@@ -5,9 +5,12 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 | Bauteil | Datei | Vorlage |
 |---|---|---|
 | Marke Tieout (23.10.): Bildmarke und Wortmarke oben in der Seitenleiste, darunter die Firma als Arbeitsbereich; eingeklappt nur die Bildmarke | `Logo.tsx` | Kopf der Website (`website/components/ui/Logo.tsx`), Linear (Marke oben, Arbeitsbereich darunter) |
+| Einstellungen (23.10.): Abschnitte mit Zeilen, Bezeichnung links, Wert rechts, Linien statt Kästen; Profil und Mitglieder nur mit Anmeldung | `Einstellungen.tsx`, `konto.css` | Linear „Settings“, Attio „Workspace settings“ |
+| Anmeldeseite (23.10., per Schalter aus): Papier mit Planraster, eckige Knöpfe in Ultramarin wie die Website, eine schmale Spalte | `Anmelden.tsx`, `konto.css` | Website tieout, Linear-Anmeldung |
+| Rahmen (23.10.): Seitenleiste und Inhalt, Anmeldeseite ohne Rahmen | `Rahmen.tsx` | Linear, Attio |
 | Seitenleiste: Firma oben, Projekte als Baum ohne Ampelpunkt (Ampel-Wort im Tooltip), aktives Projekt aufgeklappt | `Seitenleiste.tsx` | Linear (Arbeitsbereich oben, „Your teams“ als Baum, aktiver Eintrag als Fläche, Zähler rechts), Attio (Gruppen-Label) |
 | Seitenkopf | `Seitenkopf.tsx` | Linear-Kopfzeile, Attio |
-| Kennzahl | `Kennzahl.tsx` | reebuild-Projektübersicht R-C |
+| Kennzahl | `Kennzahl.tsx` | reebuild-Projektübersicht R-C, Stripe-Übersicht. Seit 23.10. ohne Linien und Trenner, nur Abstand; am Handy waagrecht scrollbar mit Randblende |
 | Panel | `Panel.tsx` | Linear, Attio (Rand statt Schatten) |
 | Statusmarke | `Statusmarke.tsx` | Linear-Labels |
 | Stand | `Stand.tsx` | Linear-Statusspalte, reebuild-Freigabe |
@@ -16,13 +19,14 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 | Zeilennavigation | `Zeilennavigation.tsx` | Linear (Klick, Enter, j/k) |
 | Zeitachse | `Zeitachse.tsx` | Linear-Aktivität (Symbol auf der Linie), Attio-Zeitleiste (Monatsköpfe), Filter als Reiter mit Zähler |
 | Zuruf-Szene (Mock) | `ZurufSzene.tsx` | Chat eines Messengers, neutral ohne fremde Marke; Papierfarben wie Belege |
-| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear „Group by“, Attio-Suche über der Tabelle. Zeile 36 px, Kopf 32 px ohne Fläche, feste Spalten (`.tab-liste`); Spalte „Nächste AR“ zeigt die Menge aus dem Rechenkern, keine Marke je Zeile |
+| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear „Group by“, Attio-Suche über der Tabelle. Zeile 36 px, Kopf 32 px ohne Fläche, feste Spalten (`.tab-liste`); am Handy blendet der rechte Rand aus, solange Spalten folgen (`.tw`, `.ledger-rahmen`, gesteuert vom Bildlauf); Spalte „Nächste AR“ zeigt die Menge aus dem Rechenkern, keine Marke je Zeile |
 | Belegmatrix und Dokumentliste | `Ordner.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B. Einzeilig, leere Zelle heißt kein Beleg (kein Wort), Zeile mit Befund öffnet ihn per Klick, Enter, j/k |
 | **Projektliste mit Ampel** (neu) | `../app/page.tsx` | Linear-Projektliste (Gruppen nach Zustand, Zähler im Gruppenkopf), reebuild R-B (Beträge rechtsbündig, Summen), Statusmarke für die Ampel |
 
 ## Projektliste mit Ampel
 
 - Eine Zeile pro Projekt, einzeilig (36 px): Kurzzeichen (gedämpft, feste Breite) und Name, Auftraggeber als eigene gedämpfte Spalte, Ampel als Wort, Datum, Auftrag, die zwei Listen getrennt.
+- Handy (bis 640 px): Kopf mit „Projekt“ und „Jetzt verrechenbar“; je Projekt oben Name und Betrag, darunter Ampel und Datum (Linear mobil: Titel mit Metazeile).
 - Gruppen: „Im Abgleich“ mit Beträgen je Projekt, „Schlussrechnung gelegt oder abgeschlossen“ ohne Beträge, Gruppenkopf nur mit Zähler. Letzte Zeile: Summen aller Projekte aus dem Rechenkern.
 - **Ampel als Wort ohne Punkt**, Farbe nur als Schriftfarbe bei „Bald legen“ und „Beträge offen“ (seit Politur 22.10., `marken.css`). Regel im Rechenkern (`engine/firma.ts`), Wörter fest:
 

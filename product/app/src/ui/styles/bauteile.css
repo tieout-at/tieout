@@ -55,9 +55,8 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .sw-risk .sw-ico { width: 14px; height: 14px; }
 
 /* Kennzahl (Vorlage: reebuild-Projektübersicht R-C: Label, Betrag, Kontextzeile) */
-.sw-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); } /* 22.10.: Kennzahlen als Reihe mit Trennlinien statt Karten (Stripe, Attio) */
-.sw-kpi { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-4) var(--space-5); background: transparent; border: 0; border-left: 1px solid var(--line); min-width: 0; }
-.sw-kpi:first-child { border-left: 0; padding-left: var(--space-3); }
+.sw-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-8); } /* 23.10.: ohne Linien und Trenner, nur Abstand (Stripe-Übersicht, Linear-Insights); 22.10. noch mit Trennlinien */
+.sw-kpi { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-2) var(--space-3); background: transparent; border: 0; min-width: 0; }
 .sw-kpi .kpi { font-variant-numeric: tabular-nums; margin-top: var(--space-1); }
 .sw-kpi__ctx { color: var(--text-secondary); }
 

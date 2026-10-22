@@ -17,6 +17,30 @@ function merken(schluessel: string, wert: string) {
   }
 }
 
+export type Thema = "hell" | "dunkel" | "system";
+
+/** Thema aus den Einstellungen: fest hell, fest dunkel oder wie das Gerät. */
+export function themaSetzen(t: Thema) {
+  const dunkel = t === "dunkel" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme = dunkel ? "dark" : "light";
+  if (t === "system") {
+    try {
+      localStorage.removeItem(SCHLUESSEL);
+    } catch {
+      // privater Modus
+    }
+  } else merken(SCHLUESSEL, t);
+}
+
+export function themaGemerkt(): Thema {
+  try {
+    const t = localStorage.getItem(SCHLUESSEL);
+    return t === "hell" || t === "dunkel" ? t : "system";
+  } catch {
+    return "system";
+  }
+}
+
 export function themaWechseln() {
   const neu = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
   document.documentElement.dataset.theme = neu;

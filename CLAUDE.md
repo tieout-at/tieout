@@ -47,7 +47,7 @@ Wo v2 und v3 abweichen, gilt v3.
 
 ## Wenn es um die Website geht
 
-Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), Domain tieout.at, CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Online offen erreichbar unter endpoint-preview.pages.dev (noindex, Entscheidung Maxi D. 22.10.), Details in `website/README.md`. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA „Demo buchen“ mit Terminwahl und Einwilligungs-Häkchen (Entscheidung Maxi D., 22.10.); keine Preise, keine Pakete. Hintergrund in Dossier v3 Abschnitt 9.
+Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), Domain tieout.at, CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Online offen erreichbar unter tieout-at.pages.dev, später tieout.at (noindex, Entscheidung Maxi D. 22.10.; die alte Adresse endpoint-preview.pages.dev leitet weiter), Details in `website/README.md`. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA „Demo buchen“ mit Terminwahl und Einwilligungs-Häkchen (Entscheidung Maxi D., 22.10.); keine Preise, keine Pakete. Hintergrund in Dossier v3 Abschnitt 9.
 
 ## Wenn es um den Bau geht
 

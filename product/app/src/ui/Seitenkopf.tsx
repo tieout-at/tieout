@@ -22,7 +22,7 @@ export function Seitenkopf({ pfad, titel, aktion }: { pfad: Pfadteil[]; titel: s
         <h1>{titel}</h1>
       </div>
       <div className="sw-pagehead__actions">
-        <span className="sw-synth" title="Synthetischer Demo-Datensatz: Firmen und Beträge erfunden, keine echten Funde">
+        <span className="sw-synth" title="Synthetischer Datensatz: Firmen und Beträge erfunden, keine echten Funde">
           Synthetisch
         </span>
         {aktion}

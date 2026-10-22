@@ -35,8 +35,8 @@ function Zeile({ p }: { p: ProjektZeile }) {
       <td className="neben nur-breit" title={p.auftraggeber.name}>
         {p.auftraggeber.name}
       </td>
-      <td className="nur-breit">{p.ampel !== "grau" && <span className={a.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${a.ton}`}>{a.wort}</span>}</td>
-      <td className="sw-num nur-breit">{p.datum?.art === "legen_bis" && datum(p.datum.wert)}</td>
+      <td className="mobil-ampel">{p.ampel !== "grau" && <span className={a.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${a.ton}`}>{a.wort}</span>}</td>
+      <td className="sw-num mobil-datum">{p.datum?.art === "legen_bis" && datum(p.datum.wert)}</td>
       <td className="r nur-breit">{betrag(p.auftragssumme)}</td>
       <td className="r">{p.jetzt !== null && betrag(p.jetzt)}</td>
       <td className="r nur-breit">{p.offen !== null && betrag(p.offen)}</td>
@@ -83,12 +83,12 @@ export default function Firmenuebersicht() {
             <thead>
               <tr>
                 <th>Projekt</th>
-                <th>Auftraggeber</th>
-                <th>Ampel</th>
-                <th>Legen bis</th>
-                <th className="r">Auftrag</th>
+                <th className="nur-breit">Auftraggeber</th>
+                <th className="nur-breit">Ampel</th>
+                <th className="nur-breit">Legen bis</th>
+                <th className="r nur-breit">Auftrag</th>
                 <th className="r">Jetzt verrechenbar</th>
-                <th className="r">Angemeldet und offen</th>
+                <th className="r nur-breit">Angemeldet und offen</th>
               </tr>
             </thead>
             <tbody>

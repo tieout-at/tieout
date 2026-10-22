@@ -49,6 +49,8 @@ export default async function ProjektUebersicht({ params }: Props) {
   const ag = daten.auftraggeber.find((a) => a.id === p.auftraggeberId);
   const basis = `/projekte/${id}`;
   const href = (schluessel: string) => `${basis}/befunde/${befundSlug(schluessel)}/`;
+  // „Braucht Anwalt“ geht an die Kanzlei und ist damit schon entschieden: zählt weder bei „Zu entscheiden“ noch bei
+  // „x von y freigegeben“, steht in der Tabelle als eigene Gruppe mit eigenem Zähler.
   const entscheiden = e.befunde.filter((b) => b.liste !== "anwalt").map((b) => ({ schluessel: b.schluessel, liste: b.liste, href: href(b.schluessel) }));
   const risiken = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
   const zurufe = d.zurufe.length;
@@ -141,7 +143,7 @@ export default async function ProjektUebersicht({ params }: Props) {
               )}
             </Kennzahlen>
             <div className="cols">
-              <Panel titel="Zu entscheiden" rechts={<span className="sw-count">{e.befunde.length}</span>}>
+              <Panel titel="Zu entscheiden" rechts={<span className="sw-count">{entscheiden.length}</span>}>
                 <BefundTabelle projektId={id} befunde={e.befunde} summen={e.summen} risiken={risiken} href={(b) => href(b.schluessel)} />
               </Panel>
               <aside className="ab-props">

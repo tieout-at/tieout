@@ -378,8 +378,8 @@
     "impressum": "Legal notice",
     "datenschutz": "Privacy",
     "linkedin": "LinkedIn",
-    "linkedinPlaceholder": "[[PLACEHOLDER: LinkedIn page]]",
-    "preview": "Preview"
+    "preview": "Preview",
+    "linkedinUrl": "https://www.linkedin.com/company/tieout-at/"
   },
   "legal": {
     "back": "Back to home",
