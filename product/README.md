@@ -37,7 +37,7 @@ Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.1
 | `app/` | Code: Next.js 16, TypeScript, Vitest. Regeln für Agenten in `app/CLAUDE.md` |
 | `app/src/app/` | Bildschirme (Routen): `/` Firmenübersicht, `/projekte/[projekt]`, `…/befunde`, `…/befunde/[befund]`, `…/ledger`, `…/zeitachse`, `…/ordner`, `…/ordner/[beleg]` |
 | `app/src/zustand/` | Freigabe als Verlauf (reine Logik mit Tests) und Speicher im Browser; später Datenbank |
-| `app/src/ui/` | Bauteile aus dem UI-Fundament (React) und Stile (`styles/tokens.css`, `bauteile.css`, `anordnung.css`) |
+| `app/src/ui/` | Bauteile aus dem UI-Fundament (React) und Stile (`styles/tokens.css`, `bauteile.css`, Layout je Bereich wie `rahmen.css`, `tabellen.css`) |
 | `app/src/daten/` | Datenzugriff der Bildschirme; heute der synthetische Firmenzwilling, später die Datenbank pro Firma |
 | `ui-fundament/` | Design-System v2 als Referenz und die Skripte, die es erzeugt haben (`LIESMICH.md`) |
 
