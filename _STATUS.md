@@ -30,7 +30,9 @@
 ## Offen für Maxi (Website)
 
 - Produktverständnis für die Website: erledigt (siehe Dossier v3 Abschnitt 0 und 3)
-- Name, CI, Hosting: noch nicht begonnen
+- 22.10.: Arbeitstitel „EndPoint.“, CI Planraster (Papier, Tinte, Ultramarin), Struktur in `website/STRUKTUR.md`. Noch nicht gebaut
+- 22.10.: GTM und Monetarisierung offen, daher keine Preise und kein „Check anfragen“ auf der Website
+- Offen: Markenprüfung und Domain, Hosting, „Ghost“ klären, Team-Rollen und Fotos
 - Frage ans Team: Ist „Zwilling“ für Inhaber zu abstrakt? Alternativ „Wissensdatenbank des Betriebs“ testen
 
 ## Produkt

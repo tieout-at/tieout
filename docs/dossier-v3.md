@@ -358,7 +358,7 @@ Deutschland (RDG, VOB/B, GAEB, kostenbasierte Bepreisung nach BGH VII ZR 34/18) 
 
 **Preislogik:** Check, Desk und Live folgen dem Wachstum des Zwillings: ein Projekt, alle schließenden Projekte, alle laufenden Projekte. Das Modell "Abo pro aktivem Projekt" war in v2 verworfen, weil es ab Tag 1 Postfach und tägliche Triage durch den PL verlangte. Mit dem Agenten entfällt der Grund teilweise. Die Preisstruktur für Live wird neu geprüft, sobald Stufe 2 steht. Bis dahin gelten die Preise oben.
 
-**Preis nach außen:** Kuro und reebuild veröffentlichen keine Preise und verkaufen über "Demo buchen" bzw. "Schreiben Sie uns" (G). Vorschlag: Nur den Einstiegspreis zeigen ("Check ab 1.500 €, fix"). Der Desk gibt es im Gespräch. Der Fixpreis ist bei Inhabern, die jeden Euro verhandeln, ein Vertrauenssignal (Annahme).
+**Preis nach außen [ausgesetzt 22.10.: GTM offen, keine Preise nach außen, siehe Abschnitt 9]:** Kuro und reebuild veröffentlichen keine Preise und verkaufen über "Demo buchen" bzw. "Schreiben Sie uns" (G). Vorschlag: Nur den Einstiegspreis zeigen ("Check ab 1.500 €, fix"). Der Desk gibt es im Gespräch. Der Fixpreis ist bei Inhabern, die jeden Euro verhandeln, ein Vertrauenssignal (Annahme).
 
 **Kennzahlen (alle Annahme):**
 
@@ -493,6 +493,13 @@ Steckbriefe zu Stratos, Dryft und Tacto sind nur Kurzfassungen. Maxi ergänzt si
 - **Headline:** Vor R3 bleibt sie beim Ergebnis: "Schlussrechnung in 10 Tagen geprüft, jede Position belegt." Nach R3 nur mit echtem Wert: "Im Schnitt X € pro Projekt gefunden."
 - **Begriff:** Ob "digitaler Zwilling" bei Inhabern von Handwerksbetrieben trägt, ist ungeprüft. Alternativen zum Testen: "Betriebsgedächtnis", "Projektakte". Dasselbe gilt für den Namen: "Schlusswerk" beschreibt die erste Anwendung, nicht das Kernprodukt (offene Frage 13).
 - **Vertrauensleiste:** EU-Hosting, AVV, Datensilo pro Firma, "ihr gebt nur die Projekte frei, die ihr wollt", "wir reden nie mit eurem GU", keine Auswertung pro Mitarbeiter. ISO 27001 erst nach dem Pre-Seed.
+
+**[geändert 22.10., Website] Was für die Website jetzt gilt (Teamentscheidung, ersetzt die Punkte oben, soweit sie abweichen):**
+- **GTM und Monetarisierung sind offen.** Die Website nennt kein Angebot (Check, Desk, Live), keine Preise und keinen CTA "Check anfragen". CTA ist neutral ("Kontakt aufnehmen"), bis GTM entschieden ist.
+- **Reihenfolge:** Zwilling zuerst (Firma → Projekt → Beleg, interaktiv), die Schlussrechnung als erste Anwendung, weitere als "in Planung".
+- **Arbeitstitel:** "EndPoint." CI: Planraster mit Papier, Tinte und Ultramarin. Details in `website/STRUKTUR.md`.
+- **Platzhalter:** Was wir noch nicht wissen (Rechtsform, Impressum, Rollen, Video, Domain), steht als `[[PLATZHALTER: …]]` im Text, nie als erfundene Tatsache. Solange Impressum oder Datenschutz Platzhalter sind, bleibt die Seite nicht öffentlich (Passwortschutz, noindex).
+- **Team-Sektion:** Die vier Gründer werden gezeigt, dazu eine offene Karte für den Bau-Insider.
 
 **Einwände:**
 
