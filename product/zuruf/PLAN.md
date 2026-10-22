@@ -107,8 +107,11 @@ Stand der Recherche 22.10.2026. Vor Phase 3 erneut bei Meta prüfen.
 | Meta ändert Regeln oder Preise | Kanal ist austauschbar, der Kern hängt nicht an WhatsApp |
 | Datenschutz und Betriebsrat (Dossier v3 Risiko 12) | nur synthetisch; R4-Fragenliste; keine Auswertung pro Person im Datenmodell |
 
-## Integration (Vorschlag für Phase 4, braucht Go von Maxi S.)
+## Integration (Go Maxi S. 22.10.2026, eingebaut)
 
-- `typen.ts`: neue Typen `Zuruf` (Kanal, Zeitstempel, Absender als Rolle, Ton, Foto, Transkript) und `Leistungsereignis` (Projekt, Ort, Leistung, Menge, Aufwand, Anweiser, je als `Feld<T>` mit Quelle auf den Zuruf; Prüfstand „bestätigt“ durch den Absender, nicht durch das Büro).
-- `Quelle` braucht eine Variante für Zurufe (Nachricht, Zeitstempel, Ausschnitt im Transkript), heute zeigt sie auf Dokument und Seite.
-- Zeitachse und Liste „offen“ zeigen Zurufe; Beträge kommen weiter nur aus dem Rechenkern und der Lösungsliste.
+- Datenmodell: kein zweiter Typ. `product/app/src/zuruf/abbildung.ts` bildet ein Leistungsereignis auf den App-Typ `Zuruf` ab; jede Angabe behält ihr Zitat als Quelle (`Quelle.stelle`).
+- Beträge: neue Zurufe ohne Betrag. Stunden bleiben 0 (der Agent trennt nicht Monteur und Helfer), auf der Liste „offen“ als „Neu per Zuruf, ohne Betrag“, Stand „Regiebericht fehlt“. Der Rechenkern sieht sie nie, die Summen der Demo bleiben.
+- Server: Route `POST /api/zuruf/nachricht` (`worker/route.ts`), ohne Server-Zustand (Browser schickt den Gesprächsstand mit). Läuft im Worker der App hinter der Anmeldung (Supabase-Sitzung, Haupt-Chat) und lokal in `worker/lokal.ts`. KI nur über `apiFrage` (ki.ts) mit dem Schlüssel als Cloudflare-Secret; `llm.ts` und `speicher-datei.ts` sind nur Node.
+- Schutz: Schalter `ZURUF_ECHT` (Route und Oberfläche, Standard aus), höchstens 100 KI-Aufrufe pro Tag für alle zusammen (nie pro Person).
+- Ablage: Schnittstelle `ZurufAblage` (`product/app/src/zustand/zurufe.ts`), heute im Browser; später Supabase (Tabelle je Firma, nur anhängen, Row Level Security).
+- Firma: aus dem Firmenzwilling der App (`product/app/src/zuruf/firma.ts`, vom Generator als `data/generated/zuruf-firma.json` geschrieben). `src/firma.ts` bleibt für Tests und Lernschleife.

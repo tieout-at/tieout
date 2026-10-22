@@ -15,6 +15,15 @@ Jeder Fehler des Agenten oder unserer Arbeit kommt hierher, neuester oben. Vor j
 
 ## Einträge
 
+### 2026-10-22: Einbau in die App
+
+### L21 Knöpfe und Zusammenfassung kannten nur die vorläufige Firma
+- Was: Mit der Firma der App (`opts.firma`) zeigten die Projektknöpfe die Kennung statt des Namens („p2-w22-bt3“), und die KI-Antwort wurde gegen die vorläufige Liste in `firma.ts` geprüft (Projekte der App wären verworfen worden).
+- Ursache: `texte.ts` (`projektKnopf`, `punktZeilen`) und `verstehen.ts` (`alsEintrag`, Kandidaten) riefen `projektNachId` ohne Firma auf, also immer mit `FIRMA`.
+- Regel: Jede Stelle, die ein Projekt nachschlägt, bekommt die Firma übergeben. `FIRMA` ist nur noch Vorgabe für Tests und Lernschleife.
+- Abgesichert durch: Test „nutzt die übergebene Firma für Knöpfe und Zusammenfassung“ in `agent.test.ts`.
+- Status: behoben.
+
 ### 2026-10-22: Aus dem eigenen Test im Simulator
 
 ### L19 Quelle zeigte alle Nachrichten des Gesprächs

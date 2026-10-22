@@ -2,9 +2,17 @@
 
 Diese Datei ist das Gedächtnis zwischen Sitzungen und Claude-Accounts. Am Ende jeder Sitzung überschreiben, nicht anhängen.
 
-**Stand:** 22.10.2026, abends
-**Branch:** `zuruf/plan`
-**Phase:** 1 Kern und Simulator (läuft)
+**Stand:** 22.10.2026, spät
+**Branch:** `claude/zuruf-einbau-9345a1` (Einbau in die App), `zuruf/plan` ist gemergt (PR #25)
+**Phase:** 1 Kern und Simulator, Einbau in die App hinter dem Schalter `ZURUF_ECHT` (aus)
+
+## Einbau in die App (Go Maxi S. 22.10.)
+
+- Route `POST /api/zuruf/nachricht` in `worker/route.ts`: Schalter, 100 KI-Aufrufe pro Tag, Zeit in Wiener Ortszeit, Gesprächsstand kommt vom Browser und geht neu zurück. Tests in `worker/route.test.ts`.
+- Lokal: `npm run app-server` (Port 3103, KI nach `ZURUF_KI`, Firma aus `../app/data/generated/zuruf-firma.json`, vorher in `product/app` `npm run generate`). Die App dazu mit `product/app/.env.local`: `NEXT_PUBLIC_ZURUF_ECHT=an` und `NEXT_PUBLIC_ZURUF_URL=http://localhost:3103/api/zuruf/nachricht`.
+- Online: Der Haupt-Chat hängt die Route in den Worker `schlusswerk-demo` (nach der Anmeldeprüfung), mit `nodejs_compat`, Secret `ANTHROPIC_API_KEY`, Zähler (`kvZaehler` oder Supabase). Schalter online aus bis Go Maxi S.
+- Nur Node, nie in Worker oder Browser: `src/llm.ts` (Abo, .env), `src/speicher-datei.ts` (JSONL). Läuft überall: `src/ki.ts`, `src/agent.ts`, `src/speicher.ts`, `worker/route.ts` (gebündelt geprüft: keine `node:`-Importe; mit dem SDK im Worker 289 KiB gzip).
+- Die App bindet aus diesem Paket nur `src/typen.ts` und `src/firma.ts` ein (Typen), damit ihre CI ohne `product/zuruf/node_modules` läuft. Eigene CI: `.github/workflows/produkt-zuruf.yml`.
 
 ## Erledigt
 
@@ -31,6 +39,7 @@ npm run szenarien:pruefen
 npm run lauf -- --ohne-bewerter
 npm run lauf
 npm run sim
+npm run app-server
 ```
 
 ## Stand der Lernschleife

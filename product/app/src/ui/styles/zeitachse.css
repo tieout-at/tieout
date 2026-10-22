@@ -350,6 +350,48 @@
   background: var(--doc-figure-soft);
   color: var(--doc-muted);
 }
+/* Echter Chat (Schalter ZURUF_ECHT): gleiche Hülle, dazu Knöpfe des Agenten und ein Eingabefeld */
+.szene__aktionen {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+.szene__text {
+  white-space: pre-line;
+}
+.szene__knoepfe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-width: 82%;
+}
+.szene__knoepfe .sw-btn {
+  background: var(--doc-paper);
+  color: var(--doc-ink);
+  border-color: var(--doc-line);
+}
+.szene__knoepfe .sw-btn:hover {
+  background: var(--doc-figure-soft);
+}
+.szene__input {
+  flex: 1;
+  min-width: 0;
+  height: var(--control-h);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--doc-figure-soft);
+  color: var(--doc-ink);
+  font: inherit;
+}
+.szene__input::placeholder {
+  color: var(--doc-muted);
+}
+.szene__eingabe .szene__senden {
+  flex: none;
+  width: var(--control-h);
+  padding: 0;
+}
 @media (prefers-reduced-motion: reduce) {
   .szene__msg--neu,
   .zeit-ev[data-neu],

@@ -4,6 +4,7 @@
 
 import { TriangleAlert } from "lucide-react";
 import Link from "next/link";
+import { Fragment, type ReactNode } from "react";
 import type { Befund, Ergebnis } from "@/engine/typen";
 import { ART_TEXT, LISTEN, teileTitel } from "./befund-texte";
 import { betrag } from "./format";
@@ -17,6 +18,7 @@ export function BefundTabelle({
   summen,
   risiken,
   href,
+  nachOffen,
 }: {
   projektId: string;
   befunde: Befund[];
@@ -26,6 +28,8 @@ export function BefundTabelle({
   risiken: Set<string>;
   /** Ziel einer Zeile; ohne: Zeilen sind nicht anklickbar. */
   href?: (b: Befund) => string;
+  /** Zeilen hinter „Angemeldet und offen“, z. B. neue Zurufe aus dem Browser (ohne Betrag, ohne Summe). */
+  nachOffen?: ReactNode;
 }) {
   const gruppen = LISTEN.map((l) => ({ ...l, posten: befunde.filter((b) => b.liste === l.liste) })).filter((g) => g.posten.length);
   return (
@@ -56,8 +60,12 @@ export function BefundTabelle({
             </tr>
           )}
           {gruppen.map((g) => (
-            <GruppenZeilen key={g.liste} g={g} summe={g.liste === "anwalt" ? null : summen[g.liste]} projektId={projektId} risiken={risiken} href={href} />
+            <Fragment key={g.liste}>
+              <GruppenZeilen g={g} summe={g.liste === "anwalt" ? null : summen[g.liste]} projektId={projektId} risiken={risiken} href={href} />
+              {g.liste === "offen" && nachOffen}
+            </Fragment>
           ))}
+          {!gruppen.some((g) => g.liste === "offen") && nachOffen}
         </tbody>
       </table>
     </Zeilennavigation>

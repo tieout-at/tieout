@@ -7,6 +7,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "sim": "tsx sim/server.ts",
+    "app-server": "tsx worker/lokal.ts",
     "lauf": "tsx scripts/lauf.ts",
     "szenarien:pruefen": "tsx scripts/szenarien-pruefen.ts"
   },

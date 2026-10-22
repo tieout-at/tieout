@@ -7,6 +7,7 @@ import type { Datensatz, Dokument, Quelle, Rechnung, Zuruf } from "@/domain/type
 import { menge, prozentText } from "@/engine/geld";
 import type { Beleg } from "@/engine/typen";
 import { betrag, datum, zeitpunkt } from "./format";
+import { zurufAntwort } from "./zuruf-text";
 
 function Synth() {
   return <span className="sw-page__synth">Synthetisch</span>;
@@ -208,11 +209,7 @@ function PlanSeite({ d, dok, beleg }: { d: Datensatz; dok: Dokument; beleg: Bele
 /** Zuruf als Chat (WhatsApp-Muster): Foto, Sprachnachricht mit Transkript, Zusammenfassung des Agenten, „Ja“.
  * Ausrichtung wie in der Zuruf-Szene: Der Zuruf ist die Aussage des Monteurs, also stehen seine Nachrichten rechts
  * (Sicht des Absenders, wie auf seinem Telefon), die Antworten des Agenten links. */
-function ZurufSeite({ z }: { z: Zuruf }) {
-  const stunden = [
-    z.stundenMonteur.wert ? `${menge(z.stundenMonteur.wert)} h Monteur` : "",
-    z.stundenHelfer.wert ? `${menge(z.stundenHelfer.wert)} h Helfer` : "",
-  ].filter(Boolean);
+function ZurufSeite({ z, projektName }: { z: Zuruf; projektName: string }) {
   return (
     <div className="chat">
       <div className="chat__kopf">
@@ -232,10 +229,7 @@ function ZurufSeite({ z }: { z: Zuruf }) {
         <span className="sw-mark">„{z.transkript.wert}“</span>
         <span className="chat__zeit">{z.zeitpunkt.slice(11, 16)}</span>
       </div>
-      <div className="chat__msg chat__msg--ein">
-        So habe ich es verstanden: {z.taetigkeit.wert.includes(z.ort.wert) ? "" : `${z.ort.wert}. `}{z.taetigkeit.wert}.{stunden.length ? ` ${stunden.join(", ")}.` : ""}
-        {z.angewiesenVon ? ` Angewiesen von: ${z.angewiesenVon.wert}.` : ""} Stimmt das?
-      </div>
+      <div className="chat__msg chat__msg--ein">{zurufAntwort(z, projektName)}</div>
       <div className="chat__msg chat__msg--aus chat__msg--kurz">
         Ja<span className="chat__zeit">{z.bestaetigt.zeitpunkt.slice(11, 16)}</span>
       </div>
@@ -411,7 +405,7 @@ export function Belegseite({ d, beleg, ganz = false }: { d: Datensatz; beleg: Be
     return (
       <div className="sw-page sw-page--chat">
         <Synth />
-        <ZurufSeite z={zuruf} />
+        <ZurufSeite z={zuruf} projektName={d.projekt.name} />
       </div>
     );
   }

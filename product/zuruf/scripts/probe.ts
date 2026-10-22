@@ -2,11 +2,11 @@
 import { ZurufAgent } from "../src/agent.ts";
 import { Arbeitsspeicher } from "../src/speicher.ts";
 import { kiVersteher } from "../src/verstehen.ts";
-import { kiWeg, kostenUsd, verbrauch } from "../src/llm.ts";
+import { frageStrukturiert, kiWeg, kostenUsd, verbrauch } from "../src/llm.ts";
 
 const speicher = new Arbeitsspeicher();
 speicher.setzeEinwilligung("probe", "monteur");
-const agent = new ZurufAgent(speicher, kiVersteher());
+const agent = new ZurufAgent(speicher, kiVersteher({ frage: frageStrukturiert }));
 let i = 0;
 for (const text of process.argv.slice(2)) {
   const istKnopf = text.startsWith("#");
