@@ -1,0 +1,150 @@
+// Ende-zu-Ende: Rechenkern auf dem synthetischen Datensatz W21 gegen die Lösungsliste (Demo_Faelle.md v1).
+
+import { describe, expect, it } from "vitest";
+import { erzeugeW21 } from "@/demo/w21/erzeuge";
+import {
+  SOLL_BEFUNDE,
+  SOLL_HINWEISE,
+  SOLL_IMPORT,
+  SOLL_KASKADE,
+  SOLL_REGIE,
+  SOLL_RISIKEN,
+  SOLL_SUMMEN,
+  SOLL_VORPRUEFUNG,
+  SOLL_ZAHLUNGEN,
+} from "@/demo/w21/loesung";
+import { pruefe } from "./index";
+
+const d = erzeugeW21();
+const e = pruefe(d);
+
+describe("W21: Befunde gegen die Lösungsliste", () => {
+  it("findet genau die 13 eingebauten Befunde, keinen zusätzlichen", () => {
+    expect(e.befunde.map((b) => b.schluessel).sort()).toEqual(SOLL_BEFUNDE.map((s) => s.schluessel).sort());
+  });
+
+  it.each(SOLL_BEFUNDE)("$id: Art, Liste und Betrag cent-genau", (soll) => {
+    const b = e.befunde.find((x) => x.schluessel === soll.schluessel)!;
+    expect(b).toBeDefined();
+    expect({ art: b.art, liste: b.liste, betrag: b.betrag }).toEqual({ art: soll.art, liste: soll.liste, betrag: soll.betrag });
+  });
+
+  it("Summen der drei Listen", () => {
+    expect(e.summen).toEqual(SOLL_SUMMEN);
+  });
+
+  it("J1: Rechenweg und K7-Plausibilität wie in der Lösungsliste", () => {
+    const j1 = e.befunde.find((b) => b.schluessel === "mehrmenge:22.04.12B")!;
+    expect(j1.rechenweg?.text).toBe("(100 − 86) Stk × 456,00 € = 6.384,00 €");
+    expect(j1.rechenweg?.plausibilitaet).toBe("K7: 1,30 h × 56,80 € = 73,84 € Lohn + 382,16 € Sonstiges = 456,00 €");
+    expect(j1.belege.map((b) => b.titel)).toEqual([
+      "LV Pos. 22.04.12B",
+      "Plan H-201, Index C",
+      "Plan H-201, Index D",
+      "Mail Bauleitung Hochbau Beispiel GmbH",
+      "Foto IMG_2291.jpg",
+      "Aufmaßblatt AB-12",
+    ]);
+  });
+
+  it("J8: Preisumrechnung aus 40 % Lohnanteil und Index +3,8 %", () => {
+    const j8 = e.befunde.find((b) => b.schluessel === "preisumrechnung")!;
+    expect(j8.rechenweg?.text).toBe("190.736,84 € × 3,8 % = 7.248,00 €");
+  });
+
+  it("O3 und V1: Lohn mit dem Mittellohnpreis 56,80 €", () => {
+    expect(e.befunde.find((b) => b.schluessel === "anmeldung:mail-0314-technikraum")?.rechenweg?.text).toBe(
+      "Untergrenze aus eigener Kalkulation: 96 h × 56,80 € (Mittellohnpreis) + Material 2.900,00 € = 8.352,80 €",
+    );
+  });
+
+  it("A1: Hinweis ohne Betrag und ohne Wort „Forcierung“", () => {
+    const a1 = e.befunde.find((b) => b.liste === "anwalt")!;
+    expect(a1.betrag).toBeNull();
+    expect(JSON.stringify(e)).not.toMatch(/Forcierung|Claim/i);
+  });
+});
+
+describe("W21: Vorprüfung aus GU-Sicht", () => {
+  it("genau die 4 Positionen mit Kürzungsrisiko", () => {
+    expect(e.vorpruefung.risiken.map((r) => r.schluessel).sort()).toEqual(SOLL_RISIKEN.map((s) => s.schluessel).sort());
+  });
+
+  it.each(SOLL_RISIKEN)("$id: Grund, Betrag, schon gekürzt, Bezug zum Befund", (soll) => {
+    const r = e.vorpruefung.risiken.find((x) => x.schluessel === soll.schluessel)!;
+    expect({ grund: r.grund, betrag: r.betrag, bereitsGekuerzt: r.bereitsGekuerzt, befundSchluessel: r.befundSchluessel }).toEqual({
+      grund: soll.grund,
+      betrag: soll.betrag,
+      bereitsGekuerzt: soll.bereitsGekuerzt,
+      befundSchluessel: soll.befundSchluessel,
+    });
+  });
+
+  it("Summe, bereits gekürzt, Abgleich mit dem Korrekturblatt AR3", () => {
+    expect({ summe: e.vorpruefung.summe, bereitsGekuerzt: e.vorpruefung.bereitsGekuerzt, korrekturblatt: e.vorpruefung.korrekturblatt }).toEqual(SOLL_VORPRUEFUNG);
+  });
+
+  it("Texte von G1 und G2 wie in der Lösungsliste", () => {
+    const g1 = e.vorpruefung.risiken.find((r) => r.grund === "aufmass_nicht_gegengezeichnet")!;
+    const g2 = e.vorpruefung.risiken.find((r) => r.grund === "stunden_weichen_ab")!;
+    expect(g1.abhilfe).toBe("Plan D und Mail 07.04. beilegen, gemeinsames Aufmaß nachholen");
+    expect(g2.detail).toBe("Bericht 24 h, Stundenliste KW 23: 21 h");
+  });
+
+  it("Hinweise „Mengenänderung über 20 %“ nur bei J5, J6, J7", () => {
+    expect(Object.fromEntries(e.hinweise.map((h) => [h.positionNr, h.aenderung]))).toEqual(SOLL_HINWEISE);
+  });
+});
+
+describe("W21: Prüfkaskade, Zahlungen, Import", () => {
+  it("Kaskade Zeile für Zeile", () => {
+    expect(e.kaskade.zeilen.map((z) => [z.bezeichnung, z.betrag])).toEqual(SOLL_KASKADE.map((s) => [s.bezeichnung, s.betrag]));
+    for (const s of SOLL_KASKADE.filter((x) => x.quelle)) {
+      const z = e.kaskade.zeilen.find((x) => x.bezeichnung === s.bezeichnung)!;
+      expect({ pruefung: z.pruefung ?? undefined, quelle: z.quelle }, s.bezeichnung).toEqual({ pruefung: s.pruefung, quelle: s.quelle });
+    }
+    expect(e.kaskade.restforderung).toBe(17_006_089);
+  });
+
+  it("Zahlungen je AR nach der Rechenregel", () => {
+    expect(d.zahlungen.map((z) => z.betrag.wert)).toEqual(SOLL_ZAHLUNGEN);
+    expect(d.abschlaege.map((a) => a.summe.wert)).toEqual([31_240_000, 41_890_000, 35_620_000]);
+  });
+
+  it("Import: 165 Dokumente, 12 Duplikate, Indizes C/D/E, 31 korrigierte Felder", () => {
+    const { dokumente, duplikate, eindeutig, planIndizes, korrigierteFelder } = e.import;
+    expect({ dokumente, duplikate, eindeutig, planIndizes, korrigierteFelder }).toEqual(SOLL_IMPORT);
+  });
+
+  it("Regieberichte: 16, davon 11 verrechnet, 3 unterschrieben offen, 2 ohne Unterschrift", () => {
+    expect(e.regie).toEqual(SOLL_REGIE);
+  });
+
+  it("Auftragssumme = Summe LV-Menge × EP", () => {
+    const summe = d.lv.reduce((s, p) => s + Math.round((p.menge.wert * p.ep.wert) / 100), 0);
+    expect(summe).toBe(d.vertrag.auftragssumme.wert);
+  });
+});
+
+describe("W21: Invarianten", () => {
+  it("jede LV-Position genau einmal im Ledger", () => {
+    expect(e.ledger.length).toBe(380);
+    expect(new Set(e.ledger.map((z) => z.positionNr)).size).toBe(380);
+  });
+
+  it("jeder Befund und jedes Risiko hat mindestens einen Beleg mit Quelle in einem vorhandenen Dokument", () => {
+    const ids = new Set(d.dokumente.map((x) => x.id));
+    for (const b of [...e.befunde, ...e.vorpruefung.risiken]) {
+      expect(b.belege.length, b.schluessel).toBeGreaterThan(0);
+      for (const beleg of b.belege) expect(ids.has(beleg.quelle.dokumentId), `${b.schluessel}: ${beleg.quelle.dokumentId}`).toBe(true);
+    }
+  });
+
+  it("Ledger: Differenz nur bei den vier Mehrmengen", () => {
+    expect(e.ledger.filter((z) => z.differenzMenge > 0).map((z) => z.positionNr).sort()).toEqual(["22.04.12B", "22.06.03C", "24.02.05A", "26.03.04A"]);
+  });
+
+  it("Generator ist deterministisch", () => {
+    expect(JSON.stringify(erzeugeW21())).toBe(JSON.stringify(d));
+  });
+});
