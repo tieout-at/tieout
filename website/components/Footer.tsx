@@ -1,5 +1,6 @@
 import { homePath, legalPath, type Locale, type Messages } from "@/lib/i18n";
 import { Ph } from "@/components/ui/Ph";
+import { LogoMark } from "@/components/ui/Logo";
 
 export function Footer({ t, locale }: { t: Messages["footer"]; locale: Locale }) {
   return (
@@ -7,7 +8,7 @@ export function Footer({ t, locale }: { t: Messages["footer"]; locale: Locale })
       <div className="wrap footer__grid">
         <div>
           <a className="wordmark" href={homePath(locale)}>
-            <span className="wordmark__sq" aria-hidden="true" />
+            <LogoMark size={26} />
             <span>EndPoint<span className="wordmark__dot">.</span></span>
           </a>
           <small>{t.claim}</small>

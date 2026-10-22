@@ -11,7 +11,7 @@ function Corner({ pos }: { pos: React.CSSProperties }) {
 export function Video({ t }: { t: Messages["video"] }) {
   const [clicked, setClicked] = useState(false);
   return (
-    <section id="video" className="section">
+    <section id="video" className="section section--blue">
       <div className="wrap">
         <p className="eyebrow">{t.eyebrow}</p>
         <h2 className="h-section">{t.title}</h2>

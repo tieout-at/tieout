@@ -33,9 +33,9 @@
       "c1Text": "Requested on site by the client, never invoiced.",
       "c1Value": "+ €780",
       "c1Note": "added to the final invoice",
-      "c2Tag": "More built than ordered",
-      "c2Title": "Plan changed: 14 extra sockets",
-      "c2Value": "+ €6,384",
+      "c2Tag": "Change ordered by email",
+      "c2Title": "6 extra outlets on the 2nd floor",
+      "c2Value": "+ €2,736",
       "c3Tag": "All evidence in one place",
       "c3Title": "Plans, emails, photos, WhatsApp",
       "c3Value": "1,248 records"
@@ -154,13 +154,13 @@
       ],
       "evidenceWord": "records",
       "detailTitle": "Project Vienna 21 · Item 03.12.004",
-      "position": "Flush socket",
-      "positionValue": "+ 14 pcs · €6,384",
+      "position": "6 outlets 2nd floor",
+      "positionValue": "+ 6 pcs · €2,736",
       "evidence": [
-        "Plan rev. D",
         "Email site mgmt",
+        "Plan rev. D",
         "Photo 14 Mar",
-        "Daywork 11"
+        "WhatsApp request"
       ],
       "caption": "One twin for the whole business, with insight into every project",
       "outputTitle": "Final invoice",
@@ -174,7 +174,83 @@
       ],
       "openLabel": "additionally billable",
       "openValue": 27410,
-      "sample": "Sample data"
+      "sample": "Sample data",
+      "level1": "Level 1 · Your business",
+      "level2": "Level 2 · Project Vienna 21",
+      "positionsLabel": "Items with evidence",
+      "positions2": [
+        [
+          "Daywork 11",
+          "€1,290"
+        ],
+        [
+          "Socket room 5",
+          "€780"
+        ],
+        [
+          "Stairwell lights",
+          "€1,640"
+        ]
+      ]
+    },
+    "timeline": {
+      "timelineTitle": "Project Vienna 21 · Example",
+      "trackSite": "On site",
+      "trackInvoice": "Final invoice",
+      "without": "Today",
+      "with": "With EndPoint.",
+      "missing": "missing",
+      "billed": "invoiced",
+      "found": "found",
+      "summaryWithout": "{n} of {total} changes not invoiced",
+      "summaryWith": "All {total} changes backed by evidence and invoiced",
+      "replay": "Play again",
+      "hint": "Switch and compare",
+      "sample": "Synthetic sample data",
+      "events": [
+        {
+          "week": "Wk 12",
+          "type": "WhatsApp",
+          "text": "Client: move socket in room 5",
+          "amount": 780,
+          "billed": false
+        },
+        {
+          "week": "Wk 15",
+          "type": "Daywork",
+          "text": "Daywork 11: cable tray extended, signed",
+          "amount": 1290,
+          "billed": true
+        },
+        {
+          "week": "Wk 19",
+          "type": "Email",
+          "text": "Site management: 6 extra outlets on 2nd floor",
+          "amount": 2736,
+          "billed": false
+        },
+        {
+          "week": "Wk 23",
+          "type": "Daywork",
+          "text": "Daywork 14: plant room, unsigned",
+          "amount": 390,
+          "billed": false
+        },
+        {
+          "week": "Wk 27",
+          "type": "Plan",
+          "text": "Plan rev. D: cable route changed",
+          "amount": 4120,
+          "billed": true
+        },
+        {
+          "week": "Wk 31",
+          "type": "Photo",
+          "text": "Extra lights installed in stairwell",
+          "amount": 1640,
+          "billed": false
+        }
+      ]
     }
   },
   "video": {
@@ -257,7 +333,21 @@
     "slotLabel": "Preferred time",
     "slotTimezone": "Vienna time",
     "slotPlaceholder": "[[PLACEHOLDER: calendar integration]]",
-    "errorSlot": "Please choose a time slot."
+    "errorSlot": "Please choose a time slot.",
+    "slotChooseDay": "Choose a day",
+    "slotTimesFor": "Available times on",
+    "slotNoDay": "Choose a day in the calendar first.",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "weekdays": [
+      "Mo",
+      "Tu",
+      "We",
+      "Th",
+      "Fr",
+      "Sa",
+      "Su"
+    ]
   },
   "footer": {
     "claim": "Final invoices for electrical and MEP contractors.",

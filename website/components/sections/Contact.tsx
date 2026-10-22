@@ -1,39 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { legalPath, type Locale, type Messages } from "@/lib/i18n";
 import { Ph } from "@/components/ui/Ph";
 import { Dim } from "@/components/ui/Dim";
+import { Calendar, type Slot } from "@/components/sections/Calendar";
 
 type Errors = Partial<Record<"name" | "email" | "slot" | "consent", string>>;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const TIMES = ["09:00", "10:30", "13:00", "14:30", "16:00"];
-
-/** Nächste zehn Werktage ab morgen. Vorschau: feste Zeiten, noch ohne Kalender-Anbindung. */
-function nextWorkdays(count: number): Date[] {
-  const days: Date[] = [];
-  const d = new Date();
-  d.setHours(12, 0, 0, 0);
-  while (days.length < count) {
-    d.setDate(d.getDate() + 1);
-    const wd = d.getDay();
-    if (wd !== 0 && wd !== 6) days.push(new Date(d));
-  }
-  return days;
-}
 
 export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale }) {
   const [errors, setErrors] = useState<Errors>({});
   const [sent, setSent] = useState(false);
-  const [day, setDay] = useState<number | null>(null);
-  const [time, setTime] = useState<string | null>(null);
-  // Erst im Browser berechnen, sonst weicht das Datum vom statischen Build ab.
-  const [days, setDays] = useState<Date[]>([]);
-  useEffect(() => setDays(nextWorkdays(10)), []);
+  const [slot, setSlot] = useState<Slot>(null);
   const lang = locale === "de" ? "de-AT" : "en-GB";
-  const fmtWd = new Intl.DateTimeFormat(lang, { weekday: "short" });
-  const fmtDay = new Intl.DateTimeFormat(lang, { day: "2-digit", month: "2-digit" });
   const fmtLong = new Intl.DateTimeFormat(lang, { weekday: "long", day: "numeric", month: "long" });
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,24 +23,20 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
     const next: Errors = {};
     if (!String(fd.get("name") ?? "").trim()) next.name = t.errorName;
     if (!EMAIL.test(String(fd.get("email") ?? "").trim())) next.email = t.errorEmail;
-    if (day === null || !time) next.slot = t.errorSlot;
+    if (!slot) next.slot = t.errorSlot;
     if (!fd.get("consent")) next.consent = t.errorConsent;
     setErrors(next);
     if (Object.keys(next).length === 0) setSent(true);
   };
 
   const clear = (key: keyof Errors) => () => errors[key] && setErrors((er) => ({ ...er, [key]: undefined }));
-  const pickDay = (i: number) => {
-    setDay(i);
-    if (time) clear("slot")();
-  };
-  const pickTime = (tm: string) => {
-    setTime(tm);
-    if (day !== null) clear("slot")();
+  const pickSlot = (v: Slot) => {
+    setSlot(v);
+    if (v) clear("slot")();
   };
 
   return (
-    <section id="demo" className="section section--blue">
+    <section id="demo" className="section">
       <div className="wrap contact">
         <div className="contact__intro">
           <p className="eyebrow">{t.eyebrow}</p>
@@ -79,9 +56,9 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
         {sent ? (
           <div className="form">
             <Dim label={t.success} draw />
-            {day !== null && time && (
+            {slot && (
               <p style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>
-                {fmtLong.format(days[day])} · {time} ({t.slotTimezone})
+                {fmtLong.format(slot.date)} · {slot.time} ({t.slotTimezone})
               </p>
             )}
             <div className="success">
@@ -90,30 +67,7 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
           </div>
         ) : (
           <form className="form" onSubmit={onSubmit} noValidate>
-            <fieldset className="slots">
-              <legend>
-                {t.slotLabel} * <small>{t.slotTimezone}</small>
-              </legend>
-              <div className="slots__days" role="radiogroup" aria-label={t.slotLabel}>
-                {days.map((d, i) => (
-                  <button type="button" key={i} role="radio" aria-checked={day === i} className="slot slot--day" onClick={() => pickDay(i)}>
-                    <span>{fmtWd.format(d)}</span>
-                    <b>{fmtDay.format(d)}</b>
-                  </button>
-                ))}
-              </div>
-              <div className="slots__times" role="radiogroup" aria-label={t.slotLabel}>
-                {TIMES.map((tm) => (
-                  <button type="button" key={tm} role="radio" aria-checked={time === tm} className="slot" onClick={() => pickTime(tm)} disabled={day === null}>
-                    {tm}
-                  </button>
-                ))}
-              </div>
-              {errors.slot && <span className="field__err">{errors.slot}</span>}
-              <small className="slots__note">
-                <Ph text={t.slotPlaceholder} />
-              </small>
-            </fieldset>
+            <Calendar t={t} locale={locale} value={slot} onChange={pickSlot} error={errors.slot} />
 
             <div className="form__row2">
               <div className="field">

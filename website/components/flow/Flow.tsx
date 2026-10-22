@@ -53,97 +53,122 @@ function Icon({ k }: { k: string }) {
 }
 
 /**
- * Der Zwilling: der Betrieb als Ganzes (Firmenwissen und alle Projekte),
- * darunter der Einblick in ein Projekt bis zur einzelnen Position mit ihren Belegen.
+ * Der Zwilling in zwei Ebenen: oben der Betrieb (Firmenwissen und alle Projekte),
+ * darunter ein Projekt bis zur einzelnen Position mit ihren Belegen.
  */
+const SKEW = 56;
+
+function Plane({ y, h, label, active }: { y: number; h: number; label: string; active?: boolean }) {
+  const pts = `${10 + SKEW},${y} ${430},${y} ${430 - SKEW},${y + h} ${10},${y + h}`;
+  return (
+    <g>
+      <polygon points={pts} fill={active ? "#f5f7ff" : "#ffffff"} stroke={active ? ULTRA : INK} strokeOpacity={active ? 0.9 : 0.5} strokeWidth="1.2" />
+      <polygon points={`${10},${y + h} ${430 - SKEW},${y + h} ${430 - SKEW},${y + h + 6} ${10},${y + h + 6}`} fill={active ? "#dde3ff" : "#e3e8f0"} stroke={INK} strokeOpacity=".25" />
+      <text x={10 + SKEW + 14} y={y + 20} fontFamily="var(--font-mono)" fontSize="10.5" fill={ULTRA} letterSpacing="1">
+        {label.toUpperCase()}
+      </text>
+    </g>
+  );
+}
+
 function Twin({ t }: { t: T }) {
-  const cols = [24, 160, 296];
-  const cardW = 120;
-  const cardH = 52;
-  const rows = [134, 194];
+  const tileX = [86, 186, 286];
+  const tileRows = [94, 132];
+  const tileW = 92;
+  const tileH = 30;
   const ev = [
-    { x: 30, y: 312 },
-    { x: 30, y: 392 },
-    { x: 310, y: 312 },
-    { x: 310, y: 392 },
+    { x: 54, y: 300 },
+    { x: 54, y: 362 },
+    { x: 304, y: 300 },
+    { x: 304, y: 362 },
   ];
-  const center = { x: 150, y: 342, w: 140, h: 44 };
+  const c = { x: 150, y: 318, w: 140, h: 44 };
+  const wien = { x: tileX[0], y: tileRows[0] };
 
   return (
-    <svg viewBox="0 0 440 452" role="img" aria-label={`${t.twin}: ${t.caption}`}>
-      {/* Rahmen: Ihr Betrieb */}
-      <rect x="6" y="6" width="428" height="440" fill="#ffffff" stroke={INK} strokeWidth="1.2" />
-      <path d="M6 22V6h16M418 6h16v16M434 430v16h-16M22 446H6v-16" stroke={ULTRA} strokeWidth="2.5" fill="none" />
-      <text x="24" y="34" fontFamily="var(--font-mono)" fontSize="11" fill={ULTRA} letterSpacing="1.2">
-        {t.company.toUpperCase()}
-      </text>
+    <svg viewBox="0 0 440 452" role="img" aria-label={`${t.twin}: ${t.level1}, ${t.level2}`}>
+      {/* Verbindung: Projekt aus Ebene 1 öffnet Ebene 2 */}
+      <path d={`M${wien.x},${wien.y + tileH} L${c.x},${c.y}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
+      <path d={`M${wien.x + tileW},${wien.y + tileH} L${c.x + c.w},${c.y}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
 
-      {/* Firmenwissen */}
-      <text x="24" y="60" fontFamily="var(--font-mono)" fontSize="9.5" fill={INK} fillOpacity=".45" letterSpacing="1">
-        {t.companyKnowledge.toUpperCase()}
-      </text>
-      {t.companyTags.map((tag, i) => (
-        <g key={tag}>
-          <rect x={cols[i]} y="68" width={cardW} height="28" fill="#f4f6f9" stroke={INK} strokeOpacity=".35" />
-          <text x={cols[i] + cardW / 2} y="86" textAnchor="middle" fontFamily="var(--font-mono)" fontSize="11" fill={INK}>
-            {tag}
-          </text>
-        </g>
-      ))}
-
-      {/* Projekte */}
-      <text x="24" y="124" fontFamily="var(--font-mono)" fontSize="9.5" fill={INK} fillOpacity=".45" letterSpacing="1">
-        {t.projectsLabel.toUpperCase()}
-      </text>
-      {t.projects.map((p, i) => {
-        const [name, share, count] = p as [string, number, number];
-        const x = cols[i % 3];
-        const y = rows[Math.floor(i / 3)];
-        const hi = i === 0;
-        return (
-          <g key={name}>
-            <rect x={x} y={y} width={cardW} height={cardH} fill={hi ? "#eef1ff" : "#ffffff"} stroke={hi ? ULTRA : INK} strokeOpacity={hi ? 1 : 0.35} strokeWidth={hi ? 2 : 1} />
-            <text x={x + 10} y={y + 19} fontFamily="var(--font-sans)" fontSize="12.5" fontWeight="600" fill={INK}>
-              {name}
-            </text>
-            <rect x={x + 10} y={y + 28} width={cardW - 20} height="4" fill="#e8ecf2" />
-            <rect x={x + 10} y={y + 28} width={(cardW - 20) * share} height="4" fill={ULTRA} style={{ transformBox: "fill-box", transformOrigin: "left", animation: `barX ${LOOP}s ease ${(0.4 + i * 0.25).toFixed(2)}s infinite` }} />
-            <text x={x + 10} y={y + 45} fontFamily="var(--font-mono)" fontSize="9.5" fill={INK} fillOpacity=".55">
-              {count} {t.evidenceWord}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Einblick in ein Projekt: Zoom von der Projektkarte */}
-      <path d={`M${cols[0]},${rows[0] + cardH} L24,268 M${cols[0] + cardW},${rows[0] + cardH} L416,268`} stroke={ULTRA} strokeOpacity=".5" strokeDasharray="3 4" fill="none" />
-      <rect x="24" y="268" width="392" height="164" fill="#f8f9ff" stroke={ULTRA} strokeDasharray="4 4" />
-      <text x="36" y="290" fontFamily="var(--font-mono)" fontSize="10" fill={ULTRA} letterSpacing=".8">
-        {t.detailTitle.toUpperCase()}
+      {/* Ebene 2: Projekt */}
+      <Plane y={248} h={176} label={t.level2} active />
+      <text x="96" y="290" fontFamily="var(--font-mono)" fontSize="9.5" fill={INK} fillOpacity=".45" letterSpacing="1">
+        {t.positionsLabel.toUpperCase()}
       </text>
       {ev.map((e, i) => {
-        const ex = e.x < 200 ? e.x + 100 : e.x;
-        const ey = e.y + 13;
-        const cx = e.x < 200 ? center.x : center.x + center.w;
-        const cy = center.y + center.h / 2;
+        const left = e.x < 200;
+        const ex = left ? e.x + 86 : e.x;
+        const ey = e.y + 11;
+        const cx = left ? c.x : c.x + c.w;
+        const cy = c.y + c.h / 2;
         return (
           <g key={i}>
             <path d={`M${ex},${ey} C${(ex + cx) / 2},${ey} ${(ex + cx) / 2},${cy} ${cx},${cy}`} stroke={ULTRA} strokeOpacity=".55" fill="none" />
-            <rect x={e.x} y={e.y} width="100" height="26" fill="#ffffff" stroke={INK} strokeOpacity=".4" />
-            <rect x={e.x} y={e.y} width="100" height="26" fill={ULTRA} style={{ animation: `evFlash ${LOOP}s ease ${(2.4 + i * 0.7).toFixed(1)}s infinite`, fillOpacity: 0 }} />
-            <text x={e.x + 50} y={e.y + 17} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="10.5" fill={INK}>
+            <rect x={e.x} y={e.y} width="86" height="22" fill="#ffffff" stroke={INK} strokeOpacity=".4" />
+            <rect x={e.x} y={e.y} width="86" height="22" fill={ULTRA} style={{ animation: `evFlash ${LOOP}s ease ${(2.4 + i * 0.7).toFixed(1)}s infinite`, fillOpacity: 0 }} />
+            <text x={e.x + 43} y={e.y + 15} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="9.5" fill={INK}>
               {t.evidence[i]}
             </text>
           </g>
         );
       })}
-      <rect x={center.x} y={center.y} width={center.w} height={center.h} fill={ULTRA} />
-      <text x={center.x + center.w / 2} y={center.y + 18} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="12.5" fontWeight="600" fill="#ffffff">
+      <rect x={c.x} y={c.y} width={c.w} height={c.h} fill={ULTRA} />
+      <text x={c.x + c.w / 2} y={c.y + 18} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="12.5" fontWeight="600" fill="#ffffff">
         {t.position}
       </text>
-      <text x={center.x + center.w / 2} y={center.y + 34} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="10" fill="#ffffff" fillOpacity=".85">
+      <text x={c.x + c.w / 2} y={c.y + 34} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="10" fill="#ffffff" fillOpacity=".85">
         {t.positionValue}
       </text>
+      {t.positions2.map((p, i) => {
+        const [name, val] = p as [string, string];
+        const x = 66 + i * 106;
+        return (
+          <g key={name}>
+            <rect x={x} y="388" width="100" height="30" fill="#ffffff" stroke={INK} strokeOpacity=".25" />
+            <text x={x + 7} y="400" fontFamily="var(--font-mono)" fontSize="8.8" fill={INK} fillOpacity=".7">
+              {name}
+            </text>
+            <text x={x + 7} y="412" fontFamily="var(--font-mono)" fontSize="8.8" fill={ULTRA}>
+              {val}
+            </text>
+          </g>
+        );
+      })}
+
+      {/* Ebene 1: Betrieb */}
+      <Plane y={14} h={162} label={t.level1} />
+      <text x="96" y="58" fontFamily="var(--font-mono)" fontSize="9" fill={INK} fillOpacity=".45" letterSpacing="1">
+        {t.companyKnowledge.toUpperCase()}
+      </text>
+      {t.companyTags.map((tag, i) => (
+        <g key={tag}>
+          <rect x={tileX[i]} y="64" width={tileW} height="20" fill="#f4f6f9" stroke={INK} strokeOpacity=".35" />
+          <text x={tileX[i] + tileW / 2} y="78" textAnchor="middle" fontFamily="var(--font-mono)" fontSize="9.5" fill={INK}>
+            {tag}
+          </text>
+        </g>
+      ))}
+      {t.projects.map((p, i) => {
+        const [name, share] = p as [string, number, number];
+        const x = tileX[i % 3];
+        const y = tileRows[Math.floor(i / 3)];
+        const hi = i === 0;
+        return (
+          <g key={name}>
+            <rect x={x} y={y} width={tileW} height={tileH} fill={hi ? ULTRA : "#ffffff"} stroke={hi ? ULTRA : INK} strokeOpacity={hi ? 1 : 0.35} />
+            <text x={x + 8} y={y + 14} fontFamily="var(--font-sans)" fontSize="10.5" fontWeight="600" fill={hi ? "#ffffff" : INK}>
+              {name}
+            </text>
+            <rect x={x + 8} y={y + 20} width={tileW - 16} height="3" fill={hi ? "rgba(255,255,255,.35)" : "#e8ecf2"} />
+            <rect x={x + 8} y={y + 20} width={(tileW - 16) * share} height="3" fill={hi ? "#ffffff" : ULTRA} style={{ transformBox: "fill-box", transformOrigin: "left", animation: `barX ${LOOP}s ease ${(0.4 + i * 0.25).toFixed(2)}s infinite` }} />
+          </g>
+        );
+      })}
+      {/* Punkt, der von Ebene 1 in Ebene 2 wandert */}
+      <circle r="3.5" fill={ULTRA}>
+        <animateMotion dur="2.2s" repeatCount="indefinite" path={`M${wien.x + tileW / 2},${wien.y + tileH} L${c.x + c.w / 2},${c.y}`} />
+      </circle>
     </svg>
   );
 }
