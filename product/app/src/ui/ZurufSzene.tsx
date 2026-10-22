@@ -1,0 +1,138 @@
+"use client";
+
+// Zuruf-Szene (Mock, kein echter Agent, keine echte Nummer): Der Monteur schickt Foto und Sprachnachricht, der Agent
+// fasst zusammen, ein Tipp auf „Ja“ bestätigt, und der Eintrag erscheint in der Zeitachse. Inhalte aus dem Zuruf des
+// Datensatzes. Vorlage: Chat-Ansicht eines Messengers, neutral gehalten (keine fremde Marke).
+
+import { Check, Mic, Play, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Ico } from "./Ico";
+
+export interface SzeneZuruf {
+  id: string;
+  nr: string;
+  absender: string;
+  uhrzeit: string;
+  foto: boolean;
+  transkript: string;
+  zusammenfassung: string;
+}
+
+// Takt der Szene in Millisekunden: Foto, Sprachnachricht, Transkript, Agent schreibt, Zusammenfassung.
+const TAKT = [300, 1100, 2300, 3000, 4300];
+
+// Wellenform der Sprachnachricht (feste Höhen, damit Server und Browser dasselbe zeichnen).
+const WELLE = [5, 9, 14, 8, 16, 11, 6, 13, 18, 10, 7, 15, 12, 5, 9, 17, 11, 8, 14, 6, 10, 16, 9, 5, 12, 8];
+
+export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void; onZu: () => void }) {
+  // Ohne Bewegung (Systemeinstellung) steht alles sofort da. Die Szene öffnet erst nach einem Klick, also im Browser.
+  const [ruhig] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [schritt, setSchritt] = useState(ruhig ? TAKT.length : 0);
+  const [bestaetigt, setBestaetigt] = useState(false);
+  const verlauf = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ruhig) return;
+    const uhren = TAKT.map((ms, i) => setTimeout(() => setSchritt(i + 1), ms));
+    return () => uhren.forEach(clearTimeout);
+  }, [ruhig]);
+
+  useEffect(() => {
+    verlauf.current?.scrollTo({ top: verlauf.current.scrollHeight, behavior: "smooth" });
+  }, [schritt, bestaetigt]);
+
+  useEffect(() => {
+    const taste = (ev: KeyboardEvent) => ev.key === "Escape" && onZu();
+    window.addEventListener("keydown", taste);
+    return () => window.removeEventListener("keydown", taste);
+  }, [onZu]);
+
+  const ja = () => {
+    setBestaetigt(true);
+    setTimeout(onJa, 900);
+  };
+
+  return (
+    <div className="szene" role="dialog" aria-label={`Zuruf ${z.nr} per WhatsApp, vorgespielt`}>
+      <div className="szene__kopf">
+        <span className="szene__avatar" aria-hidden="true">
+          S
+        </span>
+        <span className="szene__wer">
+          <b>Zuruf-Agent</b>
+          <span>{schritt === 4 ? "schreibt …" : "Vorgespielt, keine echte Nummer"}</span>
+        </span>
+        <button type="button" className="sw-btn sw-btn--ghost sw-btn--sm" aria-label="Szene schließen" onClick={onZu}>
+          <Ico icon={X} />
+        </button>
+      </div>
+      <div className="szene__verlauf" ref={verlauf} aria-live="polite">
+        <span className="szene__tag">Heute</span>
+        {schritt >= 1 && z.foto && (
+          <div className="szene__msg szene__msg--aus szene__msg--neu">
+            <div className="sw-photo">
+              <span>Foto (synthetisch)</span>
+            </div>
+            <span className="chat__zeit">{z.uhrzeit}</span>
+          </div>
+        )}
+        {schritt >= 2 && (
+          <div className="szene__msg szene__msg--aus szene__msg--neu">
+            <span className="szene__sprache">
+              <Ico icon={Play} />
+              <svg viewBox="0 0 130 20" aria-hidden="true">
+                {WELLE.map((h, i) => (
+                  <rect key={i} x={i * 5} y={10 - h / 2} width="2.5" height={h} rx="1" />
+                ))}
+              </svg>
+              <span>0:14</span>
+            </span>
+            {schritt >= 3 && <span className="szene__transkript">„{z.transkript}“</span>}
+            <span className="chat__zeit">{z.uhrzeit}</span>
+          </div>
+        )}
+        {schritt === 4 && (
+          <div className="szene__msg szene__msg--ein szene__tippt" aria-label="Agent schreibt">
+            <i />
+            <i />
+            <i />
+          </div>
+        )}
+        {schritt >= 5 && (
+          <div className="szene__msg szene__msg--ein szene__msg--neu">
+            <span>So habe ich es verstanden: {z.zusammenfassung} Stimmt das?</span>
+            <span className="chat__zeit">{z.uhrzeit}</span>
+          </div>
+        )}
+        {bestaetigt && (
+          <>
+            <div className="szene__msg szene__msg--aus szene__msg--kurz szene__msg--neu">
+              Ja<span className="chat__zeit">{z.uhrzeit}</span>
+            </div>
+            <div className="szene__msg szene__msg--ein szene__msg--neu">
+              <span>Danke, ist in der Zeitachse eingetragen.</span>
+            </div>
+          </>
+        )}
+      </div>
+      <div className="szene__eingabe">
+        {schritt >= 5 && !bestaetigt ? (
+          <>
+            <button type="button" className="sw-btn sw-btn--primary" onClick={ja} autoFocus>
+              <Ico icon={Check} />
+              Ja
+            </button>
+            <button type="button" className="sw-btn" disabled title="In der Demo nur Ja">
+              Korrigieren
+            </button>
+          </>
+        ) : (
+          <span className="szene__feld">
+            <Ico icon={Mic} />
+            Nachricht
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}

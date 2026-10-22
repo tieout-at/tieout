@@ -878,3 +878,222 @@ body {
     display: none;
   }
 }
+
+/* Leiste über der Zeitachse: Filter links, Szene rechts */
+.zeit-leiste {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.zeit-ev[data-neu] {
+  animation: zeit-neu 2.4s ease-out;
+}
+@keyframes zeit-neu {
+  0% {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  15% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Zuruf-Szene: Telefon rechts über dem Inhalt (Mock). Papier-Farben wie die Belege, also auch im Dunkeln hell. */
+.szene {
+  position: fixed;
+  z-index: 20;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  top: calc(var(--head-h) + var(--space-4));
+  width: 360px;
+  max-height: 720px;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--doc-figure-soft);
+  color: var(--doc-ink);
+  box-shadow: var(--shadow-overlay);
+}
+.szene__kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  background: var(--doc-paper);
+  border-bottom: 1px solid var(--doc-line);
+}
+.szene__kopf .sw-btn--ghost {
+  margin-left: auto;
+  color: var(--doc-muted);
+}
+.szene__kopf .sw-btn--ghost:hover {
+  background: var(--doc-figure-soft);
+  color: var(--doc-ink);
+}
+.szene__avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: var(--doc-figure);
+  color: var(--doc-paper);
+  font-size: 13px;
+  font-weight: 600;
+}
+.szene__wer {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.szene__wer b {
+  font-weight: 600;
+}
+.szene__wer span {
+  color: var(--doc-muted);
+  font-size: 12px;
+}
+.szene__verlauf {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-3);
+  font-size: 13px;
+  line-height: 19px;
+}
+.szene__tag {
+  align-self: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--doc-paper);
+  color: var(--doc-muted);
+  font-size: 11px;
+}
+.szene__msg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-width: 82%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--doc-paper);
+}
+.szene__msg--aus {
+  align-self: flex-end;
+  background: var(--doc-mark);
+}
+.szene__msg--ein {
+  align-self: flex-start;
+}
+.szene__msg--kurz {
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.szene__msg .sw-photo {
+  width: 220px;
+}
+.szene__msg--neu {
+  animation: szene-ein 260ms ease-out;
+}
+@keyframes szene-ein {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+}
+.szene__sprache {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--doc-ink-secondary);
+  font-size: 12px;
+}
+.szene__sprache svg {
+  width: 130px;
+  height: 20px;
+  fill: var(--doc-ink-secondary);
+}
+.szene__transkript {
+  color: var(--doc-ink-secondary);
+  font-size: 12px;
+  line-height: 17px;
+}
+.szene__tippt {
+  flex-direction: row;
+  gap: 4px;
+  padding: var(--space-3);
+}
+.szene__tippt i {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--doc-muted);
+  animation: szene-tippt 1s infinite;
+}
+.szene__tippt i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.szene__tippt i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes szene-tippt {
+  50% {
+    opacity: 0.3;
+  }
+}
+.szene__eingabe {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--doc-paper);
+  border-top: 1px solid var(--doc-line);
+}
+.szene__eingabe .sw-btn {
+  flex: 1;
+  justify-content: center;
+}
+.szene__eingabe .sw-btn:not(.sw-btn--primary) {
+  background: var(--doc-paper);
+  color: var(--doc-muted);
+  border-color: var(--doc-line);
+}
+.szene__eingabe .sw-btn--primary {
+  background: var(--doc-figure);
+  border-color: var(--doc-figure);
+  color: var(--doc-paper);
+}
+.szene__feld {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  height: var(--control-h);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--doc-figure-soft);
+  color: var(--doc-muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  .szene__msg--neu,
+  .zeit-ev[data-neu],
+  .szene__tippt i {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  .szene {
+    inset: 0;
+    width: auto;
+    max-height: none;
+    border-radius: 0;
+  }
+}
