@@ -26,11 +26,13 @@ app/(de)/            Deutsch: /, /impressum, /datenschutz
 app/(en)/en/         Englisch: /en, /en/impressum, /en/datenschutz
 app/globals.css      Design-Tokens (Papier, Tinte, Ultramarin), Raster, alle Styles
 components/nav/      Header mit DE/EN, Messpunkt-Navigation
-components/sections/ Abschnitte 01 bis 09
-components/twin/     interaktiver Zwilling (isometrisches SVG)
+components/sections/ Abschnitte: Hero, Lösung, Video, Team, Demo
+components/flow/     animierter Ablauf Eingänge → Zwilling → Schlussrechnung (SVG, läuft von selbst)
 components/ui/       Maßkette, Platzhalter, Einblenden
 messages/            alle Texte: de.json, en.json
-data/zwilling.json   synthetische Daten für den Zwilling
+public/hero/         Hero-Fotos (Unsplash, Quellen in QUELLEN.md)
+public/team/         Teamfotos (LinkedIn, mit Zustimmung des Teams)
+public/logos/        Logos von Hochschulen und Arbeitgebern, in Ultramarin eingefärbt
 ```
 
 Texte nur in `messages/` ändern, nie im Code. Neue Platzhalter immer als `[[PLATZHALTER: …]]` (Deutsch) bzw. `[[PLACEHOLDER: …]]` (Englisch).

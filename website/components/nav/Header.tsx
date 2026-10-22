@@ -16,6 +16,7 @@ export function Header({ locale, t }: { locale: Locale; t: Messages["nav"] }) {
   // Sprachwechsel bleibt im aktuellen Abschnitt.
   const switchTo = (target: Locale) => (e: React.MouseEvent) => {
     e.preventDefault();
+    if (target === locale) return;
     window.location.href = homePath(target) + window.location.hash;
   };
 
@@ -25,18 +26,20 @@ export function Header({ locale, t }: { locale: Locale; t: Messages["nav"] }) {
       <div className="wrap header__inner">
         <a className="wordmark" href={homePath(locale)} aria-label="EndPoint.">
           <span className="wordmark__sq" aria-hidden="true" />
-          <span>EndPoint<span className="wordmark__dot">.</span></span>
+          <span>
+            EndPoint<span className="wordmark__dot">.</span>
+          </span>
         </a>
-        <nav className="header__links" aria-label="Hauptnavigation">
-          {t.links.map((l) => (
-            <a key={l.href} href={l.href}>{l.label}</a>
-          ))}
-        </nav>
-        <div className="lang" role="group" aria-label={t.lang}>
-          <a href={homePath("de")} onClick={switchTo("de")} aria-current={locale === "de"} lang="de">DE</a>
-          <a href={homePath("en")} onClick={switchTo("en")} aria-current={locale === "en"} lang="en">EN</a>
+        <div className="header__right">
+          <div className="langsw" data-locale={locale} role="group" aria-label={t.lang}>
+            <span className="langsw__thumb" aria-hidden="true" />
+            <a href={homePath("de")} onClick={switchTo("de")} aria-current={locale === "de"} lang="de">DE</a>
+            <a href={homePath("en")} onClick={switchTo("en")} aria-current={locale === "en"} lang="en">EN</a>
+          </div>
+          <a className="btn btn--sm" href={`${homePath(locale)}#demo`}>
+            {t.cta} <span className="arrow">→</span>
+          </a>
         </div>
-        <a className="btn btn--sm" href="#kontakt">{t.cta}</a>
       </div>
     </header>
   );

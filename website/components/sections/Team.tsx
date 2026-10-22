@@ -1,51 +1,40 @@
-import type { Locale, Messages } from "@/lib/i18n";
-import { Ph } from "@/components/ui/Ph";
+import type { Messages } from "@/lib/i18n";
 import { Reveal } from "@/components/ui/Reveal";
 
-export function Team({ t, locale }: { t: Messages["team"]; locale: Locale }) {
-  const photo = locale === "de" ? "[[PLATZHALTER: Foto]]" : "[[PLACEHOLDER: photo]]";
+const LOGO_ALT: Record<string, string> = {
+  wu: "WU Wien",
+  tuwien: "TU Wien",
+  tacto: "Tacto",
+  enpal: "Enpal",
+  usc: "University of Southern California",
+};
+
+export function Team({ t }: { t: Messages["team"] }) {
   return (
     <section id="team" className="section">
       <div className="wrap">
         <p className="eyebrow">{t.eyebrow}</p>
         <h2 className="h-section">{t.title}</h2>
-        <p className="lead">
-          <Ph text={t.sub} />
-        </p>
         <div className="team">
           {t.members.map((m, i) => (
-            <Reveal key={m.name} as="article" className="member" delay={i * 70}>
+            <Reveal key={m.name} as="article" className="member" delay={i * 80}>
               <div className="member__img">
-                <span aria-hidden="true">{m.initials}</span>
-                <Ph text={photo} />
+                <img src={m.photo} alt={m.name} loading="lazy" />
               </div>
               <div className="member__body">
                 <div className="member__name">{m.name}</div>
-                <p>
-                  <Ph text={t.role} />
-                </p>
-                <p className="muted">
-                  <Ph text={t.bio} />
-                </p>
+                <div className="member__role">{t.role}</div>
+              </div>
+              <div className="member__logos">
+                {m.logos.map((l) => (
+                  <img key={l} src={`/logos/${l}.svg`} alt={LOGO_ALT[l] ?? l} loading="lazy" />
+                ))}
               </div>
               <a className="member__li" href={m.linkedin} target="_blank" rel="noopener noreferrer">
                 {t.linkedin} <span aria-hidden="true">↗</span>
               </a>
             </Reveal>
           ))}
-          <Reveal as="article" className="member member--insider" delay={t.members.length * 70}>
-            <div className="member__img">
-              <span aria-hidden="true">?</span>
-            </div>
-            <div className="member__body">
-              <div className="member__name">{t.insider.title}</div>
-              <p style={{ color: "#1d3bff" }}>{t.insider.role}</p>
-              <p className="muted">{t.insider.text}</p>
-            </div>
-            <a className="member__li" href="#kontakt">
-              {t.insider.cta} <span aria-hidden="true">→</span>
-            </a>
-          </Reveal>
         </div>
       </div>
     </section>

@@ -9,7 +9,7 @@ export function LegalPage({ locale, page }: { locale: Locale; page: "impressum" 
   const meta = page === "impressum" ? t.legal.impressum : t.legal.datenschutz;
   return (
     <>
-      <Header locale={locale} t={{ ...t.nav, links: t.nav.links.map((l) => ({ ...l, href: homePath(locale) + l.href })) }} />
+      <Header locale={locale} t={t.nav} />
       <main id="inhalt" className="legal">
         <div className="wrap" style={{ maxWidth: 900 }}>
           <p className="eyebrow">

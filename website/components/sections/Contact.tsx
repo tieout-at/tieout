@@ -5,19 +5,21 @@ import { legalPath, type Locale, type Messages } from "@/lib/i18n";
 import { Ph } from "@/components/ui/Ph";
 import { Dim } from "@/components/ui/Dim";
 
-type Errors = Partial<Record<"name" | "message" | "consent", string>>;
+type Errors = Partial<Record<"name" | "email" | "consent", string>>;
 
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Demo buchen. Vorschau: validiert, versendet aber nichts (Backend ist Platzhalter). */
 export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale }) {
   const [errors, setErrors] = useState<Errors>({});
   const [sent, setSent] = useState(false);
 
-  // Vorschau: validiert, versendet aber nichts. Backend ist Platzhalter.
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const next: Errors = {};
     if (!String(fd.get("name") ?? "").trim()) next.name = t.errorName;
-    if (!String(fd.get("message") ?? "").trim()) next.message = t.errorMessage;
+    if (!EMAIL.test(String(fd.get("email") ?? "").trim())) next.email = t.errorEmail;
     if (!fd.get("consent")) next.consent = t.errorConsent;
     setErrors(next);
     if (Object.keys(next).length === 0) setSent(true);
@@ -26,12 +28,17 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
   const clear = (key: keyof Errors) => () => errors[key] && setErrors((er) => ({ ...er, [key]: undefined }));
 
   return (
-    <section id="kontakt" className="section">
+    <section id="demo" className="section">
       <div className="wrap contact">
         <div>
           <p className="eyebrow">{t.eyebrow}</p>
           <h2 className="h-section">{t.title}</h2>
           <p className="lead">{t.sub}</p>
+          <ul className="contact__points">
+            {t.points.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
           <p className="mail-line">
             <span className="muted">{t.mailLabel}: </span>
             <Ph text={t.mail} />
@@ -58,14 +65,26 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
                 <input id="f-company" name="company" autoComplete="organization" />
               </div>
             </div>
-            <div className="field">
-              <label htmlFor="f-role">{t.fields.role}</label>
-              <input id="f-role" name="role" placeholder={t.rolePlaceholder} />
+            <div className="form__row2">
+              <div className="field">
+                <label htmlFor="f-email">{t.fields.email} *</label>
+                <input id="f-email" name="email" type="email" autoComplete="email" aria-invalid={!!errors.email} aria-describedby="e-email" onChange={clear("email")} />
+                {errors.email && <span id="e-email" className="field__err">{errors.email}</span>}
+              </div>
+              <div className="field">
+                <label htmlFor="f-phone">
+                  {t.fields.phone}
+                  <small>{t.optional}</small>
+                </label>
+                <input id="f-phone" name="phone" type="tel" autoComplete="tel" />
+              </div>
             </div>
             <div className="field">
-              <label htmlFor="f-msg">{t.fields.message} *</label>
-              <textarea id="f-msg" name="message" aria-invalid={!!errors.message} aria-describedby="e-msg" onChange={clear("message")} />
-              {errors.message && <span id="e-msg" className="field__err">{errors.message}</span>}
+              <label htmlFor="f-msg">
+                {t.fields.message}
+                <small>{t.optional}</small>
+              </label>
+              <textarea id="f-msg" name="message" placeholder={t.messagePlaceholder} />
             </div>
             <div>
               <label className="consent">
