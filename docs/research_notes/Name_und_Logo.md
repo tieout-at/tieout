@@ -170,6 +170,20 @@ Domains: gemessen per DNS-Abfrage (Cloudflare DNS over HTTPS) am 22.10.2026. „
 
 ---
 
+## 5b. Runde 2 (22.10.2026, nach Feedback Maxi S.)
+
+Lotwerk ist raus: im Wort steckt „twerk“. Gewünscht: neu, kurz, auf Englisch gut, YC-Stil, mit Bezug zum Produkt. Kurzprüfung wie oben (DNS und eine Websuche je Name, keine Rechtsprüfung).
+
+| Rang | Name | Idee | Domains (DNS) | Risiko |
+|---|---|---|---|---|
+| 1 | **Plumb** | EN „plumb“ = lotrecht, exakt, stimmig; dazu „plumbing“ für HKLS. Eine Silbe wie Ramp oder Glean. Logo-Idee Senklot bleibt ([Plumb bob](https://en.wikipedia.org/wiki/Plumb_bob)) | plumb.at frei; .com, .ai belegt | Kleine Installateur-App „Plumb Ace“ ([BetaList](https://betalist.com/startups/plumb-ace)); Wiener sagen „Plamm“ (Annahme) |
+| 2 | **Tieout** | Buchhaltung: „tie out“ = jede Zahl gegen den Beleg abgleichen. Genau das Produkt | tieout.at, tieout.de frei; .com, .ai, .io belegt (ohne Inhalt) | Begriff nur Finanzleuten geläufig (Annahme); kein Startup gefunden |
+| 3 | **Notch** | Kerbe im Kerbholz, dem alten Beleg für Schulden ([Tally stick](https://en.wikipedia.org/wiki/Tally_stick)) | notch.at frei; .com, .ai belegt | notch.ai ist „Notch AI-Powered Operations“ (gemessen, Seitentitel) |
+
+Verworfen in Runde 2: Recoup (recoup.ai wirbt mit „Reclaim Your Hard-Earned Money“), Closeout (alle Domains belegt, klingt nach Ausverkauf), Tally (TallyPrime, tally.so), Rivet und Truss (wenig Bezug).
+
+---
+
 ## 6. Nächste Schritte (Vorschlag)
 
 1. Team stimmt über die Top 3 ab, gern mit 2 bis 3 Elektro- oder HKLS-Unternehmern als Hörprobe („Sag den Namen laut, was denkst du?“).
