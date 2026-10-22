@@ -9,7 +9,7 @@ import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
-const EDGE = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe";
+const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const ziel = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "qa-shots");
 mkdirSync(ziel, { recursive: true });
 
