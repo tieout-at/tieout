@@ -29,4 +29,12 @@ Diese Datei ist das Gedächtnis zwischen Sitzungen und Claude-Accounts. Am Ende 
 
 ## Für eine neue Sitzung oder einen neuen Account
 
-Starte Claude Code im Repo und schreibe: „Lies `product/zuruf/CLAUDE.md` und `product/zuruf/UEBERGABE.md` und mach beim nächsten Schritt weiter.“
+1. Branch holen. Windows PowerShell 5.1 kennt `&&` nicht, deshalb Befehle einzeln oder mit `;` und `if ($?)`:
+
+   ```powershell
+   git fetch origin; if ($?) { git checkout zuruf/plan }
+   ```
+
+   Auf einem Rechner ohne Repo zuerst `git clone https://github.com/schlusswerk/schlusswerk.git`, dann `cd schlusswerk`. In Git Bash, auf Mac und Linux geht auch `git fetch origin && git checkout zuruf/plan`.
+
+2. Claude Code im Repo starten und schreiben: „Lies `product/zuruf/CLAUDE.md` und `product/zuruf/UEBERGABE.md` und mach beim nächsten Schritt weiter.“
