@@ -11,6 +11,7 @@ import { useState } from "react";
 import type { LedgerZeile } from "@/engine/typen";
 import { menge } from "@/engine/geld";
 import { betrag } from "./format";
+import { GruppenTitel } from "./Gruppe";
 import { Ico } from "./Ico";
 import { Zeilennavigation } from "./Zeilennavigation";
 
@@ -88,21 +89,21 @@ export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; grup
                 <th className="r">Nächste AR</th>
               </tr>
             </thead>
-            <tbody>
-              {sichtbar.length === 0 && (
+            {sichtbar.length === 0 && (
+              <tbody>
                 <tr>
                   <td colSpan={9} className="sw-muted">
                     Keine Treffer.
                   </td>
                 </tr>
-              )}
+              </tbody>
+            )}
               {lgs.map((lg) => {
                 const teil = sichtbar.filter((z) => gruppeVon(z.positionNr) === lg);
                 return (
-                  <LgZeilen key={lg} titel={`${lg} ${gruppen[lg] ?? "Übrige Leistungen"}`} zeilen={teil} />
+                  <LgZeilen key={lg} gruppe={lg} titel={`${lg} ${gruppen[lg] ?? "Übrige Leistungen"}`} zeilen={teil} />
                 );
               })}
-            </tbody>
           </table>
         </div>
       </Zeilennavigation>
@@ -110,13 +111,15 @@ export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; grup
   );
 }
 
-function LgZeilen({ titel, zeilen }: { titel: string; zeilen: LedgerReihe[] }) {
+function LgZeilen({ gruppe, titel, zeilen }: { gruppe: string; titel: string; zeilen: LedgerReihe[] }) {
   return (
-    <>
+    <tbody data-gruppe={gruppe}>
       <tr className="grp">
         <td colSpan={9}>
-          {titel}
-          <span className="sw-count">{zeilen.length}</span>
+          <GruppenTitel>
+            {titel}
+            <span className="sw-count">{zeilen.length}</span>
+          </GruppenTitel>
         </td>
       </tr>
       {zeilen.map((z) => (
@@ -140,6 +143,6 @@ function LgZeilen({ titel, zeilen }: { titel: string; zeilen: LedgerReihe[] }) {
           <td className="r">{z.naechsteArMenge > 0 ? menge(z.naechsteArMenge) : ""}</td>
         </tr>
       ))}
-    </>
+    </tbody>
   );
 }
