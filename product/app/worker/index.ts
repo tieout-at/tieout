@@ -1,6 +1,6 @@
 // Prüfskript vor den statischen Seiten (Cloudflare Worker mit Assets, `run_worker_first` in wrangler.jsonc).
 // Ohne gültige Supabase-Sitzung geht es zur Anmeldeseite; die Seiten selbst bleiben fertige Dateien aus `out/`.
-// Dazu zwei kleine Schnittstellen für die Einstellungen: Mitglieder auflisten und einladen (nur angemeldet).
+// Dazu zwei kleine Schnittstellen für die Einstellungen: Mitglieder auflisten und einladen mit Anmeldelink (nur angemeldet).
 // Solange src/anmeldung/konfig.ts leer ist, lässt das Skript alles durch (Schutz dann wie bisher über Cloudflare Access).
 
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
@@ -71,13 +71,17 @@ async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Resp
     return json({ mitglieder });
   }
 
+  // Einladen ohne Mail: Person anlegen (falls neu) und einen einmaligen Anmeldelink erzeugen, den das Team weitergibt.
+  // Mit Gmail-Adresse geht es danach jederzeit über „Mit Google fortfahren“.
   if (url.pathname === "/api/einladen" && anfrage.method === "POST") {
     const { email } = (await anfrage.json().catch(() => ({}))) as { email?: string };
     const adresse = (email ?? "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adresse)) return json({ fehler: "Keine gültige E-Mail-Adresse" }, 400);
-    const { error } = await admin.auth.admin.inviteUserByEmail(adresse, { redirectTo: `${url.origin}${ANMELDESEITE}` });
+    const neu = await admin.auth.admin.createUser({ email: adresse, email_confirm: true });
+    if (neu.error && !/already|registered|exists/i.test(neu.error.message)) return json({ fehler: neu.error.message }, 400);
+    const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email: adresse, options: { redirectTo: `${url.origin}${ANMELDESEITE}` } });
     if (error) return json({ fehler: error.message }, 400);
-    return json({ ok: true });
+    return json({ link: data.properties.action_link });
   }
 
   return json({ fehler: "Unbekannt" }, 404);

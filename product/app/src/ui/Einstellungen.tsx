@@ -151,16 +151,28 @@ function Mitglieder() {
   }
   useEffect(laden, []);
 
-  async function einladen(e: React.FormEvent) {
-    e.preventDefault();
+  const [link, setLink] = useState<{ email: string; url: string } | null>(null);
+
+  async function anmeldelink(adresse: string) {
     setLaeuft(true);
-    const r = await fetch("/api/einladen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) }).catch(() => null);
+    const r = await fetch("/api/einladen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: adresse }) }).catch(() => null);
     const d = r ? await r.json().catch(() => null) : null;
     setLaeuft(false);
-    if (!r?.ok) return zeigeToast(d?.fehler ?? "Einladung fehlgeschlagen");
-    zeigeToast(`Einladung an ${email.trim()} gesendet`);
-    setEmail("");
+    if (!r?.ok || !d?.link) return zeigeToast(d?.fehler ?? "Einladung fehlgeschlagen");
+    setLink({ email: adresse.trim(), url: d.link });
     laden();
+  }
+
+  async function einladen(e: React.FormEvent) {
+    e.preventDefault();
+    await anmeldelink(email);
+    setEmail("");
+  }
+
+  async function kopieren() {
+    if (!link) return;
+    await navigator.clipboard.writeText(link.url).catch(() => null);
+    zeigeToast(`Anmeldelink für ${link.email} kopiert`);
   }
 
   return (
@@ -174,6 +186,15 @@ function Mitglieder() {
           Einladen
         </button>
       </form>
+      {link && (
+        <div className="einst__link" title="Einmaliger Anmeldelink, 24 Stunden gültig">
+          <span className="sw-secondary">{link.email}</span>
+          <code>{link.url}</code>
+          <button type="button" className="sw-btn" onClick={kopieren}>
+            Link kopieren
+          </button>
+        </div>
+      )}
       {fehler && <p className="einst__hinweis">{fehler}</p>}
       {liste && (
         <table className="sw-table tab-liste tab-mitglieder">
@@ -182,6 +203,7 @@ function Mitglieder() {
               <th>Name</th>
               <th>E-Mail</th>
               <th style={{ width: 160 }}>Stand</th>
+              <th style={{ width: 120 }} />
             </tr>
           </thead>
           <tbody>
@@ -195,6 +217,11 @@ function Mitglieder() {
                 </td>
                 <td className="sw-secondary">{m.email}</td>
                 <td className="sw-secondary">{m.zuletzt ? `Zuletzt ${DATUM.format(new Date(m.zuletzt))}` : "Eingeladen"}</td>
+                <td className="r">
+                  <button type="button" className="sw-btn sw-btn--ghost sw-btn--sm" disabled={laeuft} onClick={() => anmeldelink(m.email)} title="Neuen Anmeldelink erzeugen">
+                    Anmeldelink
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
