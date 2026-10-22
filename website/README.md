@@ -1,6 +1,6 @@
 # Website
 
-Arbeitstitel **tieout** (klein, ohne Punkt) Struktur, CI und Platzhalter-Regeln: [`STRUKTUR.md`](STRUKTUR.md).
+Öffentliche Website von **tieout** (klein, ohne Punkt): Next.js 16 mit statischem Export, Deutsch und Englisch, ohne Abhängigkeit zum Produktcode. Struktur, CI und Platzhalter-Regeln: [`STRUKTUR.md`](STRUKTUR.md).
 
 ## Starten
 
@@ -16,7 +16,7 @@ Dann http://localhost:3210 öffnen (Deutsch) bzw. http://localhost:3210/en/ (Eng
 | `npm run dev` | Entwicklung mit Live-Reload |
 | `npm run build` | statischer Export nach `out/` (läuft auf jedem Webspace) |
 | `npm run typecheck` | TypeScript prüfen |
-| `npm run deploy:vorschau` | baut und lädt auf die geschützte Vorschau (Cloudflare Pages) |
+| `npm run deploy` | baut und lädt auf Cloudflare Pages (Projekt `tieout-at`) |
 | `npm run check:platzhalter` | listet alle `[[PLATZHALTER]]`. Vor dem Livegang muss die Liste leer sein |
 
 ## Aufbau
@@ -27,8 +27,9 @@ app/(en)/en/         Englisch: /en, /en/impressum, /en/datenschutz
 app/globals.css      Design-Tokens (Papier, Tinte, Ultramarin), Raster, alle Styles
 components/nav/      Header mit DE/EN, Messpunkt-Navigation
 components/sections/ Abschnitte: Hero, Lösung, Video, Team, Demo
-components/flow/     animierter Ablauf Eingänge → Zwilling → Schlussrechnung (SVG, läuft von selbst)
-components/ui/       Maßkette, Platzhalter, Einblenden
+components/flow/     animierter Ablauf Eingänge → Zwilling → Schlussrechnung (SVG, Beispielprojekte wechseln alle 5 s)
+components/problem/  Projekt-Zeitleiste mit Schalter Heute | Mit tieout
+components/ui/       Logo, Maßkette, Platzhalter, Einblenden, Fit (Laptop-Anordnung am Handy verkleinert)
 messages/            alle Texte: de.json, en.json
 public/hero/         Hero-Fotos (Unsplash, Quellen in QUELLEN.md)
 public/team/         Teamfotos (LinkedIn, mit Zustimmung des Teams)
@@ -50,4 +51,4 @@ Texte nur in `messages/` ändern, nie im Code. Neue Platzhalter immer als `[[PLA
 
 ## Stand
 
-Vorschau, per Link öffentlich erreichbar, `noindex`. Hinweis „Vorschau“ unten links. Formular versendet noch nichts. Impressum, Datenschutz, Rechtsform, Domain, Team-Rollen und Video sind Platzhalter.
+Vorschau, per Link öffentlich erreichbar, `noindex`. Hinweis „Vorschau“ unten links. Offen: Formular und Kalender versenden noch nichts, Impressum, Datenschutz, Rechtsform und Video sind Platzhalter, das Postfach kontakt@tieout.at existiert noch nicht, tieout.at wartet auf die Nameserver-Umstellung bei easyname.
