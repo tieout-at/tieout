@@ -1,7 +1,8 @@
 "use client";
 
 // Seitenleiste (Vorlage: Attio-Navigation hell, Linear: aktiver Eintrag als Fläche, Zähler rechts).
-// Zwei Abschnitte: Firma (immer) und Projekt (sobald man in einem Projekt ist). Reihenfolge = Ablauf.
+// Oben die Firma wie ein Arbeitsbereich (Linear, Attio), darunter alle Projekte mit Ampelpunkt; das aktive Projekt
+// ist aufgeklappt und zeigt seine Bildschirme eingerückt (Linear „Your teams“). Reihenfolge = Ablauf.
 // Nur was gebaut ist, steht in der Navigation (Linear, Attio); Einträge mit `folgt` werden ausgeblendet.
 
 import {
@@ -56,6 +57,28 @@ function NavLink({ e, pfad }: { e: Eintrag; pfad: string }) {
   );
 }
 
+// Wörter der Ampel wie in der Firmenübersicht (ui/README.md); hier nur im Tooltip, der Punkt ist Verstärkung.
+const AMPEL_WORT: Record<NavProjekt["ampel"], string> = {
+  rot: "Bald legen",
+  gelb: "Beträge offen",
+  gruen: "Nichts offen",
+  grau: "Kein Abgleich",
+};
+
+function projektNav(p: NavProjekt): Eintrag[] {
+  const basis = `/projekte/${p.id}`;
+  return [
+    { href: basis, icon: LayoutDashboard, text: "Übersicht" },
+    { href: `${basis}/ordner`, icon: FolderOpen, text: "Ordner", zaehler: p.dokumente, folgt: "Ordner folgt in Phase 2" },
+    { href: `${basis}/ledger`, icon: Table, text: "Ledger", zaehler: p.ledger, folgt: "Ledger folgt in Phase 2" },
+    { href: `${basis}/zeitachse`, icon: History, text: "Zeitachse", folgt: "Zeitachse folgt in Phase 2" },
+    { href: `${basis}/befunde`, icon: ListChecks, text: "Befunde", zaehler: p.befunde, praefix: true, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
+    { href: `${basis}/vorpruefung`, icon: ShieldCheck, text: "Vorprüfung aus GU-Sicht", zaehler: p.risiken, folgt: "Vorprüfung folgt in v1.0" },
+    { href: `${basis}/schlussbesprechung`, icon: ClipboardList, text: "Schlussbesprechung", folgt: "Schlussbesprechungs-Blatt folgt in v1.0" },
+    { href: `${basis}/export`, icon: Download, text: "Export", folgt: "Export folgt in v1.0" },
+  ];
+}
+
 export function Seitenleiste({
   firma,
   untertitel,
@@ -96,63 +119,48 @@ export function Seitenleiste({
     { href: "/", icon: LayoutList, text: "Projekte", zaehler: projekte.length },
     { href: "/auftraggeber", icon: BookUser, text: "Auftraggeber", zaehler: auftraggeber, folgt: "Auftraggeber mit Historie folgen in v1.0" },
   ];
-  const basis = p ? `/projekte/${p.id}` : "";
-  const projektNav: Eintrag[] = p
-    ? [
-        { href: basis, icon: LayoutDashboard, text: "Übersicht" },
-        { href: `${basis}/ordner`, icon: FolderOpen, text: "Ordner", zaehler: p.dokumente, folgt: "Ordner folgt in Phase 2" },
-        { href: `${basis}/ledger`, icon: Table, text: "Ledger", zaehler: p.ledger, folgt: "Ledger folgt in Phase 2" },
-        { href: `${basis}/zeitachse`, icon: History, text: "Zeitachse", folgt: "Zeitachse folgt in Phase 2" },
-        { href: `${basis}/befunde`, icon: ListChecks, text: "Befunde", zaehler: p.befunde, praefix: true, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
-        { href: `${basis}/vorpruefung`, icon: ShieldCheck, text: "Vorprüfung aus GU-Sicht", zaehler: p.risiken, folgt: "Vorprüfung folgt in v1.0" },
-        { href: `${basis}/schlussbesprechung`, icon: ClipboardList, text: "Schlussbesprechung", folgt: "Schlussbesprechungs-Blatt folgt in v1.0" },
-        { href: `${basis}/export`, icon: Download, text: "Export", folgt: "Export folgt in v1.0" },
-      ]
-    : [];
 
   return (
     <aside className="sw-sidebar">
       <div className="brand-row">
-        <div className="sw-brand">
+        <div className="sw-brand" title={`${firma}, ${untertitel}`}>
           <span className="brand-mark" aria-hidden="true">
-            S
+            {firma.charAt(0)}
           </span>
-          <span className="brand-name">Schlusswerk</span>
+          <span className="brand-name">{firma}</span>
         </div>
         <button type="button" className="nav-toggle" onClick={navWechseln} title="Seitenleiste ein- oder ausklappen ( [ )" aria-label="Seitenleiste ein- oder ausklappen" aria-expanded={!zu}>
           <Ico icon={PanelLeft} />
         </button>
       </div>
+      <nav className="sw-nav" aria-label="Firma">
+        {firmaNav.filter((e) => !e.folgt).map((e) => (
+          <NavLink key={e.href} e={e} pfad={pfad} />
+        ))}
+      </nav>
       <div className="nav-group">
-        <span className="label">Firma</span>
-        <div className="sw-switch sw-switch--static">
-          <span className="sw-switch__t">
-            <b>{firma}</b>
-            <span>{untertitel}</span>
-          </span>
-        </div>
-        <nav className="sw-nav" aria-label="Firma">
-          {firmaNav.filter((e) => !e.folgt).map((e) => (
-            <NavLink key={e.href} e={e} pfad={pfad} />
-          ))}
+        <span className="label">Projekte</span>
+        <nav className="sw-nav nav-baum" aria-label="Projekte">
+          {projekte.map((x) => {
+            const offen = x.id === p?.id;
+            return (
+              <div key={x.id} className="nav-projekt" data-offen={offen || undefined}>
+                <Link href={`/projekte/${x.id}`} className="nav-projekt__kopf" title={`${x.kurz} ${x.name}, ${AMPEL_WORT[x.ampel]}`} aria-expanded={offen}>
+                  <span className={`nav-dot nav-dot--${x.ampel}`} aria-hidden="true" />
+                  <span className="nav-text">{x.name}</span>
+                </Link>
+                {offen && (
+                  <div className="nav-sub">
+                    {projektNav(x).filter((e) => !e.folgt).map((e) => (
+                      <NavLink key={e.href} e={e} pfad={pfad} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </div>
-      {p && (
-        <div className="nav-group">
-          <span className="label">Projekt</span>
-          <div className="sw-switch sw-switch--static">
-            <span className="sw-switch__t">
-              <b>{p.name}</b>
-              <span>{p.los}</span>
-            </span>
-          </div>
-          <nav className="sw-nav" aria-label="Projekt">
-            {projektNav.filter((e) => !e.folgt).map((e) => (
-              <NavLink key={e.href} e={e} pfad={pfad} />
-            ))}
-          </nav>
-        </div>
-      )}
       <div className="nav-fill" />
       <nav className="sw-nav" aria-label="Demo und Darstellung">
         <button

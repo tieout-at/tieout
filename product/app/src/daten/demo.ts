@@ -5,7 +5,7 @@ import "server-only";
 import { notFound } from "next/navigation";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import type { Datensatz, Firmendaten } from "@/domain/typen";
-import { pruefeFirma, type Befund, type Ergebnis, type FirmenErgebnis } from "@/engine";
+import { pruefeFirma, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis } from "@/engine";
 
 let cache: { f: Firmendaten; e: FirmenErgebnis } | null = null;
 
@@ -52,6 +52,8 @@ export interface NavProjekt {
   name: string;
   los: string;
   abgleich: boolean;
+  /** Ampel aus dem Rechenkern (Firmenübersicht), in der Seitenleiste als Punkt. */
+  ampel: Ampel;
   befunde: number;
   ledger: number;
   dokumente: number;
@@ -72,6 +74,7 @@ export function navDaten(): { firma: string; untertitel: string; projekte: NavPr
         name: d.projekt.name,
         los: d.projekt.los,
         abgleich: x.abgleich,
+        ampel: e.projekte.find((z) => z.projektId === d.projekt.id)?.ampel ?? "grau",
         befunde: x.befunde.length,
         ledger: x.ledger.length,
         dokumente: d.dokumente.length,
