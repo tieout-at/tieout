@@ -19,7 +19,15 @@ App **tieout** (klein, ohne Punkt) auf `main`, online und **offen** unter **http
 | Zuruf-Agent in der App hinter Schalter `ZURUF_ECHT` (Standard aus): echter Chat statt Szene, neue Zurufe ohne Betrag in Zeitachse und Liste „offen“, Ablage im Browser, Grenzen 40 Aufrufe pro Tag und 20 US-Dollar pro Monat. Z6 heißt wie in der Lösungsliste. Lokal mit Abo schon ein echter Zuruf erfolgreich | #50 |
 | Tempo: Filter und Suche in Ledger und Matrix 32 bis 72 ms statt 88 bis 176 ms (gemessen von der Sitzung), pixelgleich | #59 |
 | Next.js 16.4.2 (Sicherheitsupdate), übrig nur `uuid` mittel über exceljs | #63 |
-| [[PLATZHALTER: Ergebnis Schlussprüfung]] | |
+| Projektlinks mit Schrägstrich (keine 307-Umleitung) | #68 |
+
+**Schlussprüfung 23.10.** (unabhängiger Prüfer auf der Live-Adresse, Ergebnis vom Haupt-Chat nachgesehen): kein Muss-Befund. 297 interne Adressen abgerufen, kein 404. Alle Beträge auf Startseite, 8 Projektseiten, Befundlisten und 21 Befundseiten centgenau wie `Demo_Faelle.md`. Auf allen 284 Seiten kein „·“, kein Gedankenstrich, kein „Claim“, kein Platzhalter, „Synthetisch“ überall, `noindex` überall. Screenshots hell, dunkel, 600 px ohne Fehler. Offene Punkte für den UI-Durchgang und v1.0:
+- **Kaskade und Vorprüfung** (Restforderung 170.060,89 €, Leistungssumme, Zahlungen, Abzüge G1 bis G4) stehen auf keiner Seite. Im Rechenkern fertig, Bildschirm folgt in v1.0. Für das Demo-Skript fehlt er.
+- **Ledger bei 600 px:** nur 5 von 9 Spalten sichtbar, Rest per Wischen (rechter Rand blendet aus). Für das Handy eine schmale Fassung überlegen.
+- **Startseite P6 bis P8:** Ampel und Datum bewusst leer (gelegt oder abgeschlossen, Bedeutung im Gruppenkopf). Prüfen, ob „gelegt 15.09.“ dort hilft.
+- **V1 Container 1.180,00 €:** Rechenweg „Lohn 16 h × 56,80 € + Material 271,20 €“ steht nicht in der Lösungsliste (Summe stimmt). Quelle klären oder Rechenweg kürzen; Lösungsliste nur mit Go. Slug `anmeldung-…` passt nicht zu „Verloren“.
+- **P2 bis P5:** Zahlungen genau so hoch wie die AR, ohne Nachlass oder Rücklass (anders als W21). Lösungsliste regelt das nicht, fällt nur bei Plausibilität auf.
+- **GU-Historie** („gleicher Grund schon in P7“) laut Lösungsliste ab v1.0.
 
 ## 2. Aufträge für den nächsten Chat
 
