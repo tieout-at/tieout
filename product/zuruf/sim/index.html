@@ -21,7 +21,13 @@
   * { box-sizing: border-box; }
   html, body { overflow-x: hidden; }
   body { margin: 0; font: 14.2px/1.4 "Segoe UI", Helvetica, Arial, system-ui, sans-serif; color: var(--text); background: var(--seite); }
-  .hinweis { background: var(--warn); color: #fff; text-align: center; font-size: 12px; padding: 4px 16px; }
+  .hinweis { background: var(--leiste); color: var(--leise); border-bottom: 1px solid var(--rand); display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 12px; padding: 4px 16px; min-height: 24px; }
+  .hinweis::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #f5a524; flex: none; }
+  .rolle { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--leiste); border-bottom: 1px solid var(--rand); font-size: 12.5px; color: var(--leise); flex-wrap: wrap; }
+  .rolle button { font: inherit; font-size: 12.5px; border: 1px solid var(--rand); background: var(--feld); color: var(--text); border-radius: 14px; padding: 3px 11px; cursor: pointer; }
+  .rolle button[aria-pressed="true"] { background: var(--akzent); border-color: var(--akzent); color: #fff; }
+  .rolle .neu { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: var(--leise); background: transparent; border-color: transparent; }
+  .rolle .neu:hover { color: var(--text); }
   main { display: grid; grid-template-columns: minmax(340px, 440px) 1fr; height: calc(100vh - 24px); max-width: 1400px; margin: 0 auto; }
   @media (max-width: 800px) { main { grid-template-columns: minmax(0, 1fr); height: auto; } .chat { height: 85vh; } }
 
@@ -33,8 +39,6 @@
   .wer { flex: 1; min-width: 0; }
   .wer strong { display: block; font-weight: 500; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .wer small { opacity: .8; font-size: 12.5px; }
-  .kopf select, .kopf button { font: inherit; font-size: 12.5px; background: transparent; color: var(--kopf-text); border: 1px solid rgba(255,255,255,.35); border-radius: 14px; padding: 3px 8px; cursor: pointer; }
-  .kopf select option { color: #111b21; }
 
   #verlauf { flex: 1; overflow-y: auto; padding: 14px 6% 8px; display: flex; flex-direction: column; gap: 3px; }
   .tag { align-self: center; background: var(--er); color: var(--leise); font-size: 12px; padding: 5px 12px; border-radius: 8px; box-shadow: var(--schatten); margin: 6px 0 10px; text-transform: uppercase; }
@@ -92,12 +96,13 @@
     <div class="kopf">
       <div class="bild" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5Z"/></svg></div>
       <div class="wer"><strong>Zuruf · Haustechnik Beispiel</strong><small id="status">Assistent der Firma (Programm)</small></div>
-      <select id="absender" aria-label="Absender">
-        <option value="sim-monteur|monteur">als Monteur</option>
-        <option value="sim-polier|polier">als Polier</option>
-        <option value="sim-neu|monteur">als neue Person</option>
-      </select>
-      <button id="reset" type="button" title="Alles zurücksetzen">Neu</button>
+    </div>
+    <div class="rolle" role="group" aria-label="Du schreibst als">
+      <span>Du schreibst als</span>
+      <button type="button" data-absender="sim-monteur|monteur" aria-pressed="true">Monteur</button>
+      <button type="button" data-absender="sim-polier|polier" aria-pressed="false">Polier</button>
+      <button type="button" data-absender="sim-neu|monteur" aria-pressed="false">Neue Person</button>
+      <button type="button" class="neu" id="reset" title="Alles zurücksetzen"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7Z"/></svg>Neu</button>
     </div>
     <div id="verlauf"><div class="tag">Heute</div></div>
     <form id="form">
@@ -123,7 +128,7 @@
 const verlauf = document.getElementById("verlauf");
 const eingabe = document.getElementById("eingabe");
 const status = document.getElementById("status");
-const absenderWahl = document.getElementById("absender");
+let absenderWert = "sim-monteur|monteur";
 const platzhalter = { sprache: "Was du sagen würdest …", text: "Nachricht", foto: "Was ist auf dem Foto zu sehen?" };
 let art = "sprache";
 document.querySelectorAll(".art-wahl button").forEach((b) =>
@@ -134,7 +139,7 @@ document.querySelectorAll(".art-wahl button").forEach((b) =>
     eingabe.focus();
   }),
 );
-const absender = () => { const [id, rolle] = absenderWahl.value.split("|"); return { absenderId: id, rolle }; };
+const absender = () => { const [id, rolle] = absenderWert.split("|"); return { absenderId: id, rolle }; };
 const projekte = {};
 fetch("/firma").then((r) => r.json()).then((f) => f.projekte.forEach((p) => (projekte[p.id] = p.kurz)));
 
@@ -224,7 +229,14 @@ document.getElementById("reset").onclick = async () => {
   leeren();
   ladeBuero();
 };
-absenderWahl.onchange = leeren;
+document.querySelectorAll(".rolle [data-absender]").forEach((b) =>
+  b.addEventListener("click", () => {
+    if (absenderWert === b.dataset.absender) return;
+    absenderWert = b.dataset.absender;
+    document.querySelectorAll(".rolle [data-absender]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    leeren();
+  }),
+);
 
 const namen = { projektId: "Baustelle", ort: "Ort", leistung: "Arbeit", menge: "Menge", personen: "Leute", dauerStunden: "Stunden", angewiesenVon: "Angeschafft", datum: "Tag", material: "Material", grund: "Grund" };
 const offenNamen = { projektId: "Baustelle", leistung: "Arbeit", ort: "Ort", angewiesenVon: "wer angeschafft hat", personen: "Leute", dauerStunden: "Stunden", menge: "Menge", datum: "Tag" };
