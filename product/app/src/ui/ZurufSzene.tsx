@@ -12,7 +12,11 @@ export interface SzeneZuruf {
   id: string;
   nr: string;
   absender: string;
+  /** „08.09.2026“: sichtbar als Tagesmarke, damit Chat, Zeitachse und Stichtag zusammenpassen. */
+  datum: string;
   uhrzeit: string;
+  /** Uhrzeit der Bestätigung („Ja“). */
+  uhrzeitJa: string;
   foto: boolean;
   transkript: string;
   zusammenfassung: string;
@@ -30,6 +34,16 @@ export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void;
   const [schritt, setSchritt] = useState(ruhig ? TAKT.length : 0);
   const [bestaetigt, setBestaetigt] = useState(false);
   const verlauf = useRef<HTMLDivElement>(null);
+  const schliessen = useRef<HTMLButtonElement>(null);
+  const uhrJa = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Fokus in die Szene; Timer nach „Ja“ beim Schließen abräumen.
+  useEffect(() => {
+    schliessen.current?.focus();
+    return () => {
+      if (uhrJa.current) clearTimeout(uhrJa.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (ruhig) return;
@@ -49,11 +63,11 @@ export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void;
 
   const ja = () => {
     setBestaetigt(true);
-    setTimeout(onJa, 900);
+    uhrJa.current = setTimeout(onJa, 900);
   };
 
   return (
-    <div className="szene" role="dialog" aria-label={`Zuruf ${z.nr} per WhatsApp, vorgespielt`}>
+    <div className="szene" role="dialog" aria-modal="false" aria-label={`Zuruf ${z.nr} per WhatsApp, vorgespielt`}>
       <div className="szene__kopf">
         <span className="szene__avatar" aria-hidden="true">
           S
@@ -62,12 +76,12 @@ export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void;
           <b>Zuruf-Agent</b>
           <span>{schritt === 4 ? "schreibt …" : "Vorgespielt, keine echte Nummer"}</span>
         </span>
-        <button type="button" className="sw-btn sw-btn--ghost sw-btn--sm" aria-label="Szene schließen" onClick={onZu}>
+        <button ref={schliessen} type="button" className="sw-btn sw-btn--ghost sw-btn--sm" aria-label="Szene schließen" onClick={onZu}>
           <Ico icon={X} />
         </button>
       </div>
       <div className="szene__verlauf" ref={verlauf} aria-live="polite">
-        <span className="szene__tag">Heute</span>
+        <span className="szene__tag">{z.datum}</span>
         {schritt >= 1 && z.foto && (
           <div className="szene__msg szene__msg--aus szene__msg--neu">
             <div className="sw-photo">
@@ -100,17 +114,17 @@ export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void;
         )}
         {schritt >= 5 && (
           <div className="szene__msg szene__msg--ein szene__msg--neu">
-            <span>So habe ich es verstanden: {z.zusammenfassung} Stimmt das?</span>
+            <span>Danke. So habe ich es verstanden: {z.zusammenfassung} Stimmt das?</span>
             <span className="chat__zeit">{z.uhrzeit}</span>
           </div>
         )}
         {bestaetigt && (
           <>
             <div className="szene__msg szene__msg--aus szene__msg--kurz szene__msg--neu">
-              Ja<span className="chat__zeit">{z.uhrzeit}</span>
+              Ja<span className="chat__zeit">{z.uhrzeitJa}</span>
             </div>
             <div className="szene__msg szene__msg--ein szene__msg--neu">
-              <span>Danke, ist in der Zeitachse eingetragen.</span>
+              <span>Gespeichert.</span>
             </div>
           </>
         )}
@@ -123,7 +137,7 @@ export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void;
               Ja
             </button>
             <button type="button" className="sw-btn" disabled title="In der Demo nur Ja">
-              Korrigieren
+              Ändern
             </button>
           </>
         ) : (

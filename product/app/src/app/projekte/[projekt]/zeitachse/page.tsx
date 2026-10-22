@@ -7,6 +7,7 @@ import { Seitenkopf } from "@/ui/Seitenkopf";
 import { Zeitachse } from "@/ui/Zeitachse";
 import type { SzeneZuruf } from "@/ui/ZurufSzene";
 import { menge } from "@/engine/geld";
+import { datum } from "@/ui/format";
 
 type Props = { params: Promise<{ projekt: string }> };
 
@@ -34,10 +35,20 @@ export default async function ZeitachseSeite({ params }: Props) {
     id: z.id,
     nr: z.nr,
     absender: z.absender,
+    datum: datum(z.zeitpunkt.slice(0, 10)),
     uhrzeit: z.zeitpunkt.slice(11, 16),
+    uhrzeitJa: z.bestaetigt.zeitpunkt.slice(11, 16),
     foto: z.foto !== null,
     transkript: z.transkript.wert,
-    zusammenfassung: [z.taetigkeit.wert, stunden.join(", "), z.angewiesenVon ? `Angewiesen von ${z.angewiesenVon.wert}` : ""].filter(Boolean).join(". ") + ".",
+    zusammenfassung: [
+      `${d.projekt.name}, ${z.ort.wert}`,
+      `${z.taetigkeit.wert.replace(`${z.ort.wert} `, "")}, ${z.bezugPositionen.wert.length ? `LV-Position ${z.bezugPositionen.wert.join(", ")}` : "keine LV-Position"}`,
+      stunden.join(", "),
+      z.angewiesenVon ? `Angewiesen vom ${z.angewiesenVon.wert}` : "",
+      `Regiebericht: ${z.bezugRegie?.wert ?? "keiner"}`,
+    ]
+      .filter(Boolean)
+      .join(". ") + ".",
   };
   return (
     <>

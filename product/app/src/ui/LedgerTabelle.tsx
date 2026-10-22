@@ -43,12 +43,12 @@ export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; grup
   return (
     <section className="ledger" aria-label="Ledger">
       <div className="zeit-leiste">
-        <div className="sw-tabs zeit-filter" role="tablist" aria-label="Filter">
+        <div className="sw-tabs zeit-filter" role="group" aria-label="Filter">
           {FILTER.map((x) => {
             const n = zeilen.filter(x.passt).length;
             if (n === 0 && x.f !== "alle") return null;
             return (
-              <button key={x.f} type="button" role="tab" className="sw-tab" aria-selected={filter === x.f} onClick={() => setFilter(x.f)}>
+              <button key={x.f} type="button" className="sw-tab" aria-pressed={filter === x.f} onClick={() => setFilter(x.f)}>
                 {x.text}
                 <span className="sw-count">{n.toLocaleString("de-AT")}</span>
               </button>

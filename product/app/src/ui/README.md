@@ -13,6 +13,10 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 | Schrittleiste | `Schrittleiste.tsx` | reebuild-Ablauf, Kuro „x von y“ |
 | Befundtabelle | `BefundTabelle.tsx` | Linear „Group by“, reebuild R-B, Ramp (Hinweis an der Zeile) |
 | Zeilennavigation | `Zeilennavigation.tsx` | Linear (Klick, Enter, j/k) |
+| Zeitachse | `Zeitachse.tsx` | Linear-Aktivität (Symbol auf der Linie), Attio-Zeitleiste (Monatsköpfe), Filter als Reiter mit Zähler |
+| Zuruf-Szene (Mock) | `ZurufSzene.tsx` | Chat eines Messengers, neutral ohne fremde Marke; Papierfarben wie Belege |
+| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear „Group by“, Attio-Suche über der Tabelle |
+| Belegmatrix und Dokumentliste | `Ordner.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B |
 | **Projektliste mit Ampel** (neu) | `../app/page.tsx` | Linear-Projektliste (Gruppen nach Zustand, Zähler im Gruppenkopf), reebuild R-B (Beträge rechtsbündig, Summen), Statusmarke für die Ampel |
 
 ## Projektliste mit Ampel

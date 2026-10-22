@@ -750,6 +750,11 @@ body {
 .zeit-filter {
   flex-wrap: wrap;
 }
+/* Filter sind Umschaltknöpfe (aria-pressed), gleiche Form wie Reiter */
+.sw-tab[aria-pressed="true"] {
+  background: var(--surface-selected);
+  color: var(--text);
+}
 .zeit-monat__kopf {
   position: sticky;
   top: calc(-1 * var(--space-5));
@@ -875,6 +880,10 @@ body {
     gap: var(--space-2);
   }
   .zeit-ev__befund {
+    grid-column: 3;
+    padding-top: 0;
+  }
+  .zeit-ev__befund:empty {
     display: none;
   }
 }
@@ -1148,4 +1157,66 @@ body {
   background: transparent;
   color: var(--text);
   font: inherit;
+}
+
+/* Belegmatrix (Hebbia, Harvey): Zellen sind Links aufs Original, Lücken als „kein Beleg“ */
+.tab-matrix {
+  min-width: 988px;
+}
+.tab-dokumente {
+  min-width: 720px;
+}
+.tab-matrix td.matrix-zelle {
+  vertical-align: top;
+  padding-top: var(--space-3);
+}
+.matrix-zelle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.matrix-zelle > * + * {
+  margin-left: var(--space-2);
+}
+.matrix-link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+.matrix-link:hover {
+  text-decoration-color: currentColor;
+}
+.matrix-leer {
+  color: var(--text-disabled);
+}
+.matrix-befund {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 12px;
+}
+.matrix-befund:hover {
+  text-decoration: underline;
+}
+.dok-datei {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.dok-duplikat td {
+  color: var(--text-muted);
+}
+.dok-duplikat .dok-datei {
+  color: var(--text-muted);
+}
+
+/* Ganzes Dokument im Ordner: keine feste A4-Höhe, Sprung zur Position per Anker markiert diese Zeile */
+.sw-page--ganz {
+  aspect-ratio: auto;
+}
+.sw-dt tr:target td,
+.sw-dt tr[data-ziel] td {
+  background: var(--doc-mark);
+}
+.sw-dt tr[id] {
+  scroll-margin-top: var(--space-8);
 }
