@@ -1,6 +1,6 @@
 # Website: Struktur v1
 
-**Stand:** 22.10.2026. Grundlage für den Bau. Noch kein Code.
+**Stand:** 22.10.2026. Gebaut (v1 Vorschau), siehe `README.md`. Abweichungen vom Plan stehen in Abschnitt 10.
 **Arbeitstitel:** EndPoint. (mit Punkt). Name nicht final, Markenprüfung offen.
 **Zuständig:** Maxi (allein). Gearbeitet wird auf dem Branch `website/build`, nur im Ordner `website/`. `product/` und alles andere fasst die Website-Arbeit nicht an.
 
@@ -108,7 +108,7 @@ Die Seite erklärt in wenigen Sekunden: **EndPoint. ist der digitale Zwilling ei
 
 **Mobil und Barrierefreiheit:** vereinfachte Ansicht (Tippen statt Hover, keine Kamerafahrt), ohne Animation bei `prefers-reduced-motion`, per Tastatur bedienbar, Textalternative.
 
-**Technik:** zuerst ein Prototyp von einem Tag mit React Three Fiber (orthografische Kamera, Linien). Reicht die Leistung auf Mobilgeräten nicht, wird es isometrisches SVG mit GSAP.
+**Technik (entschieden 22.10.):** isometrisches SVG mit eigener Projektion, ohne 3D-Bibliothek. Leicht, scharf auf jedem Bildschirm, gut auf Mobilgeräten. Kamerafahrt durch Wechsel der Ansicht ersetzt.
 
 ---
 
@@ -161,7 +161,7 @@ Rollen und Texte schreibt jeder selbst. Nichts wird automatisch von LinkedIn üb
 | Team-Rollen, Fotos, Texte | Team | jeder selbst |
 | Anrede Sie oder ihr | alle Texte | Team |
 
-**Vor dem Livegang:** Passwortschutz und `noindex`, solange Impressum oder Datenschutz Platzhalter sind (Impressumspflicht nach § 5 ECG, § 25 MedienG). Live erst, wenn `grep -r "PLATZHALTER" website/` nichts mehr findet.
+**Vor dem Livegang:** Passwortschutz und `noindex`, solange Impressum oder Datenschutz Platzhalter sind (Impressumspflicht nach § 5 ECG, § 25 MedienG). Live erst, wenn `npm run check:platzhalter` nichts mehr findet (prüft `PLATZHALTER` und `PLACEHOLDER`).
 
 ---
 
@@ -170,13 +170,13 @@ Rollen und Texte schreibt jeder selbst. Nichts wird automatisch von LinkedIn üb
 | Thema | Entscheidung |
 |---|---|
 | Framework | Next.js (App Router) mit TypeScript, wie das Produkt |
-| Styling | Tailwind CSS, Farben und Abstände als Tokens aus Abschnitt 2 |
-| Sprachen | `next-intl`, `messages/de.json` und `messages/en.json` |
-| 3D | React Three Fiber und drei (nach Prototyp, siehe Abschnitt 6) |
-| Animation | Framer Motion oder GSAP für Scroll-Effekte |
+| Styling | eine CSS-Datei mit Tokens aus Abschnitt 2 (`app/globals.css`), ohne Tailwind |
+| Sprachen | zwei Routengruppen `(de)` und `(en)`, Texte in `messages/de.json` und `messages/en.json`, ohne Zusatzbibliothek |
+| Zwilling | isometrisches SVG (Abschnitt 6) |
+| Animation | CSS-Animationen und IntersectionObserver, `prefers-reduced-motion` respektiert |
 | Formular | vorerst ohne Versand (Platzhalter), Backend später |
 | Analytics | später, cookielos (z. B. Plausible, Umami), damit kein Cookie-Banner nötig ist |
-| Hosting | offen; lokal entwickeln, Vorschau-Hosting später |
+| Hosting | offen. Statischer Export (`out/`), läuft auf jedem Webspace |
 
 **Ordner:**
 

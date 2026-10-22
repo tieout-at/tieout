@@ -1,0 +1,250 @@
+{
+  "meta": {
+    "title": "EndPoint. The digital twin for electrical and MEP contractors",
+    "description": "EndPoint. brings everything an electrical or MEP contractor knows into one place: clients, contracts, prices and every project. First application: the final invoice."
+  },
+  "nav": {
+    "links": [
+      { "href": "#zwilling", "label": "Twin" },
+      { "href": "#anwendungen", "label": "Applications" },
+      { "href": "#team", "label": "Team" },
+      { "href": "#kontakt", "label": "Contact" }
+    ],
+    "cta": "Get in touch",
+    "ctaPlaceholder": "[[PLACEHOLDER: final CTA]]",
+    "skip": "Skip to content",
+    "lang": "Language"
+  },
+  "measure": {
+    "aria": "Sections",
+    "labels": ["Start", "Problem", "Twin", "Inputs", "Applications", "Video", "Principles", "Team", "Contact"]
+  },
+  "hero": {
+    "eyebrow": "Digital twin · Electrical and MEP",
+    "title1": "Your business.",
+    "title2": "On one plan.",
+    "sub": "EndPoint. brings your company's knowledge into one place: clients, contracts, prices and every project, with everything that was built, changed and agreed. Every number leads back to its source.",
+    "cta": "Get in touch",
+    "secondary": "Explore the twin",
+    "dim": "8 projects",
+    "planLabels": ["GF", "1st floor", "Room 5"]
+  },
+  "problem": {
+    "eyebrow": "02 · Problem",
+    "title": "What a company knows about a project is everywhere. Just not in one place.",
+    "items": [
+      {
+        "title": "Scattered",
+        "text": "Bills of quantities in the ERP, instructions in emails, daywork sheets on paper, photos on phones. At the end of a project someone has to piece it all together."
+      },
+      {
+        "title": "Informal",
+        "text": "Much of the work on site is agreed by phone, by word of mouth and on WhatsApp. What was never written down is missing later as evidence."
+      },
+      {
+        "title": "Tied to people",
+        "text": "When a project manager leaves, the knowledge leaves too. In electrical installation, more than 70 % of open positions remain unfilled.",
+        "source": { "label": "KOFA Kompakt 07/2026", "url": "https://www.iwkoeln.de/fileadmin/user_upload/Studien/KOFA_kompakt_und_Studien/2026/KOFA_Kompakt-07-2026-Handwerk.pdf" }
+      },
+      {
+        "title": "Uneven",
+        "text": "Clients increasingly check subcontractor invoices with software, line by line against the bill of quantities, contract and measurements.",
+        "source": { "label": "reebuild, developers", "url": "https://www.reebuild.com/projektentwickler" }
+      }
+    ]
+  },
+  "twin": {
+    "eyebrow": "03 · The twin",
+    "title": "A model of your business. From the company down to a single piece of evidence.",
+    "sub": "Click on a project. It holds everything that was built, changed, instructed and paid, and where we know it from.",
+    "synthetic": "Synthetic sample data",
+    "crumbFirm": "Company",
+    "hintFirm": "Click a project",
+    "hintProject": "Click evidence · drag the timeline",
+    "back": "Back to company",
+    "open": "open to invoice",
+    "volume": "Contract value",
+    "projects": "Projects",
+    "clients": "Clients",
+    "timeline": "Timeline",
+    "sources": "Sources",
+    "position": "Item",
+    "evidence": "Evidence",
+    "close": "Close",
+    "types": {
+      "mail": "Email",
+      "foto": "Photo",
+      "zuruf": "Voice note",
+      "regie": "Daywork",
+      "plan": "Plan",
+      "erp": "ERP"
+    },
+    "status": {
+      "laufend": "in progress",
+      "schluss": "final invoice due",
+      "abgeschlossen": "closed"
+    }
+  },
+  "wege": {
+    "eyebrow": "04 · Three ways in",
+    "title": "The twin fills up where the work happens.",
+    "tabs": [
+      {
+        "key": "anbinden",
+        "title": "Connect",
+        "text": "ERP, estimating and CRM stay in charge. EndPoint. reads master data, projects, bills of quantities, invoices and payments, and adds what is missing there.",
+        "items": ["ERP and estimating", "CRM", "Email and calendar", "Recorded calls"]
+      },
+      {
+        "key": "einspielen",
+        "title": "Upload",
+        "text": "No system? The project folder is enough. Every file becomes a record with source, page and location. Duplicates and new plan revisions are detected.",
+        "items": ["PDFs and scans", "Plans with revision", "Excel measurements", "Emails (.msg, .eml)"]
+      },
+      {
+        "key": "zurufen",
+        "title": "Voice in",
+        "text": "Fitters and foremen send a photo and a voice note via WhatsApp. An agent assigns it, asks briefly if needed, and the sender confirms with one tap.",
+        "items": ["Photo", "Voice note", "Follow-up question", "Confirmation"]
+      }
+    ],
+    "chat": {
+      "title": "EndPoint. · Site",
+      "voice": "Voice note · 0:18",
+      "transcript": "Moved the socket in room 5, the client wanted it that way. Two people, six hours.",
+      "agent": "Got it. Residential complex Vienna 21, plot B, room 5: socket moved, instructed by the client, 2 × 6 h. Correct?",
+      "confirm": "Yes",
+      "entry": "Work event created",
+      "entryDetail": "Room 5 · 12 h · Source: photo, audio, transcript",
+      "replay": "Play again"
+    }
+  },
+  "apps": {
+    "eyebrow": "05 · Applications",
+    "title": "Applications run on the twin. The first one is the final invoice.",
+    "first": {
+      "label": "Application 1",
+      "title": "Final invoice",
+      "text": "The project twin knows what was delivered and what was invoiced. From that, the draft final invoice is created, and every line has evidence. Click on an amount.",
+      "columns": ["Item", "Quantity", "Amount", "Status"],
+      "rows": [
+        { "pos": "03.12.004 Flush socket", "qty": "14 pcs", "amount": "€6,384.00", "status": "billable", "evidence": ["Plan revision C → D, rooms 5 to 9", "Email from site management: “please do it right away”", "Photo 14 March, 09:41", "14 × unit price €456.00 incl. labour time"] },
+        { "pos": "Daywork 11 room 5", "qty": "12 h", "amount": "€780.00", "status": "billable", "evidence": ["Voice note via WhatsApp, confirmed", "Photo and voice message", "Daywork rate per contract"] },
+        { "pos": "04.02.010 Cable tray", "qty": "86 m", "amount": "€3,010.00", "status": "invoiced", "evidence": ["Measurement sheet 7", "Interim invoice 2"] },
+        { "pos": "Daywork 14 plant room", "qty": "6 h", "amount": "€390.00", "status": "signature missing", "evidence": ["Daywork sheet without signature", "Flagged for approval"] }
+      ],
+      "evidenceTitle": "Evidence",
+      "note": "Synthetic sample data"
+    },
+    "plannedLabel": "Planned",
+    "planned": [
+      { "title": "Portfolio", "text": "All projects, open amounts and deadlines at a glance." },
+      { "title": "Client history", "text": "What a client cuts, accepts and how they pay." },
+      { "title": "Deadlines", "text": "Deadlines and securities across all projects." }
+    ],
+    "plannedPlaceholder": "[[PLACEHOLDER: further applications]]"
+  },
+  "video": {
+    "eyebrow": "06 · Product video",
+    "title": "EndPoint. in three minutes.",
+    "placeholder": "[[PLACEHOLDER: product video]]",
+    "soon": "Video coming soon.",
+    "play": "Play video"
+  },
+  "principles": {
+    "eyebrow": "07 · Principles",
+    "title": "Legend.",
+    "items": [
+      { "sym": "src", "title": "Every number has a source", "text": "File, page, location. For voice notes: message, photo, audio." },
+      { "sym": "human", "title": "People confirm", "text": "AI provides facts and suggestions. Your people decide." },
+      { "sym": "code", "title": "The math is code", "text": "Amounts are calculated by deterministic code, not by a language model." },
+      { "sym": "hist", "title": "Nothing is overwritten", "text": "Every change is a new version with time and origin." },
+      { "sym": "silo", "title": "Your data stays yours", "text": "One data silo per company. You decide which projects go in." },
+      { "sym": "gu", "title": "We never talk to your client", "text": "EndPoint. works only for you and with your people. No evaluation of individual employees." }
+    ],
+    "hosting": "[[PLACEHOLDER: hosting and certification]]"
+  },
+  "team": {
+    "eyebrow": "08 · Team",
+    "title": "Who builds EndPoint.",
+    "sub": "[[PLACEHOLDER: team description]]",
+    "role": "[[PLACEHOLDER: role]]",
+    "bio": "[[PLACEHOLDER: short bio]]",
+    "linkedin": "LinkedIn",
+    "members": [
+      { "name": "Maximilian Dieringer", "initials": "MD", "linkedin": "https://www.linkedin.com/in/maximilian-dieringer/" },
+      { "name": "Maximilian Seipl", "initials": "MS", "linkedin": "https://www.linkedin.com/in/maximilian-seipl/" },
+      { "name": "Santino Schrader", "initials": "SS", "linkedin": "https://www.linkedin.com/in/santino-schrader/" },
+      { "name": "Simon Fuhrbach", "initials": "SF", "linkedin": "https://www.linkedin.com/in/simonfuhrbach/" }
+    ],
+    "insider": {
+      "title": "Construction insider",
+      "role": "We are looking for you",
+      "text": "You know billing, change orders and final account meetings in electrical or MEP? Then we should talk.",
+      "cta": "Get in touch"
+    }
+  },
+  "contact": {
+    "eyebrow": "09 · Contact",
+    "title": "Let's talk.",
+    "sub": "For contractors, construction insiders, partners and anyone who wants to know more.",
+    "mailLabel": "Or by email",
+    "mail": "kontakt@[[PLACEHOLDER: domain]]",
+    "fields": {
+      "name": "Name",
+      "company": "Company",
+      "role": "Role",
+      "message": "Message"
+    },
+    "rolePlaceholder": "Owner, billing, project manager …",
+    "consent": "I agree that EndPoint. may contact me about this request by email or phone. I can withdraw my consent at any time. Details in the privacy policy.",
+    "submit": "Send",
+    "required": "Required",
+    "errorName": "Please enter your name.",
+    "errorMessage": "Please write a message.",
+    "errorConsent": "Without your consent we cannot reply.",
+    "success": "Received",
+    "successNote": "Preview: this form does not send anything yet. [[PLACEHOLDER: form backend]]"
+  },
+  "footer": {
+    "claim": "The digital twin for electrical and MEP contractors.",
+    "legal": "[[PLACEHOLDER: legal form]] · [[PLACEHOLDER: address]]",
+    "impressum": "Legal notice",
+    "datenschutz": "Privacy",
+    "linkedin": "LinkedIn",
+    "linkedinPlaceholder": "[[PLACEHOLDER: LinkedIn page]]",
+    "preview": "Preview. Not public."
+  },
+  "legal": {
+    "back": "Back to home",
+    "impressum": {
+      "title": "Legal notice",
+      "note": "Placeholder. Details will follow once the company is founded. This page will only be published when all fields are filled in.",
+      "rows": [
+        ["Media owner and publisher", "[[PLACEHOLDER: company name]]"],
+        ["Legal form", "[[PLACEHOLDER: legal form]]"],
+        ["Registered office and address", "[[PLACEHOLDER: address]]"],
+        ["Company register number", "[[PLACEHOLDER: FN]]"],
+        ["Register court", "[[PLACEHOLDER: court]]"],
+        ["VAT ID", "[[PLACEHOLDER: UID]]"],
+        ["Business purpose", "[[PLACEHOLDER: purpose]]"],
+        ["Managing directors", "[[PLACEHOLDER: names]]"],
+        ["Contact", "kontakt@[[PLACEHOLDER: domain]]"],
+        ["Supervisory authority, chamber", "[[PLACEHOLDER: authority, chamber]]"],
+        ["Editorial line", "[[PLACEHOLDER: editorial line]]"]
+      ]
+    },
+    "datenschutz": {
+      "title": "Privacy policy",
+      "note": "Placeholder. The text will be drafted with our lawyer once hosting, form and analytics are decided.",
+      "sections": [
+        ["Controller", "[[PLACEHOLDER: controller under Art. 4(7) GDPR]]"],
+        ["Hosting", "[[PLACEHOLDER: provider, location, DPA]]"],
+        ["Contact form", "[[PLACEHOLDER: purpose, legal basis, retention]]"],
+        ["Analytics", "[[PLACEHOLDER: cookieless, provider]]"],
+        ["Cookies", "This preview does not set any cookies."],
+        ["Your rights", "[[PLACEHOLDER: access, rectification, erasure, complaint to the data protection authority]]"]
+      ]
+    }
+  }
+}
