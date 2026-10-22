@@ -1149,3 +1149,53 @@ body {
   color: var(--text);
   font: inherit;
 }
+
+/* Belegmatrix (Hebbia, Harvey): Zellen sind Links aufs Original, Lücken als „kein Beleg“ */
+.tab-matrix {
+  min-width: 988px;
+}
+.tab-dokumente {
+  min-width: 720px;
+}
+.tab-matrix td.matrix-zelle {
+  vertical-align: top;
+  padding-top: var(--space-3);
+}
+.matrix-zelle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.matrix-zelle > * + * {
+  margin-left: var(--space-2);
+}
+.matrix-link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+.matrix-link:hover {
+  text-decoration-color: currentColor;
+}
+.matrix-leer {
+  color: var(--text-disabled);
+}
+.matrix-befund {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 12px;
+}
+.matrix-befund:hover {
+  text-decoration: underline;
+}
+.dok-datei {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.dok-duplikat td {
+  color: var(--text-muted);
+}
+.dok-duplikat .dok-datei {
+  color: var(--text-muted);
+}

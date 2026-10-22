@@ -69,7 +69,7 @@ function projektNav(p: NavProjekt): Eintrag[] {
   const basis = `/projekte/${p.id}`;
   return [
     { href: basis, icon: LayoutDashboard, text: "Übersicht" },
-    { href: `${basis}/ordner`, icon: FolderOpen, text: "Ordner", zaehler: p.dokumente, folgt: "Ordner folgt in Phase 2" },
+    { href: `${basis}/ordner`, icon: FolderOpen, text: "Ordner", zaehler: p.dokumente, praefix: true },
     { href: `${basis}/ledger`, icon: Table, text: "Ledger", zaehler: p.ledger },
     { href: `${basis}/zeitachse`, icon: History, text: "Zeitachse" },
     { href: `${basis}/befunde`, icon: ListChecks, text: "Befunde", zaehler: p.befunde, praefix: true, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
