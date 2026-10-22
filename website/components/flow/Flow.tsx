@@ -244,7 +244,7 @@ export function Flow({ t, locale }: { t: T; locale: "de" | "en" }) {
     return () => window.clearInterval(id);
   }, [count]);
   const { ref: totalRef, value } = useCountUp(t.openValue);
-  const money = new Intl.NumberFormat(locale === "de" ? "de-AT" : "en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
+  const money = locale === "de" ? `${new Intl.NumberFormat("de-DE").format(value)} €` : new Intl.NumberFormat("en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
   let n = -1;
 
   return (

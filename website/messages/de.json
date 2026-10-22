@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Tieout Schlussrechnungen für Elektro- und HKLS-Betriebe",
-    "description": "Tieout prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
+    "title": "tieout | Schlussrechnungen für Elektro- und HKLS-Betriebe",
+    "description": "tieout prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
   },
   "nav": {
     "cta": "Demo buchen",
@@ -23,7 +23,7 @@
     "eyebrow": "Für Elektro- und HKLS-Betriebe",
     "title1": "Schlussrechnungen,",
     "title2": "die nichts liegen lassen.",
-    "sub": "Tieout prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
+    "sub": "tieout prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
     "cta": "Demo buchen",
     "secondary": "So funktioniert es",
     "cards": {
@@ -46,7 +46,7 @@
     "title": "Am Projektende fehlt Geld, das längst verdient ist.",
     "problem": "Stundenarbeit ohne Unterschrift, Mehrmengen, Änderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Und Auftraggeber prüfen Rechnungen zunehmend mit Software.",
     "solutionEyebrow": "03 · Lösung",
-    "solution": "Tieout verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
+    "solution": "tieout verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
     "flow": {
       "inputs": "Ihre Daten",
       "twin": "Digitaler Zwilling",
@@ -165,7 +165,7 @@
         "Zu jeder Position ein Beleg"
       ],
       "openLabel": "zusätzlich verrechenbar",
-      "openValue": 27410,
+      "openValue": 5546,
       "sample": "Beispieldaten",
       "level1": "Ebene 1 · Ihr Betrieb",
       "level2": "Ebene 2 · Projekt Wien 21",
@@ -187,14 +187,14 @@
           "+ 2.736 €"
         ],
         [
-          "Kabeltrasse",
-          "340 m",
-          "340 m",
-          "340 m",
-          "✓"
+          "Steckdose versetzt",
+          "–",
+          "1",
+          "0",
+          "+ 780 €"
         ],
         [
-          "Stunden Technikraum",
+          "Technikraum",
           "–",
           "6 h",
           "0 h",
@@ -209,14 +209,14 @@
         ]
       ],
       "tableTotalLabel": "Offen verrechenbar",
-      "tableTotal": "+ 4.766 €"
+      "tableTotal": "+ 5.546 €"
     },
     "timeline": {
       "timelineTitle": "Projekt Wien 21 · Beispiel",
       "trackSite": "Baustelle",
       "trackInvoice": "Schlussrechnung",
       "without": "Heute",
-      "with": "Mit Tieout",
+      "with": "Mit tieout",
       "missing": "fehlt",
       "billed": "verrechnet",
       "found": "gefunden",
@@ -237,7 +237,7 @@
           "week": "KW 15",
           "type": "Stundenarbeit",
           "text": "Kabeltrasse verlängert, 18 Stunden, Stundenzettel unterschrieben",
-          "amount": 1290,
+          "amount": 1170,
           "billed": true
         },
         {
@@ -273,14 +273,14 @@
   },
   "video": {
     "eyebrow": "04 · Produktvideo",
-    "title": "Tieout in drei Minuten.",
+    "title": "tieout in drei Minuten.",
     "placeholder": "[[PLATZHALTER: Produktvideo]]",
     "soon": "Das Video folgt.",
     "play": "Video abspielen"
   },
   "team": {
     "eyebrow": "05 · Über uns",
-    "title": "Wer Tieout baut.",
+    "title": "Wer tieout baut.",
     "role": "Co-Founder",
     "linkedin": "LinkedIn",
     "members": [
@@ -290,6 +290,7 @@
         "linkedin": "https://www.linkedin.com/in/maximilian-dieringer/",
         "logos": [
           "wu",
+          "usc",
           "tacto"
         ],
         "title": "CEO"
@@ -329,7 +330,7 @@
   "contact": {
     "eyebrow": "06 · Demo",
     "title": "Demo buchen.",
-    "sub": "Wir zeigen Ihnen Tieout an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
+    "sub": "Wir zeigen Ihnen tieout an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
     "points": [
       "30 Minuten, online",
       "Live an einem Beispielprojekt",
@@ -346,7 +347,7 @@
     },
     "optional": "optional",
     "messagePlaceholder": "Gewerk, Größe, worum es Ihnen geht …",
-    "consent": "Ich bin einverstanden, dass Tieout mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
+    "consent": "Ich bin einverstanden, dass tieout mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
     "submit": "Demo anfragen",
     "errorName": "Bitte Namen angeben.",
     "errorEmail": "Bitte eine gültige Mailadresse angeben.",
