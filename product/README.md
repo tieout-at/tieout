@@ -16,7 +16,7 @@ Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnun
 | App | Firmenübersicht, Projekt-Übersicht, Befunde, Befund-Seite mit Original (aus dem Datensatz gezeichnet, A4), Beweiskette und zweistufiger Freigabe (Verlauf im Browser, Rückgängig, Demo zurücksetzen). Seitenleiste einklappbar. Drei unabhängige Prüfungen (Code, Design gegen Linear/Attio/reebuild, Schlussprüfung), Befunde eingearbeitet (PR #5) |
 | UI-Fundament | In der App (`app/src/ui`, Regeln in `app/src/ui/README.md`), **die App ist die Quelle**; das Artifact bleibt Referenz v2. Weißer Grund, keine Kästen, wenig Text. Gate 2 (annehmen) durch Maxi S. an der laufenden App offen. `fundament.test.ts` sperrt freie Farben, Stile, Trennpunkte, verbotene Wörter |
 | Prüfungen | GitHub Actions bei jedem PR: Typen, Lint, Tests, Build. Schutz von main braucht einen bezahlten GitHub-Plan (offen). Screenshots: `app/scripts/qa/screens.mjs` |
-| Online | noch nicht. Optionen siehe unten „Nächste Schritte“ |
+| Online | vorbereitet: statischer Export, Cloudflare-Konfiguration. Einrichten offen, siehe „Online (Cloudflare)“ |
 
 Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.12.
 
@@ -50,7 +50,26 @@ npm run build
 npm run start
 ```
 
-Danach http://localhost:3000 öffnen. `npm run generate` schreibt die synthetischen Datensätze nach `app/data/generated/` (nicht im Repository). Vor jedem Pull Request: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
+Danach http://localhost:3000 öffnen. `npm run build` legt die fertigen Seiten als Dateien in `app/out/` ab (statischer Export), `npm run start` liefert genau diese Dateien aus. `npm run generate` schreibt die synthetischen Datensätze nach `app/data/generated/` (nicht im Repository). Vor jedem Pull Request: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
+
+## Online (Cloudflare)
+
+Die Demo liegt bei Cloudflare als Worker mit statischen Dateien (Workers Builds, Gratis-Plan) und ist durch Cloudflare Access geschützt: Wer die Adresse öffnet, gibt seine E-Mail-Adresse ein und bekommt einen Code. Nur freigeschaltete Adressen kommen hinein.
+
+| Was | Wo |
+|---|---|
+| Demo (Stand von `main`) | [[PLATZHALTER: Adresse nach dem Einrichten]] |
+| Vorschau je Branch und Pull Request | Cloudflare schreibt die Adresse als Kommentar in den Pull Request |
+| Einstellungen | Cloudflare-Dashboard, Workers & Pages, `schlusswerk-demo` |
+| Konfiguration im Repository | `app/wrangler.jsonc` |
+
+So läuft es:
+- Jeder Merge auf `main` baut die Demo neu und stellt sie online (2 bis 3 Minuten). Jeder andere Branch bekommt eine eigene Vorschau-Adresse, ebenfalls geschützt.
+- Cloudflare baut selbst aus dem Repository (Stammverzeichnis `product/app`, Build `npm run build`, Deploy `npx wrangler deploy`, Vorschau `npx wrangler preview`). Die GitHub-Prüfungen (`.github/workflows/produkt-app.yml`) laufen unabhängig davon weiter.
+- Zugang: Cloudflare-Dashboard, Zero Trust, Access, Policies. Dort E-Mail-Adressen hinzufügen oder entfernen. Gratis bis 50 Personen.
+- Freigaben in der Demo liegen weiter nur im Browser des Nutzers (localStorage), es gibt online keine Datenbank. Nur synthetische Daten.
+
+Lokal unter Windows meldet die Browser-Konsole beim Vorladen einige 404 für Dateien `__next.*.txt`. Das ist ein Fehler im Export von Next.js unter Windows (falsche Pfadtrenner), die Seiten laden trotzdem. Cloudflare baut unter Linux, dort tritt er nicht auf.
 
 ## Regeln
 
