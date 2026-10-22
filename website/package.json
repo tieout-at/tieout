@@ -8,8 +8,7 @@
     "start": "npx serve out -l 3210",
     "typecheck": "tsc --noEmit",
     "check:platzhalter": "node scripts/platzhalter.mjs",
-    "deploy": "next build && npx wrangler@4 pages deploy out --project-name endpoint-preview --branch main",
-    "deploy:geschuetzt": "next build && npx wrangler@4 pages deploy out --project-name endpoint-preview --branch vorschau"
+    "deploy": "next build && npx wrangler@4 pages deploy out --project-name tieout-at --branch main"
   },
   "dependencies": {
     "next": "16.4.2",

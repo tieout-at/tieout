@@ -2,7 +2,7 @@
 
 Der digitale Zwilling eines österreichischen Elektro- oder HKLS-Subunternehmerbetriebs. Die erste Anwendung darauf ist die Schlussrechnung: Wir finden Geld, das erbracht, aber nicht verrechnet wurde, und belegen jede Position.
 
-Arbeitstitel **tieout** (klein, ohne Punkt), Domain tieout.at, CI Planraster (Papier, Tinte, Ultramarin). Website: https://endpoint-preview.pages.dev (später tieout.at). Repository und GitHub-Organisation heißen weiter `schlusswerk`. Dieses Repository ist **privat**: Es enthält Strategie, Preise und Rechtsfragen.
+Arbeitstitel **tieout** (klein, ohne Punkt), Domain tieout.at, CI Planraster (Papier, Tinte, Ultramarin). Website: https://tieout-at.pages.dev (später tieout.at). Repository und GitHub-Organisation heißen weiter `schlusswerk`. Dieses Repository ist **privat**: Es enthält Strategie, Preise und Rechtsfragen.
 
 ## Einstieg
 

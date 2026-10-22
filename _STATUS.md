@@ -30,7 +30,7 @@
 ## Offen für Maxi (Website)
 
 - Produktverständnis für die Website: erledigt (siehe Dossier v3 Abschnitt 0 und 3)
-- 22.10.: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), CI Planraster (Papier, Tinte, Ultramarin), Website online unter endpoint-preview.pages.dev. Domain tieout.at gekauft (easyname, Inhaber Maxi D.), Zone in Cloudflare angelegt und mit der Website verbunden. Offen: Nameserver bei easyname auf cheryl/hugh.ns.cloudflare.com umstellen, sobald der CloudPit-Zugang da ist
+- 22.10.: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), CI Planraster (Papier, Tinte, Ultramarin), Website online unter tieout-at.pages.dev (alte Adresse endpoint-preview.pages.dev leitet weiter). Domain tieout.at gekauft (easyname, Inhaber Maxi D.), Zone in Cloudflare angelegt und mit der Website verbunden. Offen: Nameserver bei easyname auf cheryl/hugh.ns.cloudflare.com umstellen, sobald der CloudPit-Zugang da ist
 - 22.10.: GTM und Monetarisierung offen, daher keine Preise und kein „Check anfragen“ auf der Website
 - Offen: Markenprüfung und Domain, Hosting, „Ghost“ klären, Team-Rollen und Fotos
 - Frage ans Team: Ist „Zwilling“ für Inhaber zu abstrakt? Alternativ „Wissensdatenbank des Betriebs“ testen

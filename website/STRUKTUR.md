@@ -173,7 +173,7 @@ Rollen und Texte schreibt jeder selbst. Nichts wird automatisch von LinkedIn üb
 | Team-Rollen, Fotos, Texte | Team | jeder selbst |
 | Anrede Sie oder ihr | alle Texte | Team |
 
-**Online (Entscheidung Maxi D., 22.10.2026):** Die Seite ist per Link offen erreichbar (`endpoint-preview.pages.dev`), mit `noindex` und Vorschau-Hinweis. Risiko bewusst getragen: Impressum und Datenschutz sind noch Platzhalter, obwohl die Impressumspflicht (§ 5 ECG, § 25 MedienG) für jede abrufbare Website gilt. Vor einer aktiven Verbreitung (Verlinkung, LinkedIn, Bewerbungen) Impressum mit echten Angaben füllen. Vollständig live erst, wenn `npm run check:platzhalter` nichts mehr findet.
+**Online (Entscheidung Maxi D., 22.10.2026):** Die Seite ist per Link offen erreichbar (`tieout-at.pages.dev`, später `tieout.at`), mit `noindex` und Vorschau-Hinweis. Risiko bewusst getragen: Impressum und Datenschutz sind noch Platzhalter, obwohl die Impressumspflicht (§ 5 ECG, § 25 MedienG) für jede abrufbare Website gilt. Vor einer aktiven Verbreitung (Verlinkung, LinkedIn, Bewerbungen) Impressum mit echten Angaben füllen. Vollständig live erst, wenn `npm run check:platzhalter` nichts mehr findet.
 
 ---
 
