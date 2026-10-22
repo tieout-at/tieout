@@ -1097,3 +1097,55 @@ body {
     border-radius: 0;
   }
 }
+
+/* Ledger: Tabelle über die volle Breite, am Handy waagrecht scrollbar; Aufmaß über LV-Menge betont */
+.ledger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ledger-rahmen {
+  overflow-x: auto;
+}
+.tab-ledger {
+  min-width: 1000px;
+}
+.tab-ledger td {
+  height: var(--row-h);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.tab-ledger td.sw-pos-nr {
+  margin: 0;
+  font-size: 12px;
+}
+.ledger-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ledger-ueber {
+  font-weight: 500;
+}
+.sw-suche {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--control-h);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  background: var(--surface);
+}
+.sw-suche:focus-within {
+  border-color: var(--field-border);
+}
+.sw-suche input {
+  width: 200px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
