@@ -2,6 +2,7 @@
  * Übernommen aus dem UI-Fundament v2 (product/ui-fundament/project/tokens.css), Stand v2 vom 22.10.2026.
  * Ab jetzt ist diese Datei die Quelle: Änderungen hier, nicht im Artifact. Nur Werte aus tokens.css. */
 :root, [data-theme="light"] {
+  color-scheme: light;
   --bg: #f4f4f8;
   --surface: #ffffff;
   --surface-subtle: #fafafb;
@@ -44,6 +45,7 @@
   --shadow-page: 0 1px 3px rgba(16,17,18,0.16);
 }
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg: #08090a;
   --surface: #0f1011;
   --surface-subtle: #141516;

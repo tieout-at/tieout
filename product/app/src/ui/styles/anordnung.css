@@ -203,9 +203,42 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Tabellen in einem eigenen Bildlauf, damit unter 900 px nichts die Seite verbreitert */
+/* Tabellen in einem eigenen Bildlauf, damit nichts abgeschnitten wird oder die Seite verbreitert */
 .tw {
   min-width: 0;
+  overflow-x: auto;
+}
+
+/* Seitentitel in der Kopfzeile als Überschrift (wie <b> im Fundament) */
+.sw-pagehead__path h1 {
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hell/Dunkel als echter Knopf, aussehend wie ein Eintrag der Navigation */
+.sw-nav button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--tab-h);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.sw-nav button .sw-ico {
+  color: var(--text-muted);
+}
+.sw-nav button:hover {
+  background: var(--surface-hover);
+  color: var(--text);
 }
 
 /* Zeilen, die als Ganzes ein Link sind (Projektliste, Befundliste) */
@@ -272,8 +305,5 @@ body {
   }
   .sw-pagehead .sw-btn {
     display: none;
-  }
-  .tw {
-    overflow-x: auto;
   }
 }

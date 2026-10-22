@@ -30,7 +30,15 @@ export const SOLL_FIRMA = {
   auftragssummeOffen: 372_000_000,
   jetzt: 3_426_810,
   offen: 1_153_230,
+  // Posten: W21 8 + P2 3 + P3 2 + P4 1 = 14 in Liste 1; W21 5 + P2 1 = 6 in Liste 2
+  postenJetzt: 14,
+  postenOffen: 6,
+  projekteMitJetzt: 4,
+  projekteMitOffen: 2,
 };
+
+/** Nächste Schlussrechnung: W21, legen bis 31.10.2026. */
+export const SOLL_NAECHSTE = { projektId: "w21-b-hkls", datum: "2026-10-31" };
 
 export interface SollFall {
   id: string;

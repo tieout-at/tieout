@@ -126,17 +126,10 @@ export function Seitenleiste({
       )}
       <div className="nav-fill" />
       <nav className="sw-nav" aria-label="Darstellung">
-        <a
-          href="#"
-          role="button"
-          onClick={(ev) => {
-            ev.preventDefault();
-            themaWechseln();
-          }}
-        >
+        <button type="button" onClick={themaWechseln}>
           <Ico icon={SunMoon} />
           Hell / Dunkel
-        </a>
+        </button>
       </nav>
     </aside>
   );

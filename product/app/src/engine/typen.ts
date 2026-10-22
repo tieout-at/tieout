@@ -206,5 +206,12 @@ export interface FirmenErgebnis {
     auftragssummeOffen: Cent;
     jetzt: Cent;
     offen: Cent;
+    /** Anzahl der Posten in Liste 1 bzw. 2 über alle offenen Projekte. */
+    postenJetzt: number;
+    postenOffen: number;
+    projekteMitJetzt: number;
+    projekteMitOffen: number;
   };
+  /** Früheste „Schlussrechnung legen bis“ ab dem Stichtag unter den offenen Projekten. */
+  naechsteSchlussrechnung: { projektId: string; datum: Datum } | null;
 }

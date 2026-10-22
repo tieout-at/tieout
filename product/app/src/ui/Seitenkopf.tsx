@@ -20,7 +20,7 @@ export function Seitenkopf({ pfad, titel, export: mitExport = false }: { pfad: P
             <span className="sw-crumb">/</span>
           </Fragment>
         ))}
-        <b>{titel}</b>
+        <h1>{titel}</h1>
       </div>
       <div className="sw-pagehead__actions">
         <span className="sw-synth" title="Synthetischer Demo-Datensatz: Firmen und Beträge erfunden, keine echten Funde">

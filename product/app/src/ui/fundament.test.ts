@@ -16,7 +16,8 @@ function dateien(ordner: string, endungen: string[]): string[] {
 }
 
 const OBERFLAECHE = [...dateien(join(WURZEL, "app"), [".tsx", ".css"]), ...dateien(join(WURZEL, "ui"), [".tsx", ".css"])];
-const FARBE = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|\boklch\(/;
+const FARBE = /(?<!href=")#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|color-mix)\(/;
+const TEXTQUELLEN = [...dateien(join(WURZEL, "engine"), [".ts"]), ...dateien(join(WURZEL, "demo"), [".ts"])].filter((p) => !p.endsWith(".test.ts"));
 
 describe("UI-Fundament", () => {
   it("Farben und Schatten stehen nur in tokens.css", () => {
@@ -55,8 +56,23 @@ describe("UI-Fundament", () => {
     expect(verstoesse).toEqual([]);
   });
 
-  it("nie das Wort „Claim“ und keine Countdowns in der Oberfläche", () => {
-    const verstoesse = OBERFLAECHE.filter((p) => /\bClaim|Forcierung|noch \d+ Tage/i.test(readFileSync(p, "utf8"))).map((p) => relative(WURZEL, p));
+  it("nie „Claim“, „Forcierung“, Präklusion oder Countdowns, auch nicht in Texten aus Rechenkern und Demo", () => {
+    const verboten = /\bClaim|Forcierung|präklusi|noch \d+ Tage|Tage übrig|in höchstens \d+ Tagen/i;
+    const verstoesse = [...OBERFLAECHE, ...TEXTQUELLEN].filter((p) => verboten.test(readFileSync(p, "utf8"))).map((p) => relative(WURZEL, p));
+    expect(verstoesse).toEqual([]);
+  });
+
+  it("jede Seite hat den Seitenkopf (mit „Synthetisch“)", () => {
+    const seiten = OBERFLAECHE.filter((p) => /(page|not-found)\.tsx$/.test(p));
+    expect(seiten.length).toBeGreaterThan(0);
+    expect(seiten.filter((p) => !readFileSync(p, "utf8").includes("<Seitenkopf")).map((p) => relative(WURZEL, p))).toEqual([]);
+  });
+
+  it("alles Deaktivierte nennt den Grund im Tooltip", () => {
+    const verstoesse: string[] = [];
+    for (const p of OBERFLAECHE.filter((x) => x.endsWith(".tsx")))
+      for (const m of readFileSync(p, "utf8").matchAll(/<[a-z]+[^>]*aria-disabled="true"[^>]*>/g))
+        if (!/\stitle=/.test(m[0])) verstoesse.push(`${relative(WURZEL, p)}: ${m[0]}`);
     expect(verstoesse).toEqual([]);
   });
 });
