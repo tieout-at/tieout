@@ -41,4 +41,4 @@
 ## Ordner
 
 - 22.10.: aufgeräumt. v2 nach `docs/archiv/`, Kuro/reebuild-Fakten aus v2 nach `docs/research_notes/Kuro_reebuild_Fakten.md`.
-- 22.10.: privates GitHub Repository angelegt (Monorepo: `docs/`, `business/`, `product/`, `website/`, `video/`). Repo außerhalb OneDrive: erledigt.
+- 22.10.: privates GitHub Repository angelegt, liegt in der Organisation `schlusswerk` (github.com/schlusswerk/schlusswerk) (Monorepo: `docs/`, `business/`, `product/`, `website/`, `video/`). Repo außerhalb OneDrive: erledigt.

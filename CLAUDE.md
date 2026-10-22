@@ -1,6 +1,6 @@
 # Schlusswerk (Arbeitstitel): Projektkontext für Claude Code
 
-Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/Schlusswerk Dossier v3.md`.
+Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub unter github.com/schlusswerk/schlusswerk, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/Schlusswerk Dossier v3.md`.
 
 ## Worum es geht
 
