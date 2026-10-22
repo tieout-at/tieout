@@ -44,56 +44,39 @@ Auf der Baustelle wird oft mehr gebaut, geändert und zugerufen, als am Ende in 
 ## Architektur
 
 ```mermaid
-flowchart LR
-  subgraph Quellen["Daten des Betriebs (heute synthetisch)"]
-    direction TB
-    Q1[LV, Aufmaß, Pläne]
-    Q2[Stundenzettel, Mails, Fotos]
-    Q3[Zurufe per WhatsApp]
+flowchart TB
+  Q["Daten des Betriebs (heute synthetisch)<br/>LV, Aufmaß, Pläne, Stundenzettel, Mails, Fotos"]
+  Z["Zurufe per WhatsApp<br/>Foto, Sprachnachricht"]
+
+  subgraph APP["product/app · Next.js 16, TypeScript"]
+    direction LR
+    DEMO["demo + generate<br/>synthetischer Betrieb"] --> DOM["domain<br/>Firma → Projekt → Objekte"] --> ENG["engine<br/>Rechenkern in Cent:<br/>Ledger, Befunde, Vorprüfung"] --> DAT["daten<br/>Datenzugriff"] --> UI["app + ui<br/>Bildschirme"]
+    UI <--> ZST["zustand<br/>Freigaben im Browser"]
   end
 
-  subgraph Repo["GitHub: dieses Repository (Monorepo)"]
-    direction TB
-    subgraph APP["product/app (Next.js 16, TypeScript)"]
-      direction TB
-      DEMO["demo/ + scripts/generate<br/>synthetischer Firmen-Zwilling"]
-      DOM["domain/<br/>Datenmodell Firma → Projekt → Objekte"]
-      ENG["engine/<br/>Rechenkern: Geld in Cent, Ledger,<br/>Befunde, Kaskade, Vorprüfung"]
-      DAT["daten/<br/>Datenzugriff der Bildschirme"]
-      UI["app/ + ui/<br/>Bildschirme aus dem UI-Fundament"]
-      ZST["zustand/<br/>Freigaben als Verlauf (Browser)"]
-      DEMO --> DOM --> ENG --> DAT --> UI
-      UI <--> ZST
-    end
-    ZUR["product/zuruf (TypeScript)<br/>Eingang → Verstehen → Herauslesen (Claude)<br/>→ Gesprächsführung (Code) → Ablage"]
-    WEB["website/ (Next.js 16, statischer Export)<br/>DE/EN, Zwilling-Animation"]
-    BRAND["brand/<br/>Banner und Logo per Skript"]
-    DOCS["docs/<br/>Dossier v3, Recherche, Archiv"]
+  ZUR["product/zuruf · TypeScript<br/>Verstehen (Claude) → Gesprächsführung (Code) → Ablage"]
+  WEB["website · Next.js 16, statischer Export, DE/EN"]
+
+  subgraph DEPLOY["Prüfen und Ausliefern"]
+    direction LR
+    GHA["GitHub Actions<br/>Typen, Lint, Tests, Build"]
+    WB["Cloudflare Workers Builds<br/>bei jedem Merge auf main"]
+    PG["Cloudflare Pages<br/>npm run deploy"]
   end
 
-  subgraph CI["Prüfen und Ausliefern"]
-    direction TB
-    GHA["GitHub Actions<br/>Typen, Lint, Tests, Build je PR"]
-    WB["Cloudflare Workers Builds<br/>baut product/app bei jedem Merge"]
-    PAGES["Cloudflare Pages: tieout-at<br/>npm run deploy aus website/"]
-  end
-
-  subgraph Online["Online"]
-    direction TB
-    W["Worker 'app'<br/>prüft Anmeldung, liefert out/"]
-    ACC["Cloudflare Access<br/>E-Mail-Code"]
-    SUPA[("Supabase (Frankfurt)<br/>Anmeldung, vorbereitet, aus")]
+  subgraph ON["Online"]
+    direction LR
+    ACC["Cloudflare Access<br/>E-Mail-Code"] --> W["Worker app<br/>app.tieout.workers.dev"]
+    W -.-> SB[("Supabase, Frankfurt<br/>Anmeldung vorbereitet")]
     SITE["tieout-at.pages.dev<br/>später tieout.at"]
   end
 
-  Q1 & Q2 -.-> DEMO
-  Q3 -.-> ZUR
+  Q -.-> DEMO
+  Z -.-> ZUR
   ZUR -.->|später: Einträge in die Zeitachse| DOM
   APP --> GHA
   APP --> WB --> W
-  ACC --> W
-  W -.-> SUPA
-  WEB --> PAGES --> SITE
+  WEB --> PG --> SITE
 ```
 
 **So hängt es zusammen**
