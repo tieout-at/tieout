@@ -158,7 +158,7 @@ img { display: block; max-width: 100%; }
 .ingroup { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
 .ingroup__label { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-40); border-left: 1px solid var(--ink-15); text-align: center; }
 .ingroup__items { display: grid; gap: 6px; }
-.chip { cursor: default; transition: border-color .2s, background .2s; height: 40px; display: grid; grid-template-columns: 24px 1fr; align-items: center; gap: 10px; padding: 0 10px; background: var(--white); border: 1px solid var(--ink-15); font-size: 14px; animation: chipPulse 8s ease-in-out infinite; }
+.chip { cursor: default; transition: border-color .2s, background .2s; height: 40px; display: grid; grid-template-columns: 24px 1fr; align-items: center; gap: 10px; padding: 0 10px; background: var(--white); border: 1px solid var(--ink-15); font-size: 14px; }
 .chip small { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-40); margin-left: 6px; }
 .chip > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chip svg { width: 22px; height: 22px; }
@@ -395,3 +395,16 @@ img { display: block; max-width: 100%; }
 .cal__time[aria-pressed="true"] { background: var(--ultra); color: var(--white); border-color: var(--ultra); }
 .cal__empty { margin: auto 0; font-size: 13px; color: var(--ink-40); text-align: center; }
 @media (max-width: 640px) { .cal__body { grid-template-columns: 1fr; } .cal__month { border-right: 0; border-bottom: 1px solid var(--ink-15); } .cal__times { min-height: 0; } }
+
+/* Messpunkt-Navigation auf blauem Grund */
+.mnav--dark .mnav__label { background: transparent; }
+.mnav--dark .mnav__item a { color: rgba(255,255,255,.55); }
+.mnav--dark .mnav__item[aria-current="true"] a { color: var(--white); }
+.mnav--dark .mnav__tick::after { background: rgba(255,255,255,.6); }
+.mnav--dark .mnav__rail::before { background: rgba(255,255,255,.3); }
+.mnav--dark .mnav__progress { background: var(--white); }
+.mnav__label, .mnav__tick::after, .mnav__rail::before { transition: background .3s, color .3s; }
+.tl__glossary { display: flex; gap: 10px; align-items: flex-start; margin: -4px 0 16px; font-size: 13px; color: var(--ink-60); }
+.tl__glossary span { flex: none; width: 18px; height: 18px; display: grid; place-items: center; border: 1px solid var(--ultra); color: var(--ultra); font-family: var(--font-mono); font-size: 11px; margin-top: 1px; }
+
+.chip--pulse { border-color: var(--ultra); box-shadow: 0 0 0 3px var(--ultra-20); }

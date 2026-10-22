@@ -57,6 +57,11 @@ export function Timeline({ t, locale }: { t: T; locale: Locale }) {
         </div>
       </div>
 
+      <p className="tl__glossary">
+        <span aria-hidden="true">i</span>
+        {t.glossary}
+      </p>
+
       <div className="tl__grid">
         <span className="tl__track">{t.trackSite}</span>
         {events.map((e, i) => (
