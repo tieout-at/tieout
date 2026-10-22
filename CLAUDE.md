@@ -22,11 +22,10 @@ Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maxim
 | `docs/dossier-v3.md` | **Gültiger Stand.** Kernprodukt, Recht, Preise, Markt, Konkurrenz, Gates, Plan, Bau, Startprompt |
 | `docs/research_notes/` | Recherche, z. B. `Kuro_reebuild_Fakten.md` (Steckbriefe, GU-Seite-Abwägung, Investorenstory, Quellen aus v2) |
 | `docs/archiv/` | Überholte Stände, z. B. Dossier v2. Nur noch als Quelle für Links zu Recht und Markt |
-| `business/` | 1-Pager, Problem-Solution Statement, Business Plan, Pitch (Markdown) |
+| `docs/README.md` | Inhaltsverzeichnis der Dokumente; dort auch geplante Inhalte (Pitch, Business Plan, Produktvideo) |
 | `product/` | Produkt: Datenmodell, Backend, Frontend, synthetische Demo-Daten |
 | `website/` | Öffentliche Website |
-| `brand/` | Marke: LinkedIn-Banner, erzeugt per Skript (`brand/linkedin/`) |
-| `video/` | Skript und Storyboard für das Produktvideo. Videodateien nicht ins Repository |
+| `brand/` | Marke: Logo, LinkedIn-Grafiken per Skript, fertige Dateien in `brand/linkedin/upload/` |
 
 Neue Recherche nach `docs/research_notes/`, Überholtes nach `docs/archiv/`. Keine Secrets committen (`.env`). Das Repository liegt nicht in OneDrive.
 

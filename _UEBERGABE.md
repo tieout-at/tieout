@@ -18,7 +18,7 @@ Demo auf `main` und online (https://schlusswerk-demo.maximilian-seipl.workers.de
 
 Ein unabhängiger Prüfer hat danach alles angesehen: alle Beträge der 8 Projekte stimmen centgenau mit `product/docs/Demo_Faelle.md`, 313 Links ohne 404, keine „·“, Gedankenstriche oder „Claim“ im sichtbaren Text, kein Muss-Befund.
 
-Website-Check (nur gelesen): `docs/research_notes/Website_Check_2026-10-22.md`. Kern, vom Haupt-Chat nachgemessen: Die Website zeigt für „Projekt Wien 21“ einmal 5.546 € und einmal 27.410 €, Elektro-Posten statt HKLS, Beträge, die nicht in `Demo_Faelle.md` stehen, Projekte in Linz und Graz, „kein verdienter Euro vergessen“; der Vertrauensteil fehlt. Website gehört Maxi D., Änderungen dort nur nach Absprache im Team.
+Website-Check (nur gelesen): `docs/archiv/Website_Check_2026-10-22.md`. Kern, vom Haupt-Chat nachgemessen: Die Website zeigt für „Projekt Wien 21“ einmal 5.546 € und einmal 27.410 €, Elektro-Posten statt HKLS, Beträge, die nicht in `Demo_Faelle.md` stehen, Projekte in Linz und Graz, „kein verdienter Euro vergessen“; der Vertrauensteil fehlt. Website gehört Maxi D., Änderungen dort nur nach Absprache im Team.
 
 **Name und Logo stehen (22.10., Maxi S.): Tieout.**, Domain tieout.at (noch nicht live). Logo als SVG schon in `website/components/ui/Logo.tsx` (zwei Plan-Ecken in Tinte, Quadrat in Ultramarin, Wortmarke „Tieout“ mit ultramarinem Punkt). Die App heißt noch „Schlusswerk“ und nutzt „H“ als Platzhalter-Marke.
 
