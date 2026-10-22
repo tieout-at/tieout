@@ -4,6 +4,8 @@
 **Arbeitstitel:** EndPoint. (mit Punkt). Name nicht final, Markenprüfung offen.
 **Zuständig:** Maxi (allein). Gearbeitet wird auf dem Branch `website/build`, nur im Ordner `website/`. `product/` und alles andere fasst die Website-Arbeit nicht an.
 
+> **Update v2 (22.10.2026, Feedback Maxi D.):** Aufbau jetzt: 01 Hero (Text links, drei Fotos mit Produktausschnitten rechts), 02 Problem und Lösung mit animiertem Ablauf (Eingänge ERP, E-Mail, PDF, Pläne, Excel, Foto, Sprachnachricht, WhatsApp → Zwilling des Betriebs aus Projekten → Schlussrechnung mit Prüfungen), 03 Produktvideo, 04 Über uns (LinkedIn-Fotos, alle Co-Founder, Logos in Ultramarin), 05 Demo buchen. Hauptprodukt nach außen ist die Schlussrechnung, der Zwilling ist die Grundlage. Keine Navigation oben, Messpunkt-Navigation links, Schiebeschalter DE/EN. Entfallen: Legende/Prinzipien, Bau-Insider-Karte, klickbarer Zwilling. Bildquellen: `public/hero/QUELLEN.md`.
+
 ---
 
 ## 1. Ziel

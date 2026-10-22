@@ -1,8 +1,8 @@
 // Listet alle Platzhalter in Texten und Seiten. Vor dem Livegang muss die Liste leer sein.
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-const roots = ["messages", "app", "components", "data"];
+const roots = ["messages", "app", "components"].filter((r) => existsSync(r));
 const re = /\[\[(PLATZHALTER|PLACEHOLDER)[^\]]*\]\]/g;
 let total = 0;
 

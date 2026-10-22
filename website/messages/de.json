@@ -1,213 +1,118 @@
 {
   "meta": {
-    "title": "EndPoint. Der digitale Zwilling für Elektro- und HKLS-Betriebe",
-    "description": "EndPoint. führt das Wissen eines Elektro- oder HKLS-Betriebs an einem Ort zusammen: Kunden, Verträge, Preise und jedes Projekt. Erste Anwendung: die Schlussrechnung."
+    "title": "EndPoint. Schlussrechnungen für Elektro- und HKLS-Betriebe",
+    "description": "EndPoint. prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
   },
   "nav": {
-    "links": [
-      { "href": "#zwilling", "label": "Zwilling" },
-      { "href": "#anwendungen", "label": "Anwendungen" },
-      { "href": "#team", "label": "Team" },
-      { "href": "#kontakt", "label": "Kontakt" }
-    ],
-    "cta": "Kontakt aufnehmen",
-    "ctaPlaceholder": "[[PLATZHALTER: finaler CTA]]",
+    "cta": "Demo buchen",
     "skip": "Zum Inhalt springen",
     "lang": "Sprache"
   },
   "measure": {
     "aria": "Abschnitte",
-    "labels": ["Start", "Problem", "Zwilling", "Wege", "Anwendungen", "Video", "Prinzipien", "Team", "Kontakt"]
+    "labels": ["Start", "Problem und Lösung", "Video", "Team", "Demo"]
   },
   "hero": {
-    "eyebrow": "Digitaler Zwilling · Elektro und HKLS",
-    "title1": "Ihr Betrieb.",
-    "title2": "Auf einem Plan.",
-    "sub": "EndPoint. führt das Wissen Ihres Betriebs an einem Ort zusammen: Kunden, Verträge, Preise und jedes Projekt mit allem, was gebaut, geändert und vereinbart wurde. Jede Zahl führt zurück zum Original.",
-    "cta": "Kontakt aufnehmen",
-    "secondary": "Zwilling ansehen",
-    "dim": "8 Projekte",
-    "planLabels": ["EG", "1. OG", "Raum 5"]
-  },
-  "problem": {
-    "eyebrow": "02 · Problem",
-    "title": "Das Wissen über ein Projekt liegt überall. Nur nicht an einem Ort.",
-    "items": [
-      {
-        "title": "Verstreut",
-        "text": "Leistungsverzeichnis im ERP, Anweisungen in Mails, Regieberichte auf Papier, Fotos am Handy. Am Projektende sucht jemand alles zusammen."
-      },
-      {
-        "title": "Informell",
-        "text": "Vieles auf der Baustelle läuft per Telefon, Zuruf und WhatsApp. Was nie aufgeschrieben wurde, fehlt später als Beleg."
-      },
-      {
-        "title": "Personengebunden",
-        "text": "Geht ein Projektleiter, geht sein Wissen mit. In der Bauelektrik bleiben über 70 % der offenen Stellen unbesetzt.",
-        "source": { "label": "KOFA Kompakt 07/2026", "url": "https://www.iwkoeln.de/fileadmin/user_upload/Studien/KOFA_kompakt_und_Studien/2026/KOFA_Kompakt-07-2026-Handwerk.pdf" }
-      },
-      {
-        "title": "Ungleich",
-        "text": "Auftraggeber prüfen Rechnungen von Nachunternehmern zunehmend mit Software, positionsgenau gegen LV, Vertrag und Aufmaß.",
-        "source": { "label": "reebuild, Projektentwickler", "url": "https://www.reebuild.com/projektentwickler" }
-      }
-    ]
-  },
-  "twin": {
-    "eyebrow": "03 · Der Zwilling",
-    "title": "Ein Modell Ihres Betriebs. Vom Unternehmen bis zum einzelnen Beleg.",
-    "sub": "Klicken Sie auf ein Projekt. Darin steckt alles, was gebaut, geändert, angewiesen und bezahlt wurde, und woher wir es wissen.",
-    "synthetic": "Synthetische Beispieldaten",
-    "crumbFirm": "Firma",
-    "hintFirm": "Projekt anklicken",
-    "hintProject": "Beleg anklicken · Zeitachse ziehen",
-    "back": "Zurück zur Firma",
-    "open": "offen verrechenbar",
-    "volume": "Auftragssumme",
-    "projects": "Projekte",
-    "clients": "Auftraggeber",
-    "timeline": "Zeitachse",
-    "sources": "Quellen",
-    "position": "Position",
-    "evidence": "Beleg",
-    "close": "Schließen",
-    "types": {
-      "mail": "Mail",
-      "foto": "Foto",
-      "zuruf": "Zuruf",
-      "regie": "Regie",
-      "plan": "Plan",
-      "erp": "ERP"
-    },
-    "status": {
-      "laufend": "laufend",
-      "schluss": "Schlussrechnung fällig",
-      "abgeschlossen": "abgeschlossen"
+    "eyebrow": "Für Elektro- und HKLS-Betriebe",
+    "title1": "Schlussrechnungen,",
+    "title2": "die nichts liegen lassen.",
+    "sub": "EndPoint. prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
+    "cta": "Demo buchen",
+    "secondary": "So funktioniert es",
+    "facts": ["Subunternehmer Elektro und HKLS", "30 bis 150 Mitarbeiter", "Österreich"],
+    "cards": {
+      "draftTitle": "Schlussrechnung · Entwurf",
+      "draftProject": "Wohnhausanlage Wien 21",
+      "draftState": "47 von 47 Positionen belegt",
+      "regie": "Regie 11 · nicht verrechnet",
+      "regieAmount": "+ 780,00 €",
+      "plan": "Planindex C → D erkannt",
+      "planDetail": "14 Steckdosen zusätzlich · 6.384,00 €",
+      "sample": "Beispieldaten"
     }
   },
-  "wege": {
-    "eyebrow": "04 · Drei Wege hinein",
-    "title": "Der Zwilling füllt sich dort, wo die Arbeit passiert.",
-    "tabs": [
-      {
-        "key": "anbinden",
-        "title": "Anbinden",
-        "text": "ERP, AVA und CRM bleiben führend. EndPoint. liest Stammdaten, Projekte, Leistungsverzeichnisse, Rechnungen und Zahlungen mit und ergänzt, was dort fehlt.",
-        "items": ["ERP und AVA", "CRM", "Mails und Kalender", "Aufgezeichnete Calls"]
-      },
-      {
-        "key": "einspielen",
-        "title": "Einspielen",
-        "text": "Gibt es kein System, reicht der Projektordner. Jede Datei wird ein Datensatz mit Quelle, Seite und Stelle. Duplikate und neue Planstände werden erkannt.",
-        "items": ["PDF und Scans", "Pläne mit Index", "Excel-Aufmaß", "Mails (.msg, .eml)"]
-      },
-      {
-        "key": "zurufen",
-        "title": "Zurufen",
-        "text": "Monteure und Poliere schicken Foto und Sprachnachricht per WhatsApp. Ein Agent ordnet zu, fragt kurz nach und der Absender bestätigt mit einem Tipp.",
-        "items": ["Foto", "Sprachnachricht", "Rückfrage", "Bestätigung"]
-      }
-    ],
-    "chat": {
-      "title": "EndPoint. · Baustelle",
-      "voice": "Sprachnachricht · 0:18",
-      "transcript": "Steckdose in Raum 5 versetzt, der Bauherr wollte es so. Zwei Mann, sechs Stunden.",
-      "agent": "Verstanden. Wohnhausanlage Wien 21, Bauplatz B, Raum 5: Steckdose versetzt, angewiesen durch Bauherr, 2 × 6 h. Passt das?",
-      "confirm": "Ja",
-      "entry": "Leistungsereignis angelegt",
-      "entryDetail": "Raum 5 · 12 h · Quelle: Foto, Ton, Transkript",
-      "replay": "Nochmal abspielen"
-    }
-  },
-  "apps": {
-    "eyebrow": "05 · Anwendungen",
-    "title": "Auf dem Zwilling laufen Anwendungen. Die erste ist die Schlussrechnung.",
-    "first": {
-      "label": "Anwendung 1",
-      "title": "Schlussrechnung",
-      "text": "Der Projektzwilling weiß, was erbracht und was verrechnet wurde. Daraus entsteht der Entwurf der Schlussrechnung, und jede Zeile hat einen Beleg. Klicken Sie auf einen Betrag.",
-      "columns": ["Position", "Menge", "Betrag", "Status"],
-      "rows": [
-        { "pos": "03.12.004 Steckdose UP", "qty": "14 Stk", "amount": "6.384,00 €", "status": "verrechenbar", "evidence": ["Planindex C → D, Raum 5 bis 9", "Mail Bauleitung: „bitte gleich mitmachen“", "Foto 14.03., 09:41", "14 × EP 456,00 € inkl. K7-Zeitansatz"] },
-        { "pos": "Regie 11 Raum 5", "qty": "12 h", "amount": "780,00 €", "status": "verrechenbar", "evidence": ["Zuruf per WhatsApp, bestätigt", "Foto und Sprachnachricht", "Regiesatz laut Vertrag"] },
-        { "pos": "04.02.010 Kabeltrasse", "qty": "86 m", "amount": "3.010,00 €", "status": "verrechnet", "evidence": ["Aufmaß Blatt 7", "Abschlagsrechnung 2"] },
-        { "pos": "Regie 14 Technikraum", "qty": "6 h", "amount": "390,00 €", "status": "Unterschrift fehlt", "evidence": ["Regiebericht ohne Unterschrift", "Zur Freigabe vorgemerkt"] }
+  "solution": {
+    "eyebrow": "02 · Problem und Lösung",
+    "title": "Am Projektende fehlt Geld, das längst verdient ist.",
+    "problem": "Regie ohne Unterschrift, Mehrmengen, Planänderungen per Zuruf: Was auf der Baustelle vereinbart wurde, fehlt oft in der Schlussrechnung. Gleichzeitig prüfen Auftraggeber jede Rechnung zunehmend mit Software.",
+    "solutionLabel": "Unsere Lösung",
+    "solution": "EndPoint. sammelt alle Informationen Ihrer Projekte in einem digitalen Zwilling Ihres Betriebs und prüft daraus die Schlussrechnung, Position für Position.",
+    "flow": {
+      "inputs": "Eingänge",
+      "twin": "Digitaler Zwilling",
+      "output": "Schlussrechnung",
+      "groups": ["Anbinden", "Einspielen", "Zurufen"],
+      "items": [
+        { "k": "erp", "label": "ERP", "detail": "Projekte, Rechnungen", "g": 0 },
+        { "k": "mail", "label": "E-Mail", "detail": "Anweisungen", "g": 0 },
+        { "k": "pdf", "label": "PDF", "detail": "Leistungsverzeichnis", "g": 1 },
+        { "k": "plan", "label": "Pläne", "detail": "mit Index", "g": 1 },
+        { "k": "xls", "label": "Excel", "detail": "Aufmaß", "g": 1 },
+        { "k": "foto", "label": "Foto", "detail": "von der Baustelle", "g": 2 },
+        { "k": "voice", "label": "Sprachnachricht", "detail": "Zuruf", "g": 2 },
+        { "k": "wa", "label": "WhatsApp", "detail": "mit Bestätigung", "g": 2 }
       ],
-      "evidenceTitle": "Beleg",
-      "note": "Synthetische Beispieldaten"
-    },
-    "plannedLabel": "In Planung",
-    "planned": [
-      { "title": "Portfolio", "text": "Alle Projekte, offene Beträge und Fristen auf einen Blick." },
-      { "title": "Historie pro Auftraggeber", "text": "Was ein Auftraggeber kürzt, akzeptiert und wie er zahlt." },
-      { "title": "Fristen", "text": "Fristen und Sicherstellungen über alle Projekte." }
-    ],
-    "plannedPlaceholder": "[[PLATZHALTER: weitere Anwendungen]]"
+      "company": "Ihr Betrieb",
+      "companyTags": ["Kunden", "Verträge", "Preise"],
+      "projects": "Jedes Projekt ein Zwilling",
+      "outputProject": "Projekt Wien 21",
+      "checks": [
+        "Regie vollständig verrechnet",
+        "Mehrmengen erkannt",
+        "Planänderungen berücksichtigt",
+        "Vorprüfung aus Sicht des Auftraggebers",
+        "Beleg zu jeder Position"
+      ],
+      "openLabel": "offen verrechenbar",
+      "openValue": "27.410 €",
+      "sample": "Beispieldaten"
+    }
   },
   "video": {
-    "eyebrow": "06 · Produktvideo",
+    "eyebrow": "03 · Produktvideo",
     "title": "EndPoint. in drei Minuten.",
     "placeholder": "[[PLATZHALTER: Produktvideo]]",
     "soon": "Das Video folgt.",
     "play": "Video abspielen"
   },
-  "principles": {
-    "eyebrow": "07 · Prinzipien",
-    "title": "Legende.",
-    "items": [
-      { "sym": "src", "title": "Jede Zahl hat eine Quelle", "text": "Datei, Seite, Stelle. Bei Zurufen: Nachricht, Foto, Ton." },
-      { "sym": "human", "title": "Der Mensch bestätigt", "text": "Die KI liefert Fakten und Vorschläge. Entschieden wird von Ihren Leuten." },
-      { "sym": "code", "title": "Die Rechnung ist Code", "text": "Beträge rechnet deterministischer Code, nicht ein Sprachmodell." },
-      { "sym": "hist", "title": "Nichts wird überschrieben", "text": "Jede Änderung ist eine neue Version mit Zeitpunkt und Herkunft." },
-      { "sym": "silo", "title": "Ihre Daten bleiben Ihre", "text": "Ein Datensilo pro Firma. Sie geben frei, welche Projekte hineinkommen." },
-      { "sym": "gu", "title": "Wir sprechen nie mit Ihrem Auftraggeber", "text": "EndPoint. arbeitet nur für Sie und mit Ihren Leuten. Keine Auswertung einzelner Mitarbeiter." }
-    ],
-    "hosting": "[[PLATZHALTER: Hosting und Zertifizierung]]"
-  },
   "team": {
-    "eyebrow": "08 · Team",
+    "eyebrow": "04 · Über uns",
     "title": "Wer EndPoint. baut.",
-    "sub": "[[PLATZHALTER: Teambeschreibung]]",
-    "role": "[[PLATZHALTER: Rolle]]",
-    "bio": "[[PLATZHALTER: Kurztext]]",
+    "role": "Co-Founder",
     "linkedin": "LinkedIn",
     "members": [
-      { "name": "Maximilian Dieringer", "initials": "MD", "linkedin": "https://www.linkedin.com/in/maximilian-dieringer/" },
-      { "name": "Maximilian Seipl", "initials": "MS", "linkedin": "https://www.linkedin.com/in/maximilian-seipl/" },
-      { "name": "Santino Schrader", "initials": "SS", "linkedin": "https://www.linkedin.com/in/santino-schrader/" },
-      { "name": "Simon Fuhrbach", "initials": "SF", "linkedin": "https://www.linkedin.com/in/simonfuhrbach/" }
-    ],
-    "insider": {
-      "title": "Bau-Insider",
-      "role": "Wir suchen Sie",
-      "text": "Sie kennen Abrechnung, Nachträge und Schlussbesprechungen aus Elektro oder HKLS? Dann sollten wir reden.",
-      "cta": "Kontakt aufnehmen"
-    }
+      { "name": "Maximilian Dieringer", "photo": "/team/dieringer.jpg", "linkedin": "https://www.linkedin.com/in/maximilian-dieringer/", "logos": ["wu", "tacto"] },
+      { "name": "Maximilian Seipl", "photo": "/team/seipl.jpg", "linkedin": "https://www.linkedin.com/in/maximilian-seipl/", "logos": ["wu", "enpal"] },
+      { "name": "Santino Schrader", "photo": "/team/schrader.jpg", "linkedin": "https://www.linkedin.com/in/santino-schrader/", "logos": ["tuwien"] },
+      { "name": "Simon Fuhrbach", "photo": "/team/fuhrbach.jpg", "linkedin": "https://www.linkedin.com/in/simonfuhrbach/", "logos": ["wu", "tacto"] }
+    ]
   },
   "contact": {
-    "eyebrow": "09 · Kontakt",
-    "title": "Reden wir.",
-    "sub": "Für Betriebe, Bau-Insider, Partner und alle, die mehr wissen wollen.",
+    "eyebrow": "05 · Demo",
+    "title": "Demo buchen.",
+    "sub": "Wir zeigen Ihnen EndPoint. an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
+    "points": ["30 Minuten, online oder bei Ihnen", "Kein Zugriff auf Ihre Daten nötig", "Wir sprechen nie mit Ihrem Auftraggeber"],
     "mailLabel": "Oder per Mail",
     "mail": "kontakt@[[PLATZHALTER: Domain]]",
     "fields": {
       "name": "Name",
       "company": "Firma",
-      "role": "Rolle",
+      "email": "E-Mail",
+      "phone": "Telefon",
       "message": "Nachricht"
     },
-    "rolePlaceholder": "Inhaber, Abrechner, Projektleiter …",
+    "optional": "optional",
+    "messagePlaceholder": "Gewerk, Größe, worum es Ihnen geht …",
     "consent": "Ich bin einverstanden, dass EndPoint. mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
-    "submit": "Absenden",
-    "required": "Pflichtfeld",
+    "submit": "Demo anfragen",
     "errorName": "Bitte Namen angeben.",
-    "errorMessage": "Bitte eine Nachricht schreiben.",
+    "errorEmail": "Bitte eine gültige Mailadresse angeben.",
     "errorConsent": "Ohne Einwilligung können wir nicht antworten.",
-    "success": "Eingang bestätigt",
+    "success": "Anfrage erhalten",
     "successNote": "Vorschau: Das Formular versendet noch nichts. [[PLATZHALTER: Formular-Backend]]"
   },
   "footer": {
-    "claim": "Der digitale Zwilling für Elektro- und HKLS-Betriebe.",
+    "claim": "Schlussrechnungen für Elektro- und HKLS-Betriebe.",
     "legal": "[[PLATZHALTER: Rechtsform]] · [[PLATZHALTER: Adresse]]",
     "impressum": "Impressum",
     "datenschutz": "Datenschutz",
@@ -219,7 +124,7 @@
     "back": "Zurück zur Startseite",
     "impressum": {
       "title": "Impressum",
-      "note": "Platzhalter. Die Angaben folgen nach der Gründung. Die Seite wird erst veröffentlicht, wenn alle Felder ausgefüllt sind.",
+      "note": "Platzhalter. Die Angaben folgen nach der Gründung.",
       "rows": [
         ["Medieninhaber und Herausgeber", "[[PLATZHALTER: Firmenwortlaut]]"],
         ["Rechtsform", "[[PLATZHALTER: Rechtsform]]"],
@@ -240,7 +145,7 @@
       "sections": [
         ["Verantwortlicher", "[[PLATZHALTER: Verantwortlicher nach Art. 4 Z 7 DSGVO]]"],
         ["Hosting", "[[PLATZHALTER: Anbieter, Standort, AVV]]"],
-        ["Kontaktformular", "[[PLATZHALTER: Zweck, Rechtsgrundlage, Speicherdauer]]"],
+        ["Demo-Anfrage", "[[PLATZHALTER: Zweck, Rechtsgrundlage, Speicherdauer]]"],
         ["Analytics", "[[PLATZHALTER: cookielos, Anbieter]]"],
         ["Cookies", "Diese Vorschau setzt keine Cookies."],
         ["Ihre Rechte", "[[PLATZHALTER: Auskunft, Berichtigung, Löschung, Beschwerde bei der Datenschutzbehörde]]"]
