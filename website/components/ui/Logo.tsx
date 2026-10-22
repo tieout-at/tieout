@@ -1,4 +1,4 @@
-/** Tieout.-Bildmarke: zwei Plan-Ecken mit einem Punkt in der Mitte. Ecken in Tinte (oder Weiß), Punkt in Ultramarin. */
+/** Tieout-Bildmarke: zwei Plan-Ecken mit einem Punkt in der Mitte. Ecken in Tinte (oder Weiß), Punkt in Ultramarin. */
 export function LogoMark({ size = 22, ink = "#0a1020" }: { size?: number; ink?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" style={{ flex: "none" }}>

@@ -9,13 +9,13 @@ export function Footer({ t, locale }: { t: Messages["footer"]; locale: Locale })
         <div>
           <a className="wordmark" href={homePath(locale)}>
             <LogoMark size={26} />
-            <span>Tieout<span className="wordmark__dot">.</span></span>
+            <span>Tieout</span>
           </a>
           <small>{t.claim}</small>
           <small>
             <Ph text={t.legal} />
           </small>
-          <small>© 2026 Tieout.</small>
+          <small>© 2026 Tieout</small>
         </div>
         <nav className="footer__links" aria-label="Footer">
           <a href={legalPath(locale, "impressum")}>{t.impressum}</a>
