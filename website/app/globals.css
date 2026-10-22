@@ -117,7 +117,8 @@ img { display: block; max-width: 100%; }
 @media (max-width: 1239px) { .mnav { display: none; } }
 
 /* Hero */
-.hero { min-height: 100vh; display: flex; align-items: center; padding: calc(var(--header) + 32px) 0 64px; }
+/* Unten derselbe Abstand wie bei allen Abschnitten, damit die Abstände zwischen den Abschnitten gleich sind */
+.hero { display: flex; align-items: center; padding: calc(var(--header) + 32px) 0 clamp(64px, 8vw, 104px); }
 .hero__grid { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 56px; align-items: center; }
 .hero__title .l2 { color: var(--ultra); display: block; }
 .hero__sub { margin: 26px 0 32px; max-width: 520px; }

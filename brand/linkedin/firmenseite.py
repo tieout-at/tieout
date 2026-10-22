@@ -7,7 +7,7 @@ import os, subprocess
 OUT = os.path.dirname(os.path.abspath(__file__))
 W, H = 1128, 191
 PAPER, INK, ULTRA = "#F4F6F9", "#0A1020", "#1D3BFF"
-FONTS = '<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600&family=IBM+Plex+Mono:wght@400;500&display=block" rel="stylesheet">'
+FONTS = '<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=block" rel="stylesheet">'
 
 
 def banner(bg, line, ink, accent, mono):
@@ -49,8 +49,8 @@ def rechnung(bg, line, ink, accent, mono, markdot, hl, hltext):
     g.append(l(f"M{x0+4} {ys[2]+9}L{x0+14} {ys[2]-1}L{x0+21} {ys[2]+6}L{x0+25} {ys[2]+2}L{x0+31} {ys[2]+9}", .85, 1.2))
     g.append(f'<circle cx="{x0+26}" cy="{ys[2]-5}" r="2.6" fill="{line}" fill-opacity=".85"/>')
     g.append(l(f"M{x0+8} {ys[3]-3}H{x0+26}M{x0+8} {ys[3]+3}H{x0+20}", .55, 1))
-    for y, lab in zip(ys, ["PLAN", "MAIL", "FOTO", "ZURUF"]):
-        g.append(t(x0 + 44, y + 4, lab, 9.5, .85))
+    for y, lab in zip(ys, ["Plan", "Mail", "Foto", "Zuruf"]):
+        g.append(f'<text x="{x0 + 44}" y="{y + 6}" font-family="Inter Tight" font-weight="600" font-size="16" fill="{line}">{lab}</text>')
     # Linien in die Rechnung
     ix, iy0, iw, ih = 560, 18, 176, 156
     for i, y in enumerate(ys):
@@ -60,19 +60,18 @@ def rechnung(bg, line, ink, accent, mono, markdot, hl, hltext):
     # Rechnungsblatt
     g.append(f'<path d="M{ix} {iy0}H{ix+iw-16}L{ix+iw} {iy0+16}V{iy0+ih}H{ix}Z" fill="{bg}" stroke="{line}" stroke-opacity=".9" stroke-width="1.5"/>')
     g.append(l(f"M{ix+iw-16} {iy0}V{iy0+16}H{ix+iw}", .6, 1.2))
-    g.append(t(ix + 12, iy0 + 20, "SCHLUSSRECHNUNG", 9.5, .9))
+    g.append(f'<text x="{ix + 12}" y="{iy0 + 22}" font-family="Inter Tight" font-weight="600" font-size="15" fill="{line}">Schlussrechnung</text>')
     rows = [False, False, True, False, True]
     for i, add in enumerate(rows):
         y = iy0 + 42 + i * 18
         if add:
             g.append(f'<rect x="{ix+6}" y="{y-11}" width="{iw-12}" height="18" fill="{hl}"/>')
-            g.append(f'<text x="{ix+12}" y="{y+2}" font-family="IBM Plex Mono" font-size="10" font-weight="500" fill="{hltext}">+</text>')
+            g.append(f'<text x="{ix+11}" y="{y+4}" font-family="Inter Tight" font-size="16" font-weight="700" fill="{hltext}">+</text>')
             g.append(f'<path d="M{ix+24} {y-2}H{ix+96}M{ix+iw-52} {y-2}H{ix+iw-14}" stroke="{hltext}" stroke-width="3"/>')
         else:
             g.append(l(f"M{ix+12} {y-2}H{ix+96}M{ix+iw-52} {y-2}H{ix+iw-14}", .45, 3))
     yt = iy0 + ih - 18
     g.append(l(f"M{ix+12} {yt-12}H{ix+iw-12}", .7, 1))
-    g.append(t(ix + 12, yt + 2, "SUMME", 9.5, .9))
     g.append(l(f"M{ix+iw-62} {yt-2}H{ix+iw-14}", .9, 3.5))
     g.append(l(f"M{ix+iw-62} {yt+6}H{ix+iw-14}", .6, 1))
     x1 = 784
@@ -85,9 +84,9 @@ def rechnung(bg, line, ink, accent, mono, markdot, hl, hltext):
   {"".join(g)}
   {mark(x1, 36, 30, ink, markdot)}
   <text x="{x1+42}" y="62" font-family="Inter Tight" font-weight="600" font-size="34" letter-spacing="-1" fill="{ink}">tieout</text>
-  <text x="{x1}" y="106" font-family="Inter Tight" font-weight="600" font-size="23" letter-spacing="-.5" fill="{ink}">Schlussrechnungen,</text>
-  <text x="{x1}" y="133" font-family="Inter Tight" font-weight="600" font-size="23" letter-spacing="-.5" fill="{accent}">die nichts liegen lassen.</text>
-  <text x="{x1}" y="163" font-family="IBM Plex Mono" font-size="10.5" letter-spacing="1.3" fill="{mono}" fill-opacity=".85">FÜR ELEKTRO- UND HKLS-BETRIEBE</text>'''
+  <text x="{x1}" y="104" font-family="Inter Tight" font-weight="600" font-size="26" letter-spacing="-.6" fill="{ink}">Schlussrechnungen,</text>
+  <text x="{x1}" y="134" font-family="Inter Tight" font-weight="600" font-size="26" letter-spacing="-.6" fill="{accent}">die nichts liegen lassen.</text>
+  <text x="{x1}" y="166" font-family="Inter Tight" font-weight="500" font-size="17" fill="{mono}" fill-opacity=".85">Für Elektro- und HKLS-Betriebe</text>'''
 
 
 DESIGNS = {
