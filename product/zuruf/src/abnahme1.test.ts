@@ -145,6 +145,24 @@ describe("Abnahme 1: Muster", () => {
     expect(antwort[0]!.zweck).toBe("zusammenfassung");
   });
 
+  it("L17 Bündel ohne offenen Zuruf: KI sieht alle Nachrichten als eine Meldung, „Nachtrag“ wird zu „zuruf“", async () => {
+    let gesehen: VerstehenEingabe | undefined;
+    const versteher: Versteher = async (e) => {
+      gesehen = e;
+      const erste = e.mitgeschickt![0]!;
+      return v("neuer_zuruf", [
+        punkt({ projektId: a("w10", "Favoriten", erste.id), leistung: a("Badheizkörper höher gesetzt", "höher gsetzt", erste.id) }),
+        punkt({ projektId: a("w10", "Favoriten", erste.id), leistung: a("Bodenablauf freigemacht", "bodenablauf freigmacht", e.neu.id) }),
+      ]);
+    };
+    const { agent } = neu(versteher);
+    const antwort = await agent.verarbeiteBuendel([msg("Favoriten Haus A Top 8 Badheizkörper höher gsetzt"), msg("und im müllraum noch den bodenablauf freigmacht")]);
+    expect(gesehen?.mitgeschickt).toHaveLength(1);
+    expect(gesehen?.entwurf).toBeUndefined();
+    expect(antwort[0]!.text).toContain("1)");
+    expect(antwort[0]!.text).toContain("2)");
+  });
+
   it("A11 Zweite Geldfrage: anderer Satz, Zusammenfassung nicht wiederholt", async () => {
     const { agent } = neu(
       stub(

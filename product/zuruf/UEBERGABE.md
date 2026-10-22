@@ -41,13 +41,15 @@ npm run sim
 | 2 sichtbar | 25/30 | 4 / 2 | 0 | 97 % | 1,62 USD |
 | 3 sichtbar | 30/30 | 5 / 3 | 0 | 100 % | 1,45 USD |
 | Abnahme 1 zurückgehalten | 6/10 | 3,5 / 2 | 1 | 95 % | 0,84 USD |
-| 4 sichtbar (abgebrochen) | 30/32 | 5 / 3 | 1 | 100 % | 2,04 USD |
+| 4 sichtbar, API (abgebrochen) | 30/32 | 5 / 3 | 1 | 100 % | 2,04 USD |
+| 4 sichtbar, Abo | 47/50 | 4,5 / 2 | 0 | 99 % | Abo |
+| Abnahme 2 zurückgehalten, Abo | 9/10 | 4 / 2 | 0 | 98 % | Abo |
 
-Lauf 4 brach nach 32 von 50 Szenarien ab: API-Guthaben aufgebraucht. Bisher ca. 9 USD API-Kosten insgesamt.
+API-Guthaben ist seit Lauf 4 aufgebraucht (ca. 9 USD verbraucht). Seitdem läuft alles über das Claude-Abo (`ZURUF_KI=abo`). Nach Lauf 4 (Abo) wurde L17 behoben (Bündel verlor den ersten Teil der Meldung).
 
 Abnahme 1 fand den schwersten Fehler bisher: Datenverlust bei Nachtrag plus Korrektur (LERNEN.md A1, A2). Behoben, mit Tests. Altes Holdout ist verbraucht und liegt jetzt sichtbar als `szenarien/z-*.json`. Frisches Holdout: `szenarien/zurueck/h2-*.json` (nicht lesen).
 
-29 Lernpunkte in `LERNEN.md`. 40 Unit-Tests grün (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 Szenarien (50 sichtbar, 10 zurückgehalten).
+31 Lernpunkte in `LERNEN.md`. 41 Unit-Tests grün (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 Szenarien (50 sichtbar, 10 zurückgehalten).
 
 ## KI über Abo oder API
 
@@ -55,8 +57,8 @@ In `product/zuruf/.env` steht `ZURUF_KI=abo`: Agent, Persona und Bewerter laufen
 
 ## Nächster Schritt
 
-1. `npm run lauf` über alle 50 sichtbaren Szenarien vollständig (über das Abo), Fehler nach `LERNEN.md`.
-2. Abnahme 2: `npm run lauf -- --zurueck`. Bei Fehlern wieder nur abstrakt auswerten lassen (Subagent mit `--mit-protokoll`, Hauptsitzung liest das Protokoll nicht), danach frisches Holdout.
+1. Die zwei schwachen Fälle aus Abnahme 2 (laerm_bruchstueck durchgefallen, mehrere_punkte Note 2) nur abstrakt auswerten lassen: Subagent mit `npm run lauf -- --zurueck --mit-protokoll`, die Hauptsitzung liest das Protokoll nicht. Danach Holdout `h2-*` zu den sichtbaren verschieben und ein frisches `h3-*` schreiben lassen.
+2. Fixes, voller Lauf über die sichtbaren, Abnahme 3.
 3. Offen aus A10: Sammelfenster im WhatsApp-Kanal (Phase 3).
 4. Danach Phase 2 (Sprache und Foto) oder Phase 3 (echte Nummer), Entscheidung beim Team.
 

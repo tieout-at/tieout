@@ -15,6 +15,26 @@ Jeder Fehler des Agenten oder unserer Arbeit kommt hierher, neuester oben. Vor j
 
 ## Einträge
 
+### 2026-10-22: Lauf 4 (50 sichtbar) und Abnahme 2, beide über das Claude-Abo
+- Lauf 4: 47/50, 0 erfunden, Felder 99 %, Rückfragen Max 2, Note Median 4,5 / Min 2. Antwortzeit über das Abo Median 9,5 s (über die API 2,5 s, nicht vergleichbar).
+- Abnahme 2 (frisches Holdout `h2-*`, nie gelesen): 9/10, 0 erfunden, Felder 98 %, Rückfragen Max 1, Note Median 4 / Min 2. Durchgefallen: laerm_bruchstueck. Note 2 trotz bestandener Prüfungen: mehrere_punkte. Abnahme 1 war 6/10.
+- Noch nicht ausgewertet (würde das Holdout verbrauchen): die beiden schwachen Holdout-Fälle. Nächster Schritt: Subagent wertet abstrakt aus.
+
+### L17 Bündel: erster Teil der Meldung verloren
+- Was: `z-korrektur-top-und-stunden-nach-passt`. Sprachnachricht (Heizkörper) und Sekunden später Text (Bodenablauf) kamen als Bündel. Die KI las den Text als Nachtrag zu einem leeren Zuruf und gab nur den Bodenablauf zurück. Der Heizkörper fehlte in der Zusammenfassung, wurde mit „Passt“ bestätigt und war weg. Die spätere Korrektur fand ihn nicht und fing von vorn an. Note 2.
+- Ursache: Die erste Nachricht des Bündels stand im Prompt als „offener Zuruf“ mit leerem Stand.
+- Regel: Gebündelte Nachrichten stehen im Prompt als „NEUE NACHRICHTEN … zusammen EINE Meldung, kein Punkt darf fehlen“. Code als Sicherheitsnetz: Ohne offenen Zuruf wird „Nachtrag“ bei einem Bündel zu „zuruf“.
+- Abgesichert durch: Test L17 in `abnahme1.test.ts`, Szenario `z-korrektur-top-und-stunden-nach-passt` (jetzt Note 4).
+- Status: behoben.
+
+### L18 Reparatur ohne Anweiser, obwohl der Chef geschickt hat
+- Was: `abgeschlossen-tulln-verteiler`. Die Regel „bei Reparatur bleibt angewiesenVon leer“ war zu grob; „da Chef hat mi gschickt“ ging verloren. Dazu klang „War es wirklich Tulln?“ misstrauisch.
+- Regel: Bei Reparatur nur ohne Anweisung leer; wer den Einsatz geschickt hat, ist der Anweiser. Frage jetzt „Tulln ist bei uns schon abgeschlossen. Trotzdem dort eintragen?“ mit „Ja, dort“.
+- Status: behoben.
+
+### Szenario-Erwartung zu streng
+- `m-erstkontakt-zweite-meldung-statt-ja` erwartete beim zweiten Punkt 1 Person, die Nachricht sagt das aber nicht. Der Agent hat richtig nicht geraten. Erwartung entfernt. Lehre: Bei durchgefallenen Szenarien immer zuerst prüfen, ob die Erwartung selbst stimmt.
+
 ### 2026-10-22: Muster aus der ersten Abnahme (A1 bis A12)
 
 Ein Subagent hat die Holdout-Gespräche gelesen und nur abstrakte Muster gemeldet. Die Hauptsitzung kennt die Inhalte nicht. Das alte Holdout ist danach verbraucht und liegt jetzt bei den sichtbaren Szenarien (`z-*.json`); ein frisches Holdout (`zurueck/h2-*.json`) ist geschrieben. Zu jedem Muster gibt es ein neues sichtbares Szenario (`m-*.json`) und einen Test in `abnahme1.test.ts`.

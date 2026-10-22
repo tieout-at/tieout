@@ -103,16 +103,20 @@ export class ZurufAgent {
 
     if (!vorher.length && z.entwurf?.phase === "warte_bestaetigung" && BESTAETIGUNG.has(text)) return this.bestaetigen(z);
 
+    const warOffen = !!z.entwurf;
     const v = await this.versteher({
-      entwurfNachrichten: [...(z.entwurf?.nachrichten ?? []), ...vorher],
-      entwurf: z.entwurf || vorher.length ? (z.entwurf?.punkte.map((p) => p.eintrag) ?? []) : undefined,
+      entwurfNachrichten: z.entwurf?.nachrichten ?? [],
+      entwurf: z.entwurf?.punkte.map((p) => p.eintrag),
       gespeichert: this.gespeicherteFuerKontext(z, n),
       verlauf: z.verlauf.slice(0, -1 - vorher.length),
       neu: n,
+      mitgeschickt: vorher.length ? vorher : undefined,
     });
     if (vorher.length) {
       if (!z.entwurf) z.entwurf = { nachrichten: [], punkte: [], gestellt: [], phase: "sammeln" };
       z.entwurf.nachrichten.push(...vorher);
+      // Ein Bündel ohne offenen Zuruf ist eine Meldung, kein Nachtrag zu etwas Leerem (LERNEN.md L17).
+      if (!warOffen && v.absicht === "neuer_zuruf") v.absicht = "zuruf";
     }
     return this.nachAbsicht(z, n, v);
   }

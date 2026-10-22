@@ -1,6 +1,6 @@
 // Lernschleife ausführen. Aufrufe:
 //   npm run lauf                      alle sichtbaren Szenarien, mit Bewerter
-//   npm run lauf -- --nur klar        nur Szenarien, deren id mit „klar“ beginnt
+//   npm run lauf -- --nur klar,m-     nur Szenarien, deren id mit „klar“ oder „m-“ beginnt
 //   npm run lauf -- --ohne-bewerter   nur Prüfungen im Code (billiger)
 //   npm run lauf -- --zurueck         NUR die zurückgehaltenen Szenarien, Bericht ohne Inhalte (Abnahme)
 // Bericht: laeufe/<zeit>/bericht.md und ergebnisse.json (nicht im Repo). Bei --zurueck nur Zahlen.
@@ -24,7 +24,7 @@ function lade(ordner: string): Szenario[] {
   return readdirSync(ordner)
     .filter((d) => d.endsWith(".json"))
     .map((d) => SzenarioSchema.parse(JSON.parse(readFileSync(path.join(ordner, d), "utf8"))))
-    .filter((s) => !nur || s.id.startsWith(nur));
+    .filter((s) => !nur || nur.split(",").some((n) => s.id.startsWith(n)));
 }
 
 const szenarien = lade(zurueck ? "szenarien/zurueck" : "szenarien");

@@ -17,7 +17,7 @@ export const KNOPF = {
   personen1: { id: "personen:1", titel: "Allein" },
   personen2: { id: "personen:2", titel: "Zu zweit" },
   personen3: { id: "personen:3", titel: "Zu dritt" },
-  abgeschlossenJa: { id: "abgeschlossen:ja", titel: "Ja, stimmt" },
+  abgeschlossenJa: { id: "abgeschlossen:ja", titel: "Ja, dort" },
   abgeschlossenAndere: { id: "abgeschlossen:andere", titel: "Andere Baustelle" },
 } satisfies Record<string, Knopf>;
 
@@ -122,7 +122,7 @@ export function frageProjekt(kandidaten: string[], alle: string[]): Antwort {
 
 export const frageAbgeschlossen = (kurz: string): Antwort => ({
   zweck: "rueckfrage",
-  text: `${kurz} ist bei uns schon abgeschlossen. War es wirklich ${kurz}?`,
+  text: `${kurz} ist bei uns schon abgeschlossen. Trotzdem dort eintragen?`,
   knoepfe: [KNOPF.abgeschlossenJa, KNOPF.abgeschlossenAndere],
 });
 

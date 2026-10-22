@@ -83,6 +83,8 @@ export interface VerstehenEingabe {
   /** Gesprächsverlauf in Kurzform (Agent und Absender), älteste zuerst. */
   verlauf: { von: "absender" | "agent"; text: string }[];
   neu: Nachricht;
+  /** Nachrichten, die fast gleichzeitig mit der neuen kamen (Bündel). Sie gehören zur selben Meldung. */
+  mitgeschickt?: Nachricht[];
 }
 
 export type Versteher = (eingabe: VerstehenEingabe) => Promise<Verstaendnis>;
@@ -92,7 +94,7 @@ function systemPrompt(firma: Firma): string {
 
 ${firmaAlsText(firma)}
 
-Aufgabe: Bestimme die Absicht der NEUEN Nachricht und den vollständigen, aktuellen Stand der gemeldeten Punkte.
+Aufgabe: Bestimme die Absicht der NEUEN Nachricht(en) und den vollständigen, aktuellen Stand der gemeldeten Punkte. Stehen mehrere NEUE NACHRICHTEN da, sind sie eine Meldung: Ist kein Zuruf offen, ist die Absicht zuruf mit den Punkten aus allen diesen Nachrichten.
 
 Absichten:
 - zuruf: meldet eine Arbeit oder ergänzt, beantwortet oder korrigiert den offenen Zuruf. Gilt auch für die erste Meldung, wenn nichts offen ist.
@@ -122,7 +124,7 @@ Angaben: Jede Angabe hat wert, zitat und nachrichtId.
 - menge: nur mit Zahl und Einheit (m, Stk, m², psch). Personen und Stunden sind keine Menge.
 - personen: Anzahl Leute, die gearbeitet haben ("zu zweit" = 2, "i allan" = 1). Nur wenn gesagt.
 - dauerStunden: Dauer in Stunden, so wie gesagt ("an halben Tag" ist keine Zahl, dann null). Nicht umrechnen, nicht mit Personen multiplizieren.
-- angewiesenVon: wer die Arbeit direkt angeschafft oder angeordnet hat, so wie gesagt. Kam der Auftrag über jemanden ("die Bewohnerin hat im Büro angerufen, der Chef hat mich geschickt"), ist der Vermittler angewiesenVon und der Auslöser gehört in grund. Wessen Wunsch es war ("weil die Schule das will"), ist nicht angewiesenVon, wenn jemand anderer es angeschafft hat. Hat niemand ausdrücklich angeschafft, aber der Absender sagt, wer es so wollte ("weil der Architekt eine andere Höhe will"), dann ist das angewiesenVon. Sagt der Absender bei Zusatzarbeit ausdrücklich "niemand" oder "keiner", ist der wert "niemand" mit diesem Zitat. Bei Reparatur, Schaden oder Wartezeit bleibt angewiesenVon null.
+- angewiesenVon: wer die Arbeit direkt angeschafft oder angeordnet hat, so wie gesagt. Kam der Auftrag über jemanden ("die Bewohnerin hat im Büro angerufen, der Chef hat mich geschickt"), ist der Vermittler angewiesenVon und der Auslöser gehört in grund. Wessen Wunsch es war ("weil die Schule das will"), ist nicht angewiesenVon, wenn jemand anderer es angeschafft hat. Hat niemand ausdrücklich angeschafft, aber der Absender sagt, wer es so wollte ("weil der Architekt eine andere Höhe will"), dann ist das angewiesenVon. Sagt der Absender bei Zusatzarbeit ausdrücklich "niemand" oder "keiner", ist der wert "niemand" mit diesem Zitat. Bei Reparatur, Schaden oder Wartezeit ohne Anweisung bleibt angewiesenVon null; hat jemand den Einsatz geschickt oder angeschafft ("da Chef hat mi gschickt"), ist das angewiesenVon.
 - grund: warum die Arbeit nötig war, wenn gesagt ("weil die Küche woanders hinkommt" wird "Küche kommt woanders hin"). Kurz, Schriftdeutsch.
 - datum: JJJJ-MM-TT, nur wenn ein Tag genannt ist ("gestern", "am Montag"); relativ zum Zeitpunkt der Nachricht auflösen.
 - material: nur verbautes oder verbrauchtes Material, das ausdrücklich als solches genannt ist und nicht schon in leistung steht. Sonst null.
@@ -155,7 +157,13 @@ function eingabeText(e: VerstehenEingabe): string {
   } else {
     teile.push("OFFENER ZURUF: keiner");
   }
-  teile.push(`NEUE NACHRICHT:\n${nachrichtZeile(e.neu)}`);
+  if (e.mitgeschickt?.length) {
+    teile.push(
+      `NEUE NACHRICHTEN (fast gleichzeitig geschickt, zusammen EINE Meldung; werte alle zusammen aus, kein Punkt darf fehlen):\n${[...e.mitgeschickt, e.neu].map(nachrichtZeile).join("\n")}`,
+    );
+  } else {
+    teile.push(`NEUE NACHRICHT:\n${nachrichtZeile(e.neu)}`);
+  }
   return teile.join("\n\n");
 }
 

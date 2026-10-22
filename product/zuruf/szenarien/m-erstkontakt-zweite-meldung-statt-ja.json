@@ -42,21 +42,47 @@
     "eintraege": [
       {
         "projektId": "mod",
-        "ortStichwoerter": ["Technikzentrale", "Technik"],
-        "leistungStichwoerter": ["Zirkulation", "Pumpe"],
+        "ortStichwoerter": [
+          "Technikzentrale",
+          "Technik"
+        ],
+        "leistungStichwoerter": [
+          "Zirkulation",
+          "Pumpe"
+        ],
         "personen": 1,
         "dauerStunden": 2,
-        "angewiesenVonStichwoerter": ["Bauleiterin", "Bauleiter"],
-        "mussLeerSein": ["menge", "datum"]
+        "angewiesenVonStichwoerter": [
+          "Bauleiterin",
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
       },
       {
         "projektId": "mod",
-        "ortStichwoerter": ["Zimmer 105", "105", "hundertfünf"],
-        "leistungStichwoerter": ["Spülkasten", "Spuelkasten", "WC", "Toilette"],
-        "personen": 1,
+        "ortStichwoerter": [
+          "Zimmer 105",
+          "105",
+          "hundertfünf"
+        ],
+        "leistungStichwoerter": [
+          "Spülkasten",
+          "Spuelkasten",
+          "WC",
+          "Toilette"
+        ],
         "dauerStunden": 0.5,
-        "angewiesenVonStichwoerter": ["Bauleiterin", "Bauleiter"],
-        "mussLeerSein": ["menge", "datum"]
+        "angewiesenVonStichwoerter": [
+          "Bauleiterin",
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
       }
     ],
     "maxRueckfragen": 1,
