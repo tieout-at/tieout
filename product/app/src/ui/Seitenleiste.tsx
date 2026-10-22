@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavProjekt } from "@/daten/demo";
+import { zahl } from "./format";
 import { Ico } from "./Ico";
 import { LogoMark, Wortmarke } from "./Logo";
 import { navWechseln, themaWechseln, useNavZu } from "./thema";
@@ -49,7 +50,7 @@ function NavLink({ e, pfad }: { e: Eintrag; pfad: string }) {
     <>
       <Ico icon={e.icon} />
       <span className="nav-text">{e.text}</span>
-      {e.zaehler !== undefined && <span className="sw-count">{e.zaehler.toLocaleString("de-AT")}</span>}
+      {e.zaehler !== undefined && <span className="sw-count">{zahl(e.zaehler)}</span>}
     </>
   );
   return (

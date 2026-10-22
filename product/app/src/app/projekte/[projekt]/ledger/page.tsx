@@ -23,9 +23,21 @@ export default async function Ledger({ params }: Props) {
   const { d, e } = projekt(id);
   const { daten } = firma();
   if (!e.abgleich) notFound();
+  // Nur die Felder, die die Tabelle braucht: die Zeilen gehen als Daten mit jeder Seite an den Browser.
   const zeilen: LedgerReihe[] = e.ledger.map((z) => {
     const b = e.befunde.find((x) => x.schluessel.endsWith(`:${z.positionNr}`));
-    return { ...z, befundHref: b ? `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/` : null };
+    return {
+      positionNr: z.positionNr,
+      kurztext: z.kurztext,
+      einheit: z.einheit,
+      lvMenge: z.lvMenge,
+      aufmassMenge: z.aufmassMenge,
+      verrechnetMenge: z.verrechnetMenge,
+      bezahltBetrag: z.bezahltBetrag,
+      differenzBetrag: z.differenzBetrag,
+      naechsteArMenge: z.naechsteArMenge,
+      befundHref: b ? `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/` : null,
+    };
   });
   return (
     <>

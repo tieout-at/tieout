@@ -4,13 +4,16 @@
 // Fundstelle zum Anklicken; eine leere Zelle heißt „kein Beleg“) und Dokumentliste (Kuro K-B: Dokumente als Datensätze,
 // Duplikate erkannt). Reiter und Suche wie im Ledger. Zeilen mit Befund öffnen den Befund (Klick, Enter, j/k).
 
+// Tempo (gemessen 22.10.): Matrix-Zeilen sind memoisiert, viele neue Zeilen kommen in zwei Schritten (useStufenweise);
+// Zellen und Dateien sind schlichte Links mit gemeinsamem Klick (useLinkFolgen) statt je ein next/link.
+
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { memo, useMemo, useState } from "react";
 import type { Belegart, DokumentZeile, MatrixZeile } from "@/daten/ordner";
-import { datum } from "./format";
+import { datum, zahl } from "./format";
 import { Ico } from "./Ico";
-import { Zeilennavigation } from "./Zeilennavigation";
+import { useLinkFolgen, useStufenweise, Zeilennavigation } from "./Zeilennavigation";
 
 const SPALTEN: { art: Belegart; text: string }[] = [
   { art: "lv", text: "LV" },
@@ -25,12 +28,21 @@ const SPALTEN: { art: Belegart; text: string }[] = [
 type Ansicht = "befund" | "alle" | "dokumente" | "zurufe";
 
 export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; dokumente: DokumentZeile[]; basis: string }) {
-  const dateien = dokumente.filter((x) => x.art !== "Zuruf");
-  const zurufe = dokumente.filter((x) => x.art === "Zuruf");
-  const mitBefund = matrix.filter((z) => z.befundHref);
+  const dateien = useMemo(() => dokumente.filter((x) => x.art !== "Zuruf"), [dokumente]);
+  const zurufe = useMemo(() => dokumente.filter((x) => x.art === "Zuruf"), [dokumente]);
+  const mitBefund = useMemo(() => matrix.filter((z) => z.befundHref), [matrix]);
   const [ansicht, setAnsicht] = useState<Ansicht>(mitBefund.length ? "befund" : "alle");
   const [suche, setSuche] = useState("");
   const s = suche.trim().toLowerCase();
+  const dok = ansicht === "dokumente" || ansicht === "zurufe";
+  const docs = useMemo(
+    () => (ansicht === "zurufe" ? zurufe : dateien).filter((x) => !s || x.datei.toLowerCase().includes(s) || x.art.toLowerCase().includes(s)),
+    [ansicht, s, zurufe, dateien],
+  );
+  const zeilen = useMemo(
+    () => (ansicht === "befund" ? mitBefund : matrix).filter((z) => !s || z.nr.toLowerCase().includes(s) || z.kurztext.toLowerCase().includes(s)),
+    [ansicht, s, mitBefund, matrix],
+  );
   const reiter: { a: Ansicht; text: string; n: number }[] = [
     { a: "befund", text: "Positionen mit Befund", n: mitBefund.length },
     { a: "alle", text: "Alle Positionen", n: matrix.length },
@@ -47,7 +59,7 @@ export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; do
             .map((r) => (
               <button key={r.a} type="button" className="sw-tab" aria-pressed={ansicht === r.a} onClick={() => setAnsicht(r.a)}>
                 {r.text}
-                <span className="sw-count">{r.n.toLocaleString("de-AT")}</span>
+                <span className="sw-count">{zahl(r.n)}</span>
               </button>
             ))}
         </div>
@@ -56,16 +68,17 @@ export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; do
           <input type="search" placeholder={ansicht === "dokumente" || ansicht === "zurufe" ? "Datei" : "Position oder Text"} value={suche} onChange={(ev) => setSuche(ev.target.value)} aria-label="Durchsuchen" />
         </label>
       </div>
-      {ansicht === "dokumente" || ansicht === "zurufe" ? (
-        <Dokumente liste={(ansicht === "zurufe" ? zurufe : dateien).filter((x) => !s || x.datei.toLowerCase().includes(s) || x.art.toLowerCase().includes(s))} basis={basis} />
-      ) : (
-        <Matrix zeilen={(ansicht === "befund" ? mitBefund : matrix).filter((z) => !s || z.nr.toLowerCase().includes(s) || z.kurztext.toLowerCase().includes(s))} basis={basis} />
-      )}
+      {dok ? <Dokumente liste={docs} basis={basis} /> : <Matrix alle={zeilen} basis={basis} />}
     </section>
   );
 }
 
-function Matrix({ zeilen, basis }: { zeilen: MatrixZeile[]; basis: string }) {
+const nrVon = (z: MatrixZeile) => z.nr;
+const idVon = (x: DokumentZeile) => x.id;
+
+function Matrix({ alle, basis }: { alle: MatrixZeile[]; basis: string }) {
+  const folgen = useLinkFolgen();
+  const zeilen = useStufenweise(alle, nrVon);
   return (
     <Zeilennavigation>
       <table className="sw-table tab-liste tab-matrix">
@@ -96,28 +109,7 @@ function Matrix({ zeilen, basis }: { zeilen: MatrixZeile[]; basis: string }) {
             </tr>
           )}
           {zeilen.map((z) => (
-            <tr key={z.nr} data-href={z.befundHref ?? undefined} tabIndex={z.befundHref ? 0 : undefined}>
-              <td title={`${z.nr} ${z.kurztext}`}>
-                <span className="sw-pos-nr">{z.nr}</span>
-                {z.befundHref ? (
-                  <Link href={z.befundHref} className="row-link" tabIndex={-1}>
-                    {z.kurztext}
-                  </Link>
-                ) : (
-                  z.kurztext
-                )}
-              </td>
-              {SPALTEN.map((x) => (
-                <td key={x.art} className="matrix-zelle">
-                  {z.zellen[x.art].slice(0, 2).map((f) => (
-                    <Link key={f.id} href={`${basis}/ordner/${f.id}${f.anker ? `#pos-${f.anker}` : ""}`} className="matrix-link">
-                      {f.text}
-                    </Link>
-                  ))}
-                  {z.zellen[x.art].length > 2 && <span className="sw-muted">+{z.zellen[x.art].length - 2}</span>}
-                </td>
-              ))}
-            </tr>
+            <MatrixReihe key={z.nr} z={z} basis={basis} folgen={folgen} />
           ))}
         </tbody>
       </table>
@@ -125,7 +117,37 @@ function Matrix({ zeilen, basis }: { zeilen: MatrixZeile[]; basis: string }) {
   );
 }
 
-function Dokumente({ liste, basis }: { liste: DokumentZeile[]; basis: string }) {
+const MatrixReihe = memo(function MatrixReihe({ z, basis, folgen }: { z: MatrixZeile; basis: string; folgen: ReturnType<typeof useLinkFolgen> }) {
+  return (
+    <tr data-href={z.befundHref ?? undefined} tabIndex={z.befundHref ? 0 : undefined}>
+      <td title={`${z.nr} ${z.kurztext}`}>
+        <span className="sw-pos-nr">{z.nr}</span>
+        {z.befundHref ? (
+          <Link href={z.befundHref} className="row-link" tabIndex={-1}>
+            {z.kurztext}
+          </Link>
+        ) : (
+          z.kurztext
+        )}
+      </td>
+      {SPALTEN.map((x) => (
+        <td key={x.art} className="matrix-zelle">
+          {z.zellen[x.art].slice(0, 2).map((f) => (
+            // Schrägstrich vor dem Anker wie bei next/link mit trailingSlash
+            <a key={f.id} className="matrix-link" href={`${basis}/ordner/${f.id}/${f.anker ? `#pos-${f.anker}` : ""}`} {...folgen}>
+              {f.text}
+            </a>
+          ))}
+          {z.zellen[x.art].length > 2 && <span className="sw-muted">+{z.zellen[x.art].length - 2}</span>}
+        </td>
+      ))}
+    </tr>
+  );
+});
+
+function Dokumente({ liste: alle, basis }: { liste: DokumentZeile[]; basis: string }) {
+  const folgen = useLinkFolgen();
+  const liste = useStufenweise(alle, idVon);
   return (
     <div className="tw">
       <table className="sw-table tab-liste tab-dokumente">
@@ -158,9 +180,9 @@ function Dokumente({ liste, basis }: { liste: DokumentZeile[]; basis: string }) 
           {liste.map((x) => (
             <tr key={x.id} className={x.duplikat ? "dok-duplikat" : undefined}>
               <td title={x.datei}>
-                <Link href={`${basis}/ordner/${x.id}`} className="matrix-link dok-datei">
+                <a className="matrix-link dok-datei" href={`${basis}/ordner/${x.id}/`} {...folgen}>
                   {x.datei}
-                </Link>
+                </a>
               </td>
               <td>{x.art}</td>
               <td className="sw-num">{datum(x.datum)}</td>
