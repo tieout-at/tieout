@@ -1,7 +1,8 @@
 "use client";
 
 // Seitenleiste (Vorlage: Attio-Navigation hell, Linear: aktiver Eintrag als Fläche, Zähler rechts).
-// Oben die Firma wie ein Arbeitsbereich (Linear, Attio), darunter alle Projekte mit Ampelpunkt; das aktive Projekt
+// Oben die Firma wie ein Arbeitsbereich (Linear, Attio), darunter alle Projekte ohne Farbpunkt (die Ampel steht als
+// Wort in der Projektliste, hier nur im Tooltip); das aktive Projekt
 // ist aufgeklappt und zeigt seine Bildschirme eingerückt (Linear „Your teams“). Reihenfolge = Ablauf.
 // Nur was gebaut ist, steht in der Navigation (Linear, Attio); Einträge mit `folgt` werden ausgeblendet.
 
@@ -57,7 +58,7 @@ function NavLink({ e, pfad }: { e: Eintrag; pfad: string }) {
   );
 }
 
-// Wörter der Ampel wie in der Firmenübersicht (ui/README.md); hier nur im Tooltip, der Punkt ist Verstärkung.
+// Wörter der Ampel wie in der Firmenübersicht (ui/README.md); hier nur im Tooltip.
 const AMPEL_WORT: Record<NavProjekt["ampel"], string> = {
   rot: "Bald legen",
   gelb: "Beträge offen",
@@ -146,7 +147,6 @@ export function Seitenleiste({
             return (
               <div key={x.id} className="nav-projekt" data-offen={offen || undefined}>
                 <Link href={`/projekte/${x.id}`} className="nav-projekt__kopf" title={`${x.kurz} ${x.name}, ${AMPEL_WORT[x.ampel]}`}>
-                  <span className={`nav-dot nav-dot--${x.ampel}`} aria-hidden="true" />
                   <span className="nav-text">{x.name}</span>
                 </Link>
                 {offen && (

@@ -1,5 +1,5 @@
 /* Beleg: Betrachter, Zoom, Belegseiten, Chat, ganzes Dokument.
- * Teil der früheren anordnung.css (Inhalt unverändert). Nur Layout, alle Werte aus tokens.css. */
+ * Teil der früheren anordnung.css, Politur 22.10. Nur Layout, alle Werte aus tokens.css. */
 
 
 /* Zoom über die Layout-Größe (CSS zoom), damit die vergrößerte Seite scrollbar bleibt statt abgeschnitten */
@@ -27,7 +27,8 @@
   justify-content: safe center;
 }
 
-/* Belegseiten im A4-Format (reebuild, Kuro: ganze Seite), Plan mit Rahmen, Zuruf als Chat */
+/* Belegseiten im A4-Format (reebuild, Kuro: ganze Seite), Plan mit Rahmen, Zuruf als Chat.
+ * Chat wie die Zuruf-Szene: weißes Papier, Monteur rechts in Grau, Agent links mit feiner Linie; Blau nur für die Fundstelle. */
 .sw-page {
   aspect-ratio: 1 / 1.414;
 }
@@ -49,9 +50,6 @@
 }
 .doc-note {
   font-size: 12px;
-}
-.sw-page--chat {
-  background: var(--doc-figure-soft);
 }
 .chat {
   display: flex;
@@ -77,6 +75,7 @@
   gap: var(--space-1);
   max-width: 80%;
   padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--doc-line);
   border-radius: var(--radius-lg);
   background: var(--doc-paper);
   color: var(--doc-ink);
@@ -86,7 +85,8 @@
 }
 .chat__msg--aus {
   align-self: flex-end;
-  background: var(--doc-mark);
+  border-color: var(--doc-figure-soft);
+  background: var(--doc-figure-soft);
 }
 .chat__msg--kurz {
   flex-direction: row;
@@ -95,6 +95,10 @@
 }
 .chat__msg .sw-photo {
   width: 220px;
+}
+/* Foto in der grauen Blase des Monteurs: auf Papier, sonst verschwindet das Feld */
+.chat__msg--aus .sw-photo {
+  background: var(--doc-paper);
 }
 .chat__label {
   color: var(--doc-ink-secondary);

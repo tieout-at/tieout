@@ -1,5 +1,5 @@
 /* Zeitachse und Zuruf-Szene.
- * Teil der früheren anordnung.css (Inhalt unverändert). Nur Layout, alle Werte aus tokens.css. */
+ * Teil der früheren anordnung.css, Politur 22.10. Nur Layout, alle Werte aus tokens.css. */
 
 
 /* Zeitachse (Linear-Aktivität: Symbol auf der Linie; Attio-Zeitleiste: Monatsköpfe; Filter als Reiter) */
@@ -80,10 +80,6 @@
   width: 2px;
   height: calc(100% + var(--space-4));
   background: var(--line);
-}
-.zeit-ev[data-art="zuruf"] .zeit-ev__knoten {
-  background: var(--accent-soft);
-  color: var(--accent);
 }
 .zeit-ev__inhalt {
   display: flex;
@@ -182,7 +178,7 @@
   flex-direction: column;
   border-radius: 20px;
   overflow: hidden;
-  background: var(--doc-figure-soft);
+  background: var(--doc-paper);
   color: var(--doc-ink);
   box-shadow: var(--shadow-overlay);
 }
@@ -205,8 +201,8 @@
 .szene__avatar {
   display: inline-grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: var(--control-h);
+  height: var(--control-h);
   flex: none;
   border-radius: var(--radius-full);
   background: var(--doc-figure);
@@ -239,8 +235,6 @@
 .szene__tag {
   align-self: center;
   padding: 2px var(--space-2);
-  border-radius: var(--radius-md);
-  background: var(--doc-paper);
   color: var(--doc-muted);
   font-size: 11px;
 }
@@ -250,12 +244,15 @@
   gap: var(--space-1);
   max-width: 82%;
   padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--doc-line);
   border-radius: var(--radius-lg);
   background: var(--doc-paper);
 }
+/* Monteur rechts in Grau, Agent links mit feiner Linie (gleich wie der Chat auf der Belegseite) */
 .szene__msg--aus {
   align-self: flex-end;
-  background: var(--doc-mark);
+  border-color: var(--doc-figure-soft);
+  background: var(--doc-figure-soft);
 }
 .szene__msg--ein {
   align-self: flex-start;
@@ -267,6 +264,10 @@
 }
 .szene__msg .sw-photo {
   width: 220px;
+}
+/* Foto in der grauen Blase des Monteurs: auf Papier, sonst verschwindet das Feld */
+.szene__msg--aus .sw-photo {
+  background: var(--doc-paper);
 }
 .szene__msg--neu {
   animation: szene-ein 260ms ease-out;
@@ -296,7 +297,7 @@
 }
 .szene__tippt {
   flex-direction: row;
-  gap: 4px;
+  gap: var(--space-1);
   padding: var(--space-3);
 }
 .szene__tippt i {
