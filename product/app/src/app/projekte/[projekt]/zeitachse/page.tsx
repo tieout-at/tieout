@@ -46,7 +46,7 @@ export default async function ZeitachseSeite({ params }: Props) {
   };
   return (
     <>
-      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}` }]} titel="Zeitachse" />
+      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}/` }]} titel="Zeitachse" />
       <main className="scr-body">
         <Zeitachse ereignisse={zeitachse(d, e)} basis={`/projekte/${id}`} szene={szene} echt={echt} />
       </main>

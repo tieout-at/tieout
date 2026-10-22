@@ -23,7 +23,7 @@ const AMPEL: Record<Ampel, { ton: Ton; wort: string }> = {
 };
 
 function Zeile({ p }: { p: ProjektZeile }) {
-  const href = `/projekte/${p.projektId}`;
+  const href = `/projekte/${p.projektId}/`;
   const a = AMPEL[p.ampel];
   return (
     <tr data-href={href} tabIndex={0}>
