@@ -33,9 +33,9 @@
       "c1Text": "Per Zuruf vom Bauherrn beauftragt, nie verrechnet.",
       "c1Value": "+ 780 €",
       "c1Note": "in die Schlussrechnung übernommen",
-      "c2Tag": "Mehr gebaut als beauftragt",
-      "c2Title": "Plan geändert: 14 Steckdosen mehr",
-      "c2Value": "+ 6.384 €",
+      "c2Tag": "Änderung per Mail angeordnet",
+      "c2Title": "6 zusätzliche Auslässe im 2. OG",
+      "c2Value": "+ 2.736 €",
       "c3Tag": "Alle Belege an einem Ort",
       "c3Title": "Pläne, Mails, Fotos, WhatsApp",
       "c3Value": "1.248 Belege"
@@ -154,13 +154,13 @@
       ],
       "evidenceWord": "Belege",
       "detailTitle": "Projekt Wien 21 · Position 03.12.004",
-      "position": "Steckdose UP",
-      "positionValue": "+ 14 Stk · 6.384 €",
+      "position": "6 Auslässe 2. OG",
+      "positionValue": "+ 6 Stk · 2.736 €",
       "evidence": [
-        "Plan Index D",
         "Mail Bauleitung",
+        "Plan Index D",
         "Foto 14.03.",
-        "Regie 11"
+        "WhatsApp-Zuruf"
       ],
       "caption": "Ein Zwilling für den ganzen Betrieb, mit Einblick in jedes Projekt",
       "outputTitle": "Schlussrechnung",
@@ -174,7 +174,83 @@
       ],
       "openLabel": "zusätzlich verrechenbar",
       "openValue": 27410,
-      "sample": "Beispieldaten"
+      "sample": "Beispieldaten",
+      "level1": "Ebene 1 · Ihr Betrieb",
+      "level2": "Ebene 2 · Projekt Wien 21",
+      "positionsLabel": "Positionen mit Belegen",
+      "positions2": [
+        [
+          "Regie 11",
+          "1.290 €"
+        ],
+        [
+          "Steckdose Raum 5",
+          "780 €"
+        ],
+        [
+          "Leuchten Stiege",
+          "1.640 €"
+        ]
+      ]
+    },
+    "timeline": {
+      "timelineTitle": "Projekt Wien 21 · Beispiel",
+      "trackSite": "Baustelle",
+      "trackInvoice": "Schlussrechnung",
+      "without": "Heute",
+      "with": "Mit EndPoint.",
+      "missing": "fehlt",
+      "billed": "verrechnet",
+      "found": "gefunden",
+      "summaryWithout": "{n} von {total} Änderungen nicht verrechnet",
+      "summaryWith": "Alle {total} Änderungen belegt und verrechnet",
+      "replay": "Nochmal abspielen",
+      "hint": "Umschalten und vergleichen",
+      "sample": "Synthetische Beispieldaten",
+      "events": [
+        {
+          "week": "KW 12",
+          "type": "WhatsApp",
+          "text": "Bauherr: Steckdose in Raum 5 versetzen",
+          "amount": 780,
+          "billed": false
+        },
+        {
+          "week": "KW 15",
+          "type": "Regie",
+          "text": "Regie 11: Kabeltrasse verlängert, unterschrieben",
+          "amount": 1290,
+          "billed": true
+        },
+        {
+          "week": "KW 19",
+          "type": "E-Mail",
+          "text": "Bauleitung: 6 Auslässe im 2. OG zusätzlich",
+          "amount": 2736,
+          "billed": false
+        },
+        {
+          "week": "KW 23",
+          "type": "Regie",
+          "text": "Regie 14: Technikraum, ohne Unterschrift",
+          "amount": 390,
+          "billed": false
+        },
+        {
+          "week": "KW 27",
+          "type": "Plan",
+          "text": "Plan Index D: Leitungsweg geändert",
+          "amount": 4120,
+          "billed": true
+        },
+        {
+          "week": "KW 31",
+          "type": "Foto",
+          "text": "Zusatzleuchten im Stiegenhaus montiert",
+          "amount": 1640,
+          "billed": false
+        }
+      ]
     }
   },
   "video": {
@@ -257,7 +333,21 @@
     "slotLabel": "Wunschtermin",
     "slotTimezone": "Wiener Zeit",
     "slotPlaceholder": "[[PLATZHALTER: Kalender-Anbindung]]",
-    "errorSlot": "Bitte einen Termin wählen."
+    "errorSlot": "Bitte einen Termin wählen.",
+    "slotChooseDay": "Tag wählen",
+    "slotTimesFor": "Freie Zeiten am",
+    "slotNoDay": "Wählen Sie zuerst einen Tag im Kalender.",
+    "prevMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat",
+    "weekdays": [
+      "Mo",
+      "Di",
+      "Mi",
+      "Do",
+      "Fr",
+      "Sa",
+      "So"
+    ]
   },
   "footer": {
     "claim": "Schlussrechnungen für Elektro- und HKLS-Betriebe.",

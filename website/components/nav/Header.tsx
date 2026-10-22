@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { homePath, type Locale, type Messages } from "@/lib/i18n";
+import { LogoMark } from "@/components/ui/Logo";
 
 export function Header({ locale, t }: { locale: Locale; t: Messages["nav"] }) {
   const [scrolled, setScrolled] = useState(false);
@@ -25,7 +26,7 @@ export function Header({ locale, t }: { locale: Locale; t: Messages["nav"] }) {
       <a className="skip" href="#inhalt">{t.skip}</a>
       <div className="wrap header__inner">
         <a className="wordmark" href={homePath(locale)} aria-label="EndPoint.">
-          <span className="wordmark__sq" aria-hidden="true" />
+          <LogoMark size={26} />
           <span>
             EndPoint<span className="wordmark__dot">.</span>
           </span>

@@ -8,6 +8,8 @@
 
 > **Update v3 (22.10.2026):** Hero ohne Zielgruppen-Kacheln, drei Fotos mit je einem Nutzen (vergessene Leistung, Mehrmenge aus Planänderung, alle Belege an einem Ort). Problem und Lösung untereinander, ohne Zahlen (keine belastbare Quelle für AT/DE gefunden). Eingänge MECE nach Datenart: Systeme, Dokumente, Kommunikation. Zwilling als Betrieb mit Firmenwissen, Projektübersicht und Einblick bis zur Position mit Belegen. Messpunkt-Navigation rechts mit allen Namen. Demo mit Terminwahl (Dummy, Kalender-Anbindung offen), Verlauf Papier zu Ultramarin.
 
+> **Update v4 (22.10.2026):** Logo „Ecke“ (zwei Plan-Ecken, Punkt in Ultramarin). Hero-Karte 2 zeigt eine per Mail angeordnete Änderung statt Mehrmenge. Problem als animierte Projekt-Zeitleiste mit Schalter „Heute | Mit EndPoint.“. Zwilling in zwei Ebenen (Betrieb, Projekt). Blauer Übergang wie bei Dryft beim Video. Demo mit Monatskalender und freien Zeiten (Dummy).
+
 ---
 
 ## 1. Ziel
