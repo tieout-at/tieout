@@ -1,12 +1,12 @@
 # Tabelle
 
-Dichte Arbeitstabelle, nach Liste gruppiert mit Zwischensumme; eine Zeile pro Posten, Herkunft klein am Wert.
+Dense working table, grouped by list with subtotals; one row per item, provenance shown small at the value.
 
-**Vorlage:** Linear (13 px, „Group by“ mit Gruppenkopf, j/k-Navigation, keine Kästen), reebuild „Ausgelesene Positionen“ (Pos.-Nr., Bezeichnung), Hebbia (Herkunft direkt am Wert), Siteline (Gerechnetes in `text-secondary`), Ramp (Hinweis direkt an der Zeile).
+**Reference:** Linear (13 px, „Group by“ with group header, j/k navigation, no boxes), reebuild „Ausgelesene Positionen“ (extracted items; item no., description), Hebbia (provenance directly at the value), Siteline (calculated values in `text-secondary`), Ramp (notice directly on the row).
 
-**Verwenden**
-- Feste Spaltenbreiten (`table-layout: fixed`), damit nichts überläuft; lange Texte kürzen mit „…“.
-- Zeilenhöhe über den Innenabstand: einzeilig `row-h` (36), mit Unterzeile `row-h-2` (48).
-- Positionsnummer in `mono`, gedämpft, vor dem Titel (wie Linear „DRV-8852“).
-- Kürzungsrisiko als kleines Warnsymbol am Betrag, nicht als zusätzliche Marke.
-- Jede Zeile ist fokussierbar (`tabindex="0"`), Enter öffnet, j/k wechselt.
+**Usage**
+- Fixed column widths (`table-layout: fixed`) so nothing overflows; truncate long texts with „…“.
+- Row height via padding: single line `row-h` (36), with subline `row-h-2` (48).
+- Item number in `mono`, muted, before the title (like Linear „DRV-8852“).
+- Deduction risk as a small warning icon at the amount, not as an additional marker.
+- Every row is focusable (`tabindex="0"`), Enter opens, j/k moves between rows.

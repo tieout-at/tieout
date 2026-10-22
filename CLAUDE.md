@@ -1,59 +1,59 @@
-# tieout (Arbeitstitel, vorher Schlusswerk): Projektkontext für Claude Code
+# tieout (working title, formerly Schlusswerk): project context for Claude Code
 
-Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub unter github.com/tieout-at/tieout, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/dossier-v3.md`.
+This repository is the working folder for the WU Hackathon project (private on GitHub at github.com/tieout-at/tieout, everything technical and all project documents in one place). Read this file first, then `_STATUS.md`, then `docs/dossier-v3.md`.
 
-## Worum es geht
+## What it is about
 
-Schlusswerk ist der digitale Zwilling eines österreichischen Elektro- oder HKLS-Subunternehmerbetriebs (30 bis 150 Leute). Der Firmen-Zwilling führt das Wissen über das ganze Geschäft zusammen: Kunden und GUs, Verträge, Regelwerk und Historie pro GU, Preisbasis (K7), LV-Archiv und alle Projekte. In jedem Projekt steckt ein Projektzwilling (LV, Aufmaß, Regie, Pläne, Mails, Calls, Fotos, Zurufe, Rechnungen, Zahlungen). Auf dem Zwilling laufen Anwendungen. Die erste Anwendung ist die Schlussrechnung: Abschluss-Lauf, Vorprüfung aus GU-Sicht, Entwurf der Schlussrechnung, Beweispaket, Schlussbesprechungs-Blatt.
+Schlusswerk is the digital twin of an Austrian electrical or HVAC/plumbing (HKLS) subcontractor business (30 to 150 people). The company twin brings together the knowledge about the entire business: customers and general contractors (GU), contracts, rules and history per GU, price basis (K7), archive of bills of quantities (LV) and all projects. Every project contains a project twin (LV, quantity survey (Aufmaß), daywork (Regie), plans, emails, calls, photos, voice notes (Zurufe), invoices, payments). Applications run on the twin. The first application is the final invoice (Schlussrechnung): closing run, pre-check from the GU's perspective, draft of the final invoice, evidence package (Beweispaket), final meeting sheet (Schlussbesprechungs-Blatt).
 
-Drei Wege in den Zwilling: Anbinden (ERP, CRM, AVA, Mails, Calls), Einspielen (Dateien, Pläne), Zurufen (WhatsApp mit Foto und Sprache an einen Agenten, Bestätigung durch den Absender).
+Three ways into the twin: Connect (Anbinden: ERP, CRM, AVA, emails, calls), Import (Einspielen: files, plans), Call in (Zurufen: WhatsApp with photo and voice to an agent, confirmation by the sender).
 
-Drei Angebote: Check (ein Projekt rückwirkend), Desk bzw. Jahresdesk (alle schließenden Projekte, der Zwilling wächst), Live (laufend, ab Jahr 2).
+Three offers: Check (one project retroactively), Desk or annual Desk (Jahresdesk: all closing projects, the twin grows), Live (ongoing, from year 2).
 
-## Wer arbeitet hier
+## Who works here
 
-Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maximilian Seipl, Santino Schrader, Simon Fuhrbach. Maxi baut Website und Produkt mit KI Coding Agenten. Niemand im Team hat Bauhintergrund. Auf GitHub (Organisation `tieout-at`, vorher `schlusswerk`): @MaximilianDieringer, @maxi589 (Maximilian Seipl), @Snoft (Santino Schrader), @simonfuhrbach-source (Simon Fuhrbach), alle Owner und gleichberechtigt. Ein Bau-Insider ist Pflicht (Gate R1).
+Founding team: Maximilian Dieringer (Maxi, WU Wien, business informatics), Maximilian Seipl, Santino Schrader, Simon Fuhrbach. Maxi builds the website and product with AI coding agents. Nobody on the team has a construction background. On GitHub (organisation `tieout-at`, formerly `schlusswerk`): @MaximilianDieringer, @maxi589 (Maximilian Seipl), @Snoft (Santino Schrader), @simonfuhrbach-source (Simon Fuhrbach), all owners with equal rights. A construction insider is mandatory (Gate R1).
 
-## Aufbau des Repositorys
+## Repository structure
 
-| Pfad | Zweck |
+| Path | Purpose |
 |---|---|
-| `_STATUS.md` | Laufender Stand: Gates, Termine, nächste Schritte. Nach jeder Sonntags-Runde aktualisieren |
-| `docs/dossier-v3.md` | **Gültiger Stand.** Kernprodukt, Recht, Preise, Markt, Konkurrenz, Gates, Plan, Bau, Startprompt |
-| `docs/research_notes/` | Recherche, z. B. `Kuro_reebuild_Fakten.md` (Steckbriefe, GU-Seite-Abwägung, Investorenstory, Quellen aus v2) |
-| `docs/archiv/` | Überholte Stände, z. B. Dossier v2. Nur noch als Quelle für Links zu Recht und Markt |
-| `docs/README.md` | Inhaltsverzeichnis der Dokumente; dort auch geplante Inhalte (Pitch, Business Plan, Produktvideo) |
-| `product/` | Produkt: Datenmodell, Backend, Frontend, synthetische Demo-Daten |
-| `website/` | Öffentliche Website |
-| `brand/` | Marke: Logo, LinkedIn-Grafiken per Skript, fertige Dateien in `brand/linkedin/upload/` |
+| `_STATUS.md` | Running status: gates, dates, next steps. Update after every Sunday round |
+| `docs/dossier-v3.md` | **Current reference.** Core product, legal, pricing, market, competition, gates, plan, build, start prompt |
+| `docs/research_notes/` | Research, e.g. `Kuro_reebuild_Fakten.md` (profiles, GU side trade-off, investor story, sources from v2) |
+| `docs/archiv/` | Superseded versions, e.g. dossier v2. Only kept as a source for links on legal and market |
+| `docs/README.md` | Table of contents of the documents; also lists planned content (pitch, business plan, product video) |
+| `product/` | Product: data model, backend, frontend, synthetic demo data |
+| `website/` | Public website |
+| `brand/` | Brand: logo, LinkedIn graphics generated by script, finished files in `brand/linkedin/upload/` |
 
-Neue Recherche nach `docs/research_notes/`, Überholtes nach `docs/archiv/`. Keine Secrets committen (`.env`). Das Repository liegt nicht in OneDrive.
+New research goes to `docs/research_notes/`, superseded material to `docs/archiv/`. Do not commit secrets (`.env`). The repository is not in OneDrive.
 
-Wo v2 und v3 abweichen, gilt v3.
+Where v2 and v3 differ, v3 applies.
 
-## Regeln für die Arbeit
+## Rules for the work
 
-1. **Sprache:** Deutsch, direkt, ohne Floskeln, ohne Emojis, ohne Gedankenstriche als Satzzeichen.
-2. **Belege:** Jede Aussage über die Welt braucht eine Quelle. Alles mit „(unbelegt)“ oder „(Annahme)“ im Dossier ist ungeprüft und wird nicht als Tatsache weitergegeben.
-3. **Verworfenes:** Abschnitt 12 im Dossier v3 ist entschieden. Nichts daraus wieder vorschlagen, außer mit neuer Evidenz, und das ausdrücklich sagen.
-4. **Wortwahl:** Das Wort „Claim“ steht in keinem Kundenmaterial. Wir sagen Schlussrechnung, verrechenbar, Beweispaket.
-5. **Nie tun:** Kontakt zum GU aufnehmen, rechtlich würdigen oder Aussagen zur Präklusion machen, Mitarbeiter bewerten (§ 96a ArbVG), Preise zwischen Firmen poolen, Inkasso.
-6. **Vertrieb:** Keine Kaltmails, keine Kaltanrufe (§ 174 TKG). Persönlich, Brief, Events, Partner, Webformular mit Einwilligung.
-7. **Produktprinzipien:** Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnung ist deterministischer Code. Jede Zahl führt per Klick zum Original. Der Zwilling hat Historie, nichts wird überschrieben. Datensilo pro Firma.
-8. **Daten:** Bis zur schriftlichen Rechtsklärung (Gate R4) und zur Klärung mit dem Betriebsrat nur synthetische Daten. Keine echten Kundendaten in dieses Repository.
-9. **Preise und Angebote nach außen:** GTM und Monetarisierung sind offen. Keine Preise, keine Pakete, kein „Check anfragen“ in öffentlichem Material, bis das Team entscheidet.
-10. **Platzhalter:** Was noch nicht bekannt ist, steht als `[[PLATZHALTER: …]]` im Text, nie erfunden. Vor jeder Veröffentlichung darf `grep -r "PLATZHALTER"` im veröffentlichten Teil nichts finden.
+1. **Language:** documentation, READMEs and code comments in English; conversations with the team in German; direct, no filler, no emojis, no dashes as punctuation.
+2. **Evidence:** Every statement about the world needs a source. Anything marked "(unverified)" or "(assumption)" in the dossier is unchecked and is not passed on as fact.
+3. **Rejected ideas:** Section 12 of dossier v3 is decided. Do not propose anything from it again, except with new evidence, and then say so explicitly.
+4. **Wording:** The word "Claim" never appears in customer material. We say final invoice (Schlussrechnung), billable (verrechenbar), evidence package (Beweispaket).
+5. **Never do:** contact the GU, give legal assessments or make statements on preclusion (Präklusion), evaluate employees (§ 96a ArbVG), pool prices between companies, debt collection (Inkasso).
+6. **Sales:** No cold emails, no cold calls (§ 174 TKG). In person, letter, events, partners, web form with consent.
+7. **Product principles:** The AI delivers facts with a source, the human confirms, the invoice is deterministic code. Every number leads to the original with one click. The twin has history, nothing is overwritten. Data silo per company.
+8. **Data:** Until written legal clearance (Gate R4) and clarification with the works council, synthetic data only. No real customer data in this repository.
+9. **Prices and offers in external material:** GTM and monetisation are open. No prices, no packages, no "Check anfragen" (request a check) in public material until the team decides.
+10. **Placeholders:** Anything not yet known appears in the text as `[[PLATZHALTER: …]]`, never invented. Before any publication, `grep -r "PLATZHALTER"` must find nothing in the published part.
 
-## Wenn es um die Website geht
+## When it is about the website
 
-Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), Domain tieout.at, CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Online offen erreichbar unter tieout-at.pages.dev, später tieout.at (noindex, Entscheidung Maxi D. 22.10.; die alte Adresse endpoint-preview.pages.dev leitet weiter), Details in `website/README.md`. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA „Demo buchen“ mit Terminwahl und Einwilligungs-Häkchen (Entscheidung Maxi D., 22.10.); keine Preise, keine Pakete. Hintergrund in Dossier v3 Abschnitt 9.
+`website/STRUKTUR.md` is binding: working title "tieout", lower case and without a full stop (formerly "Tieout.", "EndPoint."), domain tieout.at, CI Planraster (paper #F4F6F9, ink #0A1020, ultramarine #1D3BFF), website copy in German with a switch to English, interactive twin visualisation, team section, placeholder for video, legal notice (Impressum) and legal form. Openly accessible online at tieout-at.pages.dev, later tieout.at (noindex, decision Maxi D. 22.10.; the old address endpoint-preview.pages.dev redirects), details in `website/README.md`. The website explains the core product (the digital twin of the business), the final invoice is the first application. CTA "Demo buchen" (book a demo) with appointment selection and consent checkbox (decision Maxi D., 22.10.); no prices, no packages. Background in dossier v3 section 9.
 
-## Wenn es um den Bau geht
+## When it is about the build
 
-Stufen 0 bis 4 und Demo-Skript (3 Minuten) stehen in Dossier v3 Abschnitt 15. Stufe 0 (Einspielen) reicht für die Gates R2, R3 und R5. Der WhatsApp Prototyp ist optional. Das Git Repository gehört nicht in OneDrive.
+Stages 0 to 4 and the demo script (3 minutes) are in dossier v3 section 15. Stage 0 (Import) is sufficient for gates R2, R3 and R5. The WhatsApp prototype is optional. The Git repository does not belong in OneDrive.
 
-Produktstand, Plan und Regeln für den Code: `product/README.md`, `product/app/CLAUDE.md`. Beträge der Demo nur aus `product/docs/Demo_Faelle.md` und dem Rechenkern.
+Product status, plan and rules for the code: `product/README.md`, `product/app/CLAUDE.md`. Demo amounts only from `product/docs/Demo_Faelle.md` and the calculation core.
 
-## Gates (Termine unverändert)
+## Gates (dates unchanged)
 
-R1 Insider (Term Sheet Fr 20.11.2026, hart Fr 4.12.), R4 Recht (Fr 4.12.), R2 Ordner (Fr 11.12.), R3 Geld (Fr 22.1.2027), R5 Zahlung (Fr 29.1.2027), Endentscheid So 31.1.2027. Details in Dossier v3 Abschnitt 13.
+R1 Insider (term sheet Fri 20.11.2026, hard deadline Fri 4.12.), R4 Legal (Fri 4.12.), R2 Folder (Fri 11.12.), R3 Money (Fri 22.1.2027), R5 Payment (Fri 29.1.2027), final decision Sun 31.1.2027. Details in dossier v3 section 13.

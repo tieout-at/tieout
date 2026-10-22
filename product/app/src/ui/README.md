@@ -1,45 +1,45 @@
-# Bauteile der App
+# App components
 
-Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und die Vorlage jedes Bauteils aus v2 stehen in `../../../ui-fundament/project/README.md`; neue oder geänderte Bauteile stehen hier, jeweils mit Vorlage.
+Since 22.10.2026 the app is the source of the UI foundation. Rules, terms and the reference for every component from v2 are in `../../../ui-fundament/project/README.md`; new or changed components are listed here, each with its reference.
 
-| Bauteil | Datei | Vorlage |
+| Component | File | Reference |
 |---|---|---|
-| Marke Tieout (23.10.): Bildmarke und Wortmarke oben in der Seitenleiste, darunter die Firma als Arbeitsbereich; eingeklappt nur die Bildmarke | `Logo.tsx` | Kopf der Website (`website/components/ui/Logo.tsx`), Linear (Marke oben, Arbeitsbereich darunter) |
-| Einstellungen (23.10.): Abschnitte mit Zeilen, Bezeichnung links, Wert rechts, Linien statt Kästen; Profil und Mitglieder nur mit Anmeldung | `Einstellungen.tsx`, `konto.css` | Linear „Settings“, Attio „Workspace settings“ |
-| Anmeldeseite (23.10., per Schalter aus): Papier mit Planraster, eckige Knöpfe in Ultramarin wie die Website, eine schmale Spalte | `Anmelden.tsx`, `konto.css` | Website tieout, Linear-Anmeldung |
-| Rahmen (23.10.): Seitenleiste und Inhalt, Anmeldeseite ohne Rahmen | `Rahmen.tsx` | Linear, Attio |
-| Seitenleiste: Firma oben, Projekte als Baum ohne Ampelpunkt (Ampel-Wort im Tooltip), aktives Projekt aufgeklappt | `Seitenleiste.tsx` | Linear (Arbeitsbereich oben, „Your teams“ als Baum, aktiver Eintrag als Fläche, Zähler rechts), Attio (Gruppen-Label) |
-| Seitenkopf | `Seitenkopf.tsx` | Linear-Kopfzeile, Attio |
-| Kennzahl | `Kennzahl.tsx` | reebuild-Projektübersicht R-C, Stripe-Übersicht. Seit 23.10. ohne Linien und Trenner, nur Abstand; am Handy waagrecht scrollbar mit Randblende |
-| Panel | `Panel.tsx` | Linear, Attio (Rand statt Schatten) |
-| Statusmarke | `Statusmarke.tsx` | Linear-Labels |
-| Stand | `Stand.tsx` | Linear-Statusspalte, reebuild-Freigabe |
-| Schrittleiste (Ablauf, 22.10. neu) | `Schrittleiste.tsx`, `ablauf.css` | Linear-Projekt „Milestones“ (Spalten mit Zahl), Stripe-Zahlungszeitleiste (Marke auf einer Linie), reebuild R-E (feste, nummerierte Schritte). Gewählt gegen Stripe-Setup-Checkliste (senkrecht, zu viel Höhe und Text) und reebuild-Pillen (nur Status, keine Zahl). Jeder Schritt zeigt die Zahl aus dem Rechenkern und ist als Ganzes ein Link (Ordner, Ordner, Ledger, Befunde). Schritt 4: ein Strich je Posten in fester Reihenfolge, gefärbt nach Stand (statt Prozentring ohne Inhalt) |
-| Befundtabelle | `BefundTabelle.tsx` | Linear „Group by“, reebuild R-B, Ramp (Hinweis an der Zeile) |
-| Zeilennavigation | `Zeilennavigation.tsx` | Linear (Klick, Enter, j/k) |
-| Zeitachse | `Zeitachse.tsx` | Linear-Aktivität (Symbol auf der Linie), Attio-Zeitleiste (Monatsköpfe), Filter als Reiter mit Zähler |
-| Zuruf-Szene (Mock) | `ZurufSzene.tsx` | Chat eines Messengers, neutral ohne fremde Marke; Papierfarben wie Belege |
-| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear „Group by“, Attio-Suche über der Tabelle. Zeile 36 px, Kopf 32 px ohne Fläche, feste Spalten (`.tab-liste`); am Handy blendet der rechte Rand aus, solange Spalten folgen (`.tw`, `.ledger-rahmen`, gesteuert vom Bildlauf); Spalte „Nächste AR“ zeigt die Menge aus dem Rechenkern, keine Marke je Zeile |
-| Belegmatrix und Dokumentliste | `Ordner.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B. Einzeilig, leere Zelle heißt kein Beleg (kein Wort), Zeile mit Befund öffnet ihn per Klick, Enter, j/k |
-| **Projektliste mit Ampel** (neu) | `../app/page.tsx` | Linear-Projektliste (Gruppen nach Zustand, Zähler im Gruppenkopf), reebuild R-B (Beträge rechtsbündig, Summen), Statusmarke für die Ampel |
+| Brand Tieout (23.10.): logo mark and wordmark at the top of the sidebar, below it the company as workspace; collapsed shows only the logo mark | `Logo.tsx` | Website header (`website/components/ui/Logo.tsx`), Linear (brand at the top, workspace below) |
+| Settings (23.10.): sections with rows, label on the left, value on the right, lines instead of boxes; profile and members only with sign-in | `Einstellungen.tsx`, `konto.css` | Linear "Settings", Attio "Workspace settings" |
+| Sign-in page (23.10., switched off): paper with plan grid, square buttons in ultramarine like the website, one narrow column | `Anmelden.tsx`, `konto.css` | Website tieout, Linear sign-in |
+| Frame (23.10.): sidebar and content, sign-in page without frame | `Rahmen.tsx` | Linear, Attio |
+| Sidebar: company at the top, projects as a tree without a traffic-light dot (traffic-light word in the tooltip), active project expanded | `Seitenleiste.tsx` | Linear (workspace at the top, "Your teams" as a tree, active entry as an area, counter on the right), Attio (group label) |
+| Page header | `Seitenkopf.tsx` | Linear header, Attio |
+| Key figure | `Kennzahl.tsx` | reebuild project overview R-C, Stripe overview. Since 23.10. without lines and dividers, spacing only; on the phone horizontally scrollable with an edge fade |
+| Panel | `Panel.tsx` | Linear, Attio (border instead of shadow) |
+| Status marker | `Statusmarke.tsx` | Linear labels |
+| Status | `Stand.tsx` | Linear status column, reebuild approval |
+| Step bar (flow, new 22.10.) | `Schrittleiste.tsx`, `ablauf.css` | Linear project "Milestones" (columns with a number), Stripe payment timeline (marker on a line), reebuild R-E (fixed, numbered steps). Chosen over the Stripe setup checklist (vertical, too much height and text) and reebuild pills (status only, no number). Every step shows the number from the calculation core and is a link as a whole (folder, folder, ledger, findings). Step 4: one stroke per item in a fixed order, colored by status (instead of a progress ring without content) |
+| Findings table | `BefundTabelle.tsx` | Linear "Group by", reebuild R-B, Ramp (notice on the row) |
+| Row navigation | `Zeilennavigation.tsx` | Linear (click, Enter, j/k) |
+| Timeline | `Zeitachse.tsx` | Linear activity (icon on the line), Attio timeline (month headers), filters as tabs with counters |
+| Field report scene (Zuruf, mock) | `ZurufSzene.tsx` | Messenger chat, neutral without a third-party brand; paper colors like evidence (Belege) |
+| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear "Group by", Attio search above the table. Row 36 px, header 32 px without fill, fixed columns (`.tab-liste`); on the phone the right edge fades out while more columns follow (`.tw`, `.ledger-rahmen`, controlled by scrolling); column „Nächste AR“ (next interim invoice) shows the quantity from the calculation core, no marker per row |
+| Evidence matrix and document list | `Ordner.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B. Single line, an empty cell means no evidence (no word), a row with a finding (Befund) opens it via click, Enter, j/k |
+| **Project list with traffic light** (new) | `../app/page.tsx` | Linear project list (groups by state, counter in the group header), reebuild R-B (amounts right-aligned, totals), status marker for the traffic light |
 
-## Projektliste mit Ampel
+## Project list with traffic light
 
-- Eine Zeile pro Projekt, einzeilig (36 px): Kurzzeichen (gedämpft, feste Breite) und Name, Auftraggeber als eigene gedämpfte Spalte, Ampel als Wort, Datum, Auftrag, die zwei Listen getrennt.
-- Handy (bis 640 px): Kopf mit „Projekt“ und „Jetzt verrechenbar“; je Projekt oben Name und Betrag, darunter Ampel und Datum (Linear mobil: Titel mit Metazeile).
-- Gruppen: „Im Abgleich“ mit Beträgen je Projekt, „Schlussrechnung gelegt oder abgeschlossen“ ohne Beträge, Gruppenkopf nur mit Zähler. Letzte Zeile: Summen aller Projekte aus dem Rechenkern.
-- **Ampel als Wort ohne Punkt**, Farbe nur als Schriftfarbe bei „Bald legen“ und „Beträge offen“ (seit Politur 22.10., `marken.css`). Regel im Rechenkern (`engine/firma.ts`), Wörter fest:
+- One row per project, single line (36 px): short code (muted, fixed width) and name, client (Auftraggeber) as a separate muted column, traffic light as a word, date, contract, the two lists separately.
+- Phone (up to 640 px): header with „Projekt“ (project) and „Jetzt verrechenbar“ (billable now); per project name and amount at the top, traffic light and date below (Linear mobile: title with meta line).
+- Groups: „Im Abgleich“ (in reconciliation) with amounts per project, „Schlussrechnung gelegt oder abgeschlossen“ (final invoice submitted or closed) without amounts, group header with counter only. Last row: totals of all projects from the calculation core.
+- **Traffic light as a word without a dot**, color only as text color for „Bald legen“ and „Beträge offen“ (since the polish on 22.10., `marken.css`). Rule in the calculation core (`engine/firma.ts`), fixed words:
 
-| Ampel | Wort | Token | Bedeutung |
+| Traffic light | Word | Token | Meaning |
 |---|---|---|---|
-| rot | Bald legen | `neg` | Schlussrechnung legen bis höchstens 21 Tage nach dem Stichtag und Beträge offen |
-| gelb | Beträge offen | `warn` | jetzt verrechenbar oder angemeldet und offen über 0 |
-| grün | Nichts offen | `pos` | beide Listen 0 |
-| grau | Kein Abgleich | neutral | Schlussrechnung gelegt oder abgeschlossen |
+| red | Bald legen (submit soon) | `neg` | deadline to submit the final invoice (Schlussrechnung) at most 21 days after the reference date, and amounts open |
+| yellow | Beträge offen (amounts open) | `warn` | billable now or notified and open above 0 |
+| green | Nichts offen (nothing open) | `pos` | both lists 0 |
+| gray | Kein Abgleich (no reconciliation) | neutral | final invoice submitted or closed |
 
-`neg` und `pos` bekommen hier eine zusätzliche Bedeutung (sonst: blockiert/Rechenfehler bzw. bestätigt). Das Wort trägt die Bedeutung; die Farbe ist nur Verstärkung.
-- Kein Countdown, nur das Datum. Unbekannte Werte bleiben leer, nie „–“.
+`neg` and `pos` take on an additional meaning here (otherwise: blocked/calculation error and confirmed respectively). The word carries the meaning; the color is only reinforcement.
+- No countdown, only the date. Unknown values stay empty, never „–“.
 
-## Text in der Oberfläche
+## Text in the interface
 
-Wenig Text: keine Einleitungssätze, keine Erklärsätze, keine Trennpunkte „·“, keine Gedankenstriche. Eine Information pro Zelle; Bedeutung über Spaltenkopf, Gruppenkopf und Tooltip. `fundament.test.ts` prüft das.
+Little text: no introductory sentences, no explanatory sentences, no separator dots „·“, no dashes as punctuation. One piece of information per cell; meaning comes from the column header, group header and tooltip. `fundament.test.ts` checks this.

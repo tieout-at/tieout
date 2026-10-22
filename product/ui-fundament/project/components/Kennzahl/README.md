@@ -1,10 +1,10 @@
 # Kennzahl
 
-Die drei Listen als Beträge: Label, Betrag, eine Kontextzeile.
+The three lists as amounts: label, amount, one line of context.
 
-**Vorlage:** reebuild-Projektübersicht (Label in Großbuchstaben, großer Betrag, eine Zeile Kontext). Abweichung: reebuild setzt weiche Schatten, wir einen Rand `line-strong` (Linear, Attio).
+**Reference:** reebuild project overview (label in capitals, large amount, one line of context). Deviation: reebuild uses soft shadows, we use a `line-strong` border (Linear, Attio).
 
-**Verwenden**
-- Label `label`, Betrag `kpi` mit Tabellenziffern, Kontext `meta`.
-- Genau drei Karten; die Vorprüfung gehört nicht in diese Reihe, weil sie sich mit „Jetzt verrechenbar“ überschneidet.
-- Beträge immer mit geschütztem Leerzeichen vor dem €: „27.410,00 €“.
+**Usage**
+- Label `label`, amount `kpi` with tabular figures, context `meta`.
+- Exactly three cards; the pre-check (Vorprüfung) does not belong in this row because it overlaps with „Jetzt verrechenbar“ (billable now).
+- Amounts always with a non-breaking space before the €: „27.410,00 €“.

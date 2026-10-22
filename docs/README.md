@@ -1,6 +1,6 @@
 # Documents
 
-Internal working documents on product, market, legal and planning, outside the code. These are working papers of the team and are kept in German. The current reference is [`dossier-v3.md`](dossier-v3.md); where older documents differ, v3 applies.
+Internal working documents on product, market, legal and planning, outside the code. These are working papers of the team and are written in English. The current reference is [`dossier-v3.md`](dossier-v3.md); where older documents differ, v3 applies.
 
 ## Contents
 
@@ -17,7 +17,7 @@ Product documents (plan, scope, reference solution of the demo, review reports) 
 ## Rules
 
 - New research goes to `research_notes/`, superseded material to `archiv/`.
-- Every statement about the world needs a source. Anything marked "(unbelegt)" or "(Annahme)" in the dossier is unverified and is not passed on as fact.
+- Every statement about the world needs a source. Anything marked "(unverified)" or "(assumption)" in the dossier is unverified and is not passed on as fact.
 - Section 12 of dossier v3 is decided. Nothing from it is proposed again without new evidence.
 
 ## Planned

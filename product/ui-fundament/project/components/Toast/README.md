@@ -1,9 +1,9 @@
 # Toast
 
-Kurze Bestätigung nach einer Entscheidung, mit Rückgängig; verschwindet nach 5 Sekunden.
+Short confirmation after a decision, with undo; disappears after 5 seconds.
 
-**Vorlage:** Linear (dunkler Toast unten, Rückgängig im Toast), Playbook-Regel „Rückgängig statt Bestätigungsdialog“.
+**Reference:** Linear (dark toast at the bottom, undo in the toast), playbook rule „Rückgängig statt Bestätigungsdialog“ (undo instead of a confirmation dialog).
 
-**Verwenden**
-- Ein Satz mit dem festen Begriff: „Übernommen: …“, „Freigegeben: …“, „Braucht Anwalt: …“.
-- Rückgängig nimmt den letzten Eintrag im Verlauf zurück; mehrere Schritte nacheinander sind möglich.
+**Usage**
+- One sentence with the fixed term: „Übernommen: …“ (accepted), „Freigegeben: …“ (approved), „Braucht Anwalt: …“ (needs lawyer).
+- Undo reverts the last entry in the history; several steps in a row are possible.
