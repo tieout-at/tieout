@@ -35,15 +35,16 @@ data/zwilling.json   synthetische Daten für den Zwilling
 
 Texte nur in `messages/` ändern, nie im Code. Neue Platzhalter immer als `[[PLATZHALTER: …]]` (Deutsch) bzw. `[[PLACEHOLDER: …]]` (Englisch).
 
-## Online-Vorschau
+## Online
 
-**https://vorschau.endpoint-preview.pages.dev** (Deutsch) und `/en/` (Englisch).
+**https://endpoint-preview.pages.dev** (Deutsch) und `/en/` (Englisch). Offen erreichbar, ohne Passwort (Entscheidung Maxi D., 22.10.2026).
 
-- Geschützt mit Cloudflare Access: Wer die Seite öffnet, meldet sich mit einer freigegebenen Mailadresse an und bekommt einen Einmal-Code.
-- Gehostet im privaten Cloudflare-Konto von Maxi D., Pages-Projekt `endpoint-preview`. Hochgeladen wird nur als Vorschau-Branch `vorschau`, denn Cloudflare schützt per Schalter nur Vorschauen. Die Hauptadresse `endpoint-preview.pages.dev` bleibt bewusst leer.
-- Freigegeben (Stand 22.10.): Maximilian Dieringer, Santino Schrader, Simon Fuhrbach. Maximilian Seipl fehlt noch. Weitere Personen kommen in Zero Trust → Access → Applications → `endpoint-preview` → Policies dazu.
-- Umzug auf ein Firmenkonto: dort ein Pages-Projekt anlegen und `deploy:vorschau` mit dem neuen Projektnamen ausführen.
+- Gehostet im privaten Cloudflare-Konto von Maxi D., Pages-Projekt `endpoint-preview`.
+- `npm run deploy` aktualisiert die öffentliche Seite.
+- `npm run deploy:geschuetzt` lädt nur auf `vorschau.endpoint-preview.pages.dev`. Diese Adresse bleibt per Cloudflare Access geschützt (Login per Mail-Code) und eignet sich für Entwürfe, die noch nicht offen sein sollen.
+- `noindex` bleibt gesetzt: Suchmaschinen nehmen die Seite nicht auf. Wer den Link hat, kann sie aber öffnen.
+- Umzug auf ein Firmenkonto: dort ein Pages-Projekt anlegen und die Skripte mit dem neuen Projektnamen ausführen.
 
 ## Stand
 
-Vorschau, nicht öffentlich: `noindex`, Hinweis „Vorschau. Nicht öffentlich.“ unten links. Formular versendet noch nichts. Impressum, Datenschutz, Rechtsform, Domain, Team-Rollen und Video sind Platzhalter.
+Vorschau, per Link öffentlich erreichbar, `noindex`. Hinweis „Vorschau“ unten links. Formular versendet noch nichts. Impressum, Datenschutz, Rechtsform, Domain, Team-Rollen und Video sind Platzhalter.
