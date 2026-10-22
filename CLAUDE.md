@@ -12,7 +12,7 @@ Drei Angebote: Check (ein Projekt rückwirkend), Desk bzw. Jahresdesk (alle schl
 
 ## Wer arbeitet hier
 
-Maxi (Maximilian Dieringer, WU Wien, Wirtschaftsinformatik) ist einer von drei Gründern. Er baut die Website und das Produkt mit KI Coding Agenten. Später kommen CI, endgültiger Name und Hosting dazu. Die beiden Co-Founder haben keinen Bauhintergrund. Auf GitHub arbeiten mit: @MaximilianDieringer, @Snoft, @maxi589, alle gleichberechtigt. Ein Bau-Insider ist Pflicht (Gate R1).
+Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maximilian Seipl, Santino Schrader, Simon Fuhrbach. Maxi baut Website und Produkt mit KI Coding Agenten. Niemand im Team hat Bauhintergrund. Auf GitHub (Organisation `schlusswerk`): @MaximilianDieringer, @Snoft, @maxi589, alle gleichberechtigt; Simon folgt. Ein Bau-Insider ist Pflicht (Gate R1).
 
 ## Aufbau des Repositorys
 
@@ -41,11 +41,12 @@ Wo v2 und v3 abweichen, gilt v3.
 6. **Vertrieb:** Keine Kaltmails, keine Kaltanrufe (§ 174 TKG). Persönlich, Brief, Events, Partner, Webformular mit Einwilligung.
 7. **Produktprinzipien:** Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnung ist deterministischer Code. Jede Zahl führt per Klick zum Original. Der Zwilling hat Historie, nichts wird überschrieben. Datensilo pro Firma.
 8. **Daten:** Bis zur schriftlichen Rechtsklärung (Gate R4) und zur Klärung mit dem Betriebsrat nur synthetische Daten. Keine echten Kundendaten in dieses Repository.
-9. **Preise nach außen:** Nur der Einstiegspreis („Check ab 1.500 €, fix“). Das Jahresdesk gibt es im Gespräch.
+9. **Preise und Angebote nach außen:** GTM und Monetarisierung sind offen. Keine Preise, keine Pakete, kein „Check anfragen“ in öffentlichem Material, bis das Team entscheidet.
+10. **Platzhalter:** Was noch nicht bekannt ist, steht als `[[PLATZHALTER: …]]` im Text, nie erfunden. Vor jeder Veröffentlichung darf `grep -r "PLATZHALTER"` im veröffentlichten Teil nichts finden.
 
 ## Wenn es um die Website geht
 
-Die Website muss das Kernprodukt in einem Satz erklären können: der digitale Zwilling des Betriebs, erste Anwendung Schlussrechnung. Positionierung, Zielgruppen (Inhaber, Abrechner, Projektleiter), Vertrauensleiste (EU-Hosting, AVV, Datensilo, „wir reden nie mit eurem GU“) und CTA („Check anfragen“ mit Einwilligungs-Häkchen) stehen in Dossier v3 Abschnitt 9. Offen und bewusst noch nicht festgelegt: Name, CI, Hosting. Der Name „Schlusswerk“ passt zur ersten Anwendung, nicht automatisch zum Kernprodukt.
+Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „EndPoint.“, CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA neutral („Kontakt aufnehmen“) mit Einwilligungs-Häkchen. Hintergrund in Dossier v3 Abschnitt 9.
 
 ## Wenn es um den Bau geht
 

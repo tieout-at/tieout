@@ -1,5 +1,5 @@
 # Website
 
-Muss das Kernprodukt in einem Satz erklären: der digitale Zwilling des Betriebs, erste Anwendung Schlussrechnung. Positionierung, Zielgruppen, Vertrauensleiste und CTA („Check anfragen“ mit Einwilligungs-Häkchen) stehen in `docs/dossier-v3.md`, Abschnitt 9.
+Arbeitstitel **EndPoint.** Verbindliche Struktur, CI, Abschnitte, Interaktion und Platzhalter: [`STRUKTUR.md`](STRUKTUR.md). Noch nicht gebaut.
 
-Offen: Name, CI, Hosting. Pflicht vor dem Livegang: Impressum und Datenschutzerklärung.
+Kurz: Die Website erklärt den digitalen Zwilling des Betriebs (Schlussrechnung als erste Anwendung), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, keine Preise und keine Angebote, solange GTM offen ist. Unbekanntes steht als `[[PLATZHALTER: …]]` im Text. Nicht öffentlich, solange Impressum und Datenschutz Platzhalter sind.
