@@ -150,12 +150,22 @@ export function regie(k: Kontext): Befund[] {
 
 /**
  * Regie, die nur als Zuruf belegt ist: kein Regiebericht, keine Unterschrift → angemeldet und offen.
+ * Nur Zurufe ohne Bezug zu einer LV-Position oder einem vorhandenen Regiebericht (sonst sind sie Beleg dort),
+ * mit genannten Stunden und noch nicht als Regiezeile mit der Zuruf-Nummer verrechnet.
  * Bepreist mit den Regiesätzen des Vertrags; Material nur, wenn der Zuruf es nennt (hier nie).
  */
 export function zurufRegie(k: Kontext): Befund[] {
   const v = k.d.vertrag;
+  const berichte = new Set(k.d.regie.map((r) => r.nr.wert));
   return k.d.zurufe
-    .filter((z) => !z.bezugRegie && z.stundenMonteur.wert + z.stundenHelfer.wert > 0 && vorGrenze(k, z.zeitpunkt.slice(0, 10)))
+    .filter(
+      (z) =>
+        z.bezugPositionen.wert.length === 0 &&
+        !(z.bezugRegie && berichte.has(z.bezugRegie.wert)) &&
+        z.stundenMonteur.wert + z.stundenHelfer.wert > 0 &&
+        !k.regieVerrechnet.has(z.nr) &&
+        vorGrenze(k, z.zeitpunkt.slice(0, 10)),
+    )
     .map((z) => {
       const m = stundenBetrag(z.stundenMonteur.wert, v.regiesatzMonteur.wert);
       const h = stundenBetrag(z.stundenHelfer.wert, v.regiesatzHelfer.wert);

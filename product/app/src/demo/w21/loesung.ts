@@ -98,4 +98,4 @@ export const SOLL_ZAHLUNGEN = [28_413_421, 38_099_814, 32_197_390];
 
 export const SOLL_IMPORT = { dokumente: 165, duplikate: 12, eindeutig: 153, planIndizes: ["C", "D", "E"], korrigierteFelder: 31 };
 
-export const SOLL_REGIE = { gesamt: 16, verrechnet: 11, unterschriebenNichtVerrechnet: 3, nichtUnterschrieben: 2 };
+export const SOLL_REGIE = { gesamt: 16, verrechnet: 11, unterschriebenNichtVerrechnet: 3, nichtUnterschrieben: 2, nachGrenze: 0 };

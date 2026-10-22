@@ -165,9 +165,9 @@ const P5 = def(
   },
 );
 
-/** Projekte ohne Abgleich (Schlussrechnung gelegt oder abgeschlossen): nur Stammdaten, Vertrag und LV. */
-function ohneAbgleich(p: Projekt, vertragDatum: string, auftragssumme: number, positionen: PosDef[]): ProjektDef {
-  return def(p, { vertragDatum, auftragssumme, positionen, blaetter: [], regie: [], abschlaege: [], entwurf: null });
+/** Projekte ohne Abgleich (Schlussrechnung gelegt oder abgeschlossen): Stammdaten, Vertrag, LV, ggf. Regie. */
+function ohneAbgleich(p: Projekt, vertragDatum: string, auftragssumme: number, positionen: PosDef[], regie: ProjektDef["regie"] = []): ProjektDef {
+  return def(p, { vertragDatum, auftragssumme, positionen, blaetter: [], regie, abschlaege: [], entwurf: null });
 }
 
 const P6 = ohneAbgleich(
@@ -175,6 +175,8 @@ const P6 = ohneAbgleich(
   "2025-06-18",
   34_000_000,
   [STAHLROHR(60_000), HK_TYP11(8_400), WASCHTISCH(3_600)],
+  // Gegenprobe: würde ohne die Regel „gelegt = kein Abgleich“ als Befund auftauchen
+  [{ nr: "RB-04", datum: "2026-07-23", text: "Heizungsanlage nachgeregelt", m: 400, h: 0, material: 0, unterschrieben: true }],
 );
 
 const P7 = ohneAbgleich(
@@ -215,6 +217,7 @@ export function erzeugeKleineProjekte(): Datensatz[] {
 
 export function erzeugeFirma(): Firmendaten {
   return {
+    synthetisch: true,
     firma: { id: "haustechnik-beispiel", name: "Haustechnik Beispiel GmbH", gewerk: "HKLS", sitz: "Wien" },
     auftraggeber: AUFTRAGGEBER,
     projekte: [erzeugeW21(), ...erzeugeKleineProjekte()],

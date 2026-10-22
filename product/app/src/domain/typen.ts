@@ -407,6 +407,8 @@ export interface Datensatz {
 
 /** Der Firmenzwilling: Firma, Auftraggeber und alle Projekte. Ein Datensilo pro Firma. */
 export interface Firmendaten {
+  /** Synthetische Demo-Daten: jede Seite trägt dann die Marke „Synthetisch“. */
+  synthetisch: boolean;
   firma: Firma;
   auftraggeber: Auftraggeber[];
   projekte: Datensatz[];

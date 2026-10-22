@@ -40,7 +40,8 @@ export function baueLedger(k: Kontext): LedgerZeile[] {
   return k.d.lv.map((p) => {
     const nr = p.nr.wert;
     const ep = p.ep.wert;
-    const aufmass = aufmassMenge(k, nr);
+    const aufmass = aufmassMenge(k, nr, true);
+    const naechsteAr = aufmassMenge(k, nr) - aufmass;
     const verrechnet = verrechnetMenge(k, nr);
     const verrechnetBetrag = verrechneteZeilen(k, nr).reduce((s, f) => s + f.zeile.betrag.wert, 0);
     const arZeilen = k.abschlaege.get(nr) ?? [];
@@ -56,6 +57,7 @@ export function baueLedger(k: Kontext): LedgerZeile[] {
       ep,
       lvMenge: p.menge.wert,
       aufmassMenge: aufmass,
+      naechsteArMenge: naechsteAr,
       verrechnetMenge: verrechnet,
       verrechnetBetrag,
       inAbschlaegenMenge: inAbschlaegen,

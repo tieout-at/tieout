@@ -4,7 +4,7 @@ import type { Datensatz } from "@/domain/typen";
 import { alleBefunde } from "./befunde";
 import { belegquellen, nurAusserhalbErp } from "./belegquelle";
 import { kaskade } from "./kaskade";
-import { baueKontext } from "./kontext";
+import { baueKontext, vorGrenze } from "./kontext";
 import { baueLedger, importStand } from "./ledger";
 import type { Ergebnis } from "./typen";
 import { hinweise, vorpruefung } from "./vorpruefung";
@@ -23,8 +23,10 @@ export function pruefe(d: Datensatz): Ergebnis {
     befundSchluessel: befunde.find((b) => b.positionNr === z.positionNr)?.schluessel ?? null,
   }));
   const summe = (liste: string) => befunde.filter((b) => b.liste === liste).reduce((s, b) => s + (b.betrag ?? 0), 0);
-  const unterschriebenNichtVerrechnet = d.regie.filter((r) => r.unterschriftAG.wert && !k.regieVerrechnet.has(r.nr.wert)).length;
-  const nichtUnterschrieben = d.regie.filter((r) => !r.unterschriftAG.wert && !k.regieVerrechnet.has(r.nr.wert)).length;
+  const offeneRegie = d.regie.filter((r) => !k.regieVerrechnet.has(r.nr.wert));
+  const bisGrenze = offeneRegie.filter((r) => vorGrenze(k, r.datum.wert));
+  const unterschriebenNichtVerrechnet = bisGrenze.filter((r) => r.unterschriftAG.wert).length;
+  const nichtUnterschrieben = bisGrenze.filter((r) => !r.unterschriftAG.wert).length;
 
   const quellen = Object.fromEntries(befunde.map((b) => [b.schluessel, belegquellen(d, b)]));
   const mitBetrag = befunde.filter((b) => (b.liste === "jetzt" || b.liste === "offen") && b.betrag !== null);
@@ -53,6 +55,7 @@ export function pruefe(d: Datensatz): Ergebnis {
       verrechnet: d.regie.filter((r) => k.regieVerrechnet.has(r.nr.wert)).length,
       unterschriebenNichtVerrechnet,
       nichtUnterschrieben,
+      nachGrenze: offeneRegie.length - bisGrenze.length,
     },
   };
 }

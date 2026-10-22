@@ -193,7 +193,7 @@ export function hinweise(k: Kontext, befunde: Befund[]): Hinweis[] {
     if (!b.positionNr || (b.art !== "mehrmenge" && b.art !== "mehrmenge_plan")) continue;
     const p = k.lv.get(b.positionNr);
     if (!p || p.menge.wert <= 0) continue;
-    const aenderung = rundeHalbAuf((aufmassMenge(k, b.positionNr) - p.menge.wert) * 10000, p.menge.wert);
+    const aenderung = rundeHalbAuf((aufmassMenge(k, b.positionNr, true) - p.menge.wert) * 10000, p.menge.wert);
     if (aenderung <= 2000) continue;
     ergebnis.push({
       schluessel: `mengenaenderung:${b.positionNr}`,

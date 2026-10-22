@@ -27,10 +27,13 @@ export interface Kontext {
   /** Rechnungsnummern mit Zahlung. */
   bezahlteRechnungen: Set<string>;
   /**
-   * Ohne Entwurf (Projekt in Ausführung): Datum der letzten Abschlagsrechnung. Nur Leistung davor gilt als
-   * vergessen; neuere Leistung kommt in die nächste AR und ist kein Befund. Mit Entwurf: null (alles zählt).
+   * Ohne Entwurf (Projekt in Ausführung): Datum der letzten Abschlagsrechnung. Nur Leistung bis einschließlich
+   * dieses Tages gilt als vergessen; neuere Leistung kommt in die nächste AR und ist kein Befund.
+   * Mit Entwurf: null (alles zählt).
    */
   grenze: string | null;
+  /** Weder Entwurf noch AR: Es wurde noch nichts abgerechnet, also kann auch nichts vergessen sein. */
+  nochNichtsAbgerechnet: boolean;
 }
 
 function anhaengen<K, V>(m: Map<K, V[]>, k: K, v: V) {
@@ -70,15 +73,18 @@ export function baueKontext(d: Datensatz): Kontext {
   const arDaten = d.abschlaege.map((r) => r.datum.wert).sort();
   const grenze = d.entwurf ? null : (arDaten.at(-1) ?? null);
 
-  return { d, lv, aufmass, entwurf, abschlaege, regieVerrechnet, kuerzungen, bezahlteRechnungen, grenze };
+  const nochNichtsAbgerechnet = !d.entwurf && d.abschlaege.length === 0;
+
+  return { d, lv, aufmass, entwurf, abschlaege, regieVerrechnet, kuerzungen, bezahlteRechnungen, grenze, nochNichtsAbgerechnet };
 }
 
-/** Liegt ein Datum vor der Grenze (oder gibt es keine)? */
+/** Liegt ein Datum bis einschließlich der Grenze (oder gibt es keine)? Ohne jede Abrechnung: nie. */
 export function vorGrenze(k: Kontext, datum: string): boolean {
-  return k.grenze === null || datum < k.grenze;
+  if (k.nochNichtsAbgerechnet) return false;
+  return k.grenze === null || datum <= k.grenze;
 }
 
-/** Aufgemessene Menge einer Position; mit `nurVorGrenze` nur aus Blättern vor der letzten AR. */
+/** Aufgemessene Menge einer Position; mit `nurVorGrenze` nur aus Blättern bis zur letzten AR. */
 export function aufmassMenge(k: Kontext, nr: string, nurVorGrenze = false): number {
   return (k.aufmass.get(nr) ?? [])
     .filter((f) => !nurVorGrenze || vorGrenze(k, f.blatt.datum.wert))

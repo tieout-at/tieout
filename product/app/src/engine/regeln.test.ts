@@ -193,6 +193,28 @@ describe("Zurufe", () => {
     expect(pruefe(d).befunde).toEqual([]);
   });
 
+  it("Zuruf mit LV-Position und Stunden ist Beleg der Position, kein zweiter Posten", () => {
+    const d = miniDatensatz();
+    d.aufmass[0].zeilen[1].menge = f(1_200);
+    d.zurufe.push(zuruf({ bezugPositionen: f(["22.01.02A"]) }));
+    const e = pruefe(d);
+    expect(e.befunde.map((b) => b.schluessel)).toEqual(["mehrmenge:22.01.02A"]);
+    expect(e.befunde[0].belege.map((b) => b.titel)).toContain("Zuruf Z1");
+  });
+
+  it("Zuruf mit Verweis auf einen fehlenden Regiebericht wird eigener Posten, nicht verschluckt", () => {
+    const d = miniDatensatz();
+    d.zurufe.push(zuruf({ bezugRegie: f("RB-99") }));
+    expect(pruefe(d).befunde.map((b) => b.schluessel)).toEqual(["zuruf:Z1"]);
+  });
+
+  it("Zuruf-Regie, die mit der Zuruf-Nummer verrechnet ist, ist kein Posten mehr", () => {
+    const d = miniDatensatz();
+    d.zurufe.push(zuruf({}));
+    d.entwurf!.zeilen.push({ typ: "regie", regieNr: f("Z1"), betrag: f(68_700) });
+    expect(pruefe(d).befunde).toEqual([]);
+  });
+
   it("Zuruf hängt als Beleg am Regiebericht", () => {
     const d = miniDatensatz();
     d.entwurf!.zeilen = d.entwurf!.zeilen.filter((z) => z.typ !== "regie");
@@ -232,11 +254,53 @@ describe("Projekt in Ausführung (ohne Entwurf)", () => {
     expect(pruefe(d).befunde.map((b) => [b.schluessel, b.art, b.betrag])).toEqual([["nicht_verrechnet:22.01.01A", "nicht_verrechnet", 20_000]]);
   });
 
+  it("Leistung am Tag der letzten AR zählt mit (bis einschließlich)", () => {
+    const d = laufend();
+    d.aufmass.push({ ...d.aufmass[0], nr: "AB-02", datum: f("2026-06-30"), zeilen: [{ positionNr: f("22.01.02A"), menge: f(200), ort: f("St. 2") }] });
+    expect(pruefe(d).befunde.map((b) => [b.schluessel, b.betrag])).toEqual([["mehrmenge:22.01.02A", 10_000]]);
+    d.abschlaege[0].zeilen[1] = { typ: "lv", positionNr: f("22.01.02A"), menge: f(1_200), ep: f(5_000), betrag: f(60_000) };
+    expect(pruefe(d).befunde).toEqual([]);
+  });
+
+  it("noch keine AR und kein Entwurf → nichts kann vergessen sein", () => {
+    const d = laufend();
+    d.abschlaege = [];
+    const e = pruefe(d);
+    expect({ befunde: e.befunde, regie: e.regie.unterschriebenNichtVerrechnet }).toEqual({ befunde: [], regie: 0 });
+  });
+
+  it("Zuruf nach der letzten AR ist kein Posten", () => {
+    const d = laufend();
+    d.zurufe.push({
+      id: "zuruf-z1",
+      nr: "Z1",
+      kanal: "whatsapp",
+      zeitpunkt: "2026-07-02T10:00",
+      absender: "Monteur, Trupp 1",
+      transkript: f("Ein Mann, vier Stunden."),
+      foto: null,
+      ort: f("Top 1"),
+      taetigkeit: f("Ventil getauscht"),
+      stundenMonteur: f(400),
+      stundenHelfer: f(0),
+      angewiesenVon: null,
+      bezugPositionen: f([]),
+      bezugRegie: null,
+      bestaetigt: { von: "Monteur, Trupp 1", zeitpunkt: "2026-07-02T10:01" },
+    });
+    expect(pruefe(d).befunde).toEqual([]);
+    d.zurufe[0].zeitpunkt = "2026-06-20T10:00";
+    expect(pruefe(d).befunde.map((b) => b.schluessel)).toEqual(["zuruf:Z1"]);
+  });
+
   it("Gegenprobe: Aufmaß und Regie nach der letzten AR sind kein Befund", () => {
     const d = laufend();
     d.aufmass.push({ ...d.aufmass[0], nr: "AB-02", datum: f("2026-07-15"), zeilen: [{ positionNr: f("22.01.02A"), menge: f(500), ort: f("St. 2") }] });
     d.regie.push({ ...d.regie[0], nr: f("RB-02"), datum: f("2026-07-10") });
-    expect(pruefe(d).befunde).toEqual([]);
+    const e = pruefe(d);
+    expect(e.befunde).toEqual([]);
+    expect(e.ledger.find((z) => z.positionNr === "22.01.02A")).toMatchObject({ differenzMenge: 0, naechsteArMenge: 500 });
+    expect(e.regie).toMatchObject({ unterschriebenNichtVerrechnet: 0, nachGrenze: 1 });
   });
 
   it("Schlussrechnung gelegt → kein Abgleich", () => {

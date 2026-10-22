@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import { SOLL_FAELLE, SOLL_FIRMA, SOLL_HINWEISE_KLEIN, SOLL_PROJEKTE } from "@/demo/firma/loesung";
-import { pruefeFirma, tageZwischen } from "./firma";
+import { ampel, pruefeFirma, tageZwischen } from "./firma";
 
 const f = erzeugeFirma();
 const e = pruefeFirma(f);
@@ -69,7 +69,15 @@ describe("Die 7 weiteren Projekte: Fälle und Gegenproben", () => {
     expect(nachKurz("P5").e.befunde).toEqual([]);
   });
 
-  it("P6 bis P8: kein Abgleich, keine Befunde", () => {
+  it("Ledger und Regie-Statistik widersprechen den Gegenproben nicht", () => {
+    expect(nachKurz("P2").e.ledger.find((z) => z.positionNr === "24.05.03A")).toMatchObject({ differenzMenge: 0, naechsteArMenge: 4_000 });
+    expect(nachKurz("P5").e.ledger.filter((z) => z.differenzMenge !== 0)).toEqual([]);
+    expect(nachKurz("P4").e.regie).toMatchObject({ unterschriebenNichtVerrechnet: 1, nachGrenze: 1 });
+    expect(nachKurz("P5").e.regie).toMatchObject({ nichtUnterschrieben: 0, nachGrenze: 1 });
+  });
+
+  it("P6 bis P8: kein Abgleich, keine Befunde (P6 hat einen nicht verrechneten Regiebericht)", () => {
+    expect(nachKurz("P6").d.regie.length).toBeGreaterThan(0);
     for (const kurz of ["P6", "P7", "P8"]) {
       const { e: x } = nachKurz(kurz);
       expect({ abgleich: x.abgleich, befunde: x.befunde.length }, kurz).toEqual({ abgleich: false, befunde: 0 });
@@ -99,6 +107,16 @@ describe("Firma: Invarianten", () => {
 
   it("Generator ist deterministisch", () => {
     expect(JSON.stringify(erzeugeFirma())).toBe(JSON.stringify(f));
+  });
+
+  it("Ampel: rot bis einschließlich 21 Tage vor dem Legen, danach gelb", () => {
+    const { d, e: x } = nachKurz("W21");
+    const mit = (legenBis: string) => ampel({ ...d, projekt: { ...d.projekt, schlussrechnungLegenBis: legenBis } }, x, "2026-10-22");
+    expect([mit("2026-11-12"), mit("2026-11-13")]).toEqual(["rot", "gelb"]);
+  });
+
+  it("nirgends in der Firma die Wörter „Claim“ oder „Forcierung“", () => {
+    expect(JSON.stringify(e)).not.toMatch(/Claim|Forcierung/i);
   });
 
   it("Tage zwischen zwei Daten", () => {

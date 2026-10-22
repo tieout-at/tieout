@@ -105,6 +105,8 @@ export interface LedgerZeile {
   verrechnetMenge: number;
   verrechnetBetrag: Cent;
   inAbschlaegenMenge: number;
+  /** Ohne Entwurf: nach der letzten AR aufgemessen, kommt in die nächste AR (kein Befund, nicht in der Differenz). */
+  naechsteArMenge: number;
   /** In bezahlten Abschlagsrechnungen enthalten, abzüglich Kürzungen des GU (vor Nachlass und Rücklässen). */
   bezahltBetrag: Cent;
   /** Aufmaß minus verrechnet. */
@@ -153,7 +155,7 @@ export interface Ergebnis {
   projektId: string;
   /** false bei gelegter Schlussrechnung oder abgeschlossenem Projekt: dann kein Abgleich, keine Befunde. */
   abgleich: boolean;
-  /** Ohne Entwurf: Datum der letzten AR; nur Leistung davor kann ein Befund sein. */
+  /** Ohne Entwurf: Datum der letzten AR; nur Leistung bis einschließlich dieses Tages kann ein Befund sein. */
   grenze: Datum | null;
   import: ImportStand;
   ledger: LedgerZeile[];
@@ -166,7 +168,8 @@ export interface Ergebnis {
   vorpruefung: Vorpruefung | null;
   hinweise: Hinweis[];
   kaskade: Kaskade | null;
-  regie: { gesamt: number; verrechnet: number; unterschriebenNichtVerrechnet: number; nichtUnterschrieben: number };
+  /** Nicht verrechnete Berichte zählen nur bis zur Grenze; spätere stehen unter „nachGrenze“ (kommen in die nächste AR). */
+  regie: { gesamt: number; verrechnet: number; unterschriebenNichtVerrechnet: number; nichtUnterschrieben: number; nachGrenze: number };
 }
 
 export type Ampel = "rot" | "gelb" | "gruen" | "grau";
