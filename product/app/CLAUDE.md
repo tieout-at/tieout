@@ -5,7 +5,7 @@ Internes Prüfwerkzeug für österreichische HKLS- und Elektro-Subunternehmer: V
 Auftraggeber ist Maxi S. (kein Entwickler): Deutsch, Ergebnis zuerst, einfache Sprache, Fachbegriffe beim ersten Mal übersetzen. Die Regeln in `../../CLAUDE.md` (Repo-Wurzel) gelten zusätzlich.
 
 ## Wo was steht
-- Strategie: `../../docs/Schlusswerk Dossier v3.md`, Abschnitt 3 (Produkt), 12 (Verworfen), 15 (Bau). Teamstand: `../../_STATUS.md`.
+- Strategie: `../../docs/dossier-v3.md`, Abschnitt 3 (Produkt), 12 (Verworfen), 15 (Bau). Teamstand: `../../_STATUS.md`.
 - Produkt-Dokumente in `../docs/`:
   - `Plan_MVP.md`, `Umfang_v1.md` (inkl. Nicht-Liste und Entscheidungen), `Inspiration_Muster.md`, `Pruefberichte_UI.md`.
   - `Demo_Faelle.md`: Lösungsliste der eingebauten Fälle. **Maßgeblich für Beträge.** Nicht im Code ändern, Abweichungen melden; Änderungen an der Liste nur mit Go von Maxi S.

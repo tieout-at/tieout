@@ -1,6 +1,6 @@
 # Kuro und reebuild: Faktenliste
 
-**Herkunft:** Unverändert übernommen aus `archiv/Schlusswerk Dossier v2.md`, Abschnitt 8.1 bis 8.6 und 17 (Stand 22.10.2026). Das ist der einzige Teil von v2, auf den Dossier v3 noch verweist.
+**Herkunft:** Unverändert übernommen aus `archiv/dossier-v2.md`, Abschnitt 8.1 bis 8.6 und 17 (Stand 22.10.2026). Das ist der einzige Teil von v2, auf den Dossier v3 noch verweist.
 
 **Kennzeichnung:** **G** = gelesen (Link), **S** = nur Snippet, **A** = Annahme. Alle Zahlen von Kuro und reebuild sind Eigenangaben. Wo v3 abweicht (z. B. Foto-Erfassung, Plattform-Story, Live-Erfassung), gilt v3 Abschnitt 8.2 und 12.
 
