@@ -1,6 +1,6 @@
 # Plan: Schlusswerk MVP
 
-Stand: 22.10.2026, angepasst an Dossier v3 am 22.10.2026 (Go von Maxi offen). Umfang und Nicht-Liste: `Umfang_v1.md`. Muster: `Inspiration_Muster.md`. Fälle und Beträge: `Demo_Faelle.md`.
+Stand: 22.10.2026, angepasst an Dossier v3 am 22.10.2026 (Go von Maxi S. am 22.10.2026). Umfang und Nicht-Liste: `Umfang_v1.md`. Muster: `Inspiration_Muster.md`. Fälle und Beträge: `Demo_Faelle.md`.
 
 ## Ergebnis
 
@@ -43,7 +43,7 @@ Ziele (Termine unverändert): v0.9 bis Sa 31.10.2026 (#glaubandich), v1.0 in KW 
 |---|---|---|---|
 | 0 | UI-Fundament; **Gate 2** mit Maxi. Vorher drei fehlende Bauteile aus Referenzen ergänzen: Projektliste mit Ampel, Zeitachse, Zuruf-Ansicht (WhatsApp-Szene) | ½ Tag | erledigt bis auf Gate 2 und die drei Bauteile |
 | 1a | Rechenkern mit Tests (W21) | erledigt | 58/58 Tests |
-| 1b | Lösungsliste v2 (`Demo_Faelle.md`: Firma, 7 weitere Projekte, 6 Zurufe; Go von Maxi). Datenmodell um Firma, Auftraggeber, Zuruf und Kanal erweitern, ohne die 58 Tests zu brechen. Generator: 7 kleine Projekte, die der Rechenkern rechnet; Zurufe; echte PDFs für alle Dokumente, die in einer Beweiskette vorkommen | 1½ Tage | |
+| 1b | Lösungsliste v2 (`Demo_Faelle.md`: Firma, 7 weitere Projekte, 6 Zurufe; **erledigt 22.10.**). Datenmodell um Firma, Auftraggeber, Zuruf und Kanal erweitern, ohne die 58 Tests zu brechen. Generator: 7 kleine Projekte, die der Rechenkern rechnet; Zurufe; echte PDFs für alle Dokumente, die in einer Beweiskette vorkommen | 1½ Tage | |
 | 2 | App: Firmenübersicht, Projekt-Übersicht, Ordner mit Belegmatrix, Ledger (380 Positionen), Befunde, Beleg-Panel, zweistufige Freigabe, Zeitachse, WhatsApp-Szene (Mock) | 2½ Tage | **v0.9 Sa 31.10.** |
 | 3 | Anwendung Schlussrechnung vollständig: Vorprüfung aus GU-Sicht, Schlussbesprechungs-Blatt, Entwurf der Schlussrechnung, Excel-Export; GU-Historie auf Firmenebene | 1½ Tage | **v1.0 KW 45** |
 | 4 | Feinschliff, Handy, Deployment; optional Import-Moment; restliche PDFs | 1 Tag | |
@@ -72,4 +72,5 @@ Danach Stufe 0 nach Dossier v3, 15.4 (Datenmodell KW 45–46, Ordner-Import, LV-
 | 22.10. | Plan freigegeben; Muster-Katalog, Umfang, Demo-Fälle (nachgerechnet, alle OK) geschrieben; Boards gebaut |
 | 22.10. | Phase 0: Boards A/B/C verworfen (eigener Stil). Neuer Weg: Referenzen messen → Gate 1 (Inter, kühl-neutral, Tinte) → UI-Fundament v1 → Prüfer („Liga nicht erreicht“) → v2 mit allen System-Befunden behoben. Gate 2 offen |
 | 22.10. | Phase 1a fertig: Rechenkern im Repo, 58/58 Tests, alle Fälle cent-genau. Offen: Phase 1b (PDFs), Phase 2 (App) |
-| 22.10. | Dossier v3 eingearbeitet: Firma → Projekt → Anwendung, Firmenübersicht mit 8 Projekten, Zurufe und WhatsApp-Szene, Zeitachse, Entwurf der Schlussrechnung in v1.0, Phasen neu geschnitten. Go von Maxi offen |
+| 22.10. | Dossier v3 eingearbeitet: Firma → Projekt → Anwendung, Firmenübersicht mit 8 Projekten, Zurufe und WhatsApp-Szene, Zeitachse, Entwurf der Schlussrechnung in v1.0, Phasen neu geschnitten. Go von Maxi S. |
+| 22.10. | Lösungsliste v2 geschrieben (Firma, 7 Projekte, 6 Zurufe, GU-Historie), per Skript nachgerechnet, unabhängig geprüft. Nächster Schritt: drei UI-Bauteile, Gate 2 |

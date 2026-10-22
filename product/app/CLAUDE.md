@@ -30,7 +30,7 @@ Auftraggeber ist Maxi S. (kein Entwickler): Deutsch, Ergebnis zuerst, einfache S
 ## Arbeitsweise
 - `npm run typecheck`, `npm run lint`, `npm test` vor jedem Commit grün.
 - Neue Regel = positiver Test und Gegenprobe in `regeln.test.ts`. Änderungen am Datensatz: `pruefung.test.ts` muss weiter genau die Lösungsliste treffen.
-- Arbeit auf einem eigenen Branch, nach `main` nur über Pull Request. Push nur nach Go von Maxi S. Danach `../README.md` (Abschnitt „Stand“) nachziehen.
+- Arbeit auf einem eigenen Branch, nach `main` nur über Pull Request. Pull Requests darf Claude selbst erstellen und mergen, wenn es keine Konflikte gibt; vorher kurz reviewen (Diff, typecheck, lint, Tests) und Maxi S. berichten (Erlaubnis 22.10.2026). Danach `../README.md` (Abschnitt „Stand“) nachziehen.
 
 ## Fachliche Annahmen (mit dem Insider prüfen)
 - Mehrmenge: abgerechnet wird die Aufmaßmenge zum EP laut LV; K7 dient nur der Plausibilität. Mittellohnpreis 56,80 €/h aus der eigenen Kalkulation (K3).
