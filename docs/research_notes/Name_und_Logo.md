@@ -83,7 +83,7 @@ Jeder Kandidat bekommt 0 bis 2 Punkte je Kriterium (meine Einschätzung, Annahme
 
 ---
 
-## 3. Kandidaten (25 plus EndPoint.)
+## 3. Kandidaten (26 plus EndPoint.)
 
 Domains: gemessen per DNS-Abfrage (Cloudflare DNS over HTTPS) am 22.10.2026. „frei“ heißt: die Domain hat keinen Eintrag (NXDOMAIN). Das ist ein starker Hinweis, aber kein Beweis, dass sie registrierbar ist.
 
@@ -114,8 +114,8 @@ Domains: gemessen per DNS-Abfrage (Cloudflare DNS over HTTPS) am 22.10.2026. „
 | 23 | Twinwerk | Zwilling + Werk | 1 | 1 | 1 | 2 | 1 | 1 | 7 | Sprachmix wirkt bemüht |
 | 24 | Belegwerk | Beleg + Werk | 1 | 2 | 0 | 2 | 2 | 0 | 7 | belegwerk.at ist eine Buchhaltungsfirma in Österreich (gemessen, Seitentitel) |
 | 25 | Zwilling | digitaler Zwilling | 2 | 2 | 0 | 2 | 2 | 0 | 8 | Zwilling J. A. Henckels (Messer) (Annahme) |
-| 27 | Tvyn | Vorschlag Maxi S., Kunstwort aus „twin“ | 2 | 0 | 1 | 1 | 2 | 1 | 7 | tvyn.ai/.at/.de/.io/.eu frei, tvyn.com zum Verkauf (gemessen); Aussprache unklar („Twin“ oder „Tfün“), muss am Telefon buchstabiert werden; klingt wie „Twyn“, ein Startup für digitale Zwillinge in Fabriken ([PR Newswire](https://www.prnewswire.co.uk/news-releases/phygital-twin-deeptech-twyn-joins-nvidia-inception-302025321.html)), twyn.ai ist eine Telekom-Software (gemessen, Seitentitel); betont den Zwilling, die Website stellt aber die Schlussrechnung nach vorn |
 | 26 | Akkord | Akkordarbeit am Bau, EN „accord“ | 2 | 2 | 1 | 1 | 2 | 0 | 8, aber raus | klingt nach Leistungslohn und Mitarbeiterbewertung, heikel wegen § 96a ArbVG (CLAUDE.md Regel 5) |
+| 27 | Tvyn | Vorschlag Maxi S., Kunstwort aus „twin“ | 2 | 0 | 1 | 1 | 2 | 1 | 7 | tvyn.ai/.at/.de/.io/.eu frei, tvyn.com zum Verkauf (gemessen); Aussprache unklar („Twin“ oder „Tfün“), muss am Telefon buchstabiert werden; klingt wie „Twyn“, ein Startup für digitale Zwillinge in Fabriken ([PR Newswire](https://www.prnewswire.co.uk/news-releases/phygital-twin-deeptech-twyn-joins-nvidia-inception-302025321.html)), twyn.ai ist eine Telekom-Software (gemessen, Seitentitel); betont den Zwilling, die Website stellt aber die Schlussrechnung nach vorn |
 
 ---
 
