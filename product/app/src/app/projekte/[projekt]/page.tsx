@@ -1,7 +1,9 @@
-// Projekt-Übersicht: Titel und Fakten, Schrittleiste, Kennzahlen, die Posten zum Entscheiden und Seitenpanels.
-// Eine Primäraktion („Weiter prüfen“). Alle Beträge aus dem Rechenkern.
+// Projekt-Übersicht (Vorlage: reebuild R-C, Linear-Projektseite): Titel und Fakten, Ablauf mit vier Schritten,
+// Kennzahlen, die Posten zum Entscheiden und rechts eine ruhige Eigenschaftenliste. Eine Primäraktion („Weiter prüfen“).
+// Alle Zahlen und Beträge aus dem Rechenkern.
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
 import type { Ergebnis } from "@/engine";
 import { BefundTabelle } from "@/ui/BefundTabelle";
@@ -10,7 +12,7 @@ import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
 import { Panel } from "@/ui/Panel";
 import { Schrittleiste } from "@/ui/Schrittleiste";
 import { Seitenkopf } from "@/ui/Seitenkopf";
-import { FreigegebenZaehler } from "@/ui/Stand";
+import { FreigabeStriche, FreigegebenZahl } from "@/ui/Stand";
 import { WeiterPruefen } from "@/ui/WeiterPruefen";
 
 type Props = { params: Promise<{ projekt: string }> };
@@ -29,13 +31,24 @@ function posten(e: Ergebnis, liste: "jetzt" | "offen"): string {
   return anzahl(e.befunde.filter((b) => b.liste === liste).length, "Posten", "Posten");
 }
 
+/** Eine Zeile der Eigenschaftenliste (Linear-Projekt rechts): Wort links, Zahl rechts. */
+function Eigenschaft({ text, wert }: { text: string; wert: React.ReactNode }) {
+  return (
+    <div className="ab-prop">
+      <span>{text}</span>
+      <b>{wert}</b>
+    </div>
+  );
+}
+
 export default async function ProjektUebersicht({ params }: Props) {
   const id = (await params).projekt;
   const { d, e } = projekt(id);
   const { daten } = firma();
   const p = d.projekt;
   const ag = daten.auftraggeber.find((a) => a.id === p.auftraggeberId);
-  const href = (schluessel: string) => `/projekte/${id}/befunde/${befundSlug(schluessel)}`;
+  const basis = `/projekte/${id}`;
+  const href = (schluessel: string) => `${basis}/befunde/${befundSlug(schluessel)}`;
   const entscheiden = e.befunde.filter((b) => b.liste !== "anwalt").map((b) => ({ schluessel: b.schluessel, liste: b.liste, href: href(b.schluessel) }));
   const risiken = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
   const zurufe = d.zurufe.length;
@@ -44,6 +57,7 @@ export default async function ProjektUebersicht({ params }: Props) {
   const zurufeAlsBeleg = new Set(
     e.befunde.filter((b) => b.art !== "regie_zuruf").flatMap((b) => b.belege.map((x) => x.quelle.dokumentId).filter((x) => zurufIds.has(x))),
   ).size;
+  const einlesenZeile = [zurufe ? anzahl(zurufe, "Zuruf", "Zurufe") : "", e.import.duplikate ? anzahl(e.import.duplikate, "Duplikat", "Duplikate") : ""].filter(Boolean).join(", ");
 
   return (
     <>
@@ -52,7 +66,7 @@ export default async function ProjektUebersicht({ params }: Props) {
         titel="Übersicht"
         aktion={e.abgleich ? <WeiterPruefen projektId={id} posten={entscheiden} /> : undefined}
       />
-      <main className="scr-body">
+      <main className="scr-body ab-uebersicht">
         <div className="ptitle">
           <h2 className="page-title">
             <span className="sw-pos-nr">{p.kurz}</span>
@@ -62,6 +76,11 @@ export default async function ProjektUebersicht({ params }: Props) {
             {p.schlussrechnungLegenBis && (
               <span>
                 Schlussrechnung legen bis <b>{datum(p.schlussrechnungLegenBis)}</b>
+              </span>
+            )}
+            {!p.schlussrechnungLegenBis && e.abgleich && e.grenze && (
+              <span>
+                Letzte Abschlagsrechnung <b>{datum(e.grenze)}</b>
               </span>
             )}
             {ag && (
@@ -89,81 +108,62 @@ export default async function ProjektUebersicht({ params }: Props) {
           <>
             <Schrittleiste
               schritte={[
-                { titel: "Einlesen", zeile: `${anzahl(e.import.dokumente, "Dokument", "Dokumente")}${zurufe ? `, ${anzahl(zurufe, "Zuruf", "Zurufe")}` : ""}`, erledigt: true },
-                { titel: "Datensätze", zeile: `${e.import.korrigierteFelder} Felder korrigiert`, erledigt: true },
-                { titel: "Abgleich", zeile: anzahl(e.ledger.length, "LV-Position", "LV-Positionen"), erledigt: true },
-                { titel: "Prüfen und Freigeben", zeile: <FreigegebenZaehler projektId={id} posten={entscheiden} />, erledigt: false },
+                { titel: "Einlesen", zahl: e.import.dokumente, einheit: e.import.dokumente === 1 ? "Dokument" : "Dokumente", zeile: einlesenZeile, erledigt: true, href: `${basis}/ordner` },
+                {
+                  titel: "Datensätze",
+                  zahl: e.import.eindeutig,
+                  einheit: "eindeutig",
+                  zeile: anzahl(e.import.korrigierteFelder, "Feld korrigiert", "Felder korrigiert"),
+                  erledigt: true,
+                  href: `${basis}/ordner`,
+                  hinweis: "Ein Datensatz je Dokument ohne Duplikate, jedes Feld mit Quelle",
+                },
+                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(e.befunde.length, "Befund", "Befunde"), erledigt: true, href: `${basis}/ledger` },
+                {
+                  titel: "Prüfen und Freigeben",
+                  zahl: <FreigegebenZahl projektId={id} posten={entscheiden} />,
+                  einheit: "freigegeben",
+                  zeile: <FreigabeStriche projektId={id} posten={entscheiden} />,
+                  erledigt: false,
+                  href: `${basis}/befunde`,
+                },
               ]}
             />
             <Kennzahlen>
               <Kennzahl label="Jetzt verrechenbar" wert={betrag(e.summen.jetzt)} kontext={posten(e, "jetzt")} />
               <Kennzahl label="Angemeldet und offen" wert={betrag(e.summen.offen)} kontext={posten(e, "offen")} />
-              {p.schlussrechnungLegenBis ? (
-                <Kennzahl label="Schlussrechnung legen bis" wert={datum(p.schlussrechnungLegenBis)} kontext="Schlussrechnung vorbereiten" />
-              ) : (
-                e.grenze && <Kennzahl label="Letzte Abschlagsrechnung" wert={datum(e.grenze)} kontext="In Ausführung" />
+              {e.vorpruefung && e.vorpruefung.risiken.length > 0 && (
+                <Kennzahl
+                  label="Kürzungsrisiko aus GU-Sicht"
+                  wert={betrag(e.vorpruefung.summe)}
+                  kontext={`${anzahl(e.vorpruefung.risiken.length, "Position", "Positionen")}, bereits gekürzt ${betrag(e.vorpruefung.bereitsGekuerzt.betrag)}`}
+                />
               )}
             </Kennzahlen>
             <div className="cols">
               <Panel titel="Zu entscheiden" rechts={<span className="sw-count">{e.befunde.length}</span>}>
                 <BefundTabelle projektId={id} befunde={e.befunde} risiken={risiken} href={(b) => href(b.schluessel)} />
               </Panel>
-              <div className="side">
-                {e.vorpruefung && e.vorpruefung.risiken.length > 0 && (
-                  <Panel titel="Vorprüfung aus GU-Sicht">
-                    <div className="sw-pad sw-stack">
-                      <span className="label">Kürzungsrisiko</span>
-                      <span className="kpi">{betrag(e.vorpruefung.summe)}</span>
-                    </div>
-                    <div className="kv">
-                      <div>
-                        <span>Positionen</span>
-                        <b>{e.vorpruefung.risiken.length}</b>
-                      </div>
-                      <div>
-                        <span>Bereits gekürzt</span>
-                        <b>{betrag(e.vorpruefung.bereitsGekuerzt.betrag)}</b>
-                      </div>
-                    </div>
-                  </Panel>
-                )}
-                <Panel titel="Regieberichte" rechts={<span className="sw-count">{e.regie.gesamt}</span>}>
-                  <div className="kv">
-                    <div>
-                      <span>Verrechnet</span>
-                      <b>{e.regie.verrechnet}</b>
-                    </div>
-                    <div>
-                      <span>Unterschrieben, offen</span>
-                      <b>{e.regie.unterschriebenNichtVerrechnet}</b>
-                    </div>
-                    <div>
-                      <span>Nicht unterschrieben</span>
-                      <b>{e.regie.nichtUnterschrieben}</b>
-                    </div>
-                    {e.regie.nachGrenze > 0 && (
-                      <div>
-                        <span>Nach der letzten AR</span>
-                        <b>{e.regie.nachGrenze}</b>
-                      </div>
-                    )}
-                  </div>
-                </Panel>
+              <aside className="ab-props">
+                <section className="ab-props__gruppe">
+                  <h3 className="ab-props__kopf">
+                    Regieberichte <span className="sw-count">{e.regie.gesamt}</span>
+                  </h3>
+                  <Eigenschaft text="Verrechnet" wert={e.regie.verrechnet} />
+                  <Eigenschaft text="Unterschrieben, offen" wert={e.regie.unterschriebenNichtVerrechnet} />
+                  <Eigenschaft text="Nicht unterschrieben" wert={e.regie.nichtUnterschrieben} />
+                  {e.regie.nachGrenze > 0 && <Eigenschaft text="Nach der letzten AR" wert={e.regie.nachGrenze} />}
+                </section>
                 {zurufe > 0 && (
-                  <Panel titel="Zurufe" rechts={<span className="sw-count">{zurufe}</span>}>
-                    <div className="kv">
-                      <div>
-                        <span>Als Beleg</span>
-                        <b>{zurufeAlsBeleg}</b>
-                      </div>
-                      <div>
-                        <span>Ohne Regiebericht</span>
-                        <b>{zurufePosten}</b>
-                      </div>
-                    </div>
-                  </Panel>
+                  <section className="ab-props__gruppe">
+                    <h3 className="ab-props__kopf">
+                      <Link href={`${basis}/zeitachse`}>Zurufe</Link> <span className="sw-count">{zurufe}</span>
+                    </h3>
+                    <Eigenschaft text="Als Beleg" wert={zurufeAlsBeleg} />
+                    <Eigenschaft text="Ohne Regiebericht" wert={zurufePosten} />
+                  </section>
                 )}
-              </div>
+              </aside>
             </div>
           </>
         )}
