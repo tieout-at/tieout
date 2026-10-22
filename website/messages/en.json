@@ -44,7 +44,7 @@
   "solution": {
     "problemEyebrow": "02 · Problem",
     "title": "At the end of a project, money that was earned long ago is missing.",
-    "problem": "Unsigned daywork, extra quantities, plan changes agreed on site: what was arranged on the job often never makes it into the final invoice. The evidence is scattered across emails, plans, photos and people's heads. And clients increasingly check invoices with software.",
+    "problem": "Hourly work (daywork) without a signature, extra quantities, changes agreed on site: what was arranged on the job often never makes it into the final invoice. The evidence is scattered across emails, plans, photos and people's heads. And clients increasingly check invoices with software.",
     "solutionEyebrow": "03 · Solution",
     "solution": "EndPoint. connects all the data of your business into a digital twin and uses it to check every final invoice: what was built ends up on the invoice.",
     "flow": {
@@ -191,7 +191,8 @@
           "Stairwell lights",
           "€1,640"
         ]
-      ]
+      ],
+      "projectWord": "Project"
     },
     "timeline": {
       "timelineTitle": "Project Vienna 21 · Example",
@@ -217,8 +218,8 @@
         },
         {
           "week": "Wk 15",
-          "type": "Daywork",
-          "text": "Daywork 11: cable tray extended, signed",
+          "type": "Daywork · hours",
+          "text": "Cable tray extended, 18 hours, sheet signed",
           "amount": 1290,
           "billed": true
         },
@@ -231,8 +232,8 @@
         },
         {
           "week": "Wk 23",
-          "type": "Daywork",
-          "text": "Daywork 14: plant room, unsigned",
+          "type": "Daywork · hours",
+          "text": "Plant room rebuilt, 6 hours, sheet unsigned",
           "amount": 390,
           "billed": false
         },
@@ -250,7 +251,8 @@
           "amount": 1640,
           "billed": false
         }
-      ]
+      ],
+      "glossary": "Daywork = extra work billed by the hour instead of by the bill of quantities. Without a signed daywork sheet it often goes unpaid."
     }
   },
   "video": {

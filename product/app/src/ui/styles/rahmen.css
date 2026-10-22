@@ -1,5 +1,5 @@
 /* Rahmen: Seite, Seitenleiste, Kopfzeile, Spalten, Filterknöpfe.
- * Teil der früheren anordnung.css (Inhalt unverändert). Nur Layout, alle Werte aus tokens.css. */
+ * Teil der früheren anordnung.css, Politur 22.10. Nur Layout, alle Werte aus tokens.css. */
 
 
 html,
@@ -48,7 +48,7 @@ body {
   cursor: default;
 }
 
-/* Projekte als Baum (Linear „Your teams“): Punkt mit Ampel und Name, das aktive Projekt aufgeklappt und eingerückt */
+/* Projekte als Baum (Linear „Your teams“): nur der Name, ohne Ampelpunkt; das aktive Projekt aufgeklappt und eingerückt */
 .nav-projekt {
   display: flex;
   flex-direction: column;
@@ -63,29 +63,6 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.nav-dot {
-  display: inline-grid;
-  place-items: center;
-  width: 16px;
-  height: 16px;
-  flex: none;
-}
-.nav-dot::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: var(--radius-full);
-  background: var(--text-disabled);
-}
-.nav-dot--rot::before {
-  background: var(--neg);
-}
-.nav-dot--gelb::before {
-  background: var(--warn);
-}
-.nav-dot--gruen::before {
-  background: var(--pos);
 }
 .nav-sub {
   display: flex;
@@ -114,6 +91,18 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+}
+
+/* „Synthetisch“ im Kopf als ruhiges Wort statt Pille in Großbuchstaben (Kennzeichnung bleibt auf jeder Seite) */
+.sw-pagehead .sw-synth {
+  height: auto;
+  padding: 0;
+  border: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 /* Seitentitel in der Kopfzeile als Überschrift (wie <b> im Fundament) */
@@ -245,8 +234,8 @@ body {
     overflow-x: auto;
     border-right: 0;
     border-bottom: 1px solid var(--line-strong);
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-left: max(var(--space-4), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--space-4), env(safe-area-inset-right, 0px));
   }
   .sw-sidebar .sw-switch,
   .sw-sidebar .nav-fill,
@@ -291,8 +280,8 @@ body {
   }
   .sw-pagehead,
   .scr-body {
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-left: max(var(--space-4), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--space-4), env(safe-area-inset-right, 0px));
   }
   .sw-pagehead .sw-btn {
     display: none;

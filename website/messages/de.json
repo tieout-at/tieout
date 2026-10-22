@@ -44,7 +44,7 @@
   "solution": {
     "problemEyebrow": "02 · Problem",
     "title": "Am Projektende fehlt Geld, das längst verdient ist.",
-    "problem": "Regie ohne Unterschrift, Mehrmengen, Planänderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Und Auftraggeber prüfen Rechnungen zunehmend mit Software.",
+    "problem": "Stundenarbeit (Regie) ohne Unterschrift, Mehrmengen, Änderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Und Auftraggeber prüfen Rechnungen zunehmend mit Software.",
     "solutionEyebrow": "03 · Lösung",
     "solution": "EndPoint. verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
     "flow": {
@@ -191,7 +191,8 @@
           "Leuchten Stiege",
           "1.640 €"
         ]
-      ]
+      ],
+      "projectWord": "Projekt"
     },
     "timeline": {
       "timelineTitle": "Projekt Wien 21 · Beispiel",
@@ -217,8 +218,8 @@
         },
         {
           "week": "KW 15",
-          "type": "Regie",
-          "text": "Regie 11: Kabeltrasse verlängert, unterschrieben",
+          "type": "Regie · Stunden",
+          "text": "Kabeltrasse verlängert, 18 Stunden, Bericht unterschrieben",
           "amount": 1290,
           "billed": true
         },
@@ -231,8 +232,8 @@
         },
         {
           "week": "KW 23",
-          "type": "Regie",
-          "text": "Regie 14: Technikraum, ohne Unterschrift",
+          "type": "Regie · Stunden",
+          "text": "Technikraum umgebaut, 6 Stunden, Bericht ohne Unterschrift",
           "amount": 390,
           "billed": false
         },
@@ -250,7 +251,8 @@
           "amount": 1640,
           "billed": false
         }
-      ]
+      ],
+      "glossary": "Regie = Zusatzarbeit, die nach Stunden statt nach Leistungsverzeichnis abgerechnet wird. Ohne unterschriebenen Regiebericht wird sie oft nicht bezahlt."
     }
   },
   "video": {

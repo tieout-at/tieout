@@ -36,14 +36,39 @@ export function StandZelle({ projektId, schluessel, liste, leerBeiPruefen = fals
   return <StandMarke stand={stand} />;
 }
 
-/** Zählt Posten im Stand „Freigegeben“ (nur Stufe 2 zählt). */
-export function FreigegebenZaehler({ projektId, posten }: { projektId: string; posten: { schluessel: string; liste: Liste }[] }) {
+/** Zählt Posten im Stand „Freigegeben“ (nur Stufe 2 zählt) als „x von y“ für den Ablauf. */
+export function FreigegebenZahl({ projektId, posten }: { projektId: string; posten: { schluessel: string; liste: Liste }[] }) {
   const verlauf = useVerlauf(projektId);
   const frei = posten.filter((p) => standAus(verlauf, p.schluessel, p.liste) === "freigegeben").length;
   return (
     <>
-      {frei} von {posten.length} Posten freigegeben
+      {frei} von {posten.length}
     </>
+  );
+}
+
+const STRICH_TEXT: Record<Stand, string> = {
+  pruefen: "offen",
+  zurueckgestellt: "zurückgestellt",
+  uebernommen: "übernommen",
+  freigegeben: "freigegeben",
+  verworfen: "verworfen",
+  anwalt: "braucht Anwalt",
+};
+
+/** Ein Strich je Posten in fester Reihenfolge, gefärbt nach Stand (Vorlage: Linear-Fortschritt, aber mit Inhalt statt Prozent). */
+export function FreigabeStriche({ projektId, posten }: { projektId: string; posten: { schluessel: string; liste: Liste }[] }) {
+  const verlauf = useVerlauf(projektId);
+  const staende = posten.map((p) => standAus(verlauf, p.schluessel, p.liste));
+  const zaehler = new Map<string, number>();
+  for (const s of staende) zaehler.set(STRICH_TEXT[s], (zaehler.get(STRICH_TEXT[s]) ?? 0) + 1);
+  const text = [...zaehler].map(([t, n]) => `${n} ${t}`).join(", ");
+  return (
+    <span className="ab-striche" role="img" aria-label={text} title={text}>
+      {staende.map((s, i) => (
+        <span key={posten[i].schluessel} className={`ab-strich ab-strich--${s}`} />
+      ))}
+    </span>
   );
 }
 

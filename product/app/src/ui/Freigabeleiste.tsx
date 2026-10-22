@@ -34,12 +34,13 @@ const einmal = (fn: () => void) => (ev: React.MouseEvent) => {
   fn();
 };
 
-function Schritt({ e }: { e: Eintrag }) {
+/** Ein Schritt im Verlauf: Rolle, Zeit, Grund. Das Wort nur, wenn es nicht schon im Stand davor steht. */
+function Schritt({ e, wort = false }: { e: Eintrag; wort?: boolean }) {
   return (
     <span className="sw-decide__step">
       <span className="sw-person">
         <span className="sw-avatar">{e.rolle}</span>
-        {WORT[e.aktion]}
+        {wort && WORT[e.aktion]}
       </span>
       <span className="sw-num">{uhrzeit(e.zeit)}</span>
       {e.grund && <span>{e.grund}</span>}
@@ -154,8 +155,9 @@ export function Freigabeleiste({ projektId, schluessel, liste, titel }: { projek
       <div ref={knoepfe}>{inhalt}</div>
       <div className="sw-decide__line">
         <StandMarke stand={stand} />
-        {stand === "freigegeben" && uebernahme && <Schritt e={uebernahme} />}
-        {letzter && stand !== "pruefen" ? <Schritt e={letzter} /> : liste !== "anwalt" && <span>Noch nicht entschieden</span>}
+        {stand === "freigegeben" && uebernahme && <Schritt e={uebernahme} wort />}
+        {/* „Prüfen“ sagt schon, dass nichts entschieden ist: kein zweiter Satz dazu. */}
+        {letzter && stand !== "pruefen" && <Schritt e={letzter} />}
       </div>
     </div>
   );

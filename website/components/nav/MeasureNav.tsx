@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 export const SECTION_IDS = ["start", "problem", "loesung", "video", "team", "demo"];
+/** Abschnitte mit blauem Grund: dort wird die Navigation hell dargestellt. */
+const DARK_IDS = ["video"];
 
 /**
  * Messpunkt-Navigation am rechten Rand: senkrechte Maßkette mit allen Abschnitten.
@@ -12,6 +14,7 @@ export function MeasureNav({ labels, aria }: { labels: string[]; aria: string })
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);
   const [ticks, setTicks] = useState<number[]>([]);
+  const [dark, setDark] = useState(false);
   const railRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,6 +38,14 @@ export function MeasureNav({ labels, aria }: { labels: string[]; aria: string })
         setProgress(Math.min(1, Math.max(0, (y - cur.offsetTop) / Math.max(1, end - cur.offsetTop))));
       }
       setActive(idx);
+      // Liegt die Mitte des Bildschirms in einem blauen Abschnitt?
+      const mid = window.innerHeight / 2;
+      setDark(
+        DARK_IDS.some((id) => {
+          const r = document.getElementById(id)?.getBoundingClientRect();
+          return !!r && r.top + 160 < mid && r.bottom > mid;
+        }),
+      );
     };
     measure();
     onScroll();
@@ -50,13 +61,13 @@ export function MeasureNav({ labels, aria }: { labels: string[]; aria: string })
   const progLen = ((ticks[active + 1] ?? tickTop) - tickTop) * progress;
 
   return (
-    <nav className="mnav" aria-label={aria}>
+    <nav className={`mnav ${dark ? "mnav--dark" : ""}`} aria-label={aria}>
       <div className="mnav__rail" ref={railRef}>
         <span className="mnav__progress" style={{ top: tickTop, height: progLen }} aria-hidden="true" />
         <svg className="mnav__cross" style={{ top: tickTop - 11 }} viewBox="0 0 22 22" aria-hidden="true">
-          <circle cx="11" cy="11" r="6" fill="#f4f6f9" stroke="#1d3bff" strokeWidth="1.5" />
-          <path d="M11 0v7M11 15v7M0 11h7M15 11h7" stroke="#1d3bff" strokeWidth="1.5" />
-          <circle cx="11" cy="11" r="1.6" fill="#1d3bff" />
+          <circle cx="11" cy="11" r="6" fill={dark ? "#1d3bff" : "#f4f6f9"} stroke={dark ? "#ffffff" : "#1d3bff"} strokeWidth="1.5" />
+          <path d="M11 0v7M11 15v7M0 11h7M15 11h7" stroke={dark ? "#ffffff" : "#1d3bff"} strokeWidth="1.5" />
+          <circle cx="11" cy="11" r="1.6" fill={dark ? "#ffffff" : "#1d3bff"} />
         </svg>
         <ol className="mnav__list">
           {SECTION_IDS.map((id, i) => (
