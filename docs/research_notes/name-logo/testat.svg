@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" width="480" height="200">
+  <title>Testat: Logo-Skizze</title>
+  <defs>
+    <pattern id="fein" width="12" height="12" patternUnits="userSpaceOnUse">
+      <path d="M12 0V12H0" fill="none" stroke="#E8ECF2" stroke-width="1"/>
+    </pattern>
+    <pattern id="haupt" width="48" height="48" patternUnits="userSpaceOnUse">
+      <rect width="48" height="48" fill="url(#fein)"/>
+      <path d="M48 0V48H0" fill="none" stroke="#D5DCE6" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="200" fill="#F4F6F9"/>
+  <rect width="480" height="200" fill="url(#haupt)"/>
+  <text x="96" y="112" font-family="'Inter Tight', Inter, Arial, sans-serif" font-weight="600" font-size="64" letter-spacing="-2" fill="#0A1020">Testat</text>
+  <!-- Maßkette über die Wortbreite, rechts das Prüfsiegel -->
+  <g transform="translate(96 136)">
+    <path d="M0 0H204M0 -8V8M204 -8V8" stroke="#0A1020" stroke-width="2" fill="none"/>
+    <path d="M8 -4L0 0L8 4M196 -4L204 0L196 4" stroke="#0A1020" stroke-width="2" fill="none"/>
+    <rect x="216" y="-9" width="18" height="18" fill="#1D3BFF"/>
+  </g>
+</svg>

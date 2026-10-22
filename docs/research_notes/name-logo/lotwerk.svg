@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" width="480" height="200">
+  <title>Lotwerk: Logo-Skizze</title>
+  <defs>
+    <pattern id="fein" width="12" height="12" patternUnits="userSpaceOnUse">
+      <path d="M12 0V12H0" fill="none" stroke="#E8ECF2" stroke-width="1"/>
+    </pattern>
+    <pattern id="haupt" width="48" height="48" patternUnits="userSpaceOnUse">
+      <rect width="48" height="48" fill="url(#fein)"/>
+      <path d="M48 0V48H0" fill="none" stroke="#D5DCE6" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="200" fill="#F4F6F9"/>
+  <rect width="480" height="200" fill="url(#haupt)"/>
+  <!-- Bildzeichen: Maßlinie mit Endstrichen, Faden, Senklot -->
+  <g transform="translate(60 48)">
+    <path d="M0 0H48M0 -6V6M48 -6V6" stroke="#0A1020" stroke-width="3" fill="none"/>
+    <path d="M24 0V62" stroke="#0A1020" stroke-width="2"/>
+    <path d="M21 58H27V62H21Z" fill="#0A1020"/>
+    <path d="M14 62H34V74L24 94L14 74Z" fill="#1D3BFF"/>
+  </g>
+  <text x="132" y="128" font-family="'Inter Tight', Inter, Arial, sans-serif" font-weight="600" font-size="60" letter-spacing="-2" fill="#0A1020">Lotwerk</text>
+</svg>

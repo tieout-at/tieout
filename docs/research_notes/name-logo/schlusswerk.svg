@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" width="480" height="200">
+  <title>Schlusswerk: Logo-Skizze</title>
+  <defs>
+    <pattern id="fein" width="12" height="12" patternUnits="userSpaceOnUse">
+      <path d="M12 0V12H0" fill="none" stroke="#E8ECF2" stroke-width="1"/>
+    </pattern>
+    <pattern id="haupt" width="48" height="48" patternUnits="userSpaceOnUse">
+      <rect width="48" height="48" fill="url(#fein)"/>
+      <path d="M48 0V48H0" fill="none" stroke="#D5DCE6" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="200" fill="#F4F6F9"/>
+  <rect width="480" height="200" fill="url(#haupt)"/>
+  <text x="48" y="112" font-family="'Inter Tight', Inter, Arial, sans-serif" font-weight="600" font-size="58" letter-spacing="-2" fill="#0A1020">Schlusswerk</text>
+  <!-- doppelter Schlussstrich wie unter einer Endsumme -->
+  <path d="M48 132H356" stroke="#0A1020" stroke-width="3"/>
+  <path d="M48 142H356" stroke="#1D3BFF" stroke-width="3"/>
+</svg>
