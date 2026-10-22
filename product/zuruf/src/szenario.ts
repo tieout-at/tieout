@@ -33,7 +33,7 @@ const ErwarteterEintrag = z.object({
   datum: z.string().optional(),
   /** Diese Felder dürfen NICHT gefüllt sein, weil der Absender sie nicht genannt hat. */
   mussLeerSein: z
-    .array(z.enum(["projektId", "ort", "leistung", "menge", "personen", "dauerStunden", "angewiesenVon", "datum", "material"]))
+    .array(z.enum(["projektId", "ort", "leistung", "menge", "personen", "dauerStunden", "angewiesenVon", "datum", "material", "grund"]))
     .optional(),
 });
 

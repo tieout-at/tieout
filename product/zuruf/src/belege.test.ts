@@ -70,3 +70,28 @@ describe("Lernpunkte aus Lauf 1", () => {
     expect(angepasst).toHaveLength(1);
   });
 });
+
+describe("Lernpunkte aus Lauf 2", () => {
+  it("Dialekt: „da Bauleita vom GU“ darf „Bauleiter vom GU“ heißen (L12)", () => {
+    const { eintrag, angepasst } = pruefeBelege(
+      { angewiesenVon: { wert: "Bauleiter vom GU", zitat: "da Bauleita vom GU", nachrichtId: "m1" } },
+      [n("m1", "hod da Bauleita vom GU gsogt")],
+    );
+    expect(eintrag.angewiesenVon?.wert).toBe("Bauleiter vom GU");
+    expect(angepasst).toEqual([]);
+  });
+
+  it("Dialekt-Wörterbuch: „Vertreta vo da Gmoa“ darf „Vertreter der Gemeinde“ heißen (L12)", () => {
+    const { eintrag } = pruefeBelege(
+      { angewiesenVon: { wert: "Vertreter der Gemeinde", zitat: "da Vertreta vo da Gmoa", nachrichtId: "m1" } },
+      [n("m1", "weil da Vertreta vo da Gmoa des a so wöllt")],
+    );
+    expect(eintrag.angewiesenVon?.wert).toBe("Vertreter der Gemeinde");
+  });
+
+  it("Grund nicht aus dem Foto (L14)", () => {
+    const foto = { ...n("f1", "Foto: Pumpe mit kaputtem Lager"), art: "foto" as const };
+    const { eintrag } = pruefeBelege({ grund: { wert: "Lager kaputt", zitat: "kaputtem Lager", nachrichtId: "f1" } }, [foto]);
+    expect(eintrag.grund).toBeUndefined();
+  });
+});

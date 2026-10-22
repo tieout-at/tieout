@@ -80,6 +80,8 @@ export const keinZuruf = (wiederholt: boolean): Antwort => ({
   text: wiederholt ? "Kein Problem." : "Das ist nichts für mich, ich nehm nur Meldungen von der Baustelle auf.",
 });
 
+export const verstehe = (): Antwort => ({ zweck: "hinweis_zweck", text: "Verstehe." });
+
 export const nichtsOffen = (): Antwort => ({
   zweck: "verstanden_nichts",
   text: "Da ist gerade nichts offen. Schick einfach, was du gemacht hast.",
@@ -175,9 +177,9 @@ export function punktZeilen(e: Eintrag, heute: string, offen: Feldname[] = []): 
   const was = [e.leistung?.wert ?? "Arbeit offen", e.menge ? `${zahl(e.menge.wert.wert)} ${e.menge.wert.einheit}` : undefined, material]
     .filter(Boolean)
     .join(", ");
-  zeilen.push(was);
+  zeilen.push(e.grund ? `${was} (${e.grund.wert})` : was);
   const leute = e.personen ? `${e.personen.wert} ${e.personen.wert === 1 ? "Person" : "Leute"}` : undefined;
-  const stunden = e.dauerStunden ? `${zahl(e.dauerStunden.wert)} Stunden` : undefined;
+  const stunden = e.dauerStunden ? `${zahl(e.dauerStunden.wert)} ${e.dauerStunden.wert === 1 ? "Stunde" : "Stunden"}` : undefined;
   if (leute || stunden) zeilen.push([leute, stunden].filter(Boolean).join(", "));
   if (e.angewiesenVon) zeilen.push(`Angeschafft: ${e.angewiesenVon.wert}`);
   const offenText = offen.filter((f) => f !== "projektId" && f !== "leistung").map((f) => OFFEN_NAME[f] ?? f);

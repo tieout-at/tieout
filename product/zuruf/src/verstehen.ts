@@ -39,6 +39,7 @@ const KiEintrag = z.object({
   angewiesenVon: angabe(z.string()),
   datum: angabe(z.string()),
   material: angabe(z.string()),
+  grund: angabe(z.string()),
   art: z.enum(ARTEN),
   unklar: z.array(z.enum(UNKLAR_FELDER)),
 });
@@ -102,18 +103,20 @@ Punkte (eintraege): Ein Punkt ist eine Arbeit an einem Ort. Zwei verschiedene Ar
 Angaben: Jede Angabe hat wert, zitat und nachrichtId.
 - zitat ist eine wörtliche, zusammenhängende Stelle aus einer Nachricht des Absenders (nicht des Agenten), genau so geschrieben wie dort, kurz (1 bis 8 Wörter). Ohne solche Stelle: null. Nichts ergänzen, nichts schließen, nichts aus dem Kontext raten.
 - projektId: nur eine id aus der Projektliste, wenn der Absender das Projekt, einen Rufnamen oder einen Bereich nennt, der nur zu EINEM Projekt passt. Sonst null und projektKandidaten mit den passenden ids (z. B. "Wien" passt zu w21 und w10). Ohne jeden Hinweis: projektKandidaten leer. Abgeschlossene Projekte trotzdem eintragen, wenn genannt.
-- Worttreue: wert für ort und angewiesenVon in den Worten des Absenders, nur Rechtschreibung glätten. Nichts ergänzen, nichts deuten, keine Klammerzusätze ("der vom GU" bleibt "der vom GU", nicht "Bauleiter vom GU").
+- Worttreue: wert für ort und angewiesenVon in den Worten des Absenders, aber in Schriftdeutsch ("da Bauleita vom GU" wird "Bauleiter vom GU", "Vertreta vo da Gmoa" wird "Vertreter der Gemeinde"). Nichts ergänzen, nichts deuten, keine Klammerzusätze ("der vom GU" bleibt "der vom GU", nicht "Bauleiter vom GU"). Zahlen als Ziffern ("Top zwanzig" wird "Top 20").
+- zitat für angewiesenVon und ort: nur die Person bzw. den Ort, ohne Verben und Füllwörter ("da Bauleita vom GU", nicht "hod da Bauleita vom GU gsogt").
 - ort: Stiege, Top, Haus, Geschoss, Raum, so wie gesagt.
 - leistung: kurze Beschreibung in normalem Deutsch (z. B. "Heizkörper versetzt"), zitat aus der Nachricht.
 - menge: nur mit Zahl und Einheit (m, Stk, m², psch). Personen und Stunden sind keine Menge.
 - personen: Anzahl Leute, die gearbeitet haben ("zu zweit" = 2, "i allan" = 1). Nur wenn gesagt.
 - dauerStunden: Dauer in Stunden, so wie gesagt ("an halben Tag" ist keine Zahl, dann null). Nicht umrechnen, nicht mit Personen multiplizieren.
-- angewiesenVon: wer die Arbeit direkt angeschafft oder angeordnet hat, so wie gesagt. Wessen Wunsch es war ("weil die Schule das will"), ist nicht angewiesenVon, wenn jemand anderer es angeschafft hat. Antwortet der Absender auf die Frage danach mit "niemand" oder "keiner", ist der wert "niemand (laut Absender)" mit diesem Zitat.
+- angewiesenVon: wer die Arbeit direkt angeschafft oder angeordnet hat, so wie gesagt. Wessen Wunsch es war ("weil die Schule das will"), ist nicht angewiesenVon, wenn jemand anderer es angeschafft hat. Hat niemand ausdrücklich angeschafft, aber der Absender sagt, wer es so wollte ("weil der Architekt eine andere Höhe will"), dann ist das angewiesenVon. Antwortet der Absender auf die Frage danach mit "niemand" oder "keiner", ist der wert "niemand (laut Absender)" mit diesem Zitat.
+- grund: warum die Arbeit nötig war, wenn gesagt ("weil die Küche woanders hinkommt" wird "Küche kommt woanders hin"). Kurz, Schriftdeutsch.
 - datum: JJJJ-MM-TT, nur wenn ein Tag genannt ist ("gestern", "am Montag"); relativ zum Zeitpunkt der Nachricht auflösen.
 - material: nur verbautes oder verbrauchtes Material, das ausdrücklich als solches genannt ist und nicht schon in leistung steht. Sonst null.
 - art: zusatz_aenderung, wenn es nach zusätzlicher, geänderter oder angeordneter Arbeit klingt (Änderung, Versetzen, Zusatz, Regie, auf Wunsch von jemandem, Mehraufwand). behinderung_wartezeit, wenn nicht gearbeitet werden konnte (Warten, fehlender Kran, Vorgewerk nicht fertig). auftrag bei normaler Arbeit laut Auftrag.
 - unklar: Felder, zu denen der Absender etwas gesagt hat, das aber nicht zu verstehen ist (z. B. "[unverständlich] Mann" = personen, "Top [unverständlich]" = ort). Solche Felder bleiben null.
-- Fotos: Ein Foto zeigt einen Zustand, nicht was gemacht wurde. Aus einer Bildbeschreibung nur projektId (z. B. Beschriftung an der Wand) und ort übernehmen. leistung, menge, personen, dauerStunden, angewiesenVon, datum, material nie aus einem Foto, nur aus Text oder Sprache.
+- Fotos: Ein Foto zeigt einen Zustand, nicht was gemacht wurde. Aus einer Bildbeschreibung nur projektId (z. B. Beschriftung an der Wand) und ort übernehmen. leistung, menge, personen, dauerStunden, angewiesenVon, datum, material, grund nie aus einem Foto, nur aus Text oder Sprache.
 
 Antwortknöpfe: Eine Nachricht der Art "knopf" ist der Text des gedrückten Knopfs.
 Fotos stehen als Bildbeschreibung da. Sprachnachrichten als Transkript, oft Dialekt mit Fehlern. "[unverständlich]" heißt: Stelle nicht verstanden, nicht raten.`;
@@ -155,6 +158,7 @@ function alsEintrag(k: z.infer<typeof KiEintrag>): Eintrag {
   if (k.angewiesenVon) e.angewiesenVon = k.angewiesenVon;
   if (k.datum && /^\d{4}-\d{2}-\d{2}$/.test(k.datum.wert)) e.datum = k.datum;
   if (k.material) e.material = k.material;
+  if (k.grund) e.grund = k.grund;
   return e;
 }
 

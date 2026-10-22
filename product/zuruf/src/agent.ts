@@ -11,6 +11,9 @@ import type { Versteher, Verstaendnis } from "./verstehen.ts";
 
 export const MAX_RUECKFRAGEN = 2;
 
+/** Was zuerst nachgefragt wird, wenn mehreres unverständlich war: was per Knopf schnell geht und fürs Büro zählt. */
+const UNKLAR_REIHENFOLGE = ["personen", "dauerStunden", "menge", "angewiesenVon", "ort", "datum", "leistung"] as const;
+
 const BESTAETIGUNG = new Set(["passt", "passt so", "basst", "passt eh", "ja", "jo", "jop", "ja passt", "ok", "okay", "stimmt", "genau", "passt danke"]);
 const STOPP = new Set(["stopp", "stop", "stopp bitte", "aufhören"]);
 const START = new Set(["start", "starten"]);
@@ -151,6 +154,8 @@ export class ZurufAgent {
       case "frage_zum_agenten":
         return T.zusammenlegen([T.hinweisZweck()], this.erinnern(z));
       case "kein_zuruf":
+        // Bei offenem Zuruf ist es meist ein Seufzer oder Kommentar („na hoffentlich“): zuhören, nicht abweisen.
+        if (z.entwurf?.phase === "warte_bestaetigung") return T.zusammenlegen([T.verstehe()], this.erinnern(z));
         return T.zusammenlegen([T.keinZuruf(z.letzterZweck === "verstanden_nichts")], this.erinnern(z));
       case "korrektur_gespeichert": {
         if (z.entwurf || !z.letzteGespeicherte.length) return T.zusammenlegen(vorne, this.uebernehmen(z, n, v, false));
@@ -246,8 +251,8 @@ export class ZurufAgent {
       return { frage: "abgeschlossen", antwort: T.frageAbgeschlossen(projektNachId(abgeschlossen.eintrag.projektId!.wert, this.firma)!.kurz) };
     }
     if (e.punkte.some((p) => !p.eintrag.leistung) && darf("leistung")) return { frage: "leistung", antwort: T.frageLeistung() };
-    const unklar = e.punkte.flatMap((p) => p.unklar)[0];
-    if (unklar && darf("unklar")) return { frage: "unklar", antwort: T.frageUnklar(unklar) };
+    const unklar = UNKLAR_REIHENFOLGE.find((f) => e.punkte.some((p) => p.unklar.includes(f)) && darf(`unklar:${f}`));
+    if (unklar) return { frage: `unklar:${unklar}`, antwort: T.frageUnklar(unklar) };
     const zusatz = e.punkte.map((p, i) => ({ p, i })).filter(({ p }) => p.art === "zusatz_aenderung");
     const ohneAnweiser = zusatz.find(({ p }) => !p.eintrag.angewiesenVon);
     if (ohneAnweiser && !e.anweiserBeantwortet && darf("anweiser")) {

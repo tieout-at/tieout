@@ -6,7 +6,7 @@ import path from "node:path";
 import type { Eintrag, Leistungsereignis, Nachricht, Rolle } from "./typen.ts";
 import type { Art, UnklarFeld } from "./verstehen.ts";
 
-export type Frage = "projekt" | "abgeschlossen" | "leistung" | "unklar" | "anweiser" | "aufwand";
+export type Frage = "projekt" | "abgeschlossen" | "leistung" | `unklar:${string}` | "anweiser" | "aufwand";
 
 export interface PunktZustand {
   eintrag: Eintrag;

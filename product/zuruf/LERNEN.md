@@ -15,6 +15,52 @@ Jeder Fehler des Agenten oder unserer Arbeit kommt hierher, neuester oben. Vor j
 
 ## Einträge
 
+### 2026-10-22: Lauf 3 und erste Abnahme
+- Sichtbar (30): alle bestanden, Felder 100 % richtig, 0 erfunden, Rückfragen Median 0 / Max 2, Note Median 5 / Min 3, Antwort Median 3,1 s, 1,45 USD.
+- Zurückgehalten (10): nur 6 bestanden, Note Median 3,5 / Min 2, 1 erfundener Wert, Rückfragen Max 4, Felder 95 %. Durchgefallen: abgeschlossenes_projekt, korrektur, projekt_unklar, dialekt.
+- Lehre: Die sichtbaren Szenarien sind nach drei Runden zum Teil auswendig gelernt. Die Zahlen auf ihnen sagen wenig über neue Fälle. Gegenmittel: Holdout-Fehler nur als abstrakte Muster ansehen (Subagent fasst zusammen, ohne Inhalte), daraus neue sichtbare Szenarien schreiben, danach ein frisches Holdout.
+- Kennzahl „Nachrichten bis Bestätigung“ (Median 3) misst auch Szenarien mit Korrektur und Rückfrage mit. Für das Ziel „Median 2“ nur Szenarien ohne nötige Rückfrage zählen. Offen.
+
+### 2026-10-22: Lauf 2 (30 Szenarien, 25 bestanden, Note Median 4, Minimum 2, 0 erfundene Werte, 1,62 USD)
+
+Die Noten stiegen deutlich (12 mal Note 5 statt 6), erfundene Werte auf 0. Drei der fünf neuen Fehlschläge hat der Fix L10 selbst verursacht. Lehre: Jede harte Regel im Code braucht auch eine Gegenprobe für den Normalfall (hier: Dialekt).
+
+### L12 Worttreue zu streng für Dialekt
+- Was: `mehrere-punkte-zwei-baustellen`, `dialekt-steirisch-urinale`, `dialekt-wienerisch-heizkoerper`. Weil „Bauleiter“ nicht wörtlich gesagt war („Bauleita“), ersetzte der Code den Wert durch das Zitat. So landeten Satzfetzen wie „da Bauleita vom GU gsogt“ und „des woa da Schuiwart“ in den Daten.
+- Ursache: L10 prüfte Wörter exakt. Außerdem waren die Zitate zu lang (mit Verb).
+- Regel: Ein Wort gilt als gesagt, wenn es fast so vorkommt (Abstand höchstens 30 % der Wortlänge) oder im kleinen Dialekt-Wörterbuch steht (Gmoa, Kuchl ...). Neue Wörter wie „Bauleiter“ aus „der vom GU“ bleiben verboten. Werte in Schriftdeutsch, Zitate nur die Person bzw. der Ort, ohne Verb.
+- Abgesichert durch: Tests „Dialekt: da Bauleita vom GU“, „Dialekt-Wörterbuch“, weiter „Worttreue“ aus L10.
+- Status: behoben, in Lauf 3 prüfen.
+
+### L13 Anweiser übersehen, wenn nur gesagt wird, wer es wollte
+- Was: `klar-wc-vorwand-w10`. „weil architekt andere höhe will“, trotzdem Rückfrage „Wer hat das angeschafft?“. Antwort: „steht eh oben architekt“. Note 2. Die Ursache war die Prompt-Regel aus L10 („wessen Wunsch es war, ist nicht der Anweiser“).
+- Regel: Hat niemand ausdrücklich angeschafft, gilt der, der es wollte, als Anweiser.
+- Abgesichert durch: Prompt, Szenario `klar-wc-vorwand-w10`.
+- Status: behoben, in Lauf 3 prüfen.
+
+### L14 Grund der Arbeit geht verloren
+- Was: „weil de Kuchl woanders hinkummt“, „weil s Lager hin woa“, „weil da Elektriker mit seiner Trasse ned vorbeikummt“ fehlten in Zusammenfassung und Ablage. Für das Büro ist der Grund oft das Wichtigste.
+- Regel: Neues Feld `grund`, nie aus Fotos. In der Zusammenfassung in Klammern hinter der Leistung.
+- Abgesichert durch: Tests „Grund steht in der Zusammenfassung“, „Grund nicht aus dem Foto“.
+- Status: behoben.
+
+### L15 Seufzer als Unsinn abgewiesen
+- Was: `frage-geld-kriegen-wir-das-bezahlt`. Auf „na hoffentlich“ kam „Das ist nichts für mich …“.
+- Regel: Wartet eine Zusammenfassung auf Bestätigung, ist eine Nachricht ohne Inhalt ein Kommentar: „Verstehe.“ und die offene Zusammenfassung mit Knöpfen, in einer Nachricht.
+- Abgesichert durch: Test „Seufzer bei offener Zusammenfassung“.
+- Status: behoben.
+
+### L16 Bei mehreren Lücken die falsche zuerst gefragt
+- Was: `laerm-bruchstueck-flex`. Zuerst offene Frage nach dem Ort, die Leute blieben dann offen, obwohl ein Knopf gereicht hätte.
+- Regel: Jede unklare Angabe zählt als eigene Rückfrage (höchstens 2 insgesamt). Reihenfolge: Leute, Stunden, Menge, Anweiser, Ort, Tag, Leistung.
+- Abgesichert durch: Test „bei mehreren unklaren Stellen zuerst die Leute“.
+- Status: behoben.
+
+### Prüfwerkzeug: Länge falsch gezählt
+- Was: Die Längenprüfung zählte den vorangestellten Hinweis (Geldfrage) als Zeilen der Zusammenfassung.
+- Regel: Nur der Körper nach „… so:“ oder „… offen:“ zählt.
+- Status: behoben in `lernschleife.ts`.
+
 ### 2026-10-22: Lauf 1 (30 Szenarien, 28 bestanden, Note Median 4, Minimum 1, 1,64 USD)
 
 ### L1 Menge und Leistung aus dem Foto geschlossen

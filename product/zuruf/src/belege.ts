@@ -19,7 +19,7 @@ export interface Verworfen {
   grund: string;
 }
 
-const FELDER: Feldname[] = ["projektId", "ort", "leistung", "menge", "personen", "dauerStunden", "angewiesenVon", "datum", "material"];
+const FELDER: Feldname[] = ["projektId", "ort", "leistung", "menge", "personen", "dauerStunden", "angewiesenVon", "datum", "material", "grund"];
 
 /** Ein Foto zeigt einen Zustand, nicht was gemacht wurde: Aus Bildbeschreibungen zählen nur Baustelle und Ort. */
 const AUS_FOTO_ERLAUBT = new Set<Feldname>(["projektId", "ort"]);
@@ -28,10 +28,39 @@ const AUS_FOTO_ERLAUBT = new Set<Feldname>(["projektId", "ort"]);
 const WORTTREU = new Set<Feldname>(["ort", "angewiesenVon"]);
 const ERLAUBTE_ZUSAETZE = new Set(["laut", "absender", "niemand", "stiege", "haus", "zimmer"]);
 
+/** Häufige Dialektwörter und ihre Schriftform (Wien, Niederösterreich, Steiermark). Klein halten, nur Eindeutiges. */
+const DIALEKT: Record<string, string[]> = {
+  gmoa: ["gemeinde"],
+  gmeinde: ["gemeinde"],
+  kuchl: ["küche"],
+  baumasta: ["baumeister"],
+  schui: ["schule"],
+  oarbeita: ["arbeiter"],
+};
+
 function woerter(text: string): string[] {
   return normalisiere(text)
     .split(" ")
     .filter((w) => w.length >= 4);
+}
+
+function abstand(a: string, b: string): number {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array<number>(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0]![j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      d[i]![j] = Math.min(d[i - 1]![j]! + 1, d[i]![j - 1]! + 1, d[i - 1]![j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length]![b.length]!;
+}
+
+/** Ein Wort gilt als gesagt, wenn es (fast) so vorkommt: Dialekt „Bauleita“ deckt „Bauleiter“, nicht aber ein neues Wort. */
+function gesagt(wort: string, gesagteWoerter: Set<string>): boolean {
+  if (gesagteWoerter.has(wort) || ERLAUBTE_ZUSAETZE.has(wort)) return true;
+  for (const g of gesagteWoerter) {
+    if (DIALEKT[g]?.includes(wort)) return true;
+    if (g.length >= 4 && abstand(g, wort) <= Math.max(1, Math.floor(wort.length * 0.3))) return true;
+  }
+  return false;
 }
 
 /**
@@ -67,7 +96,7 @@ export function pruefeBelege(
     }
     let wert = angabe.wert;
     if (WORTTREU.has(feld) && typeof wert === "string") {
-      const fremd = woerter(wert).filter((w) => !alles.has(w) && !ERLAUBTE_ZUSAETZE.has(w));
+      const fremd = woerter(wert).filter((w) => !gesagt(w, alles));
       if (fremd.length) {
         angepasst.push({ feld, zitat: angabe.zitat, grund: `Wert „${wert}“ enthielt nicht gesagte Wörter: ${fremd.join(", ")}` });
         wert = angabe.zitat;

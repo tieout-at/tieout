@@ -226,3 +226,36 @@ describe("Lernpunkte aus Lauf 1", () => {
     expect(c[0]!.zweck).toBe("rueckfrage");
   });
 });
+
+describe("Lernpunkte aus Lauf 2", () => {
+  it("Seufzer bei offener Zusammenfassung wird nicht abgewiesen (L15)", async () => {
+    const seufzer = (): Verstaendnis => ({ absicht: "kein_zuruf", enthaeltFrageGeldRecht: false, eintraege: [] });
+    const { agent } = neu(stub(zuruf({ projektId: ["w21", "Wien 21"], leistung: ["WC", "WC"] }), seufzer));
+    await agent.verarbeite(msg("Wien 21 WC"));
+    const a = await agent.verarbeite(msg("na hoffentlich"));
+    expect(a).toHaveLength(1);
+    expect(a[0]!.text).toMatch(/^Verstehe\./);
+    expect(a[0]!.text).not.toContain("nichts für mich");
+    expect(a[0]!.knoepfe?.map((k) => k.id)).toContain("passt");
+  });
+
+  it("Grund steht in der Zusammenfassung, „1 Stunde“ in Einzahl (L14)", async () => {
+    const { agent } = neu(stub(zuruf({ projektId: ["w10", "im Zehnten"], leistung: ["Heizkörper umgehängt", "Heizkörpa umhänga"], grund: ["Küche kommt woanders hin", "de Kuchl jetzt woanders hinkummt"], dauerStunden: [1, "a Stund"] })));
+    const a = await agent.verarbeite(msg("im Zehnten Heizkörpa umhänga weu de Kuchl jetzt woanders hinkummt, a Stund"));
+    expect(a[0]!.text).toContain("(Küche kommt woanders hin)");
+    expect(a[0]!.text).toContain("1 Stunde");
+  });
+
+  it("bei mehreren unklaren Stellen zuerst die Leute, per Knopf (L16)", async () => {
+    const luecken = (n: Nachricht): Verstaendnis => ({
+      absicht: "zuruf",
+      enthaeltFrageGeldRecht: false,
+      eintraege: [{ eintrag: { projektId: { wert: "w21", zitat: "Wien 21", nachrichtId: n.id }, leistung: { wert: "Steigleitung", zitat: "Steigleitung", nachrichtId: n.id } }, projektKandidaten: [], art: "auftrag", unklar: ["ort", "personen"] }],
+    });
+    const { agent } = neu(stub(luecken));
+    const a = await agent.verarbeite(msg("Wien 21 Top [unverständlich] Steigleitung [unverständlich] Mann"));
+    expect(a[0]!.text).toContain("Wie viele wart ihr");
+    const b = await agent.verarbeite(knopf("personen:2", "Zu zweit"));
+    expect(b[0]!.text).toContain("Wo genau");
+  });
+});

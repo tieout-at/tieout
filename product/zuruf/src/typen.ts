@@ -46,6 +46,8 @@ export interface Eintrag {
   /** Tag der Leistung als „JJJJ-MM-TT“, wenn genannt (auch „gestern“). */
   datum?: Angabe<string>;
   material?: Angabe<string>;
+  /** Warum die Arbeit nötig war, so wie gesagt („weil die Küche woanders hinkommt“). Wichtig fürs Büro. */
+  grund?: Angabe<string>;
 }
 
 export type Feldname = keyof Eintrag;

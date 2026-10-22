@@ -217,8 +217,11 @@ export async function spiele(s: Szenario, versteher: Versteher, opts: { bewerten
     if (agentText.includes(normalisiere(v))) pruefungen.push({ name: `verboten:${v}`, ok: false });
   }
   for (const z of g.filter((z) => z.zweck === "zusammenfassung")) {
-    const zeilen = z.text.split("\n").length - 1;
-    const punkte = z.text.split("\n").filter((l) => /^\d\)/.test(l)).length || 1;
+    // Nur der Körper der Zusammenfassung zählt, nicht ein vorangestellter Hinweis.
+    const alle = z.text.split("\n");
+    const kopf = alle.findLastIndex((l) => /(so|offen):$/.test(l));
+    const zeilen = alle.length - 1 - kopf;
+    const punkte = alle.filter((l) => /^\d\)/.test(l)).length || 1;
     if (punkte === 1 && zeilen > 5) pruefungen.push({ name: "laenge", ok: false, detail: `${zeilen} Zeilen` });
   }
   if (agent.protokoll.fehler.length) pruefungen.push({ name: "technik", ok: false, detail: agent.protokoll.fehler.join("; ") });

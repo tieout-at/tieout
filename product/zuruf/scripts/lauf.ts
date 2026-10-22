@@ -14,6 +14,8 @@ import { kiVersteher } from "../src/verstehen.ts";
 
 const args = process.argv.slice(2);
 const zurueck = args.includes("--zurueck");
+// Nur für einen Subagent, der Holdout-Fehler als abstrakte Muster zusammenfasst. Die Hauptsitzung liest diese Datei nicht.
+const mitProtokoll = args.includes("--mit-protokoll");
 const bewerten = !args.includes("--ohne-bewerter");
 const nur = args.includes("--nur") ? args[args.indexOf("--nur") + 1] : undefined;
 const parallel = args.includes("--parallel") ? Number(args[args.indexOf("--parallel") + 1]) : 4;
@@ -85,6 +87,7 @@ if (zurueck) {
     [...new Set(ergebnisse.map((e) => e.szenario.kategorie))].map((k) => [k, ergebnisse.filter((e) => e.szenario.kategorie === k && e.pruefungen.every((p) => p.ok)).length + "/" + ergebnisse.filter((e) => e.szenario.kategorie === k).length]),
   );
   writeFileSync(path.join(ordner, "kennzahlen.json"), JSON.stringify({ kennzahlen, proKategorie }, null, 1));
+  if (mitProtokoll) writeFileSync(path.join(ordner, "protokoll-nur-fuer-subagent.json"), JSON.stringify(ergebnisse, null, 1));
   console.log(JSON.stringify(proKategorie));
 } else {
   writeFileSync(path.join(ordner, "ergebnisse.json"), JSON.stringify(ergebnisse, null, 1));
