@@ -9,6 +9,12 @@ export function siteMetadata(locale: Locale): Metadata {
     description: m.description,
     robots: { index: false, follow: false },
     alternates: { languages: { de: "/", en: "/en/" } },
-    icons: { icon: "/favicon.svg" },
+    icons: {
+      icon: [
+        { url: "/favicon.svg", type: "image/svg+xml" },
+        { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      ],
+      apple: "/apple-touch-icon.png",
+    },
   };
 }
