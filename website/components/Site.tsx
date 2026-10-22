@@ -16,7 +16,7 @@ export function Site({ locale }: { locale: Locale }) {
       <MeasureNav labels={t.measure.labels} aria={t.measure.aria} />
       <main id="inhalt">
         <Hero t={t.hero} />
-        <Solution t={t.solution} />
+        <Solution t={t.solution} locale={locale} />
         <Video t={t.video} />
         <Team t={t.team} />
         <Contact t={t.contact} locale={locale} />

@@ -6,6 +6,8 @@
 
 > **Update v2 (22.10.2026, Feedback Maxi D.):** Aufbau jetzt: 01 Hero (Text links, drei Fotos mit Produktausschnitten rechts), 02 Problem und Lösung mit animiertem Ablauf (Eingänge ERP, E-Mail, PDF, Pläne, Excel, Foto, Sprachnachricht, WhatsApp → Zwilling des Betriebs aus Projekten → Schlussrechnung mit Prüfungen), 03 Produktvideo, 04 Über uns (LinkedIn-Fotos, alle Co-Founder, Logos in Ultramarin), 05 Demo buchen. Hauptprodukt nach außen ist die Schlussrechnung, der Zwilling ist die Grundlage. Keine Navigation oben, Messpunkt-Navigation links, Schiebeschalter DE/EN. Entfallen: Legende/Prinzipien, Bau-Insider-Karte, klickbarer Zwilling. Bildquellen: `public/hero/QUELLEN.md`.
 
+> **Update v3 (22.10.2026):** Hero ohne Zielgruppen-Kacheln, drei Fotos mit je einem Nutzen (vergessene Leistung, Mehrmenge aus Planänderung, alle Belege an einem Ort). Problem und Lösung untereinander, ohne Zahlen (keine belastbare Quelle für AT/DE gefunden). Eingänge MECE nach Datenart: Systeme, Dokumente, Kommunikation. Zwilling als Betrieb mit Firmenwissen, Projektübersicht und Einblick bis zur Position mit Belegen. Messpunkt-Navigation rechts mit allen Namen. Demo mit Terminwahl (Dummy, Kalender-Anbindung offen), Verlauf Papier zu Ultramarin.
+
 ---
 
 ## 1. Ziel

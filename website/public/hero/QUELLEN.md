@@ -2,8 +2,8 @@
 
 Alle Fotos von Unsplash, Unsplash-Lizenz (kostenlose Nutzung, auch kommerziell, ohne Namensnennung).
 
-| Datei | Unsplash-Foto |
-|---|---|
-| bauplan.jpg | https://unsplash.com/photos/ (ID photo-1772442198624-4fc4d7281e89) |
-| elektro.jpg | https://unsplash.com/photos/ (ID photo-1758101755915-462eddc23f57) |
-| rohbau.jpg | https://unsplash.com/photos/ (ID photo-1508450859948-4e04fabaa4ea) |
+| Datei | Unsplash-Foto-ID | Motiv |
+|---|---|---|
+| steckdose.jpg | photo-1751486289947-4f5f5961b3aa | offene Unterputz-Steckdose |
+| plaene.jpg | photo-1762146828422-50a8bd416d3c | ausgebreitete Baupläne |
+| tablet.jpg | photo-1778074762022-c33cc42f79ae | Bauleute prüfen Pläne auf dem Tablet |
