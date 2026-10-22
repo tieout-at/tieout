@@ -29,7 +29,7 @@ export default async function NeuerZurufSeite({ params }: Props) {
       <Seitenkopf
         pfad={[
           { text: daten.firma.name, href: "/" },
-          { text: d.projekt.kurz, href: `/projekte/${id}` },
+          { text: d.projekt.kurz, href: `/projekte/${id}/` },
           { text: "Zeitachse", href: `/projekte/${id}/zeitachse` },
         ]}
         titel="Neuer Zuruf"

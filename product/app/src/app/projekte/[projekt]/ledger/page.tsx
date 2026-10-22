@@ -41,7 +41,7 @@ export default async function Ledger({ params }: Props) {
   });
   return (
     <>
-      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}` }]} titel="Ledger" />
+      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}/` }]} titel="Ledger" />
       <main className="scr-body">
         <LedgerTabelle zeilen={zeilen} gruppen={leistungsgruppen()} />
       </main>

@@ -27,7 +27,7 @@ export default async function Befunde({ params }: Props) {
   const risiken = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
   return (
     <>
-      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}` }]} titel="Befunde" />
+      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}/` }]} titel="Befunde" />
       <main className="scr-body">
         <BefundTabelle projektId={id} befunde={e.befunde} summen={e.summen} risiken={risiken} href={(b) => `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/`}
           nachOffen={<NeueZurufZeilen projektId={id} basis={`/projekte/${id}`} />}
