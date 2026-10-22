@@ -27,7 +27,7 @@ export default async function OrdnerSeite({ params }: Props) {
     <>
       <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: basis }]} titel="Ordner" />
       <main className="scr-body">
-        <Ordner matrix={belegmatrix(d, e, (s) => `${basis}/befunde/${befundSlug(s)}`)} dokumente={dokumentliste(d)} basis={basis} />
+        <Ordner matrix={belegmatrix(d, e, (s) => `${basis}/befunde/${befundSlug(s)}`)} dokumente={dokumentliste(d)} basis={basis} abgleich={e.abgleich} />
       </main>
     </>
   );

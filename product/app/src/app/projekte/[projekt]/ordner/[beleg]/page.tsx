@@ -9,6 +9,7 @@ import { zitate } from "@/daten/zeitachse";
 import type { Datensatz, DokumentArt } from "@/domain/typen";
 import type { Beleg } from "@/engine";
 import { ART_TEXT, teileTitel } from "@/ui/befund-texte";
+import { AnkerMarke } from "@/ui/AnkerMarke";
 import { Belegseite } from "@/ui/Belegseite";
 import { betrag, datum, zeitpunkt } from "@/ui/format";
 import { Seitenkopf } from "@/ui/Seitenkopf";
@@ -136,7 +137,8 @@ export default async function BelegSeite({ params }: Props) {
             <div className="sw-viewer__body beleg-body">
               <div className="sw-viewer__canvas">
                 <div className="doc-zoom">
-                  <Belegseite d={d} beleg={beleg} />
+                  <Belegseite d={d} beleg={beleg} ganz />
+                  <AnkerMarke />
                 </div>
               </div>
             </div>

@@ -5,7 +5,7 @@
 
 import { FileText, Image as Bild, Mail, Map as Karte, MessageCircle, Receipt, Ruler, Smartphone, Wrench, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Ereignis, EreignisArt } from "@/daten/zeitachse";
 import { Ico } from "./Ico";
 import { zeigeToast } from "./Toast";
@@ -47,10 +47,14 @@ export function Zeitachse({ ereignisse, basis, szene }: { ereignisse: Ereignis[]
   // Während die Szene läuft, fehlt ihr Zuruf in der Zeitachse; nach „Ja“ erscheint er markiert.
   const [spielt, setSpielt] = useState(false);
   const [neu, setNeu] = useState<string | null>(null);
+  const ausloeser = useRef<HTMLButtonElement>(null);
   const sichtbar = ereignisse.filter((e) => passt(e, filter) && !(spielt && e.id === szene?.id));
 
   useEffect(() => {
-    if (neu) document.querySelector(`[data-id="${neu}"]`)?.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (!neu) return;
+    const el = document.querySelector<HTMLElement>(`[data-id="${neu}"]`);
+    el?.scrollIntoView({ block: "center", behavior: "smooth" });
+    el?.querySelector<HTMLElement>("a")?.focus({ preventScroll: true });
   }, [neu]);
 
   const monate: { key: string; titel: string; liste: Ereignis[] }[] = [];
@@ -63,12 +67,12 @@ export function Zeitachse({ ereignisse, basis, szene }: { ereignisse: Ereignis[]
   return (
     <section className="zeit" aria-label="Zeitachse">
       <div className="zeit-leiste">
-      <div className="sw-tabs zeit-filter" role="tablist" aria-label="Filter">
+      <div className="sw-tabs zeit-filter" role="group" aria-label="Filter">
         {FILTER.map(({ f, text }) => {
           const n = ereignisse.filter((e) => passt(e, f)).length;
           if (n === 0) return null;
           return (
-            <button key={f} type="button" role="tab" className="sw-tab" aria-selected={filter === f} onClick={() => setFilter(f)}>
+            <button key={f} type="button" className="sw-tab" aria-pressed={filter === f} onClick={() => setFilter(f)}>
               {text}
               <span className="sw-count">{n}</span>
             </button>
@@ -77,6 +81,7 @@ export function Zeitachse({ ereignisse, basis, szene }: { ereignisse: Ereignis[]
       </div>
         {szene && (
           <button
+            ref={ausloeser}
             type="button"
             className="sw-btn sw-btn--sm"
             onClick={() => {
@@ -92,7 +97,10 @@ export function Zeitachse({ ereignisse, basis, szene }: { ereignisse: Ereignis[]
       {spielt && szene && (
         <ZurufSzene
           z={szene}
-          onZu={() => setSpielt(false)}
+          onZu={() => {
+            setSpielt(false);
+            ausloeser.current?.focus();
+          }}
           onJa={() => {
             setSpielt(false);
             setFilter((f) => (f === "alle" || f === "zuruf" ? f : "alle"));

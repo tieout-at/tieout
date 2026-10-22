@@ -11,6 +11,8 @@ export interface Fundstelle {
   /** Dokument- oder Zuruf-Kennung (Ziel des Links). */
   id: string;
   text: string;
+  /** Position, zu der die Seite springt (Anker „#pos-…“), wenn das Dokument eine Zeile dafür hat. */
+  anker?: string;
 }
 
 export interface MatrixZeile {
@@ -42,15 +44,16 @@ export function belegmatrix(d: Datensatz, e: Ergebnis, befundHref: (schluessel: 
       kurztext: p.kurztext.wert,
       befundHref: b ? befundHref(b.schluessel) : null,
       zellen: {
-        lv: [{ id: p.nr.quelle.dokumentId, text: `S. ${p.nr.quelle.seite}` }],
-        aufmass: eindeutig(d.aufmass.filter((a) => a.zeilen.some((z) => z.positionNr.wert === nr)).map((a) => ({ id: a.dokumentId, text: a.nr }))),
+        lv: [{ id: p.nr.quelle.dokumentId, text: `S. ${p.nr.quelle.seite}`, anker: nr }],
+        aufmass: eindeutig(d.aufmass.filter((a) => a.zeilen.some((z) => z.positionNr.wert === nr)).map((a) => ({ id: a.dokumentId, text: a.nr, anker: nr }))),
         verrechnet: eindeutig([
-          ...d.abschlaege.filter((r) => r.zeilen.some((z) => z.typ === "lv" && z.positionNr.wert === nr)).map((r) => ({ id: r.dokumentId, text: r.nr.wert })),
-          ...(d.entwurf?.zeilen.some((z) => z.typ === "lv" && z.positionNr.wert === nr) ? [{ id: d.entwurf.dokumentId, text: "Entwurf SR" }] : []),
+          ...d.abschlaege.filter((r) => r.zeilen.some((z) => z.typ === "lv" && z.positionNr.wert === nr)).map((r) => ({ id: r.dokumentId, text: r.nr.wert, anker: nr })),
+          ...(d.entwurf?.zeilen.some((z) => z.typ === "lv" && z.positionNr.wert === nr) ? [{ id: d.entwurf.dokumentId, text: "Entwurf SR", anker: nr }] : []),
         ]),
         plan: eindeutig(
           d.plaene
             .filter((x) => x.vermerke.some((v) => v.positionNr.wert === nr))
+            .sort((a, b) => b.index.wert.localeCompare(a.index.wert))
             .map((x) => ({ id: x.dokumentId, text: `${plan.get(x.dokumentId)?.planNr.wert} Index ${x.index.wert}` })),
         ),
         mail: d.mails.filter((m) => m.bezugPositionen.wert.includes(nr)).map((m) => ({ id: m.dokumentId, text: datum(m.datum.wert).slice(0, 6) })),

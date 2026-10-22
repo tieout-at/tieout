@@ -750,6 +750,11 @@ body {
 .zeit-filter {
   flex-wrap: wrap;
 }
+/* Filter sind Umschaltknöpfe (aria-pressed), gleiche Form wie Reiter */
+.sw-tab[aria-pressed="true"] {
+  background: var(--surface-selected);
+  color: var(--text);
+}
 .zeit-monat__kopf {
   position: sticky;
   top: calc(-1 * var(--space-5));
@@ -875,6 +880,10 @@ body {
     gap: var(--space-2);
   }
   .zeit-ev__befund {
+    grid-column: 3;
+    padding-top: 0;
+  }
+  .zeit-ev__befund:empty {
     display: none;
   }
 }
@@ -1198,4 +1207,16 @@ body {
 }
 .dok-duplikat .dok-datei {
   color: var(--text-muted);
+}
+
+/* Ganzes Dokument im Ordner: keine feste A4-Höhe, Sprung zur Position per Anker markiert diese Zeile */
+.sw-page--ganz {
+  aspect-ratio: auto;
+}
+.sw-dt tr:target td,
+.sw-dt tr[data-ziel] td {
+  background: var(--doc-mark);
+}
+.sw-dt tr[id] {
+  scroll-margin-top: var(--space-8);
 }

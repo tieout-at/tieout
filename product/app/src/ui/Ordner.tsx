@@ -21,9 +21,11 @@ const SPALTEN: { art: Belegart; text: string }[] = [
   { art: "zuruf", text: "Zuruf" },
 ];
 
-type Ansicht = "befund" | "alle" | "dokumente";
+type Ansicht = "befund" | "alle" | "dokumente" | "zurufe";
 
-export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; dokumente: DokumentZeile[]; basis: string }) {
+export function Ordner({ matrix, dokumente, basis, abgleich }: { matrix: MatrixZeile[]; dokumente: DokumentZeile[]; basis: string; abgleich: boolean }) {
+  const dateien = dokumente.filter((x) => x.art !== "Zuruf");
+  const zurufe = dokumente.filter((x) => x.art === "Zuruf");
   const mitBefund = matrix.filter((z) => z.befundHref);
   const [ansicht, setAnsicht] = useState<Ansicht>(mitBefund.length ? "befund" : "alle");
   const [suche, setSuche] = useState("");
@@ -31,17 +33,18 @@ export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; do
   const reiter: { a: Ansicht; text: string; n: number }[] = [
     { a: "befund", text: "Positionen mit Befund", n: mitBefund.length },
     { a: "alle", text: "Alle Positionen", n: matrix.length },
-    { a: "dokumente", text: "Dokumente", n: dokumente.length },
+    { a: "dokumente", text: "Dokumente", n: dateien.length },
+    { a: "zurufe", text: "Zurufe", n: zurufe.length },
   ];
 
   return (
     <section className="ledger" aria-label="Ordner">
       <div className="zeit-leiste">
-        <div className="sw-tabs zeit-filter" role="tablist" aria-label="Ansicht">
+        <div className="sw-tabs zeit-filter" role="group" aria-label="Ansicht">
           {reiter
             .filter((r) => r.n > 0)
             .map((r) => (
-              <button key={r.a} type="button" role="tab" className="sw-tab" aria-selected={ansicht === r.a} onClick={() => setAnsicht(r.a)}>
+              <button key={r.a} type="button" className="sw-tab" aria-pressed={ansicht === r.a} onClick={() => setAnsicht(r.a)}>
                 {r.text}
                 <span className="sw-count">{r.n.toLocaleString("de-AT")}</span>
               </button>
@@ -49,22 +52,23 @@ export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; do
         </div>
         <label className="sw-suche">
           <Ico icon={Search} />
-          <input type="search" placeholder={ansicht === "dokumente" ? "Datei" : "Position oder Text"} value={suche} onChange={(ev) => setSuche(ev.target.value)} aria-label="Durchsuchen" />
+          <input type="search" placeholder={ansicht === "dokumente" || ansicht === "zurufe" ? "Datei" : "Position oder Text"} value={suche} onChange={(ev) => setSuche(ev.target.value)} aria-label="Durchsuchen" />
         </label>
       </div>
-      {ansicht === "dokumente" ? (
-        <Dokumente liste={dokumente.filter((x) => !s || x.datei.toLowerCase().includes(s) || x.art.toLowerCase().includes(s))} basis={basis} />
+      {ansicht === "dokumente" || ansicht === "zurufe" ? (
+        <Dokumente liste={(ansicht === "zurufe" ? zurufe : dateien).filter((x) => !s || x.datei.toLowerCase().includes(s) || x.art.toLowerCase().includes(s))} basis={basis} />
       ) : (
         <Matrix
           zeilen={(ansicht === "befund" ? mitBefund : matrix).filter((z) => !s || z.nr.toLowerCase().includes(s) || z.kurztext.toLowerCase().includes(s))}
           basis={basis}
+          abgleich={abgleich}
         />
       )}
     </section>
   );
 }
 
-function Matrix({ zeilen, basis }: { zeilen: MatrixZeile[]; basis: string }) {
+function Matrix({ zeilen, basis, abgleich }: { zeilen: MatrixZeile[]; basis: string; abgleich: boolean }) {
   return (
     <div className="ledger-rahmen">
       <table className="sw-table tab-matrix" style={{ tableLayout: "fixed" }}>
@@ -106,19 +110,19 @@ function Matrix({ zeilen, basis }: { zeilen: MatrixZeile[]; basis: string }) {
                     <Link href={z.befundHref} className="matrix-befund">
                       Befund öffnen
                     </Link>
-                  ) : (
+                  ) : abgleich ? (
                     <span>Ohne Befund</span>
-                  )}
+                  ) : null}
                 </div>
               </td>
               {SPALTEN.map((x) => (
                 <td key={x.art} className="matrix-zelle">
                   {z.zellen[x.art].length === 0 ? (
-                    <span className="matrix-leer">kein Beleg</span>
+                    <span className="matrix-leer">{x.art === "verrechnet" ? "nicht verrechnet" : "kein Beleg"}</span>
                   ) : (
                     <>
                       {z.zellen[x.art].slice(0, 2).map((f) => (
-                        <Link key={f.id} href={`${basis}/ordner/${f.id}`} className="matrix-link">
+                        <Link key={f.id} href={`${basis}/ordner/${f.id}${f.anker ? `#pos-${f.anker}` : ""}`} className="matrix-link">
                           {f.text}
                         </Link>
                       ))}

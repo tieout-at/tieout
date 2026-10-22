@@ -70,7 +70,7 @@ function projektNav(p: NavProjekt): Eintrag[] {
   return [
     { href: basis, icon: LayoutDashboard, text: "Übersicht" },
     { href: `${basis}/ordner`, icon: FolderOpen, text: "Ordner", zaehler: p.dokumente, praefix: true },
-    { href: `${basis}/ledger`, icon: Table, text: "Ledger", zaehler: p.ledger },
+    { href: `${basis}/ledger`, icon: Table, text: "Ledger", zaehler: p.ledger, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
     { href: `${basis}/zeitachse`, icon: History, text: "Zeitachse" },
     { href: `${basis}/befunde`, icon: ListChecks, text: "Befunde", zaehler: p.befunde, praefix: true, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
     { href: `${basis}/vorpruefung`, icon: ShieldCheck, text: "Vorprüfung aus GU-Sicht", zaehler: p.risiken, folgt: "Vorprüfung folgt in v1.0" },
@@ -145,7 +145,7 @@ export function Seitenleiste({
             const offen = x.id === p?.id;
             return (
               <div key={x.id} className="nav-projekt" data-offen={offen || undefined}>
-                <Link href={`/projekte/${x.id}`} className="nav-projekt__kopf" title={`${x.kurz} ${x.name}, ${AMPEL_WORT[x.ampel]}`} aria-expanded={offen}>
+                <Link href={`/projekte/${x.id}`} className="nav-projekt__kopf" title={`${x.kurz} ${x.name}, ${AMPEL_WORT[x.ampel]}`}>
                   <span className={`nav-dot nav-dot--${x.ampel}`} aria-hidden="true" />
                   <span className="nav-text">{x.name}</span>
                 </Link>

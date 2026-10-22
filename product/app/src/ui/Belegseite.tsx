@@ -41,7 +41,7 @@ function KopfZeile({ k, v }: { k: string; v: React.ReactNode }) {
   );
 }
 
-function Tabelle({ kopf, zeilen, markiert }: { kopf: string[]; zeilen: React.ReactNode[][]; markiert: number }) {
+function Tabelle({ kopf, zeilen, markiert, ids }: { kopf: string[]; zeilen: React.ReactNode[][]; markiert: number; ids?: (string | undefined)[] }) {
   return (
     <table className="sw-dt">
       <thead>
@@ -53,7 +53,7 @@ function Tabelle({ kopf, zeilen, markiert }: { kopf: string[]; zeilen: React.Rea
       </thead>
       <tbody>
         {zeilen.map((z, i) => (
-          <tr key={i} className={i === markiert ? "hl" : undefined}>
+          <tr key={i} id={ids?.[i]} className={i === markiert ? "hl" : undefined}>
             {z.map((c, j) => (
               <td key={j}>{c}</td>
             ))}
@@ -65,7 +65,9 @@ function Tabelle({ kopf, zeilen, markiert }: { kopf: string[]; zeilen: React.Rea
 }
 
 /** Ausschnitt um die markierte Zeile, damit die Seite lesbar bleibt. */
-function ausschnitt<T>(liste: T[], index: number, umfang = 14): { teil: T[]; markiert: number } {
+/** Ausschnitt; ganz = alle Zeilen (Beleg-Seite im Ordner, Sprung per Anker „#pos-…“). */
+function ausschnitt<T>(liste: T[], index: number, ganz = false, umfang = 14): { teil: T[]; markiert: number } {
+  if (ganz) return { teil: liste, markiert: index };
   if (index < 0) return { teil: liste.slice(0, umfang), markiert: -1 };
   const start = Math.max(0, Math.min(index - Math.floor(umfang / 2), liste.length - umfang));
   return { teil: liste.slice(start, start + umfang), markiert: index - start };
@@ -93,7 +95,7 @@ function Unterschriften({ ag, an, risiko }: { ag: React.ReactNode; an?: React.Re
   );
 }
 
-function RechnungsSeite({ d, r, beleg }: { d: Datensatz; r: Rechnung; beleg: Beleg }) {
+function RechnungsSeite({ d, r, beleg, ganz }: { d: Datensatz; r: Rechnung; beleg: Beleg; ganz: boolean }) {
   const nr = positionAus(beleg.quelle.stelle);
   const zeilen = r.zeilen.map((z) => {
     if (z.typ === "lv" || z.typ === "zusatz") {
@@ -105,11 +107,11 @@ function RechnungsSeite({ d, r, beleg }: { d: Datensatz; r: Rechnung; beleg: Bel
   });
   const regie = beleg.quelle.stelle?.match(/RB-\d+/)?.[0];
   const i = zeilen.findIndex((x) => x.key === (nr ?? regie));
-  const { teil, markiert } = ausschnitt(zeilen, i);
+  const { teil, markiert } = ausschnitt(zeilen, i, ganz);
   return (
     <>
       <Titel titel={r.art === "abschlag" ? `Abschlagsrechnung ${r.nr.wert}` : "Schlussrechnung, Entwurf des Projektleiters"} meta={`vom ${datum(r.datum.wert)}`} />
-      <Tabelle kopf={["Pos.", "Text", "Menge", "Betrag"]} markiert={markiert} zeilen={teil.map((x) => x.z)} />
+      <Tabelle kopf={["Pos.", "Text", "Menge", "Betrag"]} markiert={markiert} zeilen={teil.map((x) => x.z)} ids={ganz ? teil.map((x) => `pos-${x.key}`) : undefined} />
       <p className="doc-sum">
         Summe <Mark an={beleg.quelle.stelle?.startsWith("Summe") ?? false}>{betrag(r.summe.wert)}</Mark>
       </p>
@@ -239,13 +241,13 @@ function ZurufSeite({ z }: { z: Zuruf }) {
   );
 }
 
-function Inhalt({ d, dok, beleg }: { d: Datensatz; dok: Dokument; beleg: Beleg }) {
+function Inhalt({ d, dok, beleg, ganz }: { d: Datensatz; dok: Dokument; beleg: Beleg; ganz: boolean }) {
   const stelle = beleg.quelle.stelle;
   switch (dok.art) {
     case "lv": {
       const nr = positionAus(stelle);
       const i = d.lv.findIndex((p) => p.nr.wert === nr);
-      const { teil, markiert } = ausschnitt(d.lv, i);
+      const { teil, markiert } = ausschnitt(d.lv, i, ganz);
       return (
         <>
           <Titel titel="Leistungsverzeichnis" meta={`ÖNORM A 2063, Seite ${beleg.quelle.seite}`} />
@@ -253,6 +255,7 @@ function Inhalt({ d, dok, beleg }: { d: Datensatz; dok: Dokument; beleg: Beleg }
             kopf={["Pos.", "Kurztext", "Menge", "EP"]}
             markiert={markiert}
             zeilen={teil.map((p) => [p.nr.wert, p.kurztext.wert, menge(p.menge.wert, p.einheit.wert), betrag(p.ep.wert)])}
+            ids={ganz ? teil.map((p) => `pos-${p.nr.wert}`) : undefined}
           />
         </>
       );
@@ -262,7 +265,7 @@ function Inhalt({ d, dok, beleg }: { d: Datensatz; dok: Dokument; beleg: Beleg }
       if (!blatt) break;
       const nr = positionAus(stelle);
       const i = blatt.zeilen.findIndex((z) => z.positionNr.wert === nr);
-      const { teil, markiert } = ausschnitt(blatt.zeilen, i);
+      const { teil, markiert } = ausschnitt(blatt.zeilen, i, ganz);
       return (
         <>
           <Titel titel={`Aufmaßblatt ${blatt.nr}`} meta={<Mark an={trifft(beleg.quelle, "Kopf, Leistungszeitraum")}>Leistung {datum(blatt.leistungVon.wert)} bis {datum(blatt.leistungBis.wert)}, erstellt {datum(blatt.datum.wert)}</Mark>} />
@@ -270,6 +273,7 @@ function Inhalt({ d, dok, beleg }: { d: Datensatz; dok: Dokument; beleg: Beleg }
             kopf={["Pos.", "Ort", "Menge"]}
             markiert={markiert}
             zeilen={teil.map((z) => [z.positionNr.wert, z.ort.wert, menge(z.menge.wert, d.lv.find((p) => p.nr.wert === z.positionNr.wert)?.einheit.wert)])}
+            ids={ganz ? teil.map((z, k) => (teil.findIndex((y) => y.positionNr.wert === z.positionNr.wert) === k ? `pos-${z.positionNr.wert}` : undefined)) : undefined}
           />
           <Unterschriften
             ag={blatt.unterschriftAG.wert ? "Auftraggeber: gegengezeichnet" : "Auftraggeber: keine Unterschrift"}
@@ -317,7 +321,7 @@ function Inhalt({ d, dok, beleg }: { d: Datensatz; dok: Dokument; beleg: Beleg }
     case "sr_entwurf": {
       const r = dok.art === "sr_entwurf" ? d.entwurf : d.abschlaege.find((x) => x.dokumentId === dok.id);
       if (!r) break;
-      return <RechnungsSeite d={d} r={r} beleg={beleg} />;
+      return <RechnungsSeite d={d} r={r} beleg={beleg} ganz={ganz} />;
     }
     case "vertrag":
       return <VertragsSeite d={d} beleg={beleg} />;
@@ -399,7 +403,7 @@ function Inhalt({ d, dok, beleg }: { d: Datensatz; dok: Dokument; beleg: Beleg }
   return <Titel titel={dok.dateiname} meta={datum(dok.datum)} />;
 }
 
-export function Belegseite({ d, beleg }: { d: Datensatz; beleg: Beleg }) {
+export function Belegseite({ d, beleg, ganz = false }: { d: Datensatz; beleg: Beleg; ganz?: boolean }) {
   const zuruf = d.zurufe.find((z) => z.id === beleg.quelle.dokumentId);
   if (zuruf) {
     return (
@@ -411,9 +415,9 @@ export function Belegseite({ d, beleg }: { d: Datensatz; beleg: Beleg }) {
   }
   const dok = d.dokumente.find((x) => x.id === beleg.quelle.dokumentId);
   return (
-    <div className="sw-page">
+    <div className={ganz ? "sw-page sw-page--ganz" : "sw-page"}>
       <Synth />
-      {dok ? <Inhalt d={d} dok={dok} beleg={beleg} /> : <p>Kein Beleg.</p>}
+      {dok ? <Inhalt d={d} dok={dok} beleg={beleg} ganz={ganz} /> : <p>Kein Beleg.</p>}
     </div>
   );
 }
