@@ -4,7 +4,7 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 
 | Bauteil | Datei | Vorlage |
 |---|---|---|
-| Seitenleiste mit Abschnitten Firma und Projekt | `Seitenleiste.tsx` | Attio-Navigation mit Gruppen-Label, Linear (aktiver Eintrag als Fläche, Zähler rechts), Stratos (Firma → Detail) |
+| Seitenleiste: Firma oben, Projekte als Baum mit Ampelpunkt, aktives Projekt aufgeklappt | `Seitenleiste.tsx` | Linear (Arbeitsbereich oben, „Your teams“ als Baum, aktiver Eintrag als Fläche, Zähler rechts), Attio (Gruppen-Label) |
 | Seitenkopf | `Seitenkopf.tsx` | Linear-Kopfzeile, Attio |
 | Kennzahl | `Kennzahl.tsx` | reebuild-Projektübersicht R-C |
 | Panel | `Panel.tsx` | Linear, Attio (Rand statt Schatten) |

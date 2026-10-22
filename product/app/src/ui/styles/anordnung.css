@@ -48,6 +48,61 @@ body {
   cursor: default;
 }
 
+/* Projekte als Baum (Linear „Your teams“): Punkt mit Ampel und Name, das aktive Projekt aufgeklappt und eingerückt */
+.nav-projekt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nav-projekt[data-offen] > .nav-projekt__kopf {
+  color: var(--text);
+  font-weight: 500;
+}
+.nav-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nav-dot {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.nav-dot::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--text-disabled);
+}
+.nav-dot--rot::before {
+  background: var(--neg);
+}
+.nav-dot--gelb::before {
+  background: var(--warn);
+}
+.nav-dot--gruen::before {
+  background: var(--pos);
+}
+.nav-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: var(--space-5);
+}
+.brand-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sw-brand {
+  min-width: 0;
+}
+
 /* Spalten: Hauptbereich und schmale Seitenspalte */
 .cols {
   display: grid;
@@ -534,6 +589,13 @@ body {
 [data-nav="zu"] .brand-row {
   flex-direction: column;
 }
+[data-nav="zu"] .nav-projekt:not([data-offen]),
+[data-nav="zu"] .sw-nav .nav-projekt__kopf {
+  display: none;
+}
+[data-nav="zu"] .nav-sub {
+  padding-left: 0;
+}
 @media (prefers-reduced-motion: reduce) {
   .sw-sidebar {
     transition: none;
@@ -564,8 +626,18 @@ body {
   [data-nav="zu"] .sw-sidebar {
     width: auto;
   }
-  [data-nav="zu"] .sw-sidebar .nav-text,
-  [data-nav="zu"] .sw-sidebar .brand-name {
+  .sw-sidebar .brand-name,
+  [data-nav="zu"] .sw-sidebar .brand-name,
+  .nav-projekt:not([data-offen]),
+  .sw-nav .nav-projekt__kopf {
+    display: none;
+  }
+  .nav-projekt,
+  .nav-sub {
+    flex-direction: row;
+    padding-left: 0;
+  }
+  [data-nav="zu"] .sw-sidebar .nav-text {
     display: inline;
   }
   [data-nav="zu"] .sw-sidebar .sw-count {
