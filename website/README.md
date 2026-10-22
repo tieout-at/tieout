@@ -39,12 +39,12 @@ Texte nur in `messages/` ändern, nie im Code. Neue Platzhalter immer als `[[PLA
 
 ## Online
 
-**https://endpoint-preview.pages.dev** (Deutsch) und `/en/` (Englisch). Offen erreichbar, ohne Passwort (Entscheidung Maxi D., 22.10.2026).
+**https://tieout-at.pages.dev** (Deutsch) und `/en/` (Englisch). Offen erreichbar, ohne Passwort (Entscheidung Maxi D., 22.10.2026).
 
-- Gehostet im privaten Cloudflare-Konto von Maxi D., Pages-Projekt `endpoint-preview`.
-- Eigene Domain **tieout.at** (registriert bei easyname, 22.10.2026). In Cloudflare als Zone angelegt (Free), `tieout.at` und `www.tieout.at` als CNAME auf `endpoint-preview.pages.dev` und als Custom Domains am Pages-Projekt. Offen: bei easyname die Nameserver auf `cheryl.ns.cloudflare.com` und `hugh.ns.cloudflare.com` umstellen. Erst dann ist die Seite unter tieout.at erreichbar.
+- Gehostet im privaten Cloudflare-Konto von Maxi D., Pages-Projekt `tieout-at` (`tieout.pages.dev` war bei Cloudflare schon vergeben). Das alte Projekt `endpoint-preview` leitet alle Adressen per 301 auf `tieout-at.pages.dev` weiter.
+- Eigene Domain **tieout.at** (registriert bei easyname, 22.10.2026). In Cloudflare als Zone angelegt (Free), `tieout.at` und `www.tieout.at` als CNAME auf `tieout-at.pages.dev` und als Custom Domains am Pages-Projekt `tieout-at`. Offen: bei easyname die Nameserver auf `cheryl.ns.cloudflare.com` und `hugh.ns.cloudflare.com` umstellen. Erst dann ist die Seite unter tieout.at erreichbar.
 - `npm run deploy` aktualisiert die öffentliche Seite.
-- `npm run deploy:geschuetzt` lädt nur auf `vorschau.endpoint-preview.pages.dev`. Diese Adresse bleibt per Cloudflare Access geschützt (Login per Mail-Code) und eignet sich für Entwürfe, die noch nicht offen sein sollen.
+- Geschützte Vorschau: entfällt vorerst. Der Cloudflare-Access-Schutz hing am alten Projekt. Wer sie wieder braucht, legt im Cloudflare-Dashboard unter Zero Trust eine Access-Anwendung für `vorschau.tieout-at.pages.dev` an und ergänzt ein Skript mit `--branch vorschau`.
 - `noindex` bleibt gesetzt: Suchmaschinen nehmen die Seite nicht auf. Wer den Link hat, kann sie aber öffnen.
 - Umzug auf ein Firmenkonto: dort ein Pages-Projekt anlegen und die Skripte mit dem neuen Projektnamen ausführen.
 
