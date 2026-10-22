@@ -62,20 +62,10 @@ flowchart LR
 
     subgraph IN [1 · Inputs]
         direction TB
-        subgraph SYS [Systems]
-            S1[ERP<br/>invoices]:::input
-            S2[Estimating<br/>prices]:::input
-        end
-        subgraph DOC [Documents]
-            D1[Plans<br/>with revision]:::input
-            D2[Bill of quantities<br/>PDF]:::input
-            D3[Measurements<br/>Excel]:::input
-            D4[Timesheets<br/>scan]:::input
-        end
-        subgraph COM [Communication]
-            C1[Email<br/>instructions]:::input
-            C2[WhatsApp<br/>text, voice note, photo]:::input
-        end
+        SYS["Systems<br/>ERP: invoices<br/>Estimating: prices"]:::input
+        DOC["Documents<br/>plans with revision, bill of quantities,<br/>measurements, timesheets"]:::input
+        C1["Communication: email<br/>instructions from site management"]:::input
+        C2["Communication: WhatsApp<br/>text, voice note or photo<br/>from fitters on site"]:::input
     end
 
     AG["WhatsApp agent<br/>Claude reads and quotes,<br/>code decides: ask back or file"]
