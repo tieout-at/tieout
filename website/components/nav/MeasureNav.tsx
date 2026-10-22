@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export const SECTION_IDS = ["start", "loesung", "video", "team", "demo"];
+export const SECTION_IDS = ["start", "problem", "loesung", "video", "team", "demo"];
 
 /**
- * Messpunkt-Navigation am linken Rand: senkrechte Maßkette, ein Fadenkreuz markiert den
- * aktiven Abschnitt und zeigt seinen Namen. Beim Überfahren erscheinen alle Abschnitte.
+ * Messpunkt-Navigation am rechten Rand: senkrechte Maßkette mit allen Abschnitten.
+ * Namen sind immer sichtbar, der aktive in Ultramarin mit Fadenkreuz, die anderen grau.
  */
 export function MeasureNav({ labels, aria }: { labels: string[]; aria: string }) {
   const [active, setActive] = useState(0);
@@ -62,9 +62,9 @@ export function MeasureNav({ labels, aria }: { labels: string[]; aria: string })
           {SECTION_IDS.map((id, i) => (
             <li key={id} className="mnav__item" aria-current={i === active ? "true" : undefined}>
               <a href={`#${id}`}>
-                <span className="mnav__tick" />
-                <span className="mnav__num">{String(i + 1).padStart(2, "0")}</span>
                 <span className="mnav__label">{labels[i]}</span>
+                <span className="mnav__num">{String(i + 1).padStart(2, "0")}</span>
+                <span className="mnav__tick" />
               </a>
             </li>
           ))}
