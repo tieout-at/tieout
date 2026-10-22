@@ -1,8 +1,8 @@
 "use client";
 
 // Ordner: Belegmatrix (Vorlage: Hebbia Matrix, Harvey Review Table: Zeile = LV-Position, Spalte = Belegart, Zelle =
-// Fundstelle zum Anklicken; „kein Beleg“ ist eine Aussage) und Dokumentliste (Kuro K-B: Dokumente als Datensätze,
-// Duplikate erkannt). Reiter und Suche wie im Ledger.
+// Fundstelle zum Anklicken; eine leere Zelle heißt „kein Beleg“) und Dokumentliste (Kuro K-B: Dokumente als Datensätze,
+// Duplikate erkannt). Reiter und Suche wie im Ledger. Zeilen mit Befund öffnen den Befund (Klick, Enter, j/k).
 
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import { useState } from "react";
 import type { Belegart, DokumentZeile, MatrixZeile } from "@/daten/ordner";
 import { datum } from "./format";
 import { Ico } from "./Ico";
+import { Zeilennavigation } from "./Zeilennavigation";
 
 const SPALTEN: { art: Belegart; text: string }[] = [
   { art: "lv", text: "LV" },
@@ -23,7 +24,7 @@ const SPALTEN: { art: Belegart; text: string }[] = [
 
 type Ansicht = "befund" | "alle" | "dokumente" | "zurufe";
 
-export function Ordner({ matrix, dokumente, basis, abgleich }: { matrix: MatrixZeile[]; dokumente: DokumentZeile[]; basis: string; abgleich: boolean }) {
+export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; dokumente: DokumentZeile[]; basis: string }) {
   const dateien = dokumente.filter((x) => x.art !== "Zuruf");
   const zurufe = dokumente.filter((x) => x.art === "Zuruf");
   const mitBefund = matrix.filter((z) => z.befundHref);
@@ -58,29 +59,25 @@ export function Ordner({ matrix, dokumente, basis, abgleich }: { matrix: MatrixZ
       {ansicht === "dokumente" || ansicht === "zurufe" ? (
         <Dokumente liste={(ansicht === "zurufe" ? zurufe : dateien).filter((x) => !s || x.datei.toLowerCase().includes(s) || x.art.toLowerCase().includes(s))} basis={basis} />
       ) : (
-        <Matrix
-          zeilen={(ansicht === "befund" ? mitBefund : matrix).filter((z) => !s || z.nr.toLowerCase().includes(s) || z.kurztext.toLowerCase().includes(s))}
-          basis={basis}
-          abgleich={abgleich}
-        />
+        <Matrix zeilen={(ansicht === "befund" ? mitBefund : matrix).filter((z) => !s || z.nr.toLowerCase().includes(s) || z.kurztext.toLowerCase().includes(s))} basis={basis} />
       )}
     </section>
   );
 }
 
-function Matrix({ zeilen, basis, abgleich }: { zeilen: MatrixZeile[]; basis: string; abgleich: boolean }) {
+function Matrix({ zeilen, basis }: { zeilen: MatrixZeile[]; basis: string }) {
   return (
-    <div className="ledger-rahmen">
-      <table className="sw-table tab-matrix" style={{ tableLayout: "fixed" }}>
+    <Zeilennavigation>
+      <table className="sw-table tab-liste tab-matrix">
         <colgroup>
-          <col style={{ width: 260 }} />
+          <col />
           <col style={{ width: 72 }} />
-          <col style={{ width: 128 }} />
-          <col style={{ width: 128 }} />
-          <col style={{ width: 128 }} />
-          <col style={{ width: 96 }} />
-          <col style={{ width: 96 }} />
-          <col style={{ width: 80 }} />
+          <col style={{ width: 120 }} />
+          <col style={{ width: 136 }} />
+          <col style={{ width: 144 }} />
+          <col style={{ width: 88 }} />
+          <col style={{ width: 88 }} />
+          <col style={{ width: 72 }} />
         </colgroup>
         <thead>
           <tr>
@@ -99,57 +96,46 @@ function Matrix({ zeilen, basis, abgleich }: { zeilen: MatrixZeile[]; basis: str
             </tr>
           )}
           {zeilen.map((z) => (
-            <tr key={z.nr}>
-              <td className="sw-td-2">
-                <div className="sw-cell">
-                  <b className="ledger-text">
-                    <span className="sw-pos-nr">{z.nr}</span>
+            <tr key={z.nr} data-href={z.befundHref ?? undefined} tabIndex={z.befundHref ? 0 : undefined}>
+              <td title={`${z.nr} ${z.kurztext}`}>
+                <span className="sw-pos-nr">{z.nr}</span>
+                {z.befundHref ? (
+                  <Link href={z.befundHref} className="row-link" tabIndex={-1}>
                     {z.kurztext}
-                  </b>
-                  {z.befundHref ? (
-                    <Link href={z.befundHref} className="matrix-befund">
-                      Befund öffnen
-                    </Link>
-                  ) : abgleich ? (
-                    <span>Ohne Befund</span>
-                  ) : null}
-                </div>
+                  </Link>
+                ) : (
+                  z.kurztext
+                )}
               </td>
               {SPALTEN.map((x) => (
                 <td key={x.art} className="matrix-zelle">
-                  {z.zellen[x.art].length === 0 ? (
-                    <span className="matrix-leer">{x.art === "verrechnet" ? "nicht verrechnet" : "kein Beleg"}</span>
-                  ) : (
-                    <>
-                      {z.zellen[x.art].slice(0, 2).map((f) => (
-                        <Link key={f.id} href={`${basis}/ordner/${f.id}${f.anker ? `#pos-${f.anker}` : ""}`} className="matrix-link">
-                          {f.text}
-                        </Link>
-                      ))}
-                      {z.zellen[x.art].length > 2 && <span className="sw-muted">+{z.zellen[x.art].length - 2}</span>}
-                    </>
-                  )}
+                  {z.zellen[x.art].slice(0, 2).map((f) => (
+                    <Link key={f.id} href={`${basis}/ordner/${f.id}${f.anker ? `#pos-${f.anker}` : ""}`} className="matrix-link">
+                      {f.text}
+                    </Link>
+                  ))}
+                  {z.zellen[x.art].length > 2 && <span className="sw-muted">+{z.zellen[x.art].length - 2}</span>}
                 </td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
-    </div>
+    </Zeilennavigation>
   );
 }
 
 function Dokumente({ liste, basis }: { liste: DokumentZeile[]; basis: string }) {
   return (
-    <div className="ledger-rahmen">
-      <table className="sw-table tab-dokumente" style={{ tableLayout: "fixed" }}>
+    <div className="tw">
+      <table className="sw-table tab-liste tab-dokumente">
         <colgroup>
           <col />
-          <col style={{ width: 120 }} />
-          <col style={{ width: 112 }} />
+          <col style={{ width: 136 }} />
+          <col style={{ width: 104 }} />
           <col style={{ width: 104 }} />
           <col style={{ width: 72 }} />
-          <col style={{ width: 120 }} />
+          <col style={{ width: 96 }} />
         </colgroup>
         <thead>
           <tr>
@@ -171,16 +157,16 @@ function Dokumente({ liste, basis }: { liste: DokumentZeile[]; basis: string }) 
           )}
           {liste.map((x) => (
             <tr key={x.id} className={x.duplikat ? "dok-duplikat" : undefined}>
-              <td className="ledger-text">
-                <Link href={`${basis}/ordner/${x.id}`} className="matrix-link dok-datei" title={x.datei}>
+              <td title={x.datei}>
+                <Link href={`${basis}/ordner/${x.id}`} className="matrix-link dok-datei">
                   {x.datei}
                 </Link>
               </td>
               <td>{x.art}</td>
               <td className="sw-num">{datum(x.datum)}</td>
-              <td>{x.kanal}</td>
+              <td className="neben">{x.kanal}</td>
               <td className="r">{x.seiten}</td>
-              <td>{x.duplikat && <span className="sw-dotlabel">Duplikat</span>}</td>
+              <td>{x.duplikat && "Duplikat"}</td>
             </tr>
           ))}
         </tbody>

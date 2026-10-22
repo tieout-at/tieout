@@ -1,5 +1,6 @@
 // Befunde als dichte Arbeitstabelle (Vorlage: Linear „Group by“ mit Gruppenkopf, reebuild R-B, Ramp: Hinweis an der Zeile).
-// Gruppiert nach Liste mit Zwischensumme; Kürzungsrisiko als Warnsymbol am Betrag.
+// Gruppiert nach Liste mit Zwischensumme; Kürzungsrisiko als Warnsymbol am Betrag. Eine Zeile je Posten, die Art als
+// gedämpfte Spalte, die in schmalen Spalten wegfällt (tabellen.css).
 
 import { TriangleAlert } from "lucide-react";
 import Link from "next/link";
@@ -26,16 +27,18 @@ export function BefundTabelle({
   const gruppen = LISTEN.map((l) => ({ ...l, posten: befunde.filter((b) => b.liste === l.liste) })).filter((g) => g.posten.length);
   return (
     <Zeilennavigation>
-      <table className="sw-table tab-befunde liste-mobil" style={{ tableLayout: "fixed" }}>
+      <table className="sw-table tab-liste tab-befunde liste-mobil">
         <colgroup>
           <col />
-          <col style={{ width: 128 }} />
+          <col className="befund-art" style={{ width: 216 }} />
+          <col style={{ width: 120 }} />
           <col style={{ width: 24 }} />
-          <col style={{ width: 140 }} />
+          <col style={{ width: 136 }} />
         </colgroup>
         <thead>
           <tr>
             <th>Posten</th>
+            <th className="befund-art">Art</th>
             <th className="r">Betrag</th>
             <th />
             <th>Stand</th>
@@ -44,7 +47,7 @@ export function BefundTabelle({
         <tbody>
           {gruppen.length === 0 && (
             <tr>
-              <td colSpan={4} className="sw-muted">
+              <td colSpan={5} className="sw-muted">
                 Keine Treffer.
               </td>
             </tr>
@@ -77,6 +80,7 @@ function GruppenZeilen({
           <span className={g.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${g.ton}`}>{g.text}</span>
           <span className="sw-count">{g.posten.length}</span>
         </td>
+        <td className="befund-art nur-breit" />
         <td className="r">{g.liste === "anwalt" ? "" : betrag(summe)}</td>
         <td className="nur-breit" />
         <td className="nur-breit" />
@@ -86,21 +90,17 @@ function GruppenZeilen({
         const ziel = href?.(b);
         return (
           <tr key={b.schluessel} data-href={ziel} tabIndex={ziel ? 0 : undefined}>
-            <td className="sw-td-2">
-              <div className="sw-cell">
-                <b>
-                  {t.kennung && <span className="sw-pos-nr">{t.kennung}</span>}
-                  {ziel ? (
-                    <Link href={ziel} className="row-link" tabIndex={-1}>
-                      {t.text}
-                    </Link>
-                  ) : (
-                    t.text
-                  )}
-                </b>
-                <span>{ART_TEXT[b.art]}</span>
-              </div>
+            <td title={b.titel}>
+              <span className="sw-pos-nr">{t.kennung}</span>
+              {ziel ? (
+                <Link href={ziel} className="row-link" tabIndex={-1}>
+                  {t.text}
+                </Link>
+              ) : (
+                t.text
+              )}
             </td>
+            <td className="befund-art neben nur-breit">{ART_TEXT[b.art]}</td>
             <td className="r">{b.betrag !== null && betrag(b.betrag)}</td>
             <td className="risk nur-breit">
               {risiken.has(b.schluessel) && (
