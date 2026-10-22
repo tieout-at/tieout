@@ -1,37 +1,37 @@
-# Übergabe
+# Handover (Übergabe)
 
-Diese Datei ist das Gedächtnis zwischen Sitzungen und Claude-Accounts. Am Ende jeder Sitzung überschreiben, nicht anhängen.
+This file is the memory between sessions and Claude accounts. Overwrite it at the end of every session, do not append.
 
-**Stand:** 22.10.2026, spät
-**Branch:** `claude/zuruf-einbau-9345a1` (Einbau in die App), `zuruf/plan` ist gemergt (PR #25)
-**Phase:** 1 Kern und Simulator, Einbau in die App hinter dem Schalter `ZURUF_ECHT` (aus)
+**Status:** 22.10.2026, late
+**Branch:** `claude/zuruf-einbau-9345a1` (integration into the app), `zuruf/plan` is merged (PR #25)
+**Phase:** 1 Core and simulator, integration into the app behind the switch `ZURUF_ECHT` (off)
 
-## Einbau in die App (Go Maxi S. 22.10.)
+## Integration into the app (go from Maxi S. 22.10.) (Einbau in die App)
 
-- Route `POST /api/zuruf/nachricht` und `GET /api/zuruf/status` in `worker/route.ts`: Schalter zur Laufzeit, 40 KI-Aufrufe pro Tag und 20 US-Dollar pro Monat (echte Kosten je Antwort, `antwortKostenUsd` in ki.ts), Zeit in Wiener Ortszeit, Gesprächsstand kommt vom Browser und geht neu zurück. Tests in `worker/route.test.ts`.
-- Lokal: `npm run app-server` (Port 3103, KI nach `ZURUF_KI`, Firma aus `../app/data/generated/zuruf-firma.json`, vorher in `product/app` `npm run generate`). Die App dazu mit `product/app/.env.local`: `NEXT_PUBLIC_ZURUF_API=http://localhost:3103/api/zuruf` (der lokale Server meldet sich immer als verfügbar).
-- Online: eingehängt in `product/app/worker/index.ts` (ohne Login vor den Assets, mit Login nach der Sitzung; `zurufAnfrage`), `nodejs_compat` in `wrangler.jsonc`, Zähler in Supabase (`worker/supabase.sql`: Tabelle `zuruf_tageszaehler`, Funktionen `zuruf_stand`, `zuruf_buche`). Fehlt Tabelle, Secret `ANTHROPIC_API_KEY` oder `ZURUF_ECHT=an` (Secret, zur Laufzeit gelesen), meldet der Status „nicht verfügbar“ und die App spielt die Szene vor. Online aus bis Go Maxi S.
-- Die App installiert dieses Paket mit (`postinstall` in `product/app/package.json`), damit Worker-Bündel und Typprüfung `zod` und das SDK finden.
-- Nur Node, nie in Worker oder Browser: `src/llm.ts` (Abo, .env), `src/speicher-datei.ts` (JSONL). Läuft überall: `src/ki.ts`, `src/agent.ts`, `src/speicher.ts`, `worker/route.ts` (gebündelt geprüft: keine `node:`-Importe; mit dem SDK im Worker 289 KiB gzip).
-- Echter Durchlauf 23.10. (Abo, lokal): „21er Stiege 3 Top 18, Waschtisch im Bad versetzt, Fliesen kommen anders, Bauleiter vom GU hat angschafft, zu zweit vier Stunden“ wurde vollständig erkannt (Ort, Leistung, Grund, 2 Leute, 4 Stunden, Anweiser), nach „Passt“ Z7 in Zeitachse, Liste „offen“ und Belegseite. Auf Windows nimmt `llm.ts` jetzt zuerst die native Installation (`%USERPROFILE%.localinclaude.exe`); eine ältere Version im PATH war abgelaufen angemeldet.
-- Browser-Code der App bindet aus diesem Paket nur Typen ein (`src/typen.ts`, `src/firma.ts`); nur der Worker der App nutzt `worker/route.ts`. Eigene CI: `.github/workflows/produkt-zuruf.yml`.
-- Nächster Schritt: Ablage B in Supabase (`worker/supabase.sql`, Tabelle `zuruf_ereignis`, nur anhängen, RLS je Firma über `app_metadata.firma`) statt Browser-Speicher, mit derselben Schnittstelle `ZurufAblage`.
+- Route `POST /api/zuruf/nachricht` and `GET /api/zuruf/status` in `worker/route.ts`: switch read at runtime, 40 AI calls per day and 20 US dollars per month (actual cost per reply, `antwortKostenUsd` in ki.ts), time in Vienna local time, conversation state comes from the browser and goes back updated. Tests in `worker/route.test.ts`.
+- Local: `npm run app-server` (port 3103, AI according to `ZURUF_KI`, company from `../app/data/generated/zuruf-firma.json`, run `npm run generate` in `product/app` first). For the app, `product/app/.env.local` with `NEXT_PUBLIC_ZURUF_API=http://localhost:3103/api/zuruf` (the local server always reports itself as available).
+- Online: hooked into `product/app/worker/index.ts` (without login before the assets, with login after the session; `zurufAnfrage`), `nodejs_compat` in `wrangler.jsonc`, counter in Supabase (`worker/supabase.sql`: table `zuruf_tageszaehler`, functions `zuruf_stand`, `zuruf_buche`). If the table, the secret `ANTHROPIC_API_KEY` or `ZURUF_ECHT=an` (secret, read at runtime) is missing, the status reports "not available" („nicht verfügbar“) and the app plays the staged scene. Online off until a go from Maxi S.
+- The app installs this package as well (`postinstall` in `product/app/package.json`), so that the worker bundle and type check find `zod` and the SDK.
+- Node only, never in worker or browser: `src/llm.ts` (subscription, .env), `src/speicher-datei.ts` (JSONL). Runs everywhere: `src/ki.ts`, `src/agent.ts`, `src/speicher.ts`, `worker/route.ts` (checked bundled: no `node:` imports; with the SDK in the worker 289 KiB gzip).
+- Real run 23.10. (subscription, local): „21er Stiege 3 Top 18, Waschtisch im Bad versetzt, Fliesen kommen anders, Bauleiter vom GU hat angschafft, zu zweit vier Stunden“ was fully recognised (location, work performed, reason, 2 people, 4 hours, instructing person), after „Passt“ Z7 in timeline, "open" („offen“) list and evidence page. On Windows, `llm.ts` now takes the native installation first (`%USERPROFILE%.localinclaude.exe`); an older version in the PATH had an expired login.
+- The app's browser code only imports types from this package (`src/typen.ts`, `src/firma.ts`); only the app's worker uses `worker/route.ts`. Own CI: `.github/workflows/produkt-zuruf.yml`.
+- Next step: storage B in Supabase (`worker/supabase.sql`, table `zuruf_ereignis`, append only, RLS per company via `app_metadata.firma`) instead of browser storage, with the same interface `ZurufAblage`.
 
-## Erledigt
+## Done (Erledigt)
 
-- Phase 0: Ordner, Regeln, Gestaltung, Plan. Anthropic API Key liegt in `product/zuruf/.env` (ignoriert), Test erfolgreich.
-- Paket `product/zuruf/` (TypeScript, Node 22, Vitest, `@anthropic-ai/sdk`, `zod`).
-- `src/typen.ts` Datenmodell (Nachricht, Angabe mit Zitat, Eintrag, Leistungsereignis mit Version).
-- `src/firma.ts` kleiner synthetischer Firmen-Zwilling (5 Projekte, Wien 21 und Wien 10 absichtlich verwechselbar, Tulln abgeschlossen).
-- `src/belege.ts` Belegprüfung: Angabe ohne wörtliches Zitat wird verworfen. Tests in `belege.test.ts`.
-- `src/verstehen.ts` KI liest Absicht und Angaben (Claude Opus 5.5, Aufwand low, strukturierte Ausgabe, Fallback „default“).
-- `src/agent.ts` Gesprächsführung als fester Code (Einwilligung, Stopp, höchstens 2 Rückfragen, Projekt per Knopf, Anweiser nur bei Zusatzarbeit, Zusammenfassung, Korrektur als neue Version, Tagesabschluss legt Offenes unbestätigt ab). Tests in `agent.test.ts` (11 Fälle, KI durch feste Antworten ersetzt).
-- `src/texte.ts` alle Sätze des Agenten als fester Text.
-- `src/lernschleife.ts` + `scripts/lauf.ts`: Persona spielt Absender, Prüfungen im Code, Bewerter-Note 1 bis 5, Bericht in `laeufe/` (ignoriert).
-- Szenarien: 30 sichtbare in `szenarien/`, 10 zurückgehaltene in `szenarien/zurueck/` (nicht lesen, nur `npm run lauf -- --zurueck` bei Abnahme).
-- `sim/` Simulator: `npm run sim`, dann http://localhost:4321. Chat links, Büro-Ansicht mit Zitaten rechts.
+- Phase 0: folder, rules, design, plan. Anthropic API key is in `product/zuruf/.env` (ignored), test successful.
+- Package `product/zuruf/` (TypeScript, Node 22, Vitest, `@anthropic-ai/sdk`, `zod`).
+- `src/typen.ts` data model (message, item with quote, entry, work event with version).
+- `src/firma.ts` small synthetic company twin (5 projects, Wien 21 and Wien 10 deliberately easy to confuse, Tulln closed).
+- `src/belege.ts` evidence check: an item without a literal quote is discarded. Tests in `belege.test.ts`.
+- `src/verstehen.ts` AI reads intent and items (Claude Opus 5.5, effort low, structured output, fallback "default").
+- `src/agent.ts` conversation control as fixed code (consent, stop, at most 2 follow-up questions, project by button, instructing person only for additional work, summary, correction as a new version, end of day files open items as unconfirmed). Tests in `agent.test.ts` (11 cases, AI replaced by fixed answers).
+- `src/texte.ts` all of the agent's sentences as fixed text.
+- `src/lernschleife.ts` + `scripts/lauf.ts`: persona plays the sender, checks in code, rater score 1 to 5, report in `laeufe/` (ignored).
+- Scenarios: 30 visible in `szenarien/`, 10 held back in `szenarien/zurueck/` (do not read, only `npm run lauf -- --zurueck` at acceptance).
+- `sim/` simulator: `npm run sim`, then http://localhost:4321. Chat on the left, office view with quotes on the right.
 
-## Befehle
+## Commands (Befehle)
 
 ```powershell
 cd product/zuruf
@@ -45,55 +45,55 @@ npm run sim
 npm run app-server
 ```
 
-## Stand der Lernschleife
+## State of the learning loop (Stand der Lernschleife)
 
-| Lauf | Bestanden | Note Median / Min | Erfunden | Felder richtig | Kosten |
+| Run | Passed | Rating median / min | Invented | Fields correct | Cost |
 |---|---|---|---|---|---|
-| 1 sichtbar | 28/30 | 4 / 1 | 1 | 99 % | 1,64 USD |
-| 2 sichtbar | 25/30 | 4 / 2 | 0 | 97 % | 1,62 USD |
-| 3 sichtbar | 30/30 | 5 / 3 | 0 | 100 % | 1,45 USD |
-| Abnahme 1 zurückgehalten | 6/10 | 3,5 / 2 | 1 | 95 % | 0,84 USD |
-| 4 sichtbar, API (abgebrochen) | 30/32 | 5 / 3 | 1 | 100 % | 2,04 USD |
-| 4 sichtbar, Abo | 47/50 | 4,5 / 2 | 0 | 99 % | Abo |
-| Abnahme 2 zurückgehalten, Abo | 9/10 | 4 / 2 | 0 | 98 % | Abo |
+| 1 visible | 28/30 | 4 / 1 | 1 | 99 % | 1.64 USD |
+| 2 visible | 25/30 | 4 / 2 | 0 | 97 % | 1.62 USD |
+| 3 visible | 30/30 | 5 / 3 | 0 | 100 % | 1.45 USD |
+| Acceptance 1 held back | 6/10 | 3.5 / 2 | 1 | 95 % | 0.84 USD |
+| 4 visible, API (aborted) | 30/32 | 5 / 3 | 1 | 100 % | 2.04 USD |
+| 4 visible, subscription | 47/50 | 4.5 / 2 | 0 | 99 % | subscription |
+| Acceptance 2 held back, subscription | 9/10 | 4 / 2 | 0 | 98 % | subscription |
 
-API-Guthaben ist seit Lauf 4 aufgebraucht (ca. 9 USD verbraucht). Seitdem läuft alles über das Claude-Abo (`ZURUF_KI=abo`). Nach Lauf 4 (Abo) wurde L17 behoben (Bündel verlor den ersten Teil der Meldung).
+API credit has been used up since run 4 (approx. 9 USD spent). Since then everything runs via the Claude subscription (`ZURUF_KI=abo`). After run 4 (subscription), L17 was fixed (bundle lost the first part of the report).
 
-Abnahme 1 fand den schwersten Fehler bisher: Datenverlust bei Nachtrag plus Korrektur (LERNEN.md A1, A2). Behoben, mit Tests. Altes Holdout ist verbraucht und liegt jetzt sichtbar als `szenarien/z-*.json`. Frisches Holdout: `szenarien/zurueck/h2-*.json` (nicht lesen).
+Acceptance 1 found the most serious bug so far: data loss on addendum plus correction (LERNEN.md A1, A2). Fixed, with tests. The old holdout is used up and now sits visibly as `szenarien/z-*.json`. Fresh holdout: `szenarien/zurueck/h2-*.json` (do not read).
 
-33 Lernpunkte in `LERNEN.md`. 42 Unit-Tests grün (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 Szenarien (50 sichtbar, 10 zurückgehalten).
+33 learning points in `LERNEN.md`. 42 unit tests green (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 scenarios (50 visible, 10 held back).
 
-## KI über Abo oder API
+## AI via subscription or API (KI über Abo oder API)
 
-In `product/zuruf/.env` steht `ZURUF_KI=abo`: Agent, Persona und Bewerter laufen über Claude Code mit dem Claude-Abo (`claude` muss angemeldet sein, `claude auth status`). Kostet kein API-Guthaben, zählt aber gegen das Abo-Limit und ist langsamer (ca. 5 bis 16 s pro Antwort statt 2,5 s). Ein Lauf über 4 Szenarien dauerte 1:13 min, über 50 Szenarien also grob 15 bis 20 min und ca. 200 Aufrufe. Mit `ZURUF_KI=api` läuft alles wieder über den API-Key (Guthaben war am 22.10. aufgebraucht). Auf einem anderen Account: dort `claude` anmelden, dann gilt dessen Abo.
+`product/zuruf/.env` contains `ZURUF_KI=abo`: agent, persona and rater run via Claude Code with the Claude subscription (`claude` must be logged in, `claude auth status`). Costs no API credit, but counts against the subscription limit and is slower (approx. 5 to 16 s per reply instead of 2.5 s). A run over 4 scenarios took 1:13 min, so over 50 scenarios roughly 15 to 20 min and approx. 200 calls. With `ZURUF_KI=api` everything runs via the API key again (credit was used up on 22.10.). On another account: log in to `claude` there, then that account's subscription applies.
 
 ## Simulator
 
-Chat im WhatsApp-Stil (hell und dunkel), Absender per Knopfreihe, Büro-Ansicht mit Quelle pro Eintrag. Start: `npm run sim`, dann http://localhost:4321. Nach Code-Änderungen neu starten (die Seite selbst lädt ohne Neustart).
+Chat in WhatsApp style (light and dark), sender via a row of buttons, office view with source per entry. Start: `npm run sim`, then http://localhost:4321. Restart after code changes (the page itself reloads without a restart).
 
-## Nächster Schritt
+## Next step (Nächster Schritt)
 
-1. Die zwei schwachen Fälle aus Abnahme 2 (laerm_bruchstueck durchgefallen, mehrere_punkte Note 2) nur abstrakt auswerten lassen: Subagent mit `npm run lauf -- --zurueck --mit-protokoll`, die Hauptsitzung liest das Protokoll nicht. Danach Holdout `h2-*` zu den sichtbaren verschieben und ein frisches `h3-*` schreiben lassen.
-2. Fixes, voller Lauf über die sichtbaren, Abnahme 3.
-3. Offen aus A10: Sammelfenster im WhatsApp-Kanal (Phase 3).
-4. Danach Phase 2 (Sprache und Foto) oder Phase 3 (echte Nummer), Entscheidung beim Team.
+1. Have the two weak cases from acceptance 2 (laerm_bruchstueck failed, mehrere_punkte rating 2) analysed only abstractly: subagent with `npm run lauf -- --zurueck --mit-protokoll`, the main session does not read the transcript. Then move holdout `h2-*` to the visible ones and have a fresh `h3-*` written.
+2. Fixes, full run over the visible ones, acceptance 3.
+3. Open from A10: collection window in the WhatsApp channel (phase 3).
+4. Then phase 2 (voice and photo) or phase 3 (real number), decision by the team.
 
-## Offene Fragen
+## Open questions (Offene Fragen)
 
-- Antwortzeit: erster Probelauf 9,5 Sekunden pro Nachricht. Für WhatsApp eher zu lang (Annahme). Prüfen: Aufwand, Prompt kürzen, schnelleres Modell nur mit Go des Menschen.
-- Bau-Aufteilung und Zeitbudget neben dem MVP v0.9 (Sonntagsrunde 25.10.).
-- Fragen aus `GESTALTUNG.md`, Abschnitt Offen.
+- Response time: first trial run 9.5 seconds per message. Rather too long for WhatsApp (Annahme). Check: effort, shorten prompt, faster model only with a go from the human.
+- Build split and time budget alongside the MVP v0.9 (Sunday meeting 25.10.).
+- Questions from `GESTALTUNG.md`, section Offen.
 
-## Für eine neue Sitzung oder einen neuen Account
+## For a new session or a new account (Für eine neue Sitzung oder einen neuen Account)
 
-1. Branch holen. Windows PowerShell 5.1 kennt `&&` nicht, deshalb Befehle einzeln oder mit `;` und `if ($?)`:
+1. Fetch the branch. Windows PowerShell 5.1 does not know `&&`, so run commands individually or with `;` and `if ($?)`:
 
    ```powershell
    git fetch origin; if ($?) { git checkout zuruf/plan }
    ```
 
-   Auf einem Rechner ohne Repo zuerst `git clone https://github.com/schlusswerk/schlusswerk.git`, dann `cd schlusswerk`. In Git Bash, auf Mac und Linux geht auch `git fetch origin && git checkout zuruf/plan`.
+   On a computer without the repo, first `git clone https://github.com/schlusswerk/schlusswerk.git`, then `cd schlusswerk`. In Git Bash, on Mac and Linux, `git fetch origin && git checkout zuruf/plan` also works.
 
-2. Claude Code im Repo starten und schreiben: „Lies `product/zuruf/CLAUDE.md` und `product/zuruf/UEBERGABE.md` und mach beim nächsten Schritt weiter.“
+2. Start Claude Code in the repo and write: „Lies `product/zuruf/CLAUDE.md` und `product/zuruf/UEBERGABE.md` und mach beim nächsten Schritt weiter.“ (Read `product/zuruf/CLAUDE.md` and `product/zuruf/UEBERGABE.md` and continue with the next step.)
 
-3. Auf einem neuen Rechner braucht es `product/zuruf/.env` mit `ANTHROPIC_API_KEY=` (Vorlage `.env.example`). Den Key nie committen.
+3. On a new computer you need `product/zuruf/.env` with `ANTHROPIC_API_KEY=` (template `.env.example`). Never commit the key.

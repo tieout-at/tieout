@@ -1,59 +1,59 @@
 # Status
 
-**Stand:** Freitag, 23. Oktober 2026
-**Pflege:** jeden Sonntag nach der Kennzahlen-Runde aktualisieren (30 Minuten, Dossier v3 Abschnitt 14).
+**As of:** Friday, 23 October 2026
+**Maintenance:** update every Sunday after the metrics round (30 minutes, dossier v3 section 14).
 
-## Entschieden
+## Decided
 
-- Dossier v3 ist der gültige Stand. v2 ist Archiv.
-- Kernprodukt: Firmen-Zwilling mit Projektzwillingen, erste Anwendung Schlussrechnung.
-- Gates R1 bis R5 und der Endentscheid (So 31.1.2027) bleiben unverändert.
-- Sub-Seite bleibt. Wechsel auf die GU-Seite ist geprüft und verworfen.
+- Dossier v3 is the current reference. v2 is archive.
+- Core product: company twin with project twins, first application the final invoice (Schlussrechnung).
+- Gates R1 to R5 and the final decision (Sun 31.1.2027) remain unchanged.
+- We stay on the subcontractor side. A switch to the general contractor (GU) side was examined and rejected.
 
 ## Gates
 
-| Gate | Datum | Stand |
+| Gate | Date | Status |
 |---|---|---|
-| R1 Insider | Term Sheet Fr 20.11., hart Fr 4.12. | offen |
-| R4 Recht | Fr 4.12. | offen |
-| R2 Ordner | Fr 11.12. | offen |
-| R3 Geld | Fr 22.1.2027 | offen |
-| R5 Zahlung | Fr 29.1.2027 | offen |
+| R1 Insider | Term sheet Fri 20.11., hard deadline Fri 4.12. | open |
+| R4 Legal | Fri 4.12. | open |
+| R2 Folder | Fri 11.12. | open |
+| R3 Money | Fri 22.1.2027 | open |
+| R5 Payment | Fri 29.1.2027 | open |
 
-## Diese Woche (KW 43, laut Dossier v3 Abschnitt 14)
+## This week (CW 43, per dossier v3 section 14)
 
-- Dossier v3 mit dem Team durchgehen
-- Repo außerhalb OneDrive (erledigt) und `Umfang_v1.md` anlegen
-- Demo Klickpfad festlegen, Generator für synthetische Daten starten
-- Entwurf Gründervertrag (A), Entwurf #glaubandich Text (B)
+- Go through dossier v3 with the team
+- Repo outside OneDrive (done) and create `Umfang_v1.md`
+- Define the demo click path, start the generator for synthetic data
+- Draft founders' agreement (A), draft #glaubandich text (B)
 
-## Offen für Maxi (Website)
+## Open for Maxi (website)
 
-- Produktverständnis für die Website: erledigt (siehe Dossier v3 Abschnitt 0 und 3)
-- 22.10.: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), CI Planraster (Papier, Tinte, Ultramarin), Website online unter tieout-at.pages.dev (alte Adresse endpoint-preview.pages.dev leitet weiter). Domain tieout.at gekauft (easyname, Inhaber Maxi D.), Zone in Cloudflare angelegt und mit der Website verbunden. Offen: Nameserver bei easyname auf cheryl/hugh.ns.cloudflare.com umstellen, sobald der CloudPit-Zugang da ist
-- 22.10.: GTM und Monetarisierung offen, daher keine Preise und kein „Check anfragen“ auf der Website
-- Offen: Markenprüfung, Nameserver für tieout.at bei easyname, Postfach kontakt@tieout.at, Impressum und Datenschutz
-- Frage ans Team: Ist „Zwilling“ für Inhaber zu abstrakt? Alternativ „Wissensdatenbank des Betriebs“ testen
+- Product understanding for the website: done (see dossier v3 sections 0 and 3)
+- 22.10.: working title "tieout", lower case and without a full stop (formerly "Tieout.", "EndPoint."), CI Planraster (paper, ink, ultramarine), website online at tieout-at.pages.dev (old address endpoint-preview.pages.dev redirects). Domain tieout.at bought (easyname, owner Maxi D.), zone created in Cloudflare and connected to the website. Open: switch the name servers at easyname to cheryl/hugh.ns.cloudflare.com as soon as the CloudPit access is available
+- 22.10.: GTM and monetisation open, therefore no prices and no "Check anfragen" (request a check) on the website
+- Open: trademark check, name servers for tieout.at at easyname, mailbox kontakt@tieout.at, legal notice (Impressum) and privacy policy
+- Question for the team: Is "Zwilling" (twin) too abstract for owners? Alternatively test "Wissensdatenbank des Betriebs" (knowledge base of the business)
 
-## Produkt
+## Product
 
-- 22.10.: Produktstand von Maxi S. nach `product/` übernommen: Plan und Umfang (an v3 angepasst), Lösungsliste der Demo-Fälle, Rechenkern mit 58 Tests, UI-Fundament. Überblick in `product/README.md`.
-- 22.10. abends (Maxi S.): Datenmodell Firma → Auftraggeber → Projekt mit Zurufen und 7 kleinen Projekten (Tests treffen die Lösungsliste v2 cent-genau). Demo-App mit Firmenübersicht, Projekt-Übersicht, Befunden und Befund-Seite mit Original und zweistufiger Freigabe. CI prüft jeden PR. Stand und nächste Schritte in `product/README.md`.
-- 22.10. nachts (Maxi S. mit Claude): Seitenleiste neu, Zeitachse, WhatsApp-Szene, Ledger mit 380 Positionen, Ordner mit Belegmatrix. Online auf main, unabhängig geprüft. Zielgruppe geschärft (`docs/research_notes/Zielgruppe_Challenge.md`), Namensvorschläge in PR #19 (Team entscheidet). Nächster Chat: `_UEBERGABE.md`.
-- Offen fürs Team: Hosting der Demo (Vercel Hobby deployt keine privaten Org-Repos), GitHub-Plan für den Schutz von main, Name, Logo, Akzentfarbe (in der App Platzhalter).
-- 22.10. spät (Maxi S. mit Claude, vier parallele Sitzungen): Stile je Bereich geteilt (#24), Ablauf 1 bis 4 auf der Projektübersicht mit echten Zahlen und Links (#27), Politur ohne Ampelpunkte und Farbflächen (#28), alle Tabellen einheitlich 36 px ohne Verschieben (#29), zentrale Tokens (#33), Prüfbefunde (#35). Unabhängig geprüft: alle Beträge centgenau, keine kaputten Links. Website-Check mit Widersprüchen auf der Website: `docs/archiv/Website_Check_2026-10-22.md`.
-- 22.10.: Name und Logo stehen: **tieout**, Domain tieout.at (noch nicht live). LinkedIn-Firmenseite linkedin.com/company/tieout-at (im Footer verlinkt), Banner in `brand/linkedin/`. Nächste Schritte Produkt (Rebranding, Link, UI an die Website, Tempo, Zuruf-Agent von Santino aus PR #25): `_UEBERGABE.md`.
-- Offen: Wer baut was (Produkt, Website), Entscheidung in der Sonntagsrunde 25.10.
-- 23.10. (Maxi S. mit Claude, Haupt-Chat und drei Sitzungen): App heißt tieout (Logo, Ultramarin), offen für Juroren unter **https://app.tieout.workers.dev** (endgültig, steht in der Abgabe-Mail; Vorschauen bleiben geschützt). Zuruf-Agent von Santino eingebaut, Schalter online aus bis API-Schlüssel (Budget höchstens 25 €). Gruppen einklappen, Filter schneller, Restliste Prüfbericht, Einstellungen, Next.js-Sicherheitsupdate. Supabase-Projekt `tieout-app` (Frankfurt) mit fertiger, aber ausgeschalteter Anmeldung. Nächster Chat: UI-Durchgang, API-Schlüssel, Launch-Video (`_UEBERGABE.md`).
-- 22.10.: Planung Zuruf-Agent (WhatsApp, Stufe 2 vorgezogen, nur synthetisch) in `product/zuruf/` auf Branch `zuruf/plan`. Go des Teams zu `GESTALTUNG.md` und `PLAN.md` offen.
+- 22.10.: product status from Maxi S. taken over into `product/`: plan and scope (adapted to v3), solution list of the demo cases, calculation core with 58 tests, UI foundation. Overview in `product/README.md`.
+- 22.10. evening (Maxi S.): data model company → client → project with voice notes (Zurufe) and 7 small projects (tests match solution list v2 to the cent). Demo app with company overview, project overview, findings and finding page with original and two-step approval. CI checks every PR. Status and next steps in `product/README.md`.
+- 22.10. night (Maxi S. with Claude): new sidebar, timeline, WhatsApp scene, ledger with 380 items, folder with evidence matrix. Online on main, independently reviewed. Target group sharpened (`docs/research_notes/Zielgruppe_Challenge.md`), name proposals in PR #19 (team decides). Next chat: `_UEBERGABE.md`.
+- Open for the team: hosting of the demo (Vercel Hobby does not deploy private org repos), GitHub plan for protecting main, name, logo, accent colour (placeholder in the app).
+- 22.10. late (Maxi S. with Claude, four parallel sessions): styles split per area (#24), steps 1 to 4 on the project overview with real numbers and links (#27), polish without traffic-light dots and colour areas (#28), all tables uniformly 36 px without shifting (#29), central tokens (#33), review findings (#35). Independently reviewed: all amounts accurate to the cent, no broken links. Website check with contradictions on the website: `docs/archiv/Website_Check_2026-10-22.md`.
+- 22.10.: name and logo are set: **tieout**, domain tieout.at (not yet live). LinkedIn company page linkedin.com/company/tieout-at (linked in the footer), banner in `brand/linkedin/`. Next product steps (rebranding, link, UI aligned to the website, speed, voice note agent (Zuruf-Agent) by Santino from PR #25): `_UEBERGABE.md`.
+- Open: who builds what (product, website), decision in the Sunday round 25.10.
+- 23.10. (Maxi S. with Claude, main chat and three sessions): app renamed tieout (logo, ultramarine accent), open for the jury at **https://app.tieout.workers.dev** (final address, in the submission email; branch previews stay protected). Voice note agent by Santino built in, switch off online until the API key exists (budget at most 25 €). Collapsible groups, faster filters, remaining review items, settings page, Next.js security update. Supabase project `tieout-app` (Frankfurt) with finished but disabled sign-in. Independent final review: no must-fix finding. Next chat: UI pass, API key, launch video (`_UEBERGABE.md`).
+- 22.10.: planning of the voice note agent (Zuruf-Agent: WhatsApp, stage 2 brought forward, synthetic only) in `product/zuruf/` on branch `zuruf/plan`. Team go-ahead on `GESTALTUNG.md` and `PLAN.md` open.
 
-## Noch nicht angelegt
+## Not yet created
 
-- Dossier v1 (v2 verweist für Quellen zu Recht, Markt und Exits auf v1 Abschnitt 18; liegt nicht in diesem Ordner)
+- Dossier v1 (v2 refers to v1 section 18 for sources on legal, market and exits; not in this folder)
 
-## Ordner
+## Folders
 
-- 23.10.: aufgeräumt. `business/` und `video/` (nur Absichtserklärungen) in `docs/README.md` unter „Geplant“ zusammengeführt, Website-Check vom 22.10. ins Archiv, Banner-Entwürfe nach `brand/linkedin/entwuerfe/`. Neues README mit Architektur-Diagramm. GitHub-Organisation zeigt Logo und Anzeigenamen tieout.
+- 23.10.: tidied up. `business/` and `video/` (declarations of intent only) merged in `docs/README.md` under "Planned", website check of 22.10. moved to the archive, banner drafts moved to `brand/linkedin/entwuerfe/`. New README with architecture diagram. GitHub organisation shows logo and display name tieout.
 
-- 22.10.: aufgeräumt. v2 nach `docs/archiv/`, Kuro/reebuild-Fakten aus v2 nach `docs/research_notes/Kuro_reebuild_Fakten.md`.
-- 22.10.: privates GitHub Repository angelegt, liegt in der Organisation `tieout-at` (vorher `schlusswerk`) (github.com/tieout-at/tieout) (Monorepo: `docs/`, `product/`, `website/`, `brand/`). Repo außerhalb OneDrive: erledigt.
+- 22.10.: tidied up. v2 moved to `docs/archiv/`, Kuro/reebuild facts from v2 moved to `docs/research_notes/Kuro_reebuild_Fakten.md`.
+- 22.10.: private GitHub repository created, located in the organisation `tieout-at` (formerly `schlusswerk`) (github.com/tieout-at/tieout) (monorepo: `docs/`, `product/`, `website/`, `brand/`). Repo outside OneDrive: done.

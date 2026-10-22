@@ -1,97 +1,97 @@
-# Zielgruppe: Challenge und Empfehlung
+# Target group: challenge and recommendation
 
-Stand 22.10.2026. Schnelldurchgang (rund 15 Minuten Recherche), kein vollständiges Marktgutachten. Herkunft steht bei jeder Zahl: **gelesen** (mit Quelle), **Dossier** (aus `docs/dossier-v3.md`, dort teils unbelegt) oder **Annahme**.
+As of 22.10.2026. Quick pass (around 15 minutes of research), not a complete market study. The origin is stated for every figure: **read** (with source), **dossier** (from `docs/dossier-v3.md`, partly unverified there) or **assumption**.
 
-## Ergebnis zuerst
+## Result first
 
-**Empfehlung (Beachhead):** Bleibt im Kern bei der heutigen Annahme, aber enger und an einer Stelle breiter: **ein** Gewerk (das des Insiders, Elektro oder HKLS, nicht beide gleichzeitig), **20 bis 100 Beschäftigte**, Sitz in **Wien oder Niederösterreich**, mit überwiegend Projektgeschäft für GUs und Bauträger. Käufer ist der Inhaber oder die kaufmännische Geschäftsführung, Auslöser ist eine anstehende Schlussrechnung auf einem großen Auftrag oder eine Kürzung durch einen GU in den letzten 12 Monaten.
+**Recommendation (beachhead):** Stays at its core with today's assumption, but narrower and broader in one place: **one** trade (the insider's, electrical or HVAC/plumbing (HKLS), not both at the same time), **20 to 100 employees**, based in **Vienna or Lower Austria**, with mainly project business for general contractors (GU) and property developers. The buyer is the owner or the commercial management, the trigger is an upcoming final invoice (Schlussrechnung) on a large contract or a deduction by a GU in the last 12 months.
 
-Warum so: Keine der Alternativen schlägt Elektro/HKLS bei der Kombination aus Zahl der Betriebe, Schmerz und Erreichbarkeit über Innungen. Die Untergrenze 30 ist willkürlich, weil die Statistik die Klasse 20 bis 49 nicht teilt; mit 20 wird die Zielgruppe greifbar größer. Beide Gewerke gleichzeitig verdoppelt Fachwissen, Innungsarbeit und Demo-Fälle, ohne dass wir schon wissen, wo der Schmerz größer ist.
+Why this way: none of the alternatives beats electrical/HVAC/plumbing on the combination of number of businesses, pain and reachability via the guilds (Innungen). The lower limit of 30 is arbitrary, because the statistics do not split the 20 to 49 class; with 20 the target group becomes tangibly larger. Both trades at the same time doubles expertise, guild work and demo cases, without us already knowing where the pain is greater.
 
-**Die zwei stärksten Gegenargumente:**
-1. **Der Schmerz ist nicht belegt.** Ich habe keine österreichische Erhebung zu gekürzten Schlussrechnungen oder vergessener Regie gefunden. Wenn Betriebe das verlorene Geld als normalen Tausch in der Schlussbesprechung sehen, zahlen sie nicht dafür.
-2. **Der Markt ist kleiner, als die Rohzahlen sagen.** Die WKO-Zahlen für Elektro enthalten Alarm-, Kommunikations- und Servicebetriebe. Wie viele 20 bis 100 Leute große Betriebe in Wien und NÖ wirklich überwiegend für GUs arbeiten, weiß niemand von uns. Es können eher 150 als 500 sein (Annahme).
+**The two strongest counterarguments:**
+1. **The pain is not proven.** I found no Austrian survey on cut final invoices or forgotten daywork (Regie). If businesses see the lost money as a normal trade-off in the final meeting, they will not pay for it.
+2. **The market is smaller than the raw figures suggest.** The WKO figures for electrical include alarm, communication and service businesses. None of us knows how many businesses with 20 to 100 people in Vienna and Lower Austria really work mainly for GUs. It may be closer to 150 than 500 (assumption).
 
-## 1. Marktzahlen Österreich (gelesen)
+## 1. Market figures Austria (read)
 
-| Gewerk (WKO-Innung) | Unternehmen gesamt | 10 bis 19 | 20 bis 49 | 50 bis 249 | 250+ | Stand | Quelle |
+| Trade (WKO guild) | Companies total | 10 to 19 | 20 to 49 | 50 to 249 | 250+ | As of | Source |
 |---|---|---|---|---|---|---|---|
-| Elektro-, Gebäude-, Alarm- und Kommunikationstechniker | 8.021 | 671 | 397 | 142 | 27 | 2023 | [WKO lse-unt-1120](https://www.wko.at/oe/statistik/lse/lse-unt-1120.pdf) |
-| Sanitär-, Heizungs- und Lüftungstechniker | 4.606 | 612 | 363 | 104 | 4 | 2023 | [WKO lse-unt-1110](https://www.wko.at/oe/statistik/lse/lse-unt-1110.pdf) |
+| Electrical, building, alarm and communication technicians | 8,021 | 671 | 397 | 142 | 27 | 2023 | [WKO lse-unt-1120](https://www.wko.at/oe/statistik/lse/lse-unt-1120.pdf) |
+| Sanitary, heating and ventilation technicians | 4,606 | 612 | 363 | 104 | 4 | 2023 | [WKO lse-unt-1110](https://www.wko.at/oe/statistik/lse/lse-unt-1110.pdf) |
 
-Bezugsmenge: Unternehmen laut Leistungs- und Strukturstatistik (Statistik Austria, aufbereitet von der WKO), Größenklasse nach Beschäftigten. Mitgliedsbetriebe sind eine andere Zahl (mehr, weil auch Ein-Personen-Betriebe und Gewerbeberechtigungen zählen): Elektro 14.330 aktive Mitglieder, Stand 31.12.2025 ([WKO Bundesinnung](https://www.wko.at/oe/gewerbe-handwerk/elektro-gebaeude-alarm-kommunikation/statistik)); Installateure 7.105, Stand 2025 ([WKO wirinstallateure](https://www.wko.at/wirinstallateure/statistik)).
+Reference set: companies according to the performance and structural statistics (Statistik Austria, prepared by the WKO), size class by employees. Member businesses are a different number (higher, because one-person businesses and trade licences also count): electrical 14,330 active members, as of 31.12.2025 ([WKO Bundesinnung](https://www.wko.at/oe/gewerbe-handwerk/elektro-gebaeude-alarm-kommunikation/statistik)); installers 7,105, as of 2025 ([WKO wirinstallateure](https://www.wko.at/wirinstallateure/statistik)).
 
-Was daraus folgt:
-- **20 bis 249 Beschäftigte:** Elektro 539, HKLS 467, zusammen rund 1.000 Unternehmen in ganz Österreich (gelesen, Summe selbst gerechnet).
-- **20 bis 100 Beschäftigte:** Die Statistik trennt bei 49 und 249. Schätzung: Elektro 450 bis 500, HKLS 400 bis 430 (Annahme: rund zwei Drittel der Klasse 50 bis 249 liegen unter 100).
-- **Davon mit überwiegend GU-Geschäft, in Wien und NÖ:** unbekannt. Wien und NÖ haben grob 40 % der Bevölkerung (Annahme als Näherung). Davon arbeitet nur ein Teil überwiegend für GUs (Annahme). Ergibt grob **150 bis 350 Betriebe pro Gewerk** im ersten Markt. Das Dossier nennt 650 bis 700 relevante Firmen für ganz Österreich und beide Gewerke; das passt in der Größenordnung, ist aber genauso unbelegt.
-- **Konjunktur:** Die Wiener Installateure meldeten für Q4 2025 nominell 6,7 % weniger Auftragseingänge als im Vorjahr, Stichprobe 107 Betriebe ([WKO Wien Tabellenbuch Q4 2025](https://www.wko.at/wien/gewerbe-handwerk/sanitaer-heizung-lueftung/tabellenbuch-zum-kunjunkturbericht-4.-quartal-2025.pdf)). Laut KSV1870 wird rund jede sechste Rechnung in Österreich zu spät bezahlt ([Trending Topics zu KSV1870](https://www.trendingtopics.eu/zahlungsmoral-und-auftragslage-bereits-jede-sechste-rechnung-wird-in-oesterreich-zu-spaet-bezahlt/)); eine Zahl nur für den Bau oder für Subunternehmer habe ich nicht gefunden.
+What follows from this:
+- **20 to 249 employees:** electrical 539, HVAC/plumbing 467, together around 1,000 companies in all of Austria (read, sum calculated by us).
+- **20 to 100 employees:** The statistics split at 49 and 249. Estimate: electrical 450 to 500, HVAC/plumbing 400 to 430 (assumption: around two thirds of the 50 to 249 class are below 100).
+- **Of those with mainly GU business, in Vienna and Lower Austria:** unknown. Vienna and Lower Austria have roughly 40 % of the population (assumption as an approximation). Only some of them work mainly for GUs (assumption). This gives roughly **150 to 350 businesses per trade** in the first market. The dossier names 650 to 700 relevant companies for all of Austria and both trades; that fits in order of magnitude, but is just as unverified.
+- **Economy:** For Q4 2025, the Viennese installers reported nominally 6.7 % fewer incoming orders than in the previous year, sample of 107 businesses ([WKO Wien Tabellenbuch Q4 2025](https://www.wko.at/wien/gewerbe-handwerk/sanitaer-heizung-lueftung/tabellenbuch-zum-kunjunkturbericht-4.-quartal-2025.pdf)). According to KSV1870, around one in six invoices in Austria is paid late ([Trending Topics on KSV1870](https://www.trendingtopics.eu/zahlungsmoral-und-auftragslage-bereits-jede-sechste-rechnung-wird-in-oesterreich-zu-spaet-bezahlt/)); I did not find a figure only for construction or for subcontractors.
 
-## 2. Die Alternativen im Vergleich
+## 2. The alternatives compared
 
-Bewertung: + gut, o mittel, minus schlecht. Alle Bewertungen ohne Zahl sind Annahme.
+Rating: + good, o medium, minus bad. All ratings without a figure are assumptions.
 
-| Option | Markt AT | Schmerz Schlussrechnung | Zahlung und Käufer | Erreichbar ohne Kaltakquise | Daten | Wettbewerb | Urteil |
+| Option | Market AT | Pain final invoice | Payment and buyer | Reachable without cold acquisition | Data | Competition | Verdict |
 |---|---|---|---|---|---|---|---|
-| **Elektro, 20 bis 100** | + rund 450 bis 500 Unternehmen (s. o.) | + Regie, Mengen, Metallzuschläge (Kupfer) | o Inhaber, kaufm. GF | + Landesinnung Elektro, Großhandel | o ERP vorhanden, AVA teils | o Dimacon, ERP-Anbieter | **Beachhead-Kandidat** |
-| **HKLS, 20 bis 100** | + rund 400 bis 430 | + Regie, Mengen, Materialpreise | o wie Elektro | + Landesinnung SHK, Großhandel | o wie Elektro | o wie Elektro | **Beachhead-Kandidat** |
-| Elektro und HKLS gleichzeitig | + doppelt | + | o | o zwei Innungen, zwei Netzwerke | o | o | später, nicht zum Start |
-| Kleinere, 10 bis 20 | + Elektro 671, HKLS 612 (gelesen) | o kleinere Aufträge, weniger GU-Geschäft | minus Inhaber macht alles selbst, kaum Budget | + Innung | minus viel Papier und Excel | o | nein, Desk trägt sich nicht |
-| Größere, über 150 | minus wenige, Elektro 27 und HKLS 4 über 250 (gelesen) | o haben eigene Abrechnung | minus Einkauf, IT, lange Zyklen | minus Konzernstrukturen | + gute Systeme | minus ERP-Anbieter sitzen schon drin | nein |
-| Trockenbau, Fassade, Stahlbau | o nicht geprüft | + viele Nachträge (Annahme) | o | o eigene Innungen | minus wenig Büro | o | zweite Welle nach Prüfung |
-| Lüftung allein | minus in HKLS enthalten | + | o | o | o | o | Teil von HKLS |
-| Aufzug | minus wenige große Konzerne (Annahme) | o | minus Konzerneinkauf | minus | + | minus | nein |
-| Subunternehmer im Tiefbau | o nicht geprüft | + Massen | o | minus Bauindustrie-Verbände sind laut Dossier kein Kanal | o | o | nein, andere Logik (Vermessung, Massen) |
-| Generalunternehmer | minus | auf der anderen Seite | | | | minus Kuro, reebuild | **verworfen** (Abschnitt 12, keine neue Evidenz) |
-| Bauträger | minus | Prüfer, nicht Rechnungssteller | | | | minus reebuild | nein, gleiche Gründe wie GU-Seite |
-| Öffentliche Auftraggeber | minus | prüfen, stellen nicht | minus Vergaberecht, langsam | | | | nein |
-| DACH statt Österreich | + Deutschland viel größer | + | o | minus ohne Netzwerk | o GAEB, VOB/B | o | **verworfen** vor 2028 (Abschnitt 12, keine neue Evidenz) |
+| **Electrical, 20 to 100** | + around 450 to 500 companies (see above) | + daywork, quantities, metal surcharges (copper) | o owner, commercial managing director | + regional electrical guild, wholesale | o ERP present, AVA partly | o Dimacon, ERP vendors | **beachhead candidate** |
+| **HVAC/plumbing, 20 to 100** | + around 400 to 430 | + daywork, quantities, material prices | o as electrical | + regional SHK guild, wholesale | o as electrical | o as electrical | **beachhead candidate** |
+| Electrical and HVAC/plumbing at the same time | + double | + | o | o two guilds, two networks | o | o | later, not at the start |
+| Smaller, 10 to 20 | + electrical 671, HVAC/plumbing 612 (read) | o smaller contracts, less GU business | minus owner does everything himself, hardly any budget | + guild | minus a lot of paper and Excel | o | no, the Desk does not pay for itself |
+| Larger, over 150 | minus few, electrical 27 and HVAC/plumbing 4 over 250 (read) | o have their own billing | minus procurement, IT, long cycles | minus group structures | + good systems | minus ERP vendors are already in there | no |
+| Drywall, facade, steel construction | o not checked | + many change orders (assumption) | o | o own guilds | minus little office | o | second wave after checking |
+| Ventilation alone | minus included in HVAC/plumbing | + | o | o | o | o | part of HVAC/plumbing |
+| Lifts | minus few large groups (assumption) | o | minus group procurement | minus | + | minus | no |
+| Subcontractors in civil engineering | o not checked | + bulk quantities | o | minus according to the dossier, construction industry associations are not a channel | o | o | no, different logic (surveying, bulk quantities) |
+| General contractors | minus | on the other side | | | | minus Kuro, reebuild | **rejected** (section 12, no new evidence) |
+| Property developers | minus | reviewer, not invoicer | | | | minus reebuild | no, same reasons as GU side |
+| Public clients | minus | review, do not invoice | minus procurement law, slow | | | | no |
+| DACH instead of Austria | + Germany much larger | + | o | minus without a network | o GAEB, VOB/B | o | **rejected** before 2028 (section 12, no new evidence) |
 
-Zu Abschnitt 12: Ich schlage nichts Verworfenes neu vor. GU-Seite und Deutschland vor 2028 bleiben verworfen, weil ich keine neue Evidenz habe.
+On section 12: I am not proposing anything rejected again. GU side and Germany before 2028 remain rejected, because I have no new evidence.
 
-## 3. Steckbrief Beachhead
+## 3. Beachhead profile
 
-| Merkmal | Definition |
+| Attribute | Definition |
 |---|---|
-| Gewerk | eines: das Gewerk des Insiders (Elektro oder HKLS) |
-| Größe | 20 bis 100 Beschäftigte, ideal 30 bis 80 |
-| Region | Sitz in Wien oder Niederösterreich |
-| Geschäft | mehr als die Hälfte des Umsatzes aus Projekten für GUs und Bauträger nach ÖNORM B 2110 (Annahme als Schwelle) |
-| Käufer | Inhaber oder kaufmännische Geschäftsführung unterschreibt; Champion ist der Abrechner oder ein Senior-PL |
-| Auslöser | Schlussrechnung auf einem großen Auftrag in den nächsten 4 bis 8 Wochen fällig, oder ein GU hat in den letzten 12 Monaten gekürzt (Streitfälle nur über die Kanzlei) |
+| Trade | one: the insider's trade (electrical or HVAC/plumbing) |
+| Size | 20 to 100 employees, ideally 30 to 80 |
+| Region | based in Vienna or Lower Austria |
+| Business | more than half of revenue from projects for GUs and property developers under ÖNORM B 2110 (assumption as threshold) |
+| Buyer | owner or commercial management signs; champion is the invoicing clerk (Abrechner) or a senior project manager |
+| Trigger | final invoice on a large contract due in the next 4 to 8 weeks, or a GU has made deductions in the last 12 months (disputes only via the law firm) |
 
-**Drei Ausschlusskriterien:**
-1. Überwiegend Endkunden-, Service- oder Wartungsgeschäft (keine Schlussrechnung an GUs).
-2. Tochter eines GU oder Konzerns (Einkauf und Interessenkonflikt).
-3. Weniger als etwa 8 Schlussrechnungen pro Jahr oder Aufträge meist unter 150.000 € (zu wenig Volumen für einen Desk; Schwelle aus dem Dossier, unbelegt).
+**Three exclusion criteria:**
+1. Mainly end customer, service or maintenance business (no final invoice to GUs).
+2. Subsidiary of a GU or group (procurement and conflict of interest).
+3. Fewer than about 8 final invoices per year or contracts mostly below 150,000 € (too little volume for a Desk; threshold from the dossier, unverified).
 
-## 4. Was gegen diese Empfehlung spricht
+## 4. What speaks against this recommendation
 
-1. **Schmerz unbelegt.** Keine österreichische Quelle zu Schlussrechnungskürzungen gefunden. Gegenhypothese: Betriebe sehen den Verlust nicht als Verlust, sondern als Preis für den nächsten Auftrag. Dann fehlt die Zahlungsbereitschaft, egal welches Gewerk.
-2. **Erster Markt womöglich zu klein.** Nach der Rechnung oben bleiben pro Gewerk in Wien und NÖ grob 150 bis 350 Betriebe, vielleicht weniger. Bei einer niedrigen Abschlussquote (Annahme) reicht das für die ersten 10 Kunden, aber nicht für die Wachstumsgeschichte. Wer Elektro wählt, muss früh zeigen, dass HKLS und die Bundesländer ohne Umbau folgen.
+1. **Pain unverified.** No Austrian source on final invoice deductions found. Counter-hypothesis: businesses do not see the loss as a loss, but as the price for the next contract. Then the willingness to pay is missing, regardless of the trade.
+2. **First market possibly too small.** According to the calculation above, roughly 150 to 350 businesses per trade remain in Vienna and Lower Austria, perhaps fewer. With a low closing rate (assumption) that is enough for the first 10 customers, but not for the growth story. Whoever chooses electrical must show early that HVAC/plumbing and the other federal states follow without restructuring.
 
-Weitere offene Punkte: Wie digital die Zielbetriebe sind (welches ERP, welche AVA) ist unbelegt. Ob die Wahl des Gewerks nach dem Insider richtig ist oder Zufall, prüft niemand; sie ist pragmatisch, aber nicht aus dem Markt abgeleitet.
+Further open points: how digital the target businesses are (which ERP, which AVA) is unverified. Nobody checks whether choosing the trade according to the insider is right or a coincidence; it is pragmatic, but not derived from the market.
 
-## 5. Prüfung in den nächsten 4 Wochen (bis Fr 20.11., passend zu R1 und R2)
+## 5. Check in the next 4 weeks (until Fri 20.11., matching R1 and R2)
 
-| Was | Wie | Passt zu | Bestanden, wenn |
+| What | How | Fits | Passed if |
 |---|---|---|---|
-| Schmerz messen | In jedem der 8+ Insider-Treffen (R1) dieselben 5 Fragen: Kürzung in den letzten 12 Monaten ja/nein, Betrag, Anteil Regie ohne Unterschrift, wer schreibt die Schlussrechnung, wer würde zahlen | R1 | mindestens 5 von 8 nennen eine Kürzung oder vergessene Posten mit Eurobetrag |
-| Gewerk entscheiden | Nach den Treffen zählen: wo kommen mehr konkrete Fälle und warme Kontakte, Elektro oder HKLS | R1 | klare Mehrheit für ein Gewerk, sonst Gewerk des Insiders |
-| Markt zählen | Öffentliche Verzeichnisse (WKO Firmen A bis Z, Innungs-Mitgliederlisten) für Wien und NÖ nach Gewerk und Größe auswerten, nur lesen, niemanden anschreiben | R2 Vorbereitung | Liste mit echten Betrieben 20 bis 100, Zahl ersetzt die Annahme oben |
-| Daten prüfen | Bei der Ordner-Anfrage (R2) abfragen: welches ERP, welche AVA, wo liegen Regieberichte | R2 | 3+ Ordner, dazu Systemliste pro Firma |
-| Ausschlusskriterien testen | Bei jedem Gespräch notieren, ob ein Kriterium griff | R1, R2 | Kriterien halten oder werden angepasst |
+| Measure the pain | In each of the 8+ insider meetings (R1) the same 5 questions: deduction in the last 12 months yes/no, amount, share of daywork without signature, who writes the final invoice, who would pay | R1 | at least 5 of 8 name a deduction or forgotten items with a euro amount |
+| Decide the trade | After the meetings, count: where do more concrete cases and warm contacts come from, electrical or HVAC/plumbing | R1 | clear majority for one trade, otherwise the insider's trade |
+| Count the market | Evaluate public directories (WKO Firmen A bis Z, guild member lists) for Vienna and Lower Austria by trade and size, read only, do not write to anyone | R2 preparation | list with real businesses of 20 to 100, the figure replaces the assumption above |
+| Check the data | During the folder request (R2) ask: which ERP, which AVA, where are the daywork reports | R2 | 3+ folders, plus a system list per company |
+| Test the exclusion criteria | In every conversation note whether a criterion applied | R1, R2 | criteria hold or are adjusted |
 
-Kontakt nur über Insider, Kanzleien, Innungsabende und persönliche Vorstellung, keine Kaltmails und keine Kaltanrufe (§ 174 TKG).
+Contact only via insiders, law firms, guild evenings and personal introduction, no cold emails and no cold calls (§ 174 TKG).
 
-## Quellen
+## Sources
 
-- [WKO: Elektro, Unternehmen nach Größenklassen (lse-unt-1120)](https://www.wko.at/oe/statistik/lse/lse-unt-1120.pdf)
-- [WKO: Sanitär, Heizung, Lüftung, Unternehmen nach Größenklassen (lse-unt-1110)](https://www.wko.at/oe/statistik/lse/lse-unt-1110.pdf)
-- [WKO Bundesinnung Elektro: Statistik](https://www.wko.at/oe/gewerbe-handwerk/elektro-gebaeude-alarm-kommunikation/statistik)
-- [WKO Installateure: Statistik](https://www.wko.at/wirinstallateure/statistik)
-- [WKO Wien SHK: Tabellenbuch Konjunktur Q4 2025](https://www.wko.at/wien/gewerbe-handwerk/sanitaer-heizung-lueftung/tabellenbuch-zum-kunjunkturbericht-4.-quartal-2025.pdf)
-- [Trending Topics: KSV1870 Zahlungsmoral](https://www.trendingtopics.eu/zahlungsmoral-und-auftragslage-bereits-jede-sechste-rechnung-wird-in-oesterreich-zu-spaet-bezahlt/)
-- `docs/dossier-v3.md` Abschnitte 2, 6, 7, 9, 12
+- [WKO: Electrical, companies by size class (lse-unt-1120)](https://www.wko.at/oe/statistik/lse/lse-unt-1120.pdf)
+- [WKO: Sanitary, heating, ventilation, companies by size class (lse-unt-1110)](https://www.wko.at/oe/statistik/lse/lse-unt-1110.pdf)
+- [WKO Bundesinnung Elektro: statistics](https://www.wko.at/oe/gewerbe-handwerk/elektro-gebaeude-alarm-kommunikation/statistik)
+- [WKO Installateure: statistics](https://www.wko.at/wirinstallateure/statistik)
+- [WKO Wien SHK: Tabellenbuch economy Q4 2025](https://www.wko.at/wien/gewerbe-handwerk/sanitaer-heizung-lueftung/tabellenbuch-zum-kunjunkturbericht-4.-quartal-2025.pdf)
+- [Trending Topics: KSV1870 payment behaviour](https://www.trendingtopics.eu/zahlungsmoral-und-auftragslage-bereits-jede-sechste-rechnung-wird-in-oesterreich-zu-spaet-bezahlt/)
+- `docs/dossier-v3.md` sections 2, 6, 7, 9, 12
 
-Hinweis zur Prüfung: Die Größenklassen-Zahlen stammen aus Suchergebnis-Auszügen der WKO-PDFs; die PDFs selbst konnte ich in diesem Durchgang nicht maschinell lesen. Vor Weitergabe nach außen einmal im PDF gegenprüfen.
+Note on verification: the size class figures come from search result excerpts of the WKO PDFs; I could not read the PDFs themselves by machine in this pass. Cross-check once in the PDF before passing on externally.

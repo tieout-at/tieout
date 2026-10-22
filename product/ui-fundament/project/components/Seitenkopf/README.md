@@ -1,10 +1,10 @@
 # Seitenkopf
 
-Eine Zeile mit 48 px: Pfad und Titel links, Kennzeichnung „Synthetisch“ und höchstens zwei Aktionen rechts.
+A single 48 px row: path and title on the left, the „Synthetisch“ (synthetic) label and at most two actions on the right.
 
-**Vorlage:** Linear-Kopfzeile (Pfad „Team / Issue“, Titel, Aktionen in einer Zeile), Attio (44–48 px).
+**Reference:** Linear header (path „Team / Issue“, title, actions in one row), Attio (44 to 48 px).
 
-**Verwenden**
-- Pfad in `text-muted`, Titel in `text` mit Gewicht 600.
-- Die Kennzeichnung „Synthetisch“ steht in jeder Kopfzeile, solange Demo-Daten geladen sind (Pflicht aus dem Umfang).
-- Aktionen, die es noch nicht gibt, deaktiviert mit Tooltip; nie als bedienbar vortäuschen.
+**Usage**
+- Path in `text-muted`, title in `text` with weight 600.
+- The „Synthetisch“ label appears in every header as long as demo data is loaded (mandatory per the scope).
+- Actions that do not exist yet are disabled with a tooltip; never pretend they are usable.

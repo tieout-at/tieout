@@ -1,11 +1,11 @@
 # Belegmatrix
 
-Der Projektzwilling als Arbeitsfläche: Zeile = LV-Position, Spalte = Belegart, Zelle = Fundstelle zum Anklicken.
+The project twin as a workspace: row = bill of quantities (LV) item, column = evidence type, cell = clickable source location.
 
-**Vorlage:** Hebbia Matrix und Harvey Review Tables (Objekte × Fragen, jede Zelle mit Quelle), Idee des „Digital Twin“ von Stratos (alle Daten eines Objekts verbunden).
+**Reference:** Hebbia Matrix and Harvey Review Tables (objects × questions, every cell with a source), the „Digital Twin“ idea from Stratos (all data of an object connected).
 
-**Verwenden**
-- Lücken sichtbar machen: „kein Beleg“ ist eine Aussage, kein leeres Feld.
-- Positionen mit Befund verlinken auf den Befund; Zellen öffnen das Original.
+**Usage**
+- Make gaps visible: „kein Beleg“ (no evidence) is a statement, not an empty field.
+- Items with a finding (Befund) link to the finding; cells open the original.
 
-**Nicht:** Netz- oder Hub-Grafiken. Der Zwilling wird als Tabelle gezeigt, an der man arbeiten kann.
+**Not:** network or hub graphics. The twin is shown as a table you can work in.

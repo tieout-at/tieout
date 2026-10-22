@@ -1,68 +1,70 @@
-# Übergabe für den nächsten Chat (Produkt-App)
+# Handover for the next chat (product app)
 
-**Stand:** Freitag, 23. Oktober 2026. Repository heißt jetzt `tieout-at/tieout` auf GitHub (alte Adresse leitet weiter). Geschrieben von Claude für Maxi S.
-**Zuerst lesen:** `CLAUDE.md`, `_STATUS.md`, `product/README.md`, `product/app/CLAUDE.md`, `product/app/src/ui/README.md`. Danach diese Datei.
+**As of:** Friday, 23 October 2026. Written by Claude for Maxi S. The GitHub repository is now `tieout-at/tieout` (the old address redirects).
+**Read first:** `CLAUDE.md`, `_STATUS.md`, `product/README.md`, `product/app/CLAUDE.md`, `product/app/src/ui/README.md`. Then this file. Documentation is in English, conversations with the team in German (CLAUDE.md rule 1).
 
-## 1. Wo wir stehen
+## 1. Where we stand
 
-App **tieout** (klein, ohne Punkt) auf `main`, online und **offen** unter **https://app.tieout.workers.dev** (endgültige Adresse, steht in der Abgabe-Mail an die Juroren, 23.10.). Cloudflare Access schützt nur noch die Vorschau-Adressen der Branches („Previews only“). Jeder Merge auf main ist nach 2 bis 3 Minuten für die Juroren sichtbar, deshalb nach jedem Merge im Browser prüfen. Worker und Subdomain nicht umbenennen und nicht in ein anderes Cloudflare-Konto umziehen, sonst ändert sich die Adresse. Am 22./23.10. gebaut und gemergt:
+App **tieout** (lower case, no dot) on `main`, online and **open** at **https://app.tieout.workers.dev** (final address, it is in the submission email to the jury, 23.10.). Cloudflare Access now only protects the branch preview addresses ("Previews only"). Every merge to main is visible to the jury after 2 to 3 minutes, so check in the browser after every merge. Do not rename the worker or the subdomain and do not move it to another Cloudflare account, otherwise the address changes. A failed Cloudflare build keeps the last working version online.
 
-| Was | PR |
+Built and merged on 22./23.10.:
+
+| What | PR |
 |---|---|
-| Marke tieout: Logo und Wortmarke in der Seitenleiste (`src/ui/Logo.tsx`, Geometrie wie die Website), Akzent Ultramarin #1D3BFF. Grautöne, Grund, Dunkelmodus bewusst unverändert | #41, #49 |
-| Zuruf-Agent von Santino (Paket `product/zuruf`) | #25 |
-| Restliste Prüfbericht: Handy, Rechenweg als Tabelle, Kennzahlen ohne Kasten, ein Seitentitel, Zählung „von 14“ | #48 |
-| Einstellungen (Thema, Freigaben zurücksetzen) statt „Demo zurücksetzen“. Anmeldung mit Supabase fertig, aber per Schalter aus | #49 |
-| Handy: Projekt im Pfad, obere Leiste blendet rechts aus | #51 |
-| Worker heißt `app`, Konto-Subdomain `tieout` | #54 |
-| Gruppen einklappen in Firmenliste, Befunden, Ledger (Linear „Group by“), Spalten bleiben stehen | #56 |
-| Zuruf-Agent in der App hinter Schalter `ZURUF_ECHT` (Standard aus): echter Chat statt Szene, neue Zurufe ohne Betrag in Zeitachse und Liste „offen“, Ablage im Browser, Grenzen 40 Aufrufe pro Tag und 20 US-Dollar pro Monat. Z6 heißt wie in der Lösungsliste. Lokal mit Abo schon ein echter Zuruf erfolgreich | #50 |
-| Tempo: Filter und Suche in Ledger und Matrix 32 bis 72 ms statt 88 bis 176 ms (gemessen von der Sitzung), pixelgleich | #59 |
-| Next.js 16.4.2 (Sicherheitsupdate), übrig nur `uuid` mittel über exceljs | #63 |
-| Projektlinks mit Schrägstrich (keine 307-Umleitung) | #68 |
+| Brand tieout: logo and wordmark in the sidebar (`src/ui/Logo.tsx`, same geometry as the website), accent ultramarine #1D3BFF. Greys, background and dark mode deliberately unchanged | #41, #49 |
+| Voice note agent (Zuruf-Agent) by Santino, package `product/zuruf` | #25 |
+| Remaining review items: mobile, calculation as a table, key figures without a box, one page title size, count "x of 14" | #48 |
+| Settings page (theme, reset approvals) instead of "Demo zurücksetzen". Sign-in with Supabase finished but switched off | #49 |
+| Mobile: project stays in the path, top bar fades out on the right | #51 |
+| Worker renamed `app`, account subdomain `tieout` | #54 |
+| Collapsible groups in company list, findings and ledger (Linear "Group by"), columns stay fixed | #56 |
+| Voice note agent in the app behind the switch `ZURUF_ECHT` (default off): real chat instead of the scripted scene, new voice notes without amount in timeline and "open" list, storage in the browser, limits 40 AI calls per day and 20 USD per month. Z6 now reads as in the solution list. One real voice note already ran locally via the Claude subscription | #50 |
+| Speed: filter and search in ledger and matrix 32 to 72 ms instead of 88 to 176 ms (measured by the session), pixel-identical | #59 |
+| Next.js 16.4.2 (security update); only `uuid` (moderate, via exceljs) remains | #63 |
+| Project links with trailing slash (no 307 redirect) | #68 |
 
-**Schlussprüfung 23.10.** (unabhängiger Prüfer auf der Live-Adresse, Ergebnis vom Haupt-Chat nachgesehen): kein Muss-Befund. 297 interne Adressen abgerufen, kein 404. Alle Beträge auf Startseite, 8 Projektseiten, Befundlisten und 21 Befundseiten centgenau wie `Demo_Faelle.md`. Auf allen 284 Seiten kein „·“, kein Gedankenstrich, kein „Claim“, kein Platzhalter, „Synthetisch“ überall, `noindex` überall. Screenshots hell, dunkel, 600 px ohne Fehler. Offene Punkte für den UI-Durchgang und v1.0:
-- **Kaskade und Vorprüfung** (Restforderung 170.060,89 €, Leistungssumme, Zahlungen, Abzüge G1 bis G4) stehen auf keiner Seite. Im Rechenkern fertig, Bildschirm folgt in v1.0. Für das Demo-Skript fehlt er.
-- **Ledger bei 600 px:** nur 5 von 9 Spalten sichtbar, Rest per Wischen (rechter Rand blendet aus). Für das Handy eine schmale Fassung überlegen.
-- **Startseite P6 bis P8:** Ampel und Datum bewusst leer (gelegt oder abgeschlossen, Bedeutung im Gruppenkopf). Prüfen, ob „gelegt 15.09.“ dort hilft.
-- **V1 Container 1.180,00 €:** Rechenweg „Lohn 16 h × 56,80 € + Material 271,20 €“ steht nicht in der Lösungsliste (Summe stimmt). Quelle klären oder Rechenweg kürzen; Lösungsliste nur mit Go. Slug `anmeldung-…` passt nicht zu „Verloren“.
-- **P2 bis P5:** Zahlungen genau so hoch wie die AR, ohne Nachlass oder Rücklass (anders als W21). Lösungsliste regelt das nicht, fällt nur bei Plausibilität auf.
-- **GU-Historie** („gleicher Grund schon in P7“) laut Lösungsliste ab v1.0.
+**Final review 23.10.** (independent reviewer on the live address, result checked by the main chat): no must-fix finding. 297 internal addresses fetched, no 404. All amounts on the start page, the 8 project pages, the finding lists and 21 finding pages match `Demo_Faelle.md` to the cent. On all 284 pages no "·", no dash, no "Claim", no placeholder; "Synthetisch" everywhere, `noindex` everywhere. Screenshots light, dark and 600 px without errors. Open points for the UI pass and v1.0:
+- **Cascade and pre-check** (remaining claim 170,060.89 €, performance total, payments, deductions G1 to G4) appear on no page. Done in the calculation core, the screen follows in v1.0. The demo script needs it.
+- **Ledger at 600 px:** only 5 of 9 columns visible, the rest by swiping (right edge fades out). Consider a narrow mobile version.
+- **Start page P6 to P8:** traffic light and date deliberately empty (submitted or closed, meaning in the group header). Check whether "gelegt 15.09." helps there.
+- **V1 container 1,180.00 €:** calculation "Lohn 16 h × 56,80 € + Material 271,20 €" is not in the solution list (total matches). Clarify the source or shorten the calculation; the solution list changes only with Maxi S.'s go. Slug `anmeldung-…` does not fit "Verloren".
+- **P2 to P5:** payments exactly equal the partial invoices, without discount or retention (unlike W21). The solution list does not cover it, only noticeable on plausibility.
+- **GC history** ("same reason already in P7") from v1.0 according to the solution list.
 
-## 2. Aufträge für den nächsten Chat
+## 2. Tasks for the next chat
 
-1. **UI haarscharf überarbeiten** (Maxi S. gibt die Punkte selbst ein). Zuerst, parallel wo sinnvoll. Regeln aus Abschnitt 5 gelten.
-2. **API-Schlüssel und Zuruf-Agent online** (Wunsch: jeder mit Link kann den echten Agenten ausprobieren, Budget höchstens 25 €):
-   - Maxi S. legt in console.anthropic.com einen Schlüssel „tieout“ an, lädt Guthaben auf und setzt das Monatslimit knapp unter 25 € (die Konsole rechnet in US-Dollar). Claude schreibt dafür eine Klick-Anleitung, Bezahlen und Schlüssel eintragen macht Maxi S.
-   - Supabase SQL-Editor: `product/zuruf/worker/supabase.sql` einspielen (Teil 1 Zähler ist Pflicht). Claude darf SQL selbst ausführen (Erlaubnis Maxi S.), danach per Lese-Abfrage prüfen.
-   - Cloudflare, Worker `app`, Settings, Variables and Secrets, alles als Secret: `SUPABASE_SECRET_KEY` (geheimer Schlüssel von `tieout-app`), `ANTHROPIC_API_KEY`, zuletzt `ZURUF_ECHT` = `an` (mit Go).
-   - Prüfen: `https://app.tieout.workers.dev/api/zuruf/status` zeigt `{"verfuegbar":true}`, in der Zeitachse von W21 heißt der Knopf „Zuruf schicken“. Grenzen im Code: 40 KI-Aufrufe pro Tag, 20 US-Dollar pro Monat, danach still zurück auf die vorgespielte Szene.
-3. **Launch-Video planen** (Details von Maxi S.). Das Video darf mehr zeigen als gebaut ist; was in der App fehlt, im Video als Ausblick kenntlich machen, weil Juroren danach selbst klicken.
+1. **Razor-sharp UI pass** (Maxi S. enters the points himself). First, in parallel where it makes sense. Rules from section 5 apply. The app is live for the jury: merge only with green CI and check in the browser after each merge.
+2. **API key and voice note agent online** (goal: anyone with the link can try the real agent, budget at most 25 €):
+   - Maxi S. creates a key "tieout" in console.anthropic.com, tops up credit and sets the monthly limit just under 25 € (the console uses US dollars). Claude writes a click guide; paying and entering the key is done by Maxi S.
+   - Supabase SQL editor: run `product/zuruf/worker/supabase.sql` (part 1, the counter, is required). Claude may run SQL itself (permission Maxi S.), then verify with a read query.
+   - Cloudflare, worker `app`, Settings, Variables and Secrets, all as secrets: `SUPABASE_SECRET_KEY` (secret key of `tieout-app`), `ANTHROPIC_API_KEY`, finally `ZURUF_ECHT` = `an` (with go).
+   - Check: `https://app.tieout.workers.dev/api/zuruf/status` returns `{"verfuegbar":true}`, the button in the W21 timeline reads "Zuruf schicken". Limits in code: 40 AI calls per day, 20 USD per month, then silently back to the scripted scene.
+3. **Plan the launch video** (details from Maxi S.). The video may show more than is built; mark what the app lacks as an outlook in the video, because the jury clicks through the app afterwards.
 
-## 3. Wichtig zu wissen
+## 3. Good to know
 
-- **Supabase:** Projekt `tieout-app` (Organisation `tieout`, Frankfurt, Free, Ref `skvctanwhocirlmozmon`), Selbstregistrierung aus, Site-URL und Weiterleitungen auf `app.tieout.workers.dev`. Keine Tabellen außer denen aus `supabase.sql`. Dafür wurde das Projekt `icons` pausiert (Free erlaubt 2 aktive Projekte). Free pausiert nach rund einer Woche ohne Nutzung, dann täglichen Ping einrichten. Standard-Mails gehen nur an Mitglieder der Organisation und höchstens 2 pro Stunde; für Mails an Kunden braucht es eigenen Versand mit Domain tieout.at.
-- **Anmeldung** ist fertig, aber aus (`ANMELDUNG_EIN = false` in `product/app/src/anmeldung/konfig.ts`), weil Juroren und Investoren per Link hineinsollen. Einschalten: Schalter auf `true`, Secret `SUPABASE_SECRET_KEY` setzen, Personen in den Einstellungen einladen (Anmeldelink zum Weitergeben). Google-Login ist angefangen (Google-Cloud-Projekt `tieout-login`, Zustimmungsbildschirm fertig, OAuth-Client fehlt), nur nötig, wenn der Login wieder an soll.
-- **Datenbank für Dokumente und Fotos** braucht die Demo nicht (synthetische Daten, beim Build erzeugt). Erst für echte Firmen (nach Gate R4 und Betriebsrat): Tabellen je Firma mit RLS, Fotos in Supabase Storage.
-- **Domain app.tieout.at:** geht erst, wenn die Zone tieout.at im selben Cloudflare-Konto liegt wie die App (heute Konto Maxi D., App im Konto Maxi S.). Mit Maxi D. klären: gemeinsames Konto oder Umzug.
-- **Claude Code lokal:** Für den Zuruf-Agenten mit Abo (`ZURUF_KI=abo`) muss `claude` angemeldet sein. Am 22.10. war die Anmeldung abgelaufen; neue Version liegt in `C:\Users\maxis\.local\bin`.
+- **Supabase:** project `tieout-app` (organisation `tieout`, Frankfurt, Free, ref `skvctanwhocirlmozmon`), sign-ups disabled, site URL and redirects on `app.tieout.workers.dev`. No tables yet apart from those in `supabase.sql`. For this the project `icons` was paused (Free allows 2 active projects). Free pauses after about a week without use; then set up a daily ping. Default emails only go to members of the organisation and at most 2 per hour; emails to customers need their own sending with the domain tieout.at.
+- **Sign-in** is finished but off (`ANMELDUNG_EIN = false` in `product/app/src/anmeldung/konfig.ts`) because the jury and investors should get in by link. To switch on: set the switch to `true`, set the secret `SUPABASE_SECRET_KEY`, invite people in the settings (sign-in link to pass on). Google sign-in is started (Google Cloud project `tieout-login`, consent screen done, OAuth client missing), only needed when sign-in is switched on again.
+- **A database for documents and photos** is not needed for the demo (synthetic data, generated at build time). Only for real companies (after gate R4 and works council): tables per company with RLS, photos in Supabase Storage.
+- **Domain app.tieout.at:** only possible once the zone tieout.at is in the same Cloudflare account as the app (today account of Maxi D., app in the account of Maxi S.). Clarify with Maxi D.: shared account or move. Add it as an extra domain; the workers.dev address must keep working (it is in the jury email).
+- **Claude Code locally:** for the voice note agent with the subscription (`ZURUF_KI=abo`), `claude` must be signed in. The new version is in `C:\Users\maxis\.local\bin`.
 
-## 4. Wie parallel arbeiten
+## 4. How to work in parallel
 
-Bewährt am 22./23.10.: Der Haupt-Chat macht gemeinsame Dateien (`tokens.css`, `bauteile.css`, `layout.tsx`, `Seitenleiste.tsx`, `Zeilennavigation.tsx`, Worker), merged und startet dann Sitzungen mit eigenem Worktree, die nur ihre Dateien berühren. Sitzungen mergen nicht selbst, sondern melden; der Haupt-Chat merged nacheinander und prüft nach jedem Merge. Ändert sich main unter einer Sitzung, schickt der Haupt-Chat ihr genau, welche Dateien betroffen sind.
+Proven on 22./23.10.: the main chat handles shared files (`tokens.css`, `bauteile.css`, `layout.tsx`, `Seitenleiste.tsx`, `Zeilennavigation.tsx`, worker), merges and then starts sessions with their own worktree that only touch their files. Sessions do not merge themselves but report; the main chat merges one after another and checks after each merge. When main moves under a session, the main chat tells it exactly which files are affected.
 
-Lehre: Messsitzungen (Tempo) brauchen eine Zeitgrenze im Auftrag, sonst messen sie über eine Stunde.
+Lessons: measuring sessions (speed) need a time limit in the brief, otherwise they measure for over an hour. Never run `npm ci` in the main checkout while another chat's dev server is running there (Windows locks a file, npm deletes node_modules and stops halfway); use a separate worktree for dependency changes.
 
-## 5. Arbeitsweise, die sich bewährt hat
+## 5. Working practice that has proven itself
 
-- **Ablauf je Bildschirm:** bauen, im Browser prüfen (hell, dunkel, 1440 px, schmal), fixen, PR, bei grüner CI selbst mergen (Erlaubnis Maxi S.).
-- **Dev-Server:** `.claude/launch.json` (ignoriert), Start mit `preview_start` „app-dev“. Läuft schon ein Dev-Server in diesem Ordner (anderer Chat), den nutzen; Next.js startet keinen zweiten. Sitzungen in Worktrees nehmen eigene Ports (3102 und folgende).
-- **Klicktests im echten Browser:** Claude in Chrome (Maxis Edge) auf `http://localhost:3100`, Messung per JavaScript (Spaltenbreiten, sichtbare Zeilen).
-- **Screenshots:** `node product/app/scripts/qa/shot.mjs <name> <url> <breite,höhe> [dunkel]`, Pixelvergleich mit `sharp`.
-- **Paketliste unter Windows:** Nach `npm install` prüfen, ob `npm ci --dry-run` sauber ist. npm unter Windows wirft Linux-Zusatzpakete (`@emnapi/*`) aus der `package-lock.json`, dann bricht die CI ab. Fehlende Einträge aus main übernehmen.
-- **Cloudflare:** Worker `app`, Zugangsschutz hängt am Worker (Reiter Access), nicht an der Adresse.
-- Regeln, die oft greifen: keine „·“ und keine Gedankenstriche im sichtbaren Text, Farben nur aus `tokens.css`, Inline-Stile nur für Spaltenbreiten (`fundament.test.ts`), Beträge nur aus dem Rechenkern, keine Summen in der Oberfläche, Lösungsliste nur mit Go.
+- **Per screen:** build, check in the browser (light, dark, 1440 px, narrow), fix, PR, merge yourself with green CI (permission Maxi S.).
+- **Dev server:** `.claude/launch.json` (ignored), start with `preview_start` "app-dev". If a dev server from another chat already runs in this folder, use it; Next.js does not start a second one. Sessions in worktrees use their own ports (3102 and up).
+- **Click tests in a real browser:** Claude in Chrome (Maxi's Edge) on `http://localhost:3100`, measure via JavaScript (column widths, visible rows).
+- **Screenshots:** `node product/app/scripts/qa/shot.mjs <name> <url> <width,height> [dunkel]`, pixel comparison with `sharp`.
+- **Package lock on Windows:** after `npm install` check that `npm ci --dry-run` is clean. npm on Windows drops Linux extras (`@emnapi/*`) from `package-lock.json`, then CI fails. Copy the missing entries from main.
+- **Cloudflare:** worker `app`; access protection belongs to the worker (Access tab), not to the address.
+- Rules that often apply: no "·" and no dashes in visible text, colours only from `tokens.css`, inline styles only for column widths (`fundament.test.ts`), amounts only from the calculation core, no totals computed in the UI, solution list only with go.
 
-## 6. Startprompt für den neuen Chat
+## 6. Start prompt for the new chat
 
-> Ich bin Maxi S. Lies `_UEBERGABE.md` und die dort genannten Dateien, hol den neuesten Stand von main. Zuerst gehen wir haarscharf über die UI, die Punkte gebe ich dir gleich. Danach API-Schlüssel und Zuruf-Agent online (Abschnitt 2, Punkt 2), dann Launch-Video planen. Die App ist schon offen für die Juroren: nach jedem Merge im Browser prüfen. Profi-Niveau wie Linear, Attio, reebuild. Wenig Text, keine „·“ und keine Gedankenstriche. Beträge nur aus dem Rechenkern, die Lösungsliste ändert sich nur mit meinem Go. Kosten nur mit meinem Go. PRs bei grüner CI selbst mergen. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Lies `_UEBERGABE.md` und die dort genannten Dateien, hol den neuesten Stand von main. Zuerst gehen wir haarscharf über die UI, die Punkte gebe ich dir gleich. Danach API-Schlüssel und Zuruf-Agent online (Abschnitt 2, Punkt 2), dann Launch-Video planen. Die App ist schon offen für die Juroren unter https://app.tieout.workers.dev: nur bei grüner CI mergen und nach jedem Merge im Browser prüfen. Profi-Niveau wie Linear, Attio, reebuild. Wenig Text, keine „·“ und keine Gedankenstriche. Beträge nur aus dem Rechenkern, die Lösungsliste ändert sich nur mit meinem Go. Kosten nur mit meinem Go. PRs bei grüner CI selbst mergen. Deutsch, einfach, Ergebnis zuerst.

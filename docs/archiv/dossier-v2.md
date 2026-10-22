@@ -1,644 +1,644 @@
 # Schlusswerk: Dossier v2
 
-**Stand:** Donnerstag, 22. Oktober 2026
-**Für:** Maxi, die zwei Co-Founder und jeden neuen KI-Chat ohne Vorwissen.
-**Verhältnis zu v1:** `Schlusswerk Dossier.md` (v1) bleibt unverändert als Archiv. v2 ist kürzer und enthält alle Entscheidungen aus v1. Neu sind Abschnitt 8 („Von Kuro und reebuild gelernt“), der Plan bis 31.1.2027 mit Bauplan (Abschnitte 14 und 15) und einige Ergänzungen, die mit **[neu]** markiert sind. Wo v1 und v2 abweichen, gilt v2.
+**As of:** Thursday, 22 October 2026
+**For:** Maxi, the two co-founders and every new AI chat without prior context.
+**Relation to v1:** `Schlusswerk Dossier.md` (v1) remains unchanged as an archive. v2 is shorter and contains all decisions from v1. New are section 8 ("Learned from Kuro and reebuild"), the plan up to 31.1.2027 with a build plan (sections 14 and 15) and a few additions marked **[new]**. Where v1 and v2 differ, v2 applies.
 
 ---
 
-## 0. Ergebnis zuerst
+## 0. Result first
 
-1. **Wir bleiben auf der Seite der Subunternehmer.** Die GU-Seite ist besser finanziert und verkauft sich nachweislich. Sie ist aber für uns nicht klar besser: Sie ist besetzt, und unser einziger möglicher Vorsprung (Insider aus dem Sub-Betrieb, Bepreisung aus LV und K7 des Subs) zählt nur auf der Sub-Seite. Begründung in 8.5.
-2. **Die Gegenseite hat jetzt nachweislich KI.** reebuild prüft für Bauträger und Baufirmen die Rechnungen der Nachunternehmer gegen LV, Bauvertrag und Aufmaß und schreibt automatisch ein Korrekturblatt. Kuro prüft für die größten GUs die Angebote der Nachunternehmer. Damit ist unser Verkaufsargument belegt und keine Behauptung mehr.
-3. **Fünf Muster übernehmen wir:**
-   - jedes Dokument wird ein Datensatz mit Quellenlink;
-   - Prüfkatalog und Regelwerk entstehen mit Praktikern;
-   - Beweis zuerst an einem echten, abgeschlossenen Projekt;
-   - Export in die Buchhaltung (BMD);
-   - eine Zahl in der Headline.
+1. **We stay on the side of the subcontractors.** The general contractor (GU) side is better funded and demonstrably sells. But it is not clearly better for us: it is occupied, and our only possible edge (an insider from a subcontractor business, pricing from the sub's bill of quantities (LV) and K7 cost sheets) only counts on the sub side. Reasoning in 8.5.
+2. **The other side now demonstrably has AI.** reebuild checks subcontractors' invoices against the LV, construction contract and measurement record (Aufmaß) for developers and construction companies, and automatically writes a correction sheet. Kuro checks subcontractors' bids for the largest GUs. This makes our sales argument a proven fact rather than a claim.
+3. **We adopt five patterns:**
+   - every document becomes a record with a source link;
+   - the check catalogue and rule set are built with practitioners;
+   - proof first on a real, completed project;
+   - export to accounting (BMD);
+   - one number in the headline.
 
-   **[neu]** Der Check bekommt eine „Vorprüfung aus GU-Sicht“: Er zeigt, was der GU wahrscheinlich kürzen wird, bevor die Schlussrechnung rausgeht.
-4. **Nicht übernehmen:**
-   - reebuilds Telefon-Kaltakquise (in Österreich nach § 174 TKG nicht erlaubt);
-   - Echtzeit-Module (Live gibt es erst ab Jahr 2, siehe Abschnitt 12);
-   - einen KI-Chat als Kernfunktion.
-5. **Neues Risiko:** reebuild (Wien, 120+ Kunden, liest schon LV, Bauvertrag und Aufmaß, BMD-Anbindung) kann die Sub-Seite schneller besetzen als PlanRadar oder Capmo. Das Fenster bleibt bei geschätzten 12–24 Monaten. reebuild ist ab jetzt der erste Name auf der Beobachtungsliste und zugleich ein möglicher Käufer.
-6. **Plan:** Gates und Termine aus v1 bleiben unverändert. Abschnitt 14 zeigt Woche für Woche, wer was macht. Abschnitt 15 zeigt, was wir bis wann bauen: die Demo bis 31.10. bzw. zum Hackathon, v1 als internes Check-Werkzeug bis So 6.12.
+   **[new]** The Check gets a "pre-check from the GU's perspective": it shows what the GU is likely to cut before the final invoice (Schlussrechnung) goes out.
+4. **Not adopted:**
+   - reebuild's cold telephone prospecting (not permitted in Austria under § 174 TKG);
+   - real-time modules (Live only from year 2, see section 12);
+   - an AI chat as a core function.
+5. **New risk:** reebuild (Vienna, 120+ customers, already reads LV, construction contract and Aufmaß, BMD integration) can occupy the sub side faster than PlanRadar or Capmo. The window remains at an estimated 12–24 months. From now on reebuild is the first name on the watch list and at the same time a possible acquirer.
+6. **Plan:** Gates and dates from v1 remain unchanged. Section 14 shows week by week who does what. Section 15 shows what we build by when: the demo by 31.10. or for the hackathon, v1 as an internal Check tool by Sun 6.12.
 
-**Kennzeichnung:** **(unbelegt)** = Erfahrung oder Allgemeinwissen ohne geprüfte Quelle. **(Annahme)** = Modellannahme, muss gemessen werden. In Abschnitt 8: **G** = gelesen (Link), **S** = nur Snippet, **A** = Annahme. Alle Zahlen von Kuro und reebuild sind Eigenangaben. Die vollständige Faktenliste mit Links steht in `research_notes/Kuro_reebuild_Fakten.md`.
-
----
-
-## 1. Kurzfassung
-
-Schlusswerk ist ein Schlussrechnungs-Desk für österreichische Elektro- und HKLS-Subunternehmer mit 30–150 Leuten. Bevor die Schlussrechnung an den GU geht, gleicht Schlusswerk LV, Aufmaß, Regieberichte, Abschlagsrechnungen, Pläne, Mails und Fotos ab. Für jede LV-Position zeigt es, was erbracht, was verrechnet und was bezahlt ist.
-
-Das Ergebnis:
-- eine Liste „jetzt verrechenbar“, bepreist aus dem eigenen LV und den K7-Blättern;
-- ein Beweispaket pro Posten;
-- ein Blatt für die Schlussbesprechung;
-- **[neu]** eine Vorprüfung aus GU-Sicht.
-
-Preise: pro Check 1.500–3.500 € oder als Jahresdesk 800–2.500 € pro Monat. Mindestens 80 % des Umsatzes sind fix.
-
-Grenzen: Schlusswerk schreibt nie an den GU. Streitfälle gehen über eine Partnerkanzlei. Das Wort „Claim“ steht in keinem Kundenmaterial.
-
-Die Firma existiert erst, wenn ein Bau-Insider mit Anteilen unterschreibt (spätestens Fr 4.12.2026). Fünf Gates entscheiden bis So 31.1.2027.
-
-Realistischer Exit bei Erfolg: 10–40 Mio. €. Die Chance auf einen Exit über 10 Mio. € bis Oktober 2032 liegt heute bei etwa 3 %, nach bestandenen Gates bei 18–20 %, über 100 Mio. € unter 0,5 %. Ob das dem Ziel „YC und Unicorn“ genügt, muss das Team bewusst entscheiden (offene Grundsatzfrage).
+**Labels:** **(unverified)** = experience or general knowledge without a checked source. **(assumption)** = model assumption, must be measured. In section 8: **G** = read (link), **S** = snippet only, **A** = assumption. All figures from Kuro and reebuild are self-reported. The complete fact list with links is in `research_notes/Kuro_reebuild_Fakten.md`.
 
 ---
 
-## 2. Problem und Kunde
+## 1. Summary
 
-**Problem:** Subunternehmer verlieren am Projektende Geld, das sie schon verdient haben:
-- Regie, die erbracht, aber nicht verrechnet oder nie unterschrieben wurde;
-- Mengenüberschreitungen, die nicht im Aufmaß stehen (bei Einheitspreisverträgen ist das Abrechnung, kein Nachtrag);
-- vereinbarte Preisgleitung und Metallzuschläge;
-- angemeldete, aber nie bepreiste Änderungen.
+Schlusswerk is a final invoice desk for Austrian electrical and HVAC/plumbing (Elektro and HKLS) subcontractors with 30–150 people. Before the final invoice goes to the GU, Schlusswerk reconciles the LV, Aufmaß, daywork (Regie) reports, interim invoices (Abschlagsrechnungen), plans, emails and photos. For each LV item it shows what has been performed, what has been invoiced and what has been paid.
 
-**Ursachen:**
-- Ein überlasteter PL schreibt die Schlussrechnung spät und aus dem Gedächtnis (unbelegt).
-- Es fehlen Fachkräfte: In der Bauelektrik bleiben über 70 % der offenen Stellen unbesetzt ([KOFA 07/2026](https://www.iwkoeln.de/fileadmin/user_upload/Studien/KOFA_kompakt_und_Studien/2026/KOFA_Kompakt-07-2026-Handwerk.pdf)).
-- Die Daten liegen verstreut.
-- Ein Teil wird bewusst in der Schlussbesprechung getauscht. Wie groß dieser Teil ist, weiß niemand; Gate R3 misst es.
+The result:
+- a "billable now" (jetzt verrechenbar) list, priced from the company's own LV and K7 sheets;
+- an evidence package (Beweispaket) per item;
+- a sheet for the final account meeting (Schlussbesprechung);
+- **[new]** a pre-check from the GU's perspective.
 
-**[neu] Warum jetzt:** Die Auftraggeber prüfen mit KI. reebuild liest Nachunternehmer-Rechnungen positionsgenau gegen LV, Bauvertrag und Aufmaß, führt Einbehalte, Abzüge, Bürgschaften und Nachlässe und erzeugt automatisch ein Korrekturblatt für den Nachunternehmer (G, [reebuild Projektentwickler](https://www.reebuild.com/projektentwickler)). Der Sub schreibt weiter von Hand.
+Prices: 1,500–3,500 € per Check or, as an annual desk (Jahresdesk), 800–2,500 € per month. At least 80 % of revenue is fixed.
 
-**Wedge-Kunde:**
+Limits: Schlusswerk never writes to the GU. Disputes go through a partner law firm. The word "Claim" does not appear in any customer material.
 
-| Merkmal | Definition |
+The company only exists once a construction insider signs with equity (by Fri 4.12.2026 at the latest). Five gates decide by Sun 31.1.2027.
+
+Realistic exit if successful: 10–40 million €. The chance of an exit above 10 million € by October 2032 is about 3 % today, 18–20 % after passing the gates, and below 0.5 % for above 100 million €. Whether this satisfies the goal "YC and unicorn" must be a conscious team decision (open fundamental question).
+
+---
+
+## 2. Problem and customer
+
+**Problem:** At the end of a project, subcontractors lose money they have already earned:
+- daywork that was performed but not invoiced or never signed;
+- quantity overruns that are not in the Aufmaß (with unit price contracts this is billing, not a change order (Nachtrag));
+- agreed price escalation and metal surcharges;
+- changes that were notified but never priced.
+
+**Causes:**
+- An overloaded project manager (PL) writes the final invoice late and from memory (unverified).
+- There is a shortage of skilled workers: in building electrics more than 70 % of vacancies remain unfilled ([KOFA 07/2026](https://www.iwkoeln.de/fileadmin/user_upload/Studien/KOFA_kompakt_und_Studien/2026/KOFA_Kompakt-07-2026-Handwerk.pdf)).
+- The data is scattered.
+- Part of it is deliberately traded away in the final account meeting. Nobody knows how large this part is; gate R3 measures it.
+
+**[new] Why now:** Clients check with AI. reebuild reads subcontractor invoices item by item against the LV, construction contract and Aufmaß, tracks retentions, deductions, guarantees and discounts, and automatically produces a correction sheet for the subcontractor (G, [reebuild Projektentwickler](https://www.reebuild.com/projektentwickler)). The sub still writes by hand.
+
+**Wedge customer:**
+
+| Attribute | Definition |
 |---|---|
-| Gewerk | HKLS oder Elektro; Start mit dem Gewerk des Insiders |
-| Größe | 30–150 Leute, ideal 40–100; 5–25 Mio. € Umsatz |
-| Geschäft | mindestens 60 % ÖNORM-B-2110-Verträge mit GUs, Bauträgern und öffentlichen Auftraggebern |
-| Volumen | mindestens 8 Schlussrechnungen pro Jahr, Aufträge 150.000 € bis 3 Mio. € (unbelegt pro Firma) |
-| Region | Wien und NÖ zuerst, OÖ und Steiermark ab Mitte 2027 |
+| Trade | HKLS or electrical; start with the insider's trade |
+| Size | 30–150 people, ideally 40–100; 5–25 million € revenue |
+| Business | at least 60 % ÖNORM B 2110 contracts with GUs, developers and public clients |
+| Volume | at least 8 final invoices per year, contracts 150,000 € to 3 million € (unverified per company) |
+| Region | Vienna and Lower Austria (NÖ) first, Upper Austria (OÖ) and Styria from mid-2027 |
 
-**Rollen:**
-- **Unterschreibt:** Inhaber oder kaufmännische Leitung.
-- **Champion:** der Abrechner oder ein Senior-PL.
-- **Blocker:** ein PL, der sich kontrolliert fühlt; der Betriebsrat.
+**Roles:**
+- **Signs:** owner or commercial management.
+- **Champion:** the billing clerk (Abrechner) or a senior PL.
+- **Blocker:** a PL who feels controlled; the works council (Betriebsrat).
 
-**Auslöser:** Eine Schlussrechnung ist in 4–8 Wochen fällig, oder ein GU hat in den letzten 12 Monaten eine Schlussrechnung gekürzt. Den zweiten Fall bearbeiten wir nur über die Kanzlei.
+**Trigger:** A final invoice is due in 4–8 weeks, or a GU has cut a final invoice in the last 12 months. We handle the second case only through the law firm.
 
 ---
 
-## 3. Produkt
+## 3. Product
 
-### 3.1 Schlussrechnungs-Check (Kernprodukt, 10 Arbeitstage)
+### 3.1 Final invoice Check (core product, 10 working days)
 
-1. **Übergabe:** nur das, was die Firma für die Schlussrechnung ohnehin sammelt. Vorher ist der AVV unterschrieben.
-2. **Einlesen [präzisiert]:** Jedes Dokument wird ein strukturierter Datensatz. Jedes Feld zeigt seine Quelle (Datei, Seite, Stelle). Duplikate und neue Versionen werden erkannt (Muster aus Kuro und reebuild, Abschnitt 8).
-3. **Vertragsprofil:** Regelwerk (ÖNORM B 2110 plus Abweichungen des GU), Preisbasis und Fristen. Wo der Vertrag mehrdeutig ist, gilt die früheste plausible Frist, und Schlusswerk sagt nie, ob eine Frist präklusiv ist.
-4. **Abgleich:** LV × Aufmaß × Regie × Rechnungen × Zahlungen. Die KI liefert die Fakten, die Rechnung ist deterministischer Code.
-5. **Erkennung:**
-   - Regie nicht unterschrieben oder nicht verrechnet;
-   - Mengen über der LV-Menge;
-   - Planindex-Änderungen;
-   - Anweisungen in Mails;
-   - vereinbarte Preisgleitung.
-6. **Bepreisung:** aus dem eigenen LV-Einheitspreis und den K7-Lohnminuten.
-7. **[neu] Vorprüfung aus GU-Sicht:** Dieselben Prüfungen, die ein GU-Werkzeug wie reebuild macht, laufen auf der eigenen Schlussrechnung:
-   - Positionen ohne Aufmaß-Nachweis;
-   - Regie ohne Unterschrift;
-   - Rechenfehler;
-   - Positionen außerhalb des LV;
-   - fehlende Belege für Einbehalte und Nachlässe.
+1. **Handover:** only what the company collects for the final invoice anyway. The data processing agreement (AVV) is signed beforehand.
+2. **Ingestion [refined]:** Every document becomes a structured record. Every field shows its source (file, page, location). Duplicates and new versions are detected (pattern from Kuro and reebuild, section 8).
+3. **Contract profile:** rule set (ÖNORM B 2110 plus the GU's deviations), price basis and deadlines. Where the contract is ambiguous, the earliest plausible deadline applies, and Schlusswerk never says whether a deadline is preclusive.
+4. **Reconciliation:** LV × Aufmaß × Regie × invoices × payments. The AI supplies the facts, the calculation is deterministic code.
+5. **Detection:**
+   - daywork not signed or not invoiced;
+   - quantities above the LV quantity;
+   - plan index changes;
+   - instructions in emails;
+   - agreed price escalation.
+6. **Pricing:** from the company's own LV unit price and the K7 labour minutes.
+7. **[new] Pre-check from the GU's perspective:** The same checks that a GU tool like reebuild performs are run on the company's own final invoice:
+   - items without Aufmaß evidence;
+   - daywork without signature;
+   - calculation errors;
+   - items outside the LV;
+   - missing evidence for retentions and discounts.
 
-   Ziel: weniger Kürzungen, ohne Streit.
-8. **Prüfung durch den Insider** vor jeder Auslieferung.
-9. **Freigabe und Versand durch die Firma selbst.**
-10. **Kodier-Session** (bei Design-Partnern, 45 Minuten): Jeder gefundene Euro wird als (a) nicht bemerkt, (b) für die Beziehung liegen gelassen, (c) im Vergleich getauscht oder (d) vertraglich ausgeschlossen kodiert.
-11. **Lernen:** Jede Korrektur des Insiders wird eine Regel im Prüfkatalog oder im Regelwerk pro GU.
+   Goal: fewer cuts, without a dispute.
+8. **Review by the insider** before every delivery.
+9. **Approval and sending by the company itself.**
+10. **Coding session** (with design partners, 45 minutes): Every euro found is coded as (a) not noticed, (b) left on the table for the relationship, (c) traded in a settlement or (d) contractually excluded.
+11. **Learning:** Every correction by the insider becomes a rule in the check catalogue or in the rule set per GU.
 
-**Reihenfolge der Posten:**
-1. Regie;
-2. Mengenüberschreitungen;
-3. Preisgleitung;
-4. angemeldete Änderungen.
+**Order of items:**
+1. daywork;
+2. quantity overruns;
+3. price escalation;
+4. notified changes.
 
-Behinderung, Forcierung und strittige Klauseln gehen nur über den Anwalt.
+Disruption, acceleration and disputed clauses go through the lawyer only.
 
-**Eingaben:**
-- ÖNORM-A-2063-LV oder PDF;
-- K-Blätter;
+**Inputs:**
+- ÖNORM A 2063 LV or PDF;
+- K sheets;
 - Aufmaß (Excel/PDF);
-- Regie-Scans;
-- Abschlagsrechnungen und Zahlungen;
-- Pläne mit Index;
-- Mails (.msg/.eml, nur der Projektordner);
-- WhatsApp-Export;
-- Fotos mit EXIF;
-- Verträge.
+- daywork scans;
+- interim invoices and payments;
+- plans with index;
+- emails (.msg/.eml, project folder only);
+- WhatsApp export;
+- photos with EXIF;
+- contracts.
 
-Regel: **keine API-Abhängigkeit in v1**, nur Dateiexporte.
+Rule: **no API dependency in v1**, file exports only.
 
-**Ausgaben:**
-- Ledger pro LV-Position;
-- drei Listen (jetzt verrechenbar / angemeldet und offen / verloren);
-- Beweispaket pro Posten mit Link auf das Original;
-- Schlussbesprechungs-Blatt mit Untergrenze pro Posten;
-- **[neu]** Vorprüfung aus GU-Sicht;
-- Export: Excel, ÖNORM; **[neu]** BMD-Buchungsimport prüfen, weil reebuild BMD, BRZ und RZL als Standard anbindet (G).
+**Outputs:**
+- ledger per LV item;
+- three lists (billable now / notified and open / lost);
+- evidence package per item with a link to the original;
+- final account meeting sheet with a floor per item;
+- **[new]** pre-check from the GU's perspective;
+- export: Excel, ÖNORM; **[new]** check BMD posting import, because reebuild integrates BMD, BRZ and RZL as standard (G).
 
-### 3.2 Weitere Angebote
+### 3.2 Further offerings
 
-| Angebot | Inhalt | Wann |
+| Offering | Content | When |
 |---|---|---|
-| Jahresdesk | jedes schließende Projekt und jede Teilschlussrechnung; Fristenkalender nach der Schlusszahlung; Sicherstellungs-Tracker nach § 1170b ABGB; Historie pro GU | ab erstem bezahlten Kunden |
-| Streitpaket | gleiche Engine, rechtliche Würdigung durch die Partnerkanzlei; Kunde bezahlt beide direkt | bei Bedarf, nur über die Kanzlei |
-| Live-Desk | Projekt-Mailordner, laufende Erkennung, Anmeldungsentwürfe, die der PL selbst versendet | Jahr 2, erst nach 2 gelieferten Checks |
+| Annual desk | every closing project and every partial final invoice; deadline calendar after the final payment; security (Sicherstellung) tracker under § 1170b ABGB; history per GU | from the first paying customer |
+| Dispute package | same engine, legal assessment by the partner law firm; customer pays both directly | as needed, only through the law firm |
+| Live desk | project mail folder, ongoing detection, notification drafts that the PL sends himself | year 2, only after 2 delivered Checks |
 
-### 3.3 Was Schlusswerk nie tut
+### 3.3 What Schlusswerk never does
 
-- Kontakt zum GU;
-- rechtliche Würdigung oder Aussagen zur Präklusion;
-- Inkasso oder Abtretung;
-- Bonus auf strittige Beträge;
-- Preise zwischen Firmen poolen;
-- Mitarbeiter bewerten;
-- das Wort „Claim“ in Kundenmaterial.
-
----
-
-## 4. Recht (Design-Hypothese, keine Rechtsberatung)
-
-Gelesen im Gesetzestext (RIS): § 134 GewO, § 1170b ABGB, § 879 ABGB. Alles andere ist unbelegt, bis das Gutachten vorliegt (Gate R4, Fr 4.12.).
-
-| Regel | Folge für Schlusswerk |
-|---|---|
-| § 8 RAO (Parteienvertretung, unbelegt) | Kernfrage an den Anwalt: Sind Check, Ledger und Bewertung vorbehaltene Tätigkeit? |
-| Winkelschreiberei (unbelegt) | keine Rechtsurkunden verfassen; Vorlagen kommen vom Kunden |
-| § 134 GewO (gelesen) | Ingenieurbüros dürfen beraten und berechnen; das passt zur Bewertung. Möglicher Lizenzweg über den Insider (unbelegt) |
-| § 879 Abs 2 Z 2 ABGB (gelesen) | nie Anteil an Streitsachen; Bonus nur auf unstrittig bezahlte Posten |
-| § 1170b ABGB (gelesen) | Sicherstellung bis 20 % (unter 3 Monaten 40 %), unverzichtbar; Feature im Jahresdesk |
-| § 174 TKG 2021 | keine Werbe-Mails und keine Werbeanrufe ohne vorherige Einwilligung, auch an Unternehmen; auch ein Anruf, der nur nach der Einwilligung fragt, ist unzulässig (gelesen: [WKO](https://www.wko.at/noe/internetrecht/e-mail-fax-telefonwerbung-telekommunikationsgesetz-detail); Prüfer: RIS § 174 und § 4 Z 13). Vor jeder elektronischen Nachricht den Anwalt fragen |
-| § 96a ArbVG | kein PL-Scoring |
-
-**Haftung:**
-- Versprechen ist „Prüfung und Entwürfe“, keine Garantie.
-- Haftungsdeckel: 12 Monatsgebühren.
-- Vermögensschadenhaftpflicht 1 Mio. €, Prämie höchstens 8.000 € pro Jahr (Gate R4).
-
-**Datenschutz:**
-- AVV vor dem ersten Ordner;
-- EU-Hosting;
-- Datensilo pro Firma;
-- nur der Projektordner;
-- Löschung bei Vertragsende.
-
-**[neu]** Die KI-Modelle laufen über eine EU-Region. Das ist eine Annahme zur Machbarkeit und muss vor dem ersten echten Ordner geprüft werden. Kuro wirbt mit EU-Hosting und ISO 27001, reebuild mit Hosting in Deutschland (G). Kunden erwarten das.
-
-Deutschland (RDG, VOB/B, GAEB, kostenbasierte Bepreisung nach BGH VII ZR 34/18) kommt erst ab 2028, nach einem Gutachten.
+- contact with the GU;
+- legal assessment or statements on preclusion;
+- debt collection or assignment;
+- bonus on disputed amounts;
+- pooling prices between companies;
+- rating employees;
+- the word "Claim" in customer material.
 
 ---
 
-## 5. Preise und Zahlen
+## 4. Law (design hypothesis, not legal advice)
 
-| Angebot | Preis |
+Read in the statutory text (RIS): § 134 GewO, § 1170b ABGB, § 879 ABGB. Everything else is unverified until the legal opinion is available (gate R4, Fri 4.12.).
+
+| Rule | Consequence for Schlusswerk |
 |---|---|
-| Erster Check für 3 Design-Partner | gratis, nur gegen die Kodier-Session |
-| Einzel-Check | 1.500 € (Auftrag unter 0,5 Mio. €) / 2.500 € (0,5–1,5 Mio. €) / 3.500 € (über 1,5 Mio. €); wird angerechnet, wenn binnen 60 Tagen ein Jahresdesk folgt |
-| Jahresdesk S / M / L | 800 / 1.400 / 2.500 € pro Monat (bis 6 / 15 / 35 Abschlüsse pro Jahr) |
-| Erfolgsbonus (optional) | höchstens 8 % der gefundenen und bezahlten Posten, max. 5.000 € pro Projekt, nur nach Anwaltsfreigabe |
-| Live-Desk (Jahr 2) | plus 600–900 € pro Monat |
-| Streitpaket | 3.000–6.000 € pro Fall |
+| § 8 RAO (representation of parties, unverified) | Core question for the lawyer: are Check, ledger and valuation a reserved activity? |
+| Unauthorised legal practice (Winkelschreiberei, unverified) | do not draft legal documents; templates come from the customer |
+| § 134 GewO (read) | engineering offices (Ingenieurbüros) may advise and calculate; this fits the valuation. Possible licence route via the insider (unverified) |
+| § 879 Abs 2 Z 2 ABGB (read) | never a share in litigation; bonus only on undisputed, paid items |
+| § 1170b ABGB (read) | security up to 20 % (40 % under 3 months), cannot be waived; feature in the annual desk |
+| § 174 TKG 2021 | no advertising emails and no advertising calls without prior consent, including to businesses; even a call that only asks for consent is not permitted (read: [WKO](https://www.wko.at/noe/internetrecht/e-mail-fax-telefonwerbung-telekommunikationsgesetz-detail); verifier: RIS § 174 and § 4 Z 13). Ask the lawyer before every electronic message |
+| § 96a ArbVG | no PL scoring |
 
-**Umwandlungsregel:** Ein Design-Partner wird zahlend, wenn sein Check mindestens 30.000 € oder 1,5 % der Auftragssumme an „nicht bemerktem“ Geld findet.
+**Liability:**
+- The promise is "review and drafts", not a guarantee.
+- Liability cap: 12 monthly fees.
+- Financial loss liability insurance (Vermögensschadenhaftpflicht) 1 million €, premium at most 8,000 € per year (gate R4).
 
-**[neu] Preis nach außen:** Kuro und reebuild veröffentlichen keine Preise und verkaufen über „Demo buchen“ bzw. „Schreiben Sie uns“ (G). Vorschlag: Nur den Einstiegspreis zeigen („Check ab 1.500 €, fix“). Das Jahresdesk gibt es im Gespräch. Der Fixpreis ist bei Inhabern, die jeden Euro verhandeln, ein Vertrauenssignal (Annahme).
+**Data protection:**
+- AVV before the first folder;
+- EU hosting;
+- data silo per company;
+- project folder only;
+- deletion at end of contract.
 
-**Kennzahlen (alle Annahme):**
+**[new]** The AI models run via an EU region. This is a feasibility assumption and must be checked before the first real folder. Kuro advertises EU hosting and ISO 27001, reebuild hosting in Germany (G). Customers expect this.
 
-| Kennzahl | Wert |
-|---|---|
-| ACV | 14.000 € zum Start, 18.000–19.000 € in der Reife |
-| Bruttomarge | 55–65 % im Jahr 2027, 75–80 % in der Reife |
-| Prüfaufwand pro Check | 6–10 h am Anfang, später 2–3 h |
-| CAC | 8.000–15.000 € früh, etwa 6.000 € in der Reife |
-| Kosten der Gates bis 31.1. | 3.000–6.000 € |
-
-**Finanzierung (Basisfall):**
-1. bezahlte Checks;
-2. Pre-Seed 0,8–1,5 Mio. € Mitte 2027;
-3. Seed 3–5 Mio. € Anfang 2029.
-
-**[neu]** reebuild wurde in der Frühphase von aws und FFG gefördert (G, [Trending Topics](https://www.trendingtopics.eu/reebuild-3-millionen-euro-seed/)). Österreichische Frühphasenförderung für Bau-KI ist also erreichbar. Programme und Beträge für uns sind weiter unbelegt.
+Germany (RDG, VOB/B, GAEB, cost-based pricing under BGH VII ZR 34/18) only comes from 2028, after a legal opinion.
 
 ---
 
-## 6. Markt und Exit
+## 5. Prices and figures
 
-**Markt:**
-- Relevante Firmen (Annahme): Österreich 650–700, Deutschland 4.200–5.000.
-- SAM Elektro/HKLS in AT plus DE: **70–100 Mio. €**; mit weiteren Gewerken in DACH 150–200 Mio. €.
-- Österreich-Deckel: 120–150 Kunden, also 2–2,5 Mio. € ARR.
-- 10 Mio. € ARR brauchen 550–700 Firmen. Im Basisfall ist das Ende 2032, im konservativen Fall nicht vor 2035.
-- Deutschland frühestens 2028, nur wenn alle drei gelten: 40 zahlende AT-Kunden, ein RDG-Gutachten liegt vor, das Produkt ist umgebaut (GAEB, VOB/B, kostenbasierte Bepreisung).
+| Offering | Price |
+|---|---|
+| First Check for 3 design partners | free, only in exchange for the coding session |
+| Single Check | 1,500 € (contract under 0.5 million €) / 2,500 € (0.5–1.5 million €) / 3,500 € (over 1.5 million €); credited if an annual desk follows within 60 days |
+| Annual desk S / M / L | 800 / 1,400 / 2,500 € per month (up to 6 / 15 / 35 closings per year) |
+| Success bonus (optional) | at most 8 % of the items found and paid, max. 5,000 € per project, only after the lawyer's approval |
+| Live desk (year 2) | plus 600–900 € per month |
+| Dispute package | 3,000–6,000 € per case |
 
-**[neu] Signal aus reebuild:** 120+ Bau- und Immobilienfirmen in AT, DE und darüber hinaus nutzen reebuilds KI-Backoffice; die Software ist laut Website „ab 10 Mitarbeitern“ gedacht (G). Mittelständische Baufirmen kaufen also solche Software. Ob Elektro- und HKLS-Betriebe darunter sind, ist unbekannt.
+**Conversion rule:** A design partner becomes paying if their Check finds at least 30,000 € or 1.5 % of the contract sum in "not noticed" money.
+
+**[new] Price shown externally:** Kuro and reebuild do not publish prices and sell via "Book a demo" or "Write to us" (G). Proposal: show only the entry price ("Check from 1,500 €, fixed"). The annual desk is offered in conversation. With owners who negotiate every euro, the fixed price is a trust signal (assumption).
+
+**Key figures (all assumption):**
+
+| Key figure | Value |
+|---|---|
+| ACV | 14,000 € at launch, 18,000–19,000 € at maturity |
+| Gross margin | 55–65 % in 2027, 75–80 % at maturity |
+| Review effort per Check | 6–10 h at the beginning, later 2–3 h |
+| CAC | 8,000–15,000 € early, about 6,000 € at maturity |
+| Cost of the gates until 31.1. | 3,000–6,000 € |
+
+**Financing (base case):**
+1. paid Checks;
+2. pre-seed 0.8–1.5 million € in mid-2027;
+3. seed 3–5 million € in early 2029.
+
+**[new]** reebuild was funded in its early phase by aws and FFG (G, [Trending Topics](https://www.trendingtopics.eu/reebuild-3-millionen-euro-seed/)). Austrian early-stage funding for construction AI is therefore attainable. Programmes and amounts for us remain unverified.
+
+---
+
+## 6. Market and exit
+
+**Market:**
+- Relevant companies (assumption): Austria 650–700, Germany 4,200–5,000.
+- SAM electrical/HKLS in AT plus DE: **70–100 million €**; with further trades in DACH 150–200 million €.
+- Austria ceiling: 120–150 customers, i.e. 2–2.5 million € ARR.
+- 10 million € ARR requires 550–700 companies. In the base case this is end of 2032, in the conservative case not before 2035.
+- Germany 2028 at the earliest, only if all three hold: 40 paying AT customers, an RDG legal opinion is available, the product has been rebuilt (GAEB, VOB/B, cost-based pricing).
+
+**[new] Signal from reebuild:** 120+ construction and real estate companies in AT, DE and beyond use reebuild's AI back office; according to the website the software is intended "from 10 employees" (G). So mid-sized construction companies do buy such software. Whether electrical and HKLS businesses are among them is unknown.
 
 **Exit:**
 
-| Szenario | ARR | Exit-Wert | Käufer |
+| Scenario | ARR | Exit value | Acquirer |
 |---|---|---|---|
-| Unten | 1–2,5 Mio. € | 3–8 Mio. € | Beratung, BuildTec-Zukauf, Constellation |
-| Wahrscheinlich bei PMF | 3–6 Mio. € | **15–30 Mio. €** | BuildTec, Nemetschek (NEVARIS), ib-data (ABK) |
-| Oben | 8–10 Mio. € | 60–100 Mio. € | Nemetschek, RIB, Fachverlag (Libra-Muster) |
+| Low | 1–2.5 million € | 3–8 million € | consulting, BuildTec acquisition, Constellation |
+| Likely at PMF | 3–6 million € | **15–30 million €** | BuildTec, Nemetschek (NEVARIS), ib-data (ABK) |
+| High | 8–10 million € | 60–100 million € | Nemetschek, RIB, specialist publisher (Libra pattern) |
 
-**[neu]** reebuild kommt als möglicher Käufer oder Partner dazu: Wien, gleiche Buchhaltungs-Anbindungen, Ziel „Agentic Backoffice“ (G). Ein Sub-Modul würde ihre GU-Kunden verärgern, das ist ein Kanalkonflikt (Annahme).
+**[new]** reebuild is added as a possible acquirer or partner: Vienna, same accounting integrations, goal "Agentic Backoffice" (G). A sub module would anger their GU customers, which is a channel conflict (assumption).
 
-**Wahrscheinlichkeitskette (unverändert aus v1):**
+**Probability chain (unchanged from v1):**
 
-| Schritt | Wahrscheinlichkeit |
+| Step | Probability |
 |---|---|
-| Insider bis 4.12. | 45 % |
-| Gates R2–R5, gegeben Insider | 35 % |
-| Team hält zusammen | 80 % |
-| → Gates bestanden und Team bleibt dabei | etwa 13 % |
-| 2,5–3 Mio. € ARR bis 2031 | 35 % |
-| Verkauf über 10 Mio. € | 55 % |
-| → **Exit über 10 Mio. € bis Okt. 2032** | **etwa 3 % (90 %-Intervall 1–6 %)** |
+| Insider by 4.12. | 45 % |
+| Gates R2–R5, given insider | 35 % |
+| Team stays together | 80 % |
+| → Gates passed and team stays on board | about 13 % |
+| 2.5–3 million € ARR by 2031 | 35 % |
+| Sale above 10 million € | 55 % |
+| → **Exit above 10 million € by Oct. 2032** | **about 3 % (90 % interval 1–6 %)** |
 
-Die Runden von Kuro und reebuild zeigen Investoreninteresse an Bau-KI in DACH. Die Engpässe ändern sie nicht: Insider, Ordner und Geld im Ordner.
+The rounds of Kuro and reebuild show investor interest in construction AI in DACH. They do not change the bottlenecks: insider, folders and money in the folder.
 
 ---
 
-## 7. Konkurrenz
+## 7. Competition
 
-| Anbieter | Seite | Was sie tun | Bedrohung für uns |
+| Provider | Side | What they do | Threat to us |
 |---|---|---|---|
-| **reebuild** (Wien) **[neu]** | Bauträger, Baufirmen | Eingangsrechnungen und NU-Rechnungen gegen LV, Bauvertrag, Aufmaß prüfen; Korrekturblatt; BMD/BRZ/RZL | **hoch-mittel:** hat die Engine für AT-Formate und Baufirmen als Kunden, die selbst Subs sind. Wahrscheinlichster Schließzug: „Ausgangsrechnung prüfen“ für die eigenen Kunden (Annahme) |
-| **Kuro** (Berlin) **[neu]** | große GUs | Kalkulation, Widerspruchsanalyse, NU-Angebotsprüfung, Raumbuch, öffentliche Vergabe | **niedrig direkt:** Angebotsphase, nicht Abrechnung. Plant Einkauf und Buchhaltung (G); stärkt die Gegenseite |
-| PlanRadar, Capmo | GU-Plattformen | Nachforderungsmanagement, KI-Nachtragsprüfung, Subs sind Gratis-Gäste | hoch: können „KI für Fachunternehmen“ als Feature bringen |
-| ABK, NEVARIS, RIB, BuildTec | AVA/ERP | halten die Daten, manuelle Nachtragsregister | mittel: könnten den Abgleich nachbauen; wir integrieren per Datei |
-| Cosuno, Forgent, Sidoun, ORCA | Angebote, Planer-AVA | Angebote und LVs | niedrig; liefern Dateien, mögliche Kanäle |
-| Document Crunch, Trunk Tools | US, GU-Seite | Änderungserkennung | niedrig in DACH für 2–3 Jahre |
+| **reebuild** (Vienna) **[new]** | developers, construction companies | check incoming invoices and subcontractor (NU) invoices against LV, construction contract, Aufmaß; correction sheet; BMD/BRZ/RZL | **high to medium:** has the engine for AT formats and construction companies as customers who are themselves subs. Most likely closing move: "check outgoing invoice" for their own customers (assumption) |
+| **Kuro** (Berlin) **[new]** | large GUs | estimating, contradiction analysis, NU bid review, room schedule, public procurement | **low directly:** bid phase, not billing. Plans purchasing and accounting (G); strengthens the other side |
+| PlanRadar, Capmo | GU platforms | change claim management, AI change order review, subs are free guests | high: could ship "AI for specialist contractors" as a feature |
+| ABK, NEVARIS, RIB, BuildTec | AVA/ERP | hold the data, manual change order registers | medium: could rebuild the reconciliation; we integrate via files |
+| Cosuno, Forgent, Sidoun, ORCA | bids, planner AVA | bids and LVs | low; supply files, possible channels |
+| Document Crunch, Trunk Tools | US, GU side | change detection | low in DACH for 2–3 years |
 
-**Die Lücke:** Keiner der geprüften Anbieter gleicht auf der Sub-Seite erbracht gegen verrechnet ab und bepreist aus LV und K7 der Firma. Das Fenster ist auf 12–24 Monate geschätzt.
+**The gap:** None of the providers checked reconciles performed against invoiced on the sub side and prices from the company's LV and K7. The window is estimated at 12–24 months.
 
-**Beobachtungsliste:**
+**Watch list:**
 1. reebuild;
 2. PlanRadar;
 3. Capmo.
 
-**Burggraben (5/10):**
-- **Was trägt:** Ledger-Historie pro Firma, Regelwerk pro GU, österreichische Formattiefe, geliehenes Vertrauen (Insider, Kanzlei), Gegenposition zu GU-finanzierten Plattformen.
-- **Was fehlt:** Netzwerkeffekt und exklusive Daten.
+**Moat (5/10):**
+- **What holds:** ledger history per company, rule set per GU, Austrian format depth, borrowed trust (insider, law firm), counter-position to GU-funded platforms.
+- **What is missing:** network effect and exclusive data.
 
 ---
 
-## 8. Von Kuro und reebuild gelernt
+## 8. Learned from Kuro and reebuild
 
-### 8.1 Steckbriefe
+### 8.1 Profiles
 
-| | **Kuro** (Berlin) | **reebuild** (Wien) |
+| | **Kuro** (Berlin) | **reebuild** (Vienna) |
 |---|---|---|
-| Kunde | Generalunternehmer, v. a. Kalkulation (G) | Bauunternehmen, Projektentwickler/Bauträger, Bestandshalter (G) |
-| Produkt | Projektunterlagen werden ein Datenmodell (Graph); Widerspruchsanalyse Pläne/Baubeschreibung/Vertrag; NU-Angebotsprüfung (PDF zu GAEB); Raumbuch zurück ins BIM; Agent für öffentliche Vergabe; KI-Chat; Versionsvergleich (G, [Website](https://www.kuro.technology)) | 9 Module: Rechnungsprüfung, Freigaben, Ablage, NU-Prüfung mit Korrekturblatt, Lieferscheine mit Foto-App, Budget, Kosten, Preisdatenbank, Lager (G, [Website](https://www.reebuild.com)) |
-| Ablauf | Upload → automatische Antworten auf Standardfragen → jede Antwort verlinkt aufs Original → Korrekturen werden Regeln (G, [Köster](https://www.kuro.technology/referenzen/koester)) | Erfassen → „digitaler Zwilling“ pro Dokument → Abgleich mit LV, Lieferschein, Rechnung, Bauvertrag, Rahmenpreis → Freigabe und Buchungssatz (Infografik auf reebuild.com, Screenshot von Maxi, 22.10.) |
-| Kunden | 12 „setzen Kuro ein“, davon 6 der 20 größten GUs in DACH; Goldbeck, Köster, Geiger, Riedel, Implenia (G, [startbase](https://www.startbase.de/news/10-millionen-euro-finanzierungsrunde-fuer-kuro/)); HOCHTIEF Infrastructure (S). Ob alle zahlen, ist nicht angegeben | 120+; Pittel+Brausewetter, 3SI Immogroup, Rödl & Herdegen, Kratzert (G); 345.000+ Dokumente, 530+ Mio. € Rechnungsvolumen, 2.350+ tägliche Nutzer (G) |
-| Nutzenversprechen | 90 h pro Angebot; 70 % fanden Übersehenes; Köster 6 h pro Woche und Mitarbeiter (G) | 3 statt 20+ min pro Rechnung; „7x schneller“; 5 → 1,5 Tage bis Freigabe (G) |
-| Preise | nicht öffentlich (G) | nicht öffentlich, „ab 10 Mitarbeitern“ (G) |
-| Integrationen | iTwo, RIB, Revit, Egnyte, CDE (G) | DATEV, BMD, BRZ, RZL; ZUGFeRD, XRechnung, Peppol (G) |
-| Gründer | Lea Scherer (CEO laut startbase, Co-Geschäftsführerin laut Referenzen) und Jonas Minkler (CPO laut dealroom); BWL und Informatik in München, zuvor Führungsteams bei Capmo und alcemy (G). 2024 hieß die Mitgründerin in der Presse „Lea Leibold“ (G); dass es dieselbe Person ist (A; Register Sept. 2024: „Jonas Minkler, L. Sch.“, S) | Gründerangaben widersprechen sich: 2023 nennt Trending Topics Paul Lind, Alexander Kornell und Lucas Iser (Iser als „Mitgründer“) (G); englische Meldungen vom 13.10.2026 nennen Kornell, Cimadom und Papay als Gründer 2022 (G, [thesaasnews](https://www.thesaasnews.com/news/reebuild-raises-3m-seed)). Lind laut Presse bis Mai 2026 Mitgründer (G). Heute Kornell CEO, Cimadom CRO (beide aus Baufamilienbetrieben), Papay CTO, Lederer COO (G) |
-| Team | 16 in Berlin (G); Stellen: Forward Deployed Engineer, Head of Eng, PM, 2× AI Engineer (G, [Join us](https://www.kuro.technology/join-us)) | rund 25 in Wien (G); Sales-Team mit Teamlead, SDR, Customer Success (G/S) |
-| Finanzierung | Gründerstipendium WISTA/Senat 2024 (G); UG eingetragen 4.9.2024, GmbH ab 4.11.2024 (S, Northdata) → 10 Mio. € am 30.9.2026, Lead UVC, dazu Foundamental, Realyze, helloworld (G). Rundenart uneinheitlich: Series A oder Seed (G/S) | Pre-Seed Jänner 2023, sechsstellig, gemeinsam von PlanRadar-Gründer Dolinsek, mehreren Investoren über das Weilburg Family Office (u. a. Storebox-Gründer Dietrich) und ROI Ventures (G); Erweiterung Sept. 2023 mit Hansmann, Steinberger u. a. (G); aws, FFG (G) → Seed 3 Mio. € am 13.10.2026, Lead Fortino, dazu Rise PropTech, CuriosityVC (G) |
-| Erste Kunden | 2024: 100+ Experteninterviews, Prototyp, „kleine Teile der Kalkulation, sofortiger Mehrwert“, modular kaufbar (G, [Adlershof](https://www.adlershof.de/en/news/kuro-a-new-start-up-is-breathing-life-into-the-construction-industry)); bei Köster erst Beweis an historischen Projekten, 1.000+ Prüffragen mit Kalkulatoren, Schulung im Haus, Gründer kennen Köster-Leute persönlich (G) | 2023: Pilot mit rund 25 Baufirmen vor Marktstart (G); Podcast-Thema „Leberkassemmeln als Door Opener am Bau“ (G, nur Titel); 2026: SDR mit Telefon-Kaltakquise, LinkedIn, E-Mail, Ziel 120 Demos im ersten Jahr (G, [JOIN](https://join.com/companies/reebuild/16366213-sales-development-representative-german-speaking)) |
-| Botschaft | „KI-Fundament für Generalunternehmer“, „Build Bigger“, „Builders for Builders“; Fachkräftemangel, Wissen produktisieren (G) | „Das KI-gestützte Backoffice“, „Vom Lieferschein zur geprüften Rechnung. 7x schneller.“, „null Verwaltungsaufwand am Bau“ (G) |
-| Technik | Knowledge Graph, LLMs, Pläne als Graphen; EU-Hosting, ISO 27001 (G); konkreter Stack nicht öffentlich | KI-Agenten bereiten vor, Mensch entscheidet; in Wien entwickelt, in Deutschland gehostet (G); Stack nicht öffentlich |
-| Nächste Schritte | Einkauf, Buchhaltung, Compliance; langfristig KI-ERP für den Bau (G) | KI-Module von Kalkulation bis Buchhaltung, „Agentic Backoffice“; Märkte Österreich und Deutschland, danach weitere europäische Länder (G) |
+| Customer | general contractors, mainly estimating (G) | construction companies, project developers/developers, portfolio holders (G) |
+| Product | project documents become a data model (graph); contradiction analysis of plans/building specification/contract; NU bid review (PDF to GAEB); room schedule back into BIM; agent for public procurement; AI chat; version comparison (G, [Website](https://www.kuro.technology)) | 9 modules: invoice review, approvals, filing, NU review with correction sheet, delivery notes with photo app, budget, costs, price database, warehouse (G, [Website](https://www.reebuild.com)) |
+| Workflow | upload → automatic answers to standard questions → every answer links to the original → corrections become rules (G, [Köster](https://www.kuro.technology/referenzen/koester)) | capture → "digital twin" per document → reconciliation with LV, delivery note, invoice, construction contract, framework price → approval and posting record (infographic on reebuild.com, screenshot by Maxi, 22.10.) |
+| Customers | 12 "use Kuro", including 6 of the 20 largest GUs in DACH; Goldbeck, Köster, Geiger, Riedel, Implenia (G, [startbase](https://www.startbase.de/news/10-millionen-euro-finanzierungsrunde-fuer-kuro/)); HOCHTIEF Infrastructure (S). Whether all of them pay is not stated | 120+; Pittel+Brausewetter, 3SI Immogroup, Rödl & Herdegen, Kratzert (G); 345,000+ documents, 530+ million € invoice volume, 2,350+ daily users (G) |
+| Value proposition | 90 h per bid; 70 % found something overlooked; Köster 6 h per week and employee (G) | 3 instead of 20+ min per invoice; "7x faster"; 5 → 1.5 days to approval (G) |
+| Prices | not public (G) | not public, "from 10 employees" (G) |
+| Integrations | iTwo, RIB, Revit, Egnyte, CDE (G) | DATEV, BMD, BRZ, RZL; ZUGFeRD, XRechnung, Peppol (G) |
+| Founders | Lea Scherer (CEO according to startbase, co-managing director according to references) and Jonas Minkler (CPO according to dealroom); business administration and computer science in Munich, previously leadership teams at Capmo and alcemy (G). In 2024 the co-founder was called "Lea Leibold" in the press (G); that it is the same person (A; register Sept. 2024: "Jonas Minkler, L. Sch.", S) | founder information is contradictory: in 2023 Trending Topics names Paul Lind, Alexander Kornell and Lucas Iser (Iser as "co-founder") (G); English reports from 13.10.2026 name Kornell, Cimadom and Papay as founders in 2022 (G, [thesaasnews](https://www.thesaasnews.com/news/reebuild-raises-3m-seed)). Lind according to the press a co-founder until May 2026 (G). Today Kornell CEO, Cimadom CRO (both from family construction businesses), Papay CTO, Lederer COO (G) |
+| Team | 16 in Berlin (G); openings: Forward Deployed Engineer, Head of Eng, PM, 2× AI Engineer (G, [Join us](https://www.kuro.technology/join-us)) | around 25 in Vienna (G); sales team with team lead, SDR, customer success (G/S) |
+| Financing | founder grant WISTA/Senate 2024 (G); UG registered 4.9.2024, GmbH from 4.11.2024 (S, Northdata) → 10 million € on 30.9.2026, lead UVC, plus Foundamental, Realyze, helloworld (G). Round type inconsistent: Series A or seed (G/S) | pre-seed January 2023, six figures, jointly from PlanRadar founder Dolinsek, several investors via the Weilburg Family Office (including Storebox founder Dietrich) and ROI Ventures (G); extension Sept. 2023 with Hansmann, Steinberger and others (G); aws, FFG (G) → seed 3 million € on 13.10.2026, lead Fortino, plus Rise PropTech, CuriosityVC (G) |
+| First customers | 2024: 100+ expert interviews, prototype, "small parts of estimating, immediate added value", modularly purchasable (G, [Adlershof](https://www.adlershof.de/en/news/kuro-a-new-start-up-is-breathing-life-into-the-construction-industry)); at Köster first proof on historical projects, 1,000+ check questions with estimators, in-house training, founders know Köster people personally (G) | 2023: pilot with around 25 construction companies before market launch (G); podcast topic "Leberkassemmeln as a door opener on the construction site" (G, title only); 2026: SDR with cold telephone prospecting, LinkedIn, email, target 120 demos in the first year (G, [JOIN](https://join.com/companies/reebuild/16366213-sales-development-representative-german-speaking)) |
+| Message | "AI foundation for general contractors", "Build Bigger", "Builders for Builders"; skilled labour shortage, productising knowledge (G) | "The AI-supported back office", "From delivery note to checked invoice. 7x faster.", "zero administrative effort on the construction site" (G) |
+| Technology | knowledge graph, LLMs, plans as graphs; EU hosting, ISO 27001 (G); concrete stack not public | AI agents prepare, humans decide; developed in Vienna, hosted in Germany (G); stack not public |
+| Next steps | purchasing, accounting, compliance; long term an AI ERP for construction (G) | AI modules from estimating to accounting, "Agentic Backoffice"; markets Austria and Germany, then further European countries (G) |
 
-### 8.2 Was beide gleich machen
+### 8.2 What both do the same way
 
-1. **Ein schmaler, messbarer Job zuerst:** bei Kuro die Unterlagen für ein Angebot, bei reebuild die Eingangsrechnung. Erst danach kommt die Plattform.
-2. **Dokument wird Datensatz mit Quelle.** Die KI bereitet vor, der Mensch entscheidet, und jede Aussage ist auf das Original zurückführbar.
-3. **Das Regelwerk des Kunden ist das Produkt:** Prüfkriterien, Bauteilkataloge, Rahmenpreise. Korrekturen werden Regeln.
-4. **Domänen-Glaubwürdigkeit im Gründerteam:** Führungsrollen bei Capmo und alcemy bei Kuro („seit 14 Jahren an der Schnittstelle von Bau, Digitalisierung und KI“, Eigenangabe), Baufamilienbetriebe bei reebuild.
-5. **Verkauft wird Zeit, mit einer Zahl in der Headline.**
+1. **One narrow, measurable job first:** at Kuro the documents for a bid, at reebuild the incoming invoice. Only after that comes the platform.
+2. **A document becomes a record with a source.** The AI prepares, the human decides, and every statement can be traced back to the original.
+3. **The customer's rule set is the product:** check criteria, component catalogues, framework prices. Corrections become rules.
+4. **Domain credibility in the founding team:** leadership roles at Capmo and alcemy at Kuro ("for 14 years at the interface of construction, digitalisation and AI", self-reported), family construction businesses at reebuild.
+5. **What is sold is time, with a number in the headline.**
 
-### 8.3 Was wir übernehmen
+### 8.3 What we adopt
 
-| Bereich | Muster (Quelle) | Für Schlusswerk |
+| Area | Pattern (source) | For Schlusswerk |
 |---|---|---|
-| **Positionierung** | Zielgruppe steht in der Headline: „KI-Fundament für Generalunternehmer“ (Kuro, G) | „Der Schlussrechnungs-Desk für Elektro- und HKLS-Betriebe.“ |
-| | Eine Zahl in der Headline (beide, G) | Vor R3: „Schlussrechnung in 10 Tagen geprüft, jede Position belegt.“ Nach R3 nur mit echtem Wert: „Im Schnitt X € pro Projekt gefunden.“ |
-| | Stolz auf die Branche: „Builders for Builders“ (Kuro, G) | „Wer die Arbeit gemacht hat, soll sie bezahlt bekommen.“ |
-| | Vertrauen sichtbar: EU-Hosting, ISO 27001, DSGVO (Kuro); Hosting in DE (reebuild) (G) | Vertrauensleiste: EU-Hosting, AVV, Datensilo, „wir reden nie mit eurem GU“. ISO 27001 erst nach dem Pre-Seed |
-| | Rollen getrennt ansprechen: GF, Kalkulation, IT (Kuro, G) | Inhaber (Geld), Abrechner (weniger Arbeit, Belege), PL (kein neues Tool) |
-| **Vertrieb** | Beweis an historischen Projekten, bevor ausgerollt wird (Kuro bei Köster, G) | Erster Gratis-Check läuft auf einem echten Projekt des Design-Partners. Bezahlt verkauft wird weiter der Check **vor** der Schlussrechnung (Abschnitt 12 bleibt) |
-| | 100+ Experteninterviews vor dem Produkt (Kuro, G) | Jedes Insider-, Kanzlei- und Sub-Gespräch mit Leitfaden; Ziel 30 Gespräche bis Weihnachten |
-| | Pilot mit vielen Firmen vor dem Marktstart (reebuild, 25 Firmen, G) | 3 Design-Partner sind das Gate; Warteliste mit Einwilligung für alle weiteren |
-| | Persönliche Nähe, vor Ort: Gründer kennen Köster-Leute (G); „Leberkassemmel“ (G, nur Titel) | Bürobesuch beim Abrechner, früh morgens, mit Frühstück; immer mit Insider oder Kanzlei als Tür |
-| | Angels aus der Wiener Bau-Tech-Szene als Türöffner; Cap Table ohne Konkurrenten der Kunden (reebuild, G) | Mentoren und Angels nur ohne GU-Bindung; keine GU-seitigen Investoren in den Cap Table |
-| | Ein klarer CTA: „Demo buchen“ (beide, G) | „Check anfragen“ mit Einwilligungs-Häkchen für die Nachfassung |
-| **Preislogik** | Keine öffentlichen Preise; modular, einzeln kaufbar (Kuro 2024, G) | Check als kleines Einzelmodul, Jahresdesk als Paket; nur der Einstiegspreis wird öffentlich (Abschnitt 5) |
-| | Nutzen in Zeit gemessen (beide) | Wir messen in Euro und zeigen die Zeit als zweite Zahl. Landet R3 im Mittelband, wird Zeit die Hauptbotschaft |
-| **Produkt** | „Digitaler Zwilling“ pro Dokument (reebuild, G) | Architektur v1: Dokument → Datensatz mit Quelle → Ledger (Abschnitt 15) |
-| | Prüfkatalog: 1.000+ Fragen zu 40+ Gewerken mit Kalkulatoren (Kuro, G) | Prüfkatalog Elektro/HKLS mit dem Insider, v0 mit 100–200 Prüffragen (Annahme) |
-| | Versionsvergleich und Duplikate: „Man kriegt immer alles nochmal“ (Kuro/Köster, G) | Planindex-Diff und Duplikaterkennung im Ordner-Import |
-| | Korrekturblatt für den NU (reebuild, G) | Gegenstück: Vorprüfung aus GU-Sicht und Ergänzungsblatt zur Schlussrechnung |
-| | Buchhaltungsexport BMD/BRZ/RZL (reebuild, G) | BMD-Importformat bis Ende Jänner prüfen; in v1 Excel und ÖNORM |
-| | „Am Ende entscheide ich“ (Köster-Kalkulatorin, G) | Freigabe jeder Zeile durch den Abrechner bleibt Pflicht |
-| **Team** | Forward Deployed Engineers, „built onsite“ (Kuro, G) | v1 ist ein internes Werkzeug. Maxi baut neben dem Insider, nicht für ihn. Erste Einstellung nach dem Pre-Seed ist ein Ex-PL als Check-Analyst, kein SDR |
-| | Domäne im Gründerteam (beide) | bestätigt: Der Insider bleibt Kill-Gate R1 |
-| | Ein Mitgründer ging (reebuild, Lind, G) | Gründervertrag mit Vesting und Leaver-Regeln bis Fr 6.11. bleibt Pflicht |
-| **Fundraising-Story** | Kuro: Fachkräftemangel, „eine Branche, die schneller vergisst, als sie lernt“, Top-Logos, Ausbau zur Plattform (G). reebuild: harte Volumenzahlen, „Agentic Backoffice“, Expansion (G) | Unsere Story siehe 8.6 |
-| | Investor kennt die Gründer seit Jahren (UVC bei Kuro, G) | Kontakte zu Bau-Investoren jetzt locker aufbauen, kein Raise vor R5 |
+| **Positioning** | target group in the headline: "AI foundation for general contractors" (Kuro, G) | "The final invoice desk for electrical and HKLS businesses." |
+| | one number in the headline (both, G) | Before R3: "Final invoice checked in 10 days, every item evidenced." After R3 only with a real value: "On average X € found per project." |
+| | pride in the industry: "Builders for Builders" (Kuro, G) | "Whoever did the work should get paid for it." |
+| | visible trust: EU hosting, ISO 27001, GDPR (Kuro); hosting in DE (reebuild) (G) | trust bar: EU hosting, AVV, data silo, "we never talk to your GU". ISO 27001 only after the pre-seed |
+| | address roles separately: management, estimating, IT (Kuro, G) | owner (money), billing clerk (less work, evidence), PL (no new tool) |
+| **Sales** | proof on historical projects before rollout (Kuro at Köster, G) | The first free Check runs on a real project of the design partner. What is sold for money is still the Check **before** the final invoice (section 12 stands) |
+| | 100+ expert interviews before the product (Kuro, G) | every insider, law firm and sub conversation with an interview guide; target 30 conversations by Christmas |
+| | pilot with many companies before market launch (reebuild, 25 companies, G) | 3 design partners are the gate; waiting list with consent for all others |
+| | personal closeness, on site: founders know Köster people (G); "Leberkassemmel" (G, title only) | office visit to the billing clerk, early in the morning, with breakfast; always with the insider or law firm as the door opener |
+| | angels from the Vienna construction tech scene as door openers; cap table without competitors of the customers (reebuild, G) | mentors and angels only without GU ties; no GU-side investors on the cap table |
+| | one clear CTA: "Book a demo" (both, G) | "Request a Check" with a consent checkbox for follow-up |
+| **Pricing logic** | no public prices; modular, purchasable individually (Kuro 2024, G) | Check as a small single module, annual desk as a package; only the entry price is public (section 5) |
+| | value measured in time (both) | We measure in euros and show time as the second number. If R3 lands in the middle band, time becomes the main message |
+| **Product** | "digital twin" per document (reebuild, G) | architecture v1: document → record with source → ledger (section 15) |
+| | check catalogue: 1,000+ questions on 40+ trades with estimators (Kuro, G) | check catalogue electrical/HKLS with the insider, v0 with 100–200 check questions (assumption) |
+| | version comparison and duplicates: "You always get everything again" (Kuro/Köster, G) | plan index diff and duplicate detection in the folder import |
+| | correction sheet for the NU (reebuild, G) | counterpart: pre-check from the GU's perspective and supplementary sheet to the final invoice |
+| | accounting export BMD/BRZ/RZL (reebuild, G) | check the BMD import format by end of January; in v1 Excel and ÖNORM |
+| | "In the end, I decide" (Köster estimator, G) | approval of every line by the billing clerk remains mandatory |
+| **Team** | Forward Deployed Engineers, "built onsite" (Kuro, G) | v1 is an internal tool. Maxi builds next to the insider, not for him. The first hire after the pre-seed is a former PL as Check analyst, not an SDR |
+| | domain expertise in the founding team (both) | confirmed: the insider remains kill gate R1 |
+| | one co-founder left (reebuild, Lind, G) | founders' agreement with vesting and leaver rules by Fri 6.11. remains mandatory |
+| **Fundraising story** | Kuro: skilled labour shortage, "an industry that forgets faster than it learns", top logos, expansion into a platform (G). reebuild: hard volume figures, "Agentic Backoffice", expansion (G) | our story see 8.6 |
+| | investor has known the founders for years (UVC at Kuro, G) | build contacts with construction investors loosely now, no raise before R5 |
 
-### 8.4 Was wir nicht übernehmen
+### 8.4 What we do not adopt
 
-| Muster | Warum nicht |
+| Pattern | Why not |
 |---|---|
-| Telefon-Kaltakquise und Outreach per E-Mail (reebuild-SDR, G) | in Österreich nach § 174 TKG ohne Einwilligung unzulässig. Ob reebuild damit vor allem Deutschland bearbeitet, ist offen (A) |
-| Echtzeit-Budget, Lager, Foto-App, ESG-Daten (reebuild) | Live-Betrieb ab Start ist verworfen (Abschnitt 12). Die Foto-App mit 2.350 täglichen Nutzern zeigt, dass Baustellen-Apps genutzt werden. Unser Verwerfungsgrund war aber das Postfach und die tägliche Triage durch den PL. Das reicht nicht zum Wiederaufnehmen |
-| KI-Chat als Kernfunktion (Kuro) | Schöne Demo, aber kein Geld-Job. Höchstens später als „Frag den Ordner“ für den Abrechner |
-| Kalkulation und Angebot (Kuro) | Kuro liest Ausschreibungsunterlagen. Unser verworfenes „Kalkül“ bepreist neue Angebote aus dem Archiv, also ein anderer Job. **Keine neue Evidenz für Kalkül, bleibt geparkt** |
-| Raumbuch, BIM, öffentliche Vergabe als Produkt (Kuro) | GU-Jobs. Vergabedaten nutzen wir nur intern, um Briefe an Gewinner von HKLS- und Elektro-Losen zu adressieren |
-| Plattform-Story ab Tag 1 („KI-ERP“) | Beide haben mit einem schmalen Job begonnen und erst nach Kunden erweitert |
+| cold telephone prospecting and outreach by email (reebuild SDR, G) | not permitted in Austria under § 174 TKG without consent. Whether reebuild mainly uses it for Germany is open (A) |
+| real-time budget, warehouse, photo app, ESG data (reebuild) | live operation from the start has been rejected (section 12). The photo app with 2,350 daily users shows that construction site apps are used. But our reason for rejection was the mailbox and the daily triage by the PL. That is not enough to reopen it |
+| AI chat as a core function (Kuro) | nice demo, but not a money job. At most later as "Ask the folder" for the billing clerk |
+| estimating and bidding (Kuro) | Kuro reads tender documents. Our rejected "Kalkül" prices new bids from the archive, which is a different job. **No new evidence for Kalkül, remains parked** |
+| room schedule, BIM, public procurement as a product (Kuro) | GU jobs. We use procurement data only internally, to address letters to winners of HKLS and electrical lots |
+| platform story from day 1 ("AI ERP") | both started with a narrow job and only expanded after having customers |
 
-### 8.5 Wäre die GU-Seite klar besser?
+### 8.5 Would the GU side be clearly better?
 
-**Nein, nicht für uns.** Zuerst die Punkte, die ehrlich für die GU-Seite sprechen:
-- **Nachfrage ist dort belegt.** Kuro hat seit der Registereintragung im Herbst 2024 12 Kunden, darunter 6 der 20 größten GUs. reebuild hat 120+ Kunden. Ob alle zahlen und zu welchem Preis, sagt keiner der beiden. Auf der Sub-Seite gibt es keinen vergleichbaren Beleg.
-- **Das Geld fließt dorthin:** 13 Mio. € in zwei Wochen für zwei GU- bzw. Auftraggeber-Tools.
-- **Weniger, größere Käufer** mit IT-Abteilung. Wie hoch die Vertragswerte sind, ist offen.
+**No, not for us.** First the points that honestly speak for the GU side:
+- **Demand is proven there.** Since its registration in autumn 2024, Kuro has 12 customers, including 6 of the 20 largest GUs. reebuild has 120+ customers. Neither says whether all of them pay and at what price. On the sub side there is no comparable evidence.
+- **The money flows there:** 13 million € in two weeks for two GU or client tools.
+- **Fewer, larger buyers** with an IT department. How high the contract values are is open.
 
-Warum wir trotzdem bleiben:
-- **Die GU-Seite ist besetzt.** Angebot: Kuro, Cosuno. Rechnung und NU-Prüfung: reebuild. Nachtrag: Capmo, PlanRadar. Dort gewinnen Teams mit Führungserfahrung in Bau-Software oder aus Baufamilien. Drei Studenten ohne Netzwerk würden dort in einen Kampf gegen finanzierte Teams laufen.
-- **Unser möglicher Vorsprung gilt nur auf der Sub-Seite:** ein Insider aus dem Sub-Betrieb, Bepreisung aus LV und K7 des Subs, Regelwerk pro GU aus Sub-Sicht.
-- **Die Gegenseite mit KI ist unser Argument.** Je stärker GUs mit KI prüfen, desto dringender braucht der Sub seinen eigenen Desk.
+Why we stay anyway:
+- **The GU side is occupied.** Bids: Kuro, Cosuno. Invoice and NU review: reebuild. Change orders: Capmo, PlanRadar. There, teams with leadership experience in construction software or from construction families win. Three students without a network would run into a fight against funded teams there.
+- **Our possible edge only applies on the sub side:** an insider from a subcontractor business, pricing from the sub's LV and K7, rule set per GU from the sub's perspective.
+- **The other side having AI is our argument.** The more GUs check with AI, the more urgently the sub needs its own desk.
 
-**Was das konkret heißt:** Scheitert R5, weil Subs nicht zahlen, ist das das stärkste Signal gegen die Sub-Seite. Ein Wechsel auf die GU-Seite wäre dann aber kein leichter Rückfall, weil sie besetzt ist. Die Rückfälle bleiben wie in v1 (Abschnitt 13). Der Seitenwechsel steht jetzt als geprüft und verworfen in Abschnitt 12.
+**What this means in concrete terms:** If R5 fails because subs do not pay, that is the strongest signal against the sub side. But a switch to the GU side would then not be an easy fallback, because it is occupied. The fallbacks remain as in v1 (section 13). The side switch is now listed as checked and rejected in section 12.
 
-### 8.6 Unsere Story für Investoren und Wettbewerbe (Entwurf)
+### 8.6 Our story for investors and competitions (draft)
 
-> Die Auftraggeber rüsten auf. Kuro prüft für die größten Generalunternehmer die Angebote der Nachunternehmer. reebuild prüft für Bauträger und Baufirmen jede Nachunternehmer-Rechnung gegen LV und Bauvertrag und schreibt das Korrekturblatt automatisch. Der Elektro- oder HKLS-Betrieb mit 60 Leuten schreibt seine Schlussrechnung weiter aus dem Gedächtnis eines überlasteten Projektleiters, und dort liegt seine Marge. Schlusswerk ist sein Schlussrechnungs-Desk: in 10 Tagen jede LV-Position abgeglichen, jeder Euro belegt, bevor die Rechnung rausgeht. Wir reden nie mit dem GU. Der Kunde entscheidet und versendet.
+> The clients are arming up. Kuro checks subcontractors' bids for the largest general contractors. reebuild checks every subcontractor invoice against the LV and construction contract for developers and construction companies and writes the correction sheet automatically. The electrical or HKLS business with 60 people still writes its final invoice from the memory of an overloaded project manager, and that is where its margin lies. Schlusswerk is its final invoice desk: every LV item reconciled in 10 days, every euro evidenced, before the invoice goes out. We never talk to the GU. The customer decides and sends.
 
-Kennzahlen, die wir ab dem ersten Check zählen, nach dem Muster von reebuilds „530 Mio. € Rechnungsvolumen“:
-- geprüfte Auftragssumme in €;
-- gefundene € pro Mio. € Auftragssumme, kodiert nach (a) bis (d);
-- Tage bis zur bezahlten Schlussrechnung.
+Key figures we count from the first Check, following the pattern of reebuild's "530 million € invoice volume":
+- checked contract sum in €;
+- € found per million € of contract sum, coded by (a) to (d);
+- days until the final invoice is paid.
 
-Für #glaubandich und den Hackathon gilt: Die Story bleibt beim Problem und der synthetischen Demo, ohne erfundene Funde.
+For #glaubandich and the hackathon: the story stays with the problem and the synthetic demo, without invented findings.
 
 ---
 
-## 9. Vertrieb
+## 9. Sales
 
-**Kanäle für die ersten 10 Kunden:** alles legal nach § 174 TKG, also persönlich, Brief, Events, Partner.
+**Channels for the first 10 customers:** everything legal under § 174 TKG, i.e. in person, letter, events, partners.
 
-| Quelle | Ziel | Wie |
+| Source | Target | How |
 |---|---|---|
-| 2 Baurechtskanzleien plus 1 Ingenieurbüro | 4 | persönlicher Besuch mit Demo; „ihr behaltet die Rechtsarbeit“; keine Provisionen |
-| 2 Innungsabende (Elektro und SHK, Wien und NÖ) | 3 | Thema „Das Geld am Ende des Projekts“; Anwalt und Insider reden, wir zeigen die Demo; Anmeldung mit Einwilligung |
-| Netzwerk des Insiders | 2 | persönliche Vorstellung |
-| Briefe an Gewinner öffentlicher Lose plus Bürobesuch | 1 | Brief nennt das Los, bietet einen Check an |
+| 2 construction law firms plus 1 engineering office | 4 | personal visit with demo; "you keep the legal work"; no commissions |
+| 2 guild (Innung) evenings (electrical and SHK, Vienna and Lower Austria) | 3 | topic "The money at the end of the project"; lawyer and insider speak, we show the demo; registration with consent |
+| insider's network | 2 | personal introduction |
+| letters to winners of public lots plus office visit | 1 | letter names the lot, offers a Check |
 
-**Später:** ÖNORM- und Kalkulationstrainer, Kundentage im Großhandel, Messen. Verbände der Bauindustrie und GUs sind kein Kanal.
+**Later:** ÖNORM and estimating trainers, customer days at wholesalers, trade fairs. Associations of the construction industry and GUs are not a channel.
 
-**Zyklus:**
-- 1–3 Monate vom ersten Treffen bis zum Vertrag (unbelegt).
-- Etwa 10 Verkaufswochen bis Weihnachten.
-- Zwischen 20.12. und 6.1. steht das Handwerk still.
+**Cycle:**
+- 1–3 months from the first meeting to the contract (unverified).
+- About 10 sales weeks until Christmas.
+- Between 20.12. and 6.1. the trades come to a standstill.
 
-**Einwände:**
+**Objections:**
 
-| Einwand | Antwort |
+| Objection | Answer |
 |---|---|
-| „Wir verrechnen eh alles.“ | „Dann zeigt der Check das schwarz auf weiß.“ |
-| „Wir brauchen den nächsten Auftrag.“ | Regie und Mengen sind Abrechnung, kein Streit. Ihr tauscht aus einer vollständigen Liste. **[neu]** „Euer GU prüft eure Rechnung schon mit Software. Prüft sie vorher selbst.“ |
-| „Daten vertraulich.“ | AVV, EU-Hosting, Silo, nur der Projektordner, unsichtbar für den GU |
-| „Seid ihr Anwälte?“ | Nein. Berechnung und Software; Rechtsfragen gehen an euren Anwalt |
-| „KI macht Fehler.“ | Jeder Posten hat Beleg und Rechenweg, die Rechnung ist deterministisch, Insider und Abrechner prüfen |
-| „Ihr seid Studenten.“ | Darauf antworten der Insider im Raum und die Zahl auf dem eigenen Projekt |
+| "We invoice everything anyway." | "Then the Check shows it in black and white." |
+| "We need the next contract." | Daywork and quantities are billing, not a dispute. You trade from a complete list. **[new]** "Your GU already checks your invoice with software. Check it yourselves first." |
+| "Data is confidential." | AVV, EU hosting, silo, project folder only, invisible to the GU |
+| "Are you lawyers?" | No. Calculation and software; legal questions go to your lawyer |
+| "AI makes mistakes." | Every item has evidence and a calculation path, the calculation is deterministic, the insider and the billing clerk review |
+| "You are students." | The insider in the room and the number on your own project answer that |
 
 ---
 
 ## 10. Team
 
-| Person | Fokus bis 31.1. |
+| Person | Focus until 31.1. |
 |---|---|
-| **Maxi** | R1 Insider (Vorrang), Produkt (Demo, v1), R3 mit dem Insider |
-| **Co-Founder A** | R4 Recht und Versicherung, AVV, synthetische Demo-Daten, Konkurrenz-Demos, Marktzählung |
-| **Co-Founder B** | Feld: Innungen, Kanzleien, Sub-Gespräche, R2 Ordner, R5 Zahlung, #glaubandich |
-| **Insider** (ab Term Sheet) | Prüfkatalog, Prüfung jedes Checks, alle Kundentermine ab Dezember |
+| **Maxi** | R1 insider (priority), product (demo, v1), R3 with the insider |
+| **Co-founder A** | R4 law and insurance, AVV, synthetic demo data, competitor demos, market count |
+| **Co-founder B** | field: guilds, law firms, sub conversations, R2 folders, R5 payment, #glaubandich |
+| **Insider** (from term sheet) | check catalogue, review of every Check, all customer meetings from December |
 
-**Regeln:**
-- Gründervertrag bis Fr 6.11.: 4 Jahre Vesting, 1 Jahr Cliff, Leaver-Regeln, wer bei bestandenen Gates Vollzeit geht.
-- Commitment: 15–20 Stunden pro Person und Woche, Kennzahlen-Runde jeden Sonntag.
-- **[neu]** Maxi baut höchstens die Hälfte seiner Zeit, solange R1 offen ist. Lehre aus dem Playbook: „Das Tool darf das eigentliche Projekt nicht auffressen.“
+**Rules:**
+- Founders' agreement by Fri 6.11.: 4 years vesting, 1 year cliff, leaver rules, who goes full time if the gates are passed.
+- Commitment: 15–20 hours per person and week, key figures round every Sunday.
+- **[new]** Maxi spends at most half of his time building while R1 is open. Lesson from the playbook: "The tool must not eat up the actual project."
 
-**Insider (Pflicht):**
-- **Option A:** pensionierter PL oder Abrechnungsleiter (60–68), 2 Tage pro Woche; 6–8 % Anteile, 3 Jahre Vesting, 6 Monate Cliff, plus 30 % jeder bezahlten Check-Gebühr.
-- **Option B:** aktiver Abrechnungs- oder Nachtragsmanager (40–55); 15–20 % Anteile, Vollzeit nach dem Pre-Seed.
-- **Wo suchen:** ÖNORM-Trainer, beeidete Sachverständige, Landesinnungen, Großhandel, TU-Institute, Roman und alle Kontakte.
-- **Ablauf:** Briefe, Kaffee, der Kandidat streicht in der Demo an, was falsch ist, dann ein bezahlter Probetag.
+**Insider (mandatory):**
+- **Option A:** retired PL or head of billing (60–68), 2 days per week; 6–8 % equity, 3 years vesting, 6 months cliff, plus 30 % of every paid Check fee.
+- **Option B:** active billing or change order manager (40–55); 15–20 % equity, full time after the pre-seed.
+- **Where to search:** ÖNORM trainers, sworn experts, state guilds, wholesalers, TU institutes, Roman and all contacts.
+- **Process:** letters, coffee, the candidate marks what is wrong in the demo, then a paid trial day.
 
-**Dazu:**
-- pensionierter Kalkulator als Advisor (0,5–1 %);
-- Baurechtskanzlei (keine Anteile, keine Provisionen);
-- Ingenieurbüro;
-- Versicherungsmakler.
+**In addition:**
+- retired estimator as advisor (0.5–1 %);
+- construction law firm (no equity, no commissions);
+- engineering office;
+- insurance broker.
 
 ---
 
-## 11. Risiken und offene Fragen
+## 11. Risks and open questions
 
-| # | Risiko (Red Team) | Wahrscheinlichkeit | Antwort | Test |
+| # | Risk (red team) | Probability | Answer | Test |
 |---|---|---|---|---|
-| 1 | Kein Ordner | ~65 %, tödlich | Einstieg kurz vor der Schlussrechnung; Anfrage über Kanzlei, Insider, Innung | R2 |
-| 2 | Geld wird bewusst liegen gelassen | ~50 % | Abrechnung statt Streit; Schlussbesprechungs-Blatt | R3 |
-| 3 | Erfolgshonorare kommen spät | ~70 % | mindestens 80 % fix | R5 |
-| 4 | Glaubwürdigkeit ohne Insider | ~70 % | Insider als Pflicht-Gate | R1 |
-| 5 | Recht und Haftung | ~40 % | Check als Berechnung, Kunde versendet, Kanzlei | R4 |
-| 6 | Kalkül ist nur ein Feature | ~55 % | geparkt | — |
-| 7 | Konkurrenz **[ergänzt: reebuild]** | ~45 % | Gegenposition, Formattiefe, Regelwerk pro GU | Demos bis 6.11., jetzt inkl. reebuild |
-| 8 | Markt kleiner als gedacht | ~60 % | Deutschland 2028, zweites Gewerk 2030 | Zählung 13.11. |
-| 9 | Exit klein | ~50 % | 80 % fix, Käufer mit Sub-Kundenbasis | Gespräche auf der BAU 2027 |
-| 10 | Timing | ~40 % | Insider und Ordner vor Weihnachten | 5 GF-Termine bis 18.12. |
+| 1 | No folder | ~65 %, fatal | entry shortly before the final invoice; request via law firm, insider, guild | R2 |
+| 2 | Money is deliberately left on the table | ~50 % | billing instead of dispute; final account meeting sheet | R3 |
+| 3 | Success fees come late | ~70 % | at least 80 % fixed | R5 |
+| 4 | Credibility without insider | ~70 % | insider as mandatory gate | R1 |
+| 5 | Law and liability | ~40 % | Check as calculation, customer sends, law firm | R4 |
+| 6 | Kalkül is just a feature | ~55 % | parked | — |
+| 7 | Competition **[added: reebuild]** | ~45 % | counter-position, format depth, rule set per GU | demos by 6.11., now including reebuild |
+| 8 | Market smaller than expected | ~60 % | Germany 2028, second trade 2030 | count 13.11. |
+| 9 | Small exit | ~50 % | 80 % fixed, acquirers with a sub customer base | conversations at BAU 2027 |
+| 10 | Timing | ~40 % | insider and folders before Christmas | 5 management meetings by 18.12. |
 
-**Offene Fragen:**
-1. Wie viel Geld bleibt pro Projekt „nicht bemerkt“ liegen? (R3)
-2. Wo finden wir den Insider, und wie sieht das Term Sheet aus (inkl. Pensionsfrage)?
-3. Wie kommen wir an 3 Ordner?
-4. Wie viele Schlussrechnungen hat eine Zielfirma pro Jahr?
-5. Was sagt der Anwalt zu RAO, Bonus, Ingenieurbüro-Weg und § 174 TKG bei Briefen und Recruiting?
-6. **[neu]** Was genau kürzen GU-Werkzeuge wie reebuild? Beim Demo-Termin und bei Subs nachfragen: Wer hat schon ein automatisches Korrekturblatt bekommen?
-7. **[neu]** Welches Importformat hat BMD für Ausgangsrechnungen?
-8. **[neu]** Welche EU-Region für die KI-Modelle, zu welchen Kosten?
+**Open questions:**
+1. How much money per project is left "not noticed"? (R3)
+2. Where do we find the insider, and what does the term sheet look like (including the pension question)?
+3. How do we get 3 folders?
+4. How many final invoices does a target company have per year?
+5. What does the lawyer say about RAO, bonus, the engineering office route and § 174 TKG for letters and recruiting?
+6. **[new]** What exactly do GU tools like reebuild cut? Ask at the demo meeting and among subs: who has already received an automatic correction sheet?
+7. **[new]** Which import format does BMD have for outgoing invoices?
+8. **[new]** Which EU region for the AI models, at what cost?
 
 ---
 
-## 12. Verworfen und warum
+## 12. Rejected and why
 
-Entschieden. Nur mit neuer Evidenz wieder aufnehmen und das ausdrücklich sagen. Die Zeilen aus v1 sind unverändert übernommen. Neu sind die letzten drei Zeilen vom 22.10.2026; dort hat die Recherche zu Kuro und reebuild keine Evidenz zum Wiederaufnehmen gebracht.
+Decided. Only reopen with new evidence and say so explicitly. The rows from v1 are carried over unchanged. New are the last three rows from 22.10.2026; there, the research on Kuro and reebuild brought no evidence for reopening.
 
-| Verworfen | Ursprünglich | Warum verworfen | Was stattdessen gilt |
+| Rejected | Originally | Why rejected | What applies instead |
 |---|---|---|---|
-| **Kalkül als Modul** | Start Monat 9–12, 450–490 €/Monat plus 35–45 € pro LV | Angriff 6 | geparkt, bis 15 zahlende Jahresdesks laufen **und** der Kalkulator-Test besteht |
-| **Abo pro aktivem Projekt** | 95 €/Projekt/Monat, mind. 690 € | verlangt ab Tag 1 Postfach und tägliche Triage | Abo pro **schließendem** Projekt |
-| **10 % Erfolgshonorar als Standard** (ursprünglich 5 % auf alles) | 10 %, Deckel 15.000 € | Cash erst 2028–29, strittig, kein ARR | mind. 80 % fix; Bonus max. 8 %, max. 5.000 €, nur nach Anwaltsfreigabe |
-| **Das Wort „Claim“**, Name „Claimwerk“ | „Claims X-ray“ | klingt nach Kampf und Rechtsberatung | „Schlusswerk“, „Schlussrechnung“, „verrechenbar“ |
-| **Röntgen alter Projekte als Einstieg** | Check eines geschlossenen Ordners | zeigt vor allem verjährtes Geld | Check **vor** der Schlussrechnung. Ein abgeschlossenes Projekt dient nur als Beweis für Insider und Design-Partner (wie bei Kuro/Köster), nicht als verkauftes Produkt |
-| **Reiner Streit-Desk** | Einstieg bei gekürzter Schlussrechnung | adversarial, rechtlich heikler | Streitpaket nur über die Kanzlei |
-| **Live-Monitoring ab Start** | Postfach, tägliche Erkennung | PL und Betriebsrat blockieren | Live-Desk ab Jahr 2 nach 2 Checks |
-| **Enpal-Kontakte als Kundenquelle** | Warm Intros | B2C-Installateure, falsches Segment | Kontakte nur zum Finden von Leuten; keine Enpal-Daten |
-| **Deutschland vor 2028** | Start im Jahr 2 über Bayern | VOB/B, GAEB, kostenbasierte Bepreisung, RDG | ab 2028 nach 40 AT-Kunden und Gutachten |
-| **Öffentliche Lose als Zielregel** | zuerst Einzelvergaben | unbelegt | nur Interviewfrage |
-| **Provisionen an oder von Kanzleien** | Empfehlungsgebühren | vermutlich verboten | keine Provisionen |
-| **Alte Markt- und Umsatzzahlen** | 810 Mio. € DACH, 2,2 Mrd. € EU, 20.000 € ACV usw. | überhöht | 70–100 Mio. € SAM, ACV 14.000 / 18.000–19.000 € |
-| **Alte Rückgewinnungsannahme** | 55 % auf 80 % | erfunden | R3 misst |
-| **Alte Exit-Erwartung** | 25–50 Mio. €, stark 70–100 Mio. € | brauchte frühes starkes Wachstum | 10–40 Mio. € |
-| **Alte Gates** | K1 13.11., Endentscheid 8.1. | zu früh | R1–R5, Endentscheid 31.1.2027 |
-| **Kalkül-Teaser und Fristen-Countdown in der Demo**, „10 % von gefundenem Geld“ | alte Demo | Kalkül geparkt, Live-Desk erst Jahr 2 | Demo zeigt Check, Schlussbesprechung, Export |
-| **[neu] Wechsel auf die GU-Seite** | nach Kuro und reebuild naheliegend | besetzt durch finanzierte Teams mit Domäne; unser Vorsprung gilt nur auf der Sub-Seite (8.5) | Sub-Seite; die GU-KI ist unser Argument |
-| **[neu] SDR- und Telefonvertrieb nach reebuild-Muster** | „Demo buchen“-Maschine mit Kaltakquise | § 174 TKG; Studenten ohne Insider verbrennen den Markt | persönlich, Brief, Events, Partner; Webformular mit Einwilligung |
-| **[neu] Plattform-Story ab Tag 1** („Backoffice-KI für Subs“) | breiter wirken für Investoren | beide Vorbilder starteten schmal | ein Job: die Schlussrechnung |
+| **Kalkül as a module** | start month 9–12, 450–490 €/month plus 35–45 € per LV | attack 6 | parked until 15 paying annual desks are running **and** the estimator test passes |
+| **Subscription per active project** | 95 €/project/month, min. 690 € | requires mailbox and daily triage from day 1 | subscription per **closing** project |
+| **10 % success fee as standard** (originally 5 % on everything) | 10 %, cap 15,000 € | cash only in 2028–29, disputed, no ARR | min. 80 % fixed; bonus max. 8 %, max. 5,000 €, only after the lawyer's approval |
+| **The word "Claim"**, name "Claimwerk" | "Claims X-ray" | sounds like a fight and legal advice | "Schlusswerk", "Schlussrechnung", "verrechenbar" |
+| **X-ray of old projects as entry** | Check of a closed folder | mainly shows time-barred money | Check **before** the final invoice. A completed project serves only as proof for the insider and design partners (as with Kuro/Köster), not as a product sold |
+| **Pure dispute desk** | entry at a cut final invoice | adversarial, legally more delicate | dispute package only through the law firm |
+| **Live monitoring from the start** | mailbox, daily detection | PL and works council block it | live desk from year 2 after 2 Checks |
+| **Enpal contacts as a customer source** | warm intros | B2C installers, wrong segment | contacts only for finding people; no Enpal data |
+| **Germany before 2028** | start in year 2 via Bavaria | VOB/B, GAEB, cost-based pricing, RDG | from 2028 after 40 AT customers and a legal opinion |
+| **Public lots as a targeting rule** | single-trade awards first | unverified | interview question only |
+| **Commissions to or from law firms** | referral fees | presumably prohibited | no commissions |
+| **Old market and revenue figures** | 810 million € DACH, 2.2 billion € EU, 20,000 € ACV etc. | inflated | 70–100 million € SAM, ACV 14,000 / 18,000–19,000 € |
+| **Old recovery assumption** | 55 % to 80 % | invented | R3 measures |
+| **Old exit expectation** | 25–50 million €, strong case 70–100 million € | required early strong growth | 10–40 million € |
+| **Old gates** | K1 13.11., final decision 8.1. | too early | R1–R5, final decision 31.1.2027 |
+| **Kalkül teaser and deadline countdown in the demo**, "10 % of money found" | old demo | Kalkül parked, live desk only in year 2 | demo shows Check, final account meeting, export |
+| **[new] Switch to the GU side** | obvious after Kuro and reebuild | occupied by funded teams with domain expertise; our edge only applies on the sub side (8.5) | sub side; the GU AI is our argument |
+| **[new] SDR and telephone sales following the reebuild pattern** | "Book a demo" machine with cold prospecting | § 174 TKG; students without an insider burn the market | in person, letter, events, partners; web form with consent |
+| **[new] Platform story from day 1** ("back office AI for subs") | appear broader to investors | both role models started narrow | one job: the final invoice |
 
 ---
 
-## 13. Die fünf Gates (unverändert)
+## 13. The five gates (unchanged)
 
-| Gate | Test | Wer | Datum | Bestanden | Kill oder Pivot |
+| Gate | Test | Who | Date | Passed | Kill or pivot |
 |---|---|---|---|---|---|
-| **R1 Insider** | 15+ Kandidaten, 8+ Treffen, bezahlter Probetag für die Top 2 | Maxi | Term Sheet Fr 20.11., harte Grenze Fr 4.12. | Beteiligungsvertrag mit einem Insider nach Profil, mind. 1 Tag pro Woche, ab Dezember in allen Kundenterminen | kein Insider bis 4.12.: stoppen |
-| **R4 Recht** | 1-Stunden-Gutachten Baurecht Wien; Maklerangebot 1 Mio. € | Co-Founder A | Fr 4.12. | schriftlich: Check, Ledger, Bewertung nicht vorbehalten; Prämie max. 8.000 €/Jahr | Kern-Check vorbehalten: stoppen. Bonus unzulässig: nur Fixpreis. Kein Versicherer: nur Abrechnungsvollständigkeit |
-| **R2 Ordner** | Anfrage an 8 Firmen über Kanzleien, Insider, Innung; AVV | Co-Founder B + Insider | Fr 11.12. | 3+ Ordner von 3+ Firmen, je 70 %+ brauchbar | max. 1 Ordner oder unter 50 % brauchbar: stoppen. 2 Ordner: einmal 2 Wochen verlängern |
-| **R3 Geld** | 3 Checks, jeden Euro kodieren (a) bis (d) | Maxi + Insider | Fr 22.1.2027 | auf 2 von 3 Projekten (a) ≥ 30.000 € **oder** 1,5 % der Auftragssumme, **und** (a) ≥ 50 % aller Funde | Median (a) unter 0,75 % oder (a) unter 40 %: stoppen. Dazwischen: S-Tarif, Retest bis 31.3. |
-| **R5 Zahlung** | Fixpreis-Check und Jahresdesk anbieten | Co-Founder B | Fr 29.1.2027 | 2+ Firmen zahlen je ≥ 1.500 € **und** 1+ Jahresdesk oder Absichtserklärung | 0 bezahlt: stoppen. 1 ohne Absichtserklärung: stoppen, außer R3 lag oben |
+| **R1 Insider** | 15+ candidates, 8+ meetings, paid trial day for the top 2 | Maxi | term sheet Fri 20.11., hard limit Fri 4.12. | equity agreement with an insider matching the profile, at least 1 day per week, in all customer meetings from December | no insider by 4.12.: stop |
+| **R4 Law** | 1-hour legal opinion on construction law, Vienna; broker quote 1 million € | Co-founder A | Fri 4.12. | in writing: Check, ledger, valuation not reserved; premium max. 8,000 €/year | core Check reserved: stop. Bonus not permitted: fixed price only. No insurer: billing completeness only |
+| **R2 Folders** | request to 8 companies via law firms, insider, guild; AVV | Co-founder B + insider | Fri 11.12. | 3+ folders from 3+ companies, each 70 %+ usable | max. 1 folder or under 50 % usable: stop. 2 folders: extend once by 2 weeks |
+| **R3 Money** | 3 Checks, code every euro (a) to (d) | Maxi + insider | Fri 22.1.2027 | on 2 of 3 projects (a) ≥ 30,000 € **or** 1.5 % of the contract sum, **and** (a) ≥ 50 % of all findings | median (a) under 0.75 % or (a) under 40 %: stop. In between: S tier, retest by 31.3. |
+| **R5 Payment** | offer fixed-price Check and annual desk | Co-founder B | Fri 29.1.2027 | 2+ companies pay ≥ 1,500 € each **and** 1+ annual desk or letter of intent | 0 paid: stop. 1 without letter of intent: stop, unless R3 was at the top |
 
-**Endentscheid So 31.1.2027:**
-- Alle fünf bestanden: Vollzeit und Geld einsammeln.
-- Eines im Pivot-Band: eine weitere 8-Wochen-Runde auf dem Pivot.
-- Zwei oder mehr gescheitert: Schlusswerk ist tot. Rückfälle sind das Abnahme- und Prüfregister für Energieanlagen oder der Hausverwaltungs-Service.
+**Final decision Sun 31.1.2027:**
+- All five passed: full time and raise money.
+- One in the pivot band: another 8-week round on the pivot.
+- Two or more failed: Schlusswerk is dead. Fallbacks are the acceptance and inspection register for energy installations or the property management service.
 
 ---
 
-## 14. Plan bis 31.1.2027, Woche für Woche
+## 14. Plan until 31.1.2027, week by week
 
-**Kürzel:**
-- **M** = Maxi, **A** = Co-Founder A, **B** = Co-Founder B, **I** = Insider (ab Term Sheet);
-- **Bau** = Produktarbeit (Details in Abschnitt 15).
+**Abbreviations:**
+- **M** = Maxi, **A** = Co-founder A, **B** = Co-founder B, **I** = insider (from term sheet);
+- **Build** = product work (details in section 15).
 
-**Fester Rhythmus:** jeden Sonntag 30 Minuten Kennzahlen-Runde mit Gesprächen, Briefen, Kandidaten, Ordnern und Bau-Stand. Danach `_STATUS.md` aktualisieren.
+**Fixed rhythm:** every Sunday a 30-minute key figures round covering conversations, letters, candidates, folders and build status. Then update `_STATUS.md`.
 
-| KW | Daten | M | A | B | Bau | Frist / Gate |
+| CW | Dates | M | A | B | Build | Deadline / gate |
 |---|---|---|---|---|---|---|
-| 43 | Do 22.–So 25.10. | Dossier v2 mit dem Team durchgehen; Repo außerhalb OneDrive und `Umfang_v1.md` anlegen | Entwurf Gründervertrag | Entwurf #glaubandich-Text | Demo-Klickpfad festlegen; Generator für synthetische Daten starten | |
-| 44 | 26.10.–1.11. (Mo Feiertag) | Insider-Liste 15+; 25–30 Briefe raus bis Fr 30.10. | synthetische Daten fertig (inkl. fiktivem GU-Korrekturblatt); 10 Kanzleien listen; Anwaltstermin für KW 48 fixieren | #glaubandich einreichen; Landesinnungen Wien/NÖ persönlich besuchen oder anschreiben (Brief) | **Demo v0.9:** Ledger, Beleg-Panel, drei Listen, vorberechnet | **#glaubandich Sa 31.10.** |
-| 45 | 2.–8.11. | 8+ Kaffeetermine, Kandidat streicht Fehler in der Demo an | Demos bei PlanRadar, Capmo, NEVARIS, ABK **und reebuild** (offen als Gründerteam); 5 Kanzleien besuchen (mit B) | 6 Sub-Gespräche mit Leitfaden und Ordner-Frage; Kodierschema (a)–(d) fertig | Demo v1.0 hackathon-fertig (Schlussbesprechungs-Blatt, Vorprüfung GU-Sicht, Export); v1-Datenmodell | **Gründervertrag Fr 6.11.** |
-| 46 | 9.–15.11. | Probetage für die Top 2; Hackathon (Planannahme Mitte Nov.) | Marktzählung: 30 Projekte, Größen in WKO Firmen A–Z; Makleranfrage Versicherung | weitere Sub-Gespräche; AVV-Vorlage mit A finalisieren | v1: LV-Parser (ÖNORM A 2063 und PDF), Aufmaß-Excel | **Marktzählung Fr 13.11.** |
-| 47 | 16.–22.11. | Term Sheet an den besten Kandidaten | Fragenliste an den Anwalt schriftlich | Ordner-Anfrage an 8 Firmen über Kanzleien, Kandidat und Innung, mit AVV | v1: Regie-Scans (OCR, Unterschriftsstatus), Rechnungen, Rechenkern Ledger | **R1 Term Sheet Fr 20.11.** |
-| 48 | 23.–29.11. | Insider-Vertrag unterschreiben; mit I den Prüfkatalog v0 (100–200 Fragen) | Anwaltsgutachten (1 h); Versicherungsangebot | Ordner nachfassen; Innungsabend Jänner/Februar mit Anwalt fixieren | v1: Bepreisung LV × K7, Mail-Extraktion, Beweispaket-PDF | |
-| 49 | 30.11.–6.12. | Probelauf v1 mit I auf synthetischen Daten und einem anonymisierten Projekt von I | R4 schriftlich festhalten | GF-Termine für KW 50–51 buchen | **v1-Freeze So 6.12.** (Abschnitt 15) | **R4 und R1 hart Fr 4.12.** |
-| 50 | 7.–13.12. (Di Feiertag) | 3 Checks starten (M baut nach, I prüft) | AVVs unterschreiben lassen; EU-Region der KI-Modelle bestätigt | Ordner einsammeln; Zwischenstand an die Partner | Fehler aus echten Ordnern beheben; Testsystem nur mit synthetischen Daten | **R2 Ordner Fr 11.12.** |
-| 51 | 14.–20.12. | Checks laufen; was geht, vor der Pause abschließen | Wettbewerbs-Update (reebuild, PlanRadar, Capmo) | 5 GF-Termine bis Fr 18.12. | Planindex-Diff, Duplikaterkennung | 5 GF-Termine |
-| 52–53 | 21.12.–3.1. | keine Verkaufstermine; v1.1 bauen | Pause | Pause | v1.1: Vorprüfung aus GU-Sicht auf echten Daten, Excel- und ÖNORM-Export, BMD-Format prüfen, Kodierbogen im Werkzeug | |
-| 1 | 4.–10.1. | ab Do 7.1.: Check 1 ausliefern, Kodier-Session (mit I und B) | Messe- und BAU-Termine (Käufergespräche) vorbereiten | Angebotsunterlagen: Fixpreis-Check, Jahresdesk S/M/L | Fixes aus Check 1 | |
-| 2 | 11.–17.1. | Check 2 und 3 ausliefern, Kodier-Sessions | Rechtsfragen aus den Checks an die Kanzlei | Angebote an Design-Partner nach jeder Lieferung | Kennzahlen-Auswertung (Funde nach a–d, Stunden pro Check) | |
-| 3 | 18.–24.1. | R3 auswerten, Zahlen unabhängig prüfen lassen | Pre-Seed- und Förderoptionen (aws, Wirtschaftsagentur) kurz kartieren | Nachfassen, Unterschriften | Stillstand für neue Features | **R3 Geld Fr 22.1.** |
-| 4 | 25.–31.1. | Endentscheid vorbereiten (Dossier v3) | | Zahlungseingänge, Absichtserklärungen | | **R5 Fr 29.1., Endentscheid So 31.1.** |
+| 43 | Thu 22.–Sun 25.10. | go through dossier v2 with the team; set up repo outside OneDrive and `Umfang_v1.md` | draft founders' agreement | draft #glaubandich text | define demo click path; start generator for synthetic data | |
+| 44 | 26.10.–1.11. (Mon public holiday) | insider list 15+; 25–30 letters out by Fri 30.10. | synthetic data finished (including fictitious GU correction sheet); list 10 law firms; fix lawyer appointment for CW 48 | submit #glaubandich; visit state guilds Vienna/Lower Austria in person or write to them (letter) | **Demo v0.9:** ledger, evidence panel, three lists, precomputed | **#glaubandich Sat 31.10.** |
+| 45 | 2.–8.11. | 8+ coffee meetings, candidate marks errors in the demo | demos at PlanRadar, Capmo, NEVARIS, ABK **and reebuild** (openly as a founding team); visit 5 law firms (with B) | 6 sub conversations with interview guide and folder question; coding scheme (a)–(d) finished | demo v1.0 hackathon-ready (final account meeting sheet, pre-check from GU perspective, export); v1 data model | **Founders' agreement Fri 6.11.** |
+| 46 | 9.–15.11. | trial days for the top 2; hackathon (planning assumption mid-Nov.) | market count: 30 projects, sizes in WKO Firmen A–Z; broker request for insurance | further sub conversations; finalise AVV template with A | v1: LV parser (ÖNORM A 2063 and PDF), Aufmaß Excel | **Market count Fri 13.11.** |
+| 47 | 16.–22.11. | term sheet to the best candidate | list of questions to the lawyer in writing | folder request to 8 companies via law firms, candidate and guild, with AVV | v1: daywork scans (OCR, signature status), invoices, ledger calculation core | **R1 term sheet Fri 20.11.** |
+| 48 | 23.–29.11. | sign insider contract; with I the check catalogue v0 (100–200 questions) | lawyer's opinion (1 h); insurance quote | follow up on folders; fix guild evening January/February with lawyer | v1: pricing LV × K7, mail extraction, evidence package PDF | |
+| 49 | 30.11.–6.12. | trial run of v1 with I on synthetic data and an anonymised project from I | record R4 in writing | book management meetings for CW 50–51 | **v1 freeze Sun 6.12.** (section 15) | **R4 and R1 hard Fri 4.12.** |
+| 50 | 7.–13.12. (Tue public holiday) | start 3 Checks (M rebuilds, I reviews) | have AVVs signed; EU region of the AI models confirmed | collect folders; interim status to the partners | fix errors from real folders; test system with synthetic data only | **R2 folders Fri 11.12.** |
+| 51 | 14.–20.12. | Checks running; finish what is possible before the break | competition update (reebuild, PlanRadar, Capmo) | 5 management meetings by Fri 18.12. | plan index diff, duplicate detection | 5 management meetings |
+| 52–53 | 21.12.–3.1. | no sales meetings; build v1.1 | break | break | v1.1: pre-check from GU perspective on real data, Excel and ÖNORM export, check BMD format, coding form in the tool | |
+| 1 | 4.–10.1. | from Thu 7.1.: deliver Check 1, coding session (with I and B) | prepare trade fair and BAU meetings (acquirer conversations) | offer documents: fixed-price Check, annual desk S/M/L | fixes from Check 1 | |
+| 2 | 11.–17.1. | deliver Checks 2 and 3, coding sessions | legal questions from the Checks to the law firm | offers to design partners after each delivery | key figures evaluation (findings by a–d, hours per Check) | |
+| 3 | 18.–24.1. | evaluate R3, have the figures independently verified | briefly map pre-seed and funding options (aws, Wirtschaftsagentur) | follow-up, signatures | freeze on new features | **R3 money Fri 22.1.** |
+| 4 | 25.–31.1. | prepare final decision (dossier v3) | | incoming payments, letters of intent | | **R5 Fri 29.1., final decision Sun 31.1.** |
 
-**Wenn ein Gate fällt:** Die Kill-Regeln aus Abschnitt 13 gelten sofort, nicht erst am 31.1. Ohne Insider am 4.12. wird nicht weitergebaut.
+**If a gate fails:** The kill rules from section 13 apply immediately, not only on 31.1. Without an insider on 4.12., building stops.
 
 ---
 
-## 15. Was wir bauen: Demo und v1
+## 15. What we build: demo and v1
 
-### 15.1 Grundsätze
+### 15.1 Principles
 
-- **Zwei Stufen, ein Code:** Die Demo ist v1 mit synthetischen Daten und vorberechnetem Rückfall. v1 ist das interne Werkzeug, mit dem M und I echte Checks machen.
-- **v1 hat keinen Kundenzugang.** Der Kunde bekommt einen Bericht (PDF), eine Excel-Datei und die Exportdatei. Das ist das Kuro-Muster „Forward Deployed“: Wir bedienen das Werkzeug selbst und lernen dabei, was Kunden später selbst bedienen.
-- **Architektur nach dem reebuild-Muster** (Screenshot „Wie reebuild funktioniert“):
+- **Two stages, one codebase:** The demo is v1 with synthetic data and a precomputed fallback. v1 is the internal tool with which M and I perform real Checks.
+- **v1 has no customer access.** The customer receives a report (PDF), an Excel file and the export file. This is the Kuro "Forward Deployed" pattern: we operate the tool ourselves and learn in the process what customers will later operate themselves.
+- **Architecture following the reebuild pattern** (screenshot "How reebuild works"):
 
   ```
-  Ordner → [1 Einlesen] → [2 Datensatz pro Dokument, mit Quelle] → [3 Abgleich mit LV, Aufmaß, Regie, Rechnungen, Vertrag] → [4 Prüfen und Freigeben] → Bericht, Listen, Beweispaket, Export
+  Folder → [1 Ingest] → [2 Record per document, with source] → [3 Reconcile with LV, Aufmaß, Regie, invoices, contract] → [4 Review and approve] → Report, lists, evidence package, export
   ```
 
-- **Die KI liefert Fakten mit Quelle, die Rechnung ist Code.** Jede Zahl im Bericht ist anklickbar und führt zum Original (Datei, Seite, Stelle).
-- **Datenschutz:**
-  - Testsystem von Tag 1, nur mit synthetischen Daten;
-  - echte Ordner nur in der EU-Umgebung, getrennt pro Firma;
-  - Löschung nach Vertragsende;
-  - Git-Repository nicht in OneDrive.
+- **The AI supplies facts with sources, the calculation is code.** Every number in the report is clickable and leads to the original (file, page, location).
+- **Data protection:**
+  - test system from day 1, with synthetic data only;
+  - real folders only in the EU environment, separated per company;
+  - deletion after end of contract;
+  - Git repository not in OneDrive.
 
-### 15.2 Demo (synthetisch, bis 31.10. bzw. Hackathon)
+### 15.2 Demo (synthetic, by 31.10. or the hackathon)
 
-**Datensatz:** „Wohnhausanlage Wien 21, Bauplatz B, HKLS-Los, 1,24 Mio. €, fiktiver GU“. Er enthält:
-- ein LV mit 380 Positionen und K7-Blättern;
+**Dataset:** "Residential complex Vienna 21, building plot B, HKLS lot, 1.24 million €, fictitious GU". It contains:
+- an LV with 380 items and K7 sheets;
 - Aufmaß;
-- 16 Regieberichte (11 verrechnet, 3 unterschrieben, aber nicht verrechnet, 2 nicht unterschrieben);
-- 3 Abschlagsrechnungen;
-- 60 Mails;
-- 40 Fotos mit EXIF;
-- Planindizes C, D und E;
-- ein GU-Abzugsschreiben;
-- **[neu]** ein fiktives automatisches GU-Korrekturblatt.
+- 16 daywork reports (11 invoiced, 3 signed but not invoiced, 2 not signed);
+- 3 interim invoices;
+- 60 emails;
+- 40 photos with EXIF;
+- plan indices C, D and E;
+- a GU deduction letter;
+- **[new]** a fictitious automatic GU correction sheet.
 
-**Skript (3 Minuten):**
+**Script (3 minutes):**
 
-| Zeit | Bildschirm | Satz |
+| Time | Screen | Line |
 |---|---|---|
-| 0:00–0:20 | „Schlussrechnung fällig in 9 Tagen“ | „Auftrag 1,24 Mio. € fertig. Bevor die Rechnung rausgeht, schauen wir, was die Firma wirklich verdient hat.“ |
-| 0:20–1:00 | Ordner hineinziehen; Dokumente werden Datensätze, das Ledger füllt sich | „LV, Aufmaß, Regie, Mails, Pläne, Fotos. Gelesen und abgeglichen.“ |
-| 1:00–1:40 | **Jetzt verrechenbar: 27.410 €**; Klick auf eine Mengenüberschreitung: Planindex C→D, Mail „bitte gleich mitmachen“, Foto, 14 × EP plus K7 = 6.384 € | „Kein Streit. Arbeit, die gemacht und nicht verrechnet wurde.“ |
-| 1:40–2:10 | **[neu] Vorprüfung aus GU-Sicht:** 4 Positionen, die der GU kürzen würde, mit fehlendem Beleg | „Euer GU prüft mit Software. Prüft vorher selbst.“ |
-| 2:10–2:40 | Schlussbesprechungs-Blatt mit Untergrenzen; ein Posten „braucht Anwalt“ | „Wenn ihr tauscht, dann aus der vollständigen Liste.“ |
-| 2:40–3:00 | Export; Preis; Insider (nur wenn unterschrieben) | „8–15 Projekte pro Jahr. Keines schließt zu kurz.“ |
+| 0:00–0:20 | "Final invoice due in 9 days" | "Contract of 1.24 million € completed. Before the invoice goes out, we look at what the company really earned." |
+| 0:20–1:00 | drag the folder in; documents become records, the ledger fills up | "LV, Aufmaß, daywork, emails, plans, photos. Read and reconciled." |
+| 1:00–1:40 | **Billable now: 27,410 €**; click on a quantity overrun: plan index C→D, email "please do this at the same time", photo, 14 × unit price plus K7 = 6,384 € | "No dispute. Work that was done and not invoiced." |
+| 1:40–2:10 | **[new] Pre-check from the GU's perspective:** 4 items the GU would cut, with missing evidence | "Your GU checks with software. Check it yourselves first." |
+| 2:10–2:40 | final account meeting sheet with floors; one item "needs a lawyer" | "If you trade, then from the complete list." |
+| 2:40–3:00 | export; price; insider (only if signed) | "8–15 projects per year. None closes short." |
 
-### 15.3 v1: internes Check-Werkzeug (Freeze So 6.12., v1.1 bis 6.1.)
+### 15.3 v1: internal Check tool (freeze Sun 6.12., v1.1 by 6.1.)
 
-| Baustein | Bis | Inhalt |
+| Component | By | Content |
 |---|---|---|
-| Ordner-Import | KW 46 | Dateien hochladen, Typ erkennen, Duplikate und Versionen (Planindex) erkennen |
-| Datensatz pro Dokument | KW 46 | Felder mit Quelle (Datei, Seite, Stelle); manuelle Korrektur durch M/I wird gespeichert |
-| LV und Aufmaß | KW 46 | ÖNORM A 2063 (Spezifikation bei Austrian Standards kaufen, Kosten unbelegt), PDF-LV, Aufmaß-Excel |
-| Regie und Rechnungen | KW 47 | OCR, Unterschriftsstatus, Stunden und Material; Abschlagsrechnungen und Zahlungen |
-| Rechenkern Ledger | KW 47 | deterministisch, mit Tests auf den synthetischen Daten |
-| Bepreisung | KW 48 | LV-Einheitspreis × Menge; K7-Lohnminuten für zusätzliche Mengen |
-| Mails und Pläne | KW 48 | Anweisungen in Mails finden; Planindex-Liste (automatischer Diff in v1.1) |
-| Prüfkatalog v0 | KW 48–49 | 100–200 Prüffragen Elektro/HKLS mit I (Annahme zur Zahl); jede Korrektur wird eine Regel |
-| Ausgaben | KW 49 | Bericht (PDF), drei Listen, Beweispaket pro Posten, Schlussbesprechungs-Blatt, Kodierbogen (a)–(d), Excel |
-| v1.1 | 6.1. | Vorprüfung aus GU-Sicht, ÖNORM-Export, BMD-Format geprüft, Planindex-Diff |
+| Folder import | CW 46 | upload files, detect type, detect duplicates and versions (plan index) |
+| Record per document | CW 46 | fields with source (file, page, location); manual correction by M/I is saved |
+| LV and Aufmaß | CW 46 | ÖNORM A 2063 (buy the specification from Austrian Standards, cost unverified), PDF LV, Aufmaß Excel |
+| Daywork and invoices | CW 47 | OCR, signature status, hours and material; interim invoices and payments |
+| Ledger calculation core | CW 47 | deterministic, with tests on the synthetic data |
+| Pricing | CW 48 | LV unit price × quantity; K7 labour minutes for additional quantities |
+| Emails and plans | CW 48 | find instructions in emails; plan index list (automatic diff in v1.1) |
+| Check catalogue v0 | CW 48–49 | 100–200 check questions electrical/HKLS with I (assumption regarding the number); every correction becomes a rule |
+| Outputs | CW 49 | report (PDF), three lists, evidence package per item, final account meeting sheet, coding form (a)–(d), Excel |
+| v1.1 | 6.1. | pre-check from GU perspective, ÖNORM export, BMD format checked, plan index diff |
 
-**Nicht in v1:**
-- Kundenlogin;
-- Postfach-Anbindung oder Live-Desk;
-- Foto-App;
-- KI-Chat;
-- automatischer Fristenkalender und § 1170b-Tracker (bei Bedarf als Tabelle von Hand);
+**Not in v1:**
+- customer login;
+- mailbox integration or live desk;
+- photo app;
+- AI chat;
+- automatic deadline calendar and § 1170b tracker (if needed as a manual spreadsheet);
 - DWG;
-- GAEB und Deutschland;
+- GAEB and Germany;
 - Kalkül;
-- Bonusabrechnung.
+- bonus billing.
 
-**Messen pro Check:**
-- Stunden M und Stunden I;
-- Seiten und Dokumente;
-- Anteil der Felder, die von Hand korrigiert wurden;
-- gefundene € nach (a) bis (d);
-- Tage bis zur bezahlten Schlussrechnung.
-
----
-
-## 16. Startprompt für einen neuen Chat
-
-> Lies zuerst `_STATUS.md` und `Schlusswerk Dossier v2.md` im Projektordner, komplett, auch Abschnitt 12 „Verworfen“. Wir sind drei Studenten in Wien (Maxi, WU Wien, baut mit KI-Coding-Agenten, plus zwei Co-Founder, keiner mit Bauhintergrund) und bauen Schlusswerk, einen Schlussrechnungs-Desk für österreichische Elektro- und HKLS-Subunternehmer. Das Dossier v2 ist der entschiedene Stand. Schlag nichts aus Abschnitt 12 wieder vor, außer du hast neue Evidenz und sagst das ausdrücklich. Alles mit „(unbelegt)“, „(Annahme)“, S oder A ist ungeprüft. Heute ist [Datum]. Seit dem Dossier ist passiert: [Gate-Stand, Insider, Ordner, Gespräche, Zahlen]. Hilf uns jetzt bei: [Aufgabe, z. B. Woche X aus Abschnitt 14]. Deutsch, direkt, ohne Floskeln. Vertrieb: keine Kaltmails, keine Kaltanrufe (§ 174 TKG).
+**Measure per Check:**
+- hours M and hours I;
+- pages and documents;
+- share of fields corrected by hand;
+- € found by (a) to (d);
+- days until the final invoice is paid.
 
 ---
 
-## 17. Quellen
+## 16. Start prompt for a new chat
 
-**Kuro und reebuild:** vollständige Liste mit Kennzeichnung in `research_notes/Kuro_reebuild_Fakten.md`. Wichtigste Quellen:
+> First read `_STATUS.md` and `Schlusswerk Dossier v2.md` in the project folder, completely, including section 12 "Rejected". We are three students in Vienna (Maxi, WU Wien, builds with AI coding agents, plus two co-founders, none with a construction background) and are building Schlusswerk, a final invoice desk for Austrian electrical and HKLS subcontractors. Dossier v2 is the decided state. Do not propose anything from section 12 again unless you have new evidence and say so explicitly. Everything marked "(unverified)", "(assumption)", S or A is unchecked. Today is [date]. Since the dossier, the following has happened: [gate status, insider, folders, conversations, figures]. Help us now with: [task, e.g. week X from section 14]. German, direct, without filler phrases. Sales: no cold emails, no cold calls (§ 174 TKG).
+
+---
+
+## 17. Sources
+
+**Kuro and reebuild:** complete list with labels in `research_notes/Kuro_reebuild_Fakten.md`. Most important sources:
 
 - Kuro:
-  - [kuro.technology](https://www.kuro.technology), [Referenz Köster](https://www.kuro.technology/referenzen/koester), [Referenz Geiger](https://www.kuro.technology/referenzen/geiger), [About](https://www.kuro.technology/about), [Join us](https://www.kuro.technology/join-us)
-  - Presse: [startbase](https://www.startbase.de/news/10-millionen-euro-finanzierungsrunde-fuer-kuro/), [dealroom](https://dealroom.co/news/157842-kuro-raises-10m-to-build-the-ai-backbone-for-construction-contractors/), [Adlershof 2024](https://www.adlershof.de/en/news/kuro-a-new-start-up-is-breathing-life-into-the-construction-industry)
+  - [kuro.technology](https://www.kuro.technology), [Reference Köster](https://www.kuro.technology/referenzen/koester), [Reference Geiger](https://www.kuro.technology/referenzen/geiger), [About](https://www.kuro.technology/about), [Join us](https://www.kuro.technology/join-us)
+  - Press: [startbase](https://www.startbase.de/news/10-millionen-euro-finanzierungsrunde-fuer-kuro/), [dealroom](https://dealroom.co/news/157842-kuro-raises-10m-to-build-the-ai-backbone-for-construction-contractors/), [Adlershof 2024](https://www.adlershof.de/en/news/kuro-a-new-start-up-is-breathing-life-into-the-construction-industry)
 - reebuild:
   - [reebuild.com](https://www.reebuild.com), [Bauunternehmen](https://www.reebuild.com/bauunternehmen), [Projektentwickler](https://www.reebuild.com/projektentwickler), [Über uns](https://www.reebuild.com/ueber-uns)
-  - Presse: [Trending Topics 2026](https://www.trendingtopics.eu/reebuild-3-millionen-euro-seed/), [Trending Topics 01/2023](https://www.trendingtopics.eu/reebuild-gruender-von-planradar-und-storebox-steigen-in-pre-seed-startup-ein/), [Trending Topics 09/2023](https://www.trendingtopics.eu/reebuild-investment-hansmann-steinberger-angels-proptech)
-  - Stellenanzeigen: [JOIN SDR](https://join.com/companies/reebuild/16366213-sales-development-representative-german-speaking), [JOIN Founders Associate](https://join.com/companies/reebuild/16425146-founders-associate-german-speaking)
+  - Press: [Trending Topics 2026](https://www.trendingtopics.eu/reebuild-3-millionen-euro-seed/), [Trending Topics 01/2023](https://www.trendingtopics.eu/reebuild-gruender-von-planradar-und-storebox-steigen-in-pre-seed-startup-ein/), [Trending Topics 09/2023](https://www.trendingtopics.eu/reebuild-investment-hansmann-steinberger-angels-proptech)
+  - Job ads: [JOIN SDR](https://join.com/companies/reebuild/16366213-sales-development-representative-german-speaking), [JOIN Founders Associate](https://join.com/companies/reebuild/16425146-founders-associate-german-speaking)
 
-**Alle weiteren Quellen** (Recht, Markt, Wettbewerb, Exits) stehen unverändert in v1, Abschnitt 18.
+**All further sources** (law, market, competition, exits) remain unchanged in v1, section 18.

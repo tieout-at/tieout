@@ -1,11 +1,11 @@
 # Knopf
 
-Primär in Tinte, sonst mit Rand; ein Tastenhinweis zeigt die Kurztaste.
+Primary in ink, otherwise with a border; a key hint shows the shortcut.
 
-**Vorlage:** reebuild (Radius 6, Gewicht 500, Primärknopf fast schwarz), Attio (Primärknopf `#242629`), Linear-Triage (Tasten 1/2/3/H).
+**Reference:** reebuild (radius 6, weight 500, primary button almost black), Attio (primary button `#242629`), Linear triage (keys 1/2/3/H).
 
-**Verwenden**
-- `sw-btn--primary` höchstens einmal pro Bereich. Verb zuerst: „Übernehmen“, „Freigeben als Insider“.
-- Größen: `control-h` (32) im Inhalt, `sw-btn--sm` (`tab-h`, 28) in Kopfzeilen und Panel-Köpfen.
-- Rand `field-border` (≥ 3:1). Deaktiviert: `aria-disabled="true"` und Tooltip mit Grund.
-- Kurztasten reagieren nicht mit Strg, Alt oder Cmd und nicht auf gehaltene Tasten.
+**Usage**
+- `sw-btn--primary` at most once per area. Verb first: „Übernehmen“ (accept), „Freigeben als Insider“ (approve as insider).
+- Sizes: `control-h` (32) in content, `sw-btn--sm` (`tab-h`, 28) in headers and panel headers.
+- Border `field-border` (≥ 3:1). Disabled: `aria-disabled="true"` and a tooltip with the reason.
+- Shortcuts do not fire with Ctrl, Alt or Cmd and not on held keys.

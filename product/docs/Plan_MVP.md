@@ -1,76 +1,76 @@
 # Plan: Schlusswerk MVP
 
-Stand: 22.10.2026, angepasst an Dossier v3 am 22.10.2026 (Go von Maxi S. am 22.10.2026). Umfang und Nicht-Liste: `Umfang_v1.md`. Muster: `Inspiration_Muster.md`. Fälle und Beträge: `Demo_Faelle.md`.
+As of: 22.10.2026, adapted to Dossier v3 on 22.10.2026 (go from Maxi S. on 22.10.2026). Scope and exclusion list: `Umfang_v1.md`. Patterns: `Inspiration_Muster.md`. Cases and amounts: `Demo_Faelle.md`.
 
-## Ergebnis
+## Result
 
-Ein internes Prüfwerkzeug, das man wirklich bedienen kann, auf synthetischen Daten. **[geändert 22.10., v3]** Es zeigt den Weg **Firma → Projekt → Anwendung**: Man startet in der Firmenübersicht der fiktiven Haustechnik Beispiel GmbH (8 Projekte), geht in ein Projekt (Wohnhausanlage Wien 21, HKLS-Los, 1,24 Mio. €, fiktiver GU) und dort in die erste Anwendung, die Schlussrechnung. Alle Beträge kommen aus echtem Rechen-Code, und jede Zahl führt zur markierten Stelle im Original. Derselbe Code wird ab KW 46 zu Stufe 0 (v1) mit echten Ordnern.
+An internal review tool that can actually be operated, on synthetic data. **[changed 22.10., v3]** It shows the path **company → project → application**: you start in the company overview of the fictitious Haustechnik Beispiel GmbH (8 projects), go into a project (Wohnhausanlage Wien 21, HVAC and plumbing lot (HKLS-Los), 1,24 Mio. €, fictitious general contractor (GU)) and there into the first application, the final invoice (Schlussrechnung). All amounts come from real calculation code, and every figure leads to the highlighted passage in the original. From KW 46 the same code becomes stage 0 (Stufe 0, v1) with real folders.
 
-Ziele (Termine unverändert): v0.9 bis Sa 31.10.2026 (#glaubandich), v1.0 in KW 45 (Insider-Kandidaten streichen Fehler an, Hackathon), Stufe-0-Freeze So 6.12.2026, v1.1 bis 6.1.2027.
+Targets (dates unchanged): v0.9 by Sat 31.10.2026 (#glaubandich), v1.0 in KW 45 (insider candidates mark errors, hackathon), stage 0 freeze Sun 6.12.2026, v1.1 by 6.1.2027.
 
-**[neu 22.10., v3] Was in welche Version gehört (Dossier v3, 14 und 15.3):**
+**[new 22.10., v3] What belongs in which version (Dossier v3, 14 and 15.3):**
 
-| Version | Inhalt |
+| Version | Content |
 |---|---|
-| v0.9 (Sa 31.10.) | Firmenübersicht, Projekt-Übersicht, Ledger, Beleg-Panel, drei Listen, Zeitachse, WhatsApp-Szene als Mock; vorberechnet |
-| v1.0 (KW 45) | dazu Schlussbesprechungs-Blatt, Vorprüfung aus GU-Sicht, Entwurf der Schlussrechnung, Excel-Export, GU-Historie auf Firmenebene |
+| v0.9 (Sat 31.10.) | Company overview, project overview, ledger, evidence panel, three lists, timeline, WhatsApp scene as mock; precalculated |
+| v1.0 (KW 45) | plus final meeting sheet (Schlussbesprechungs-Blatt), pre-check from the GU perspective (Vorprüfung aus GU-Sicht), final invoice draft, Excel export, GC history at company level |
 
-## Design-Richtung
+## Design direction
 
-- Muster von reebuild, Kuro und Stratos, nicht ihre Optik (Details in `Inspiration_Muster.md`). **[neu 22.10., v3]** Stratos ist das Vorbild für die Navigation Firma → Detail.
-- UI nur aus dem UI-Fundament (Gate 1 entschieden, Gate 2 offen). Hell und dunkel gleichwertig, Desktop zuerst, Handy 390 px lesbar.
-- **[geändert 22.10., v3]** Zwei Wow-Momente laut Demo-Skript v3: der Zuruf (Sprachnachricht wird Eintrag in der Zeitachse) und der Klick auf einen Betrag, der die markierte Stelle im Original öffnet. Der Import-Moment („Ordner wird Ledger“) steht nicht mehr im Skript und rückt nach hinten (optional, Phase 4).
-- **[neu 22.10., v3]** Das Wort „Zwilling“ steht vorerst nicht in der Navigation, weil ungeprüft ist, ob es bei Inhabern trägt (Dossier v3, offene Frage 13). Navigation heißt schlicht „Projekte“, „Auftraggeber“, Projektname. Im Vortrag darf man „Zwilling“ sagen. Später leicht austauschbar.
+- Patterns from reebuild, Kuro and Stratos, not their look (details in `Inspiration_Muster.md`). **[new 22.10., v3]** Stratos is the model for the navigation company → detail.
+- UI only from the UI foundation (gate 1 decided, gate 2 open). Light and dark equally valued, desktop first, phone 390 px readable.
+- **[changed 22.10., v3]** Two wow moments according to demo script v3: the field report (Zuruf: a voice message becomes an entry in the timeline) and the click on an amount that opens the highlighted passage in the original. The import moment ("Ordner wird Ledger", folder becomes ledger) is no longer in the script and moves back (optional, phase 4).
+- **[new 22.10., v3]** For now, the word "Zwilling" (twin) does not appear in the navigation, because it is unverified whether it resonates with owners (Dossier v3, open question 13). Navigation is simply called "Projekte" (projects), "Auftraggeber" (clients), project name. In the pitch, "twin" may be said. Easy to swap later.
 
-## Technik
+## Technology
 
-| Teil | Wahl |
+| Part | Choice |
 |---|---|
 | App | Next.js 16, TypeScript, Tailwind v4, shadcn (Base UI) |
-| Rechenkern | eigenes TypeScript-Modul, Beträge in Cent, Tests mit Vitest |
-| Daten | Generator-Skript (reproduzierbar): PDFs, Aufmaß-Excel, Mails (.eml), Fotos mit EXIF, Lösungsliste. **[neu 22.10., v3]** dazu: Firma mit 8 Projekten und Auftraggebern, 6 Zurufe (Foto, Sprachnachricht als Text-Transkript, Zeitstempel) |
-| Datenmodell | **[neu 22.10., v3]** Ebenen Firma → Auftraggeber (GU) → Projekt → Objekte. Jedes Objekt mit Quelle, Zeitpunkt, Kanal (Ordner, WhatsApp, später Anbindung), Status und bestätigt-von; nichts wird überschrieben (Verlauf). Mitarbeiter nur als Rolle, nie mit Namen oder Leistungsdaten (§ 96a ArbVG) |
-| Dokumentansicht | pdf.js mit Markierung aus den Generator-Koordinaten |
-| Zustand MVP | Freigaben im Browser, „Demo zurücksetzen“; v1: EU-Datenbank pro Firma (ab KW 46) |
-| Hosting | Demo mit synthetischen Daten: Vercel Frankfurt. Echte Daten nur in einer EU-Umgebung, getrennt pro Firma (Wahl offen, Dossier v3 Abschnitt 14). Code in `product/app/` des Team-Repos github.com/schlusswerk/schlusswerk (privat), Änderungen über Branch und Pull Request |
-| KI | Phase 5: Claude liest die synthetischen PDFs, Ergebnis gespeichert, Genauigkeit gegen die Lösungsliste gemessen |
+| Calculation core | own TypeScript module, amounts in cents, tests with Vitest |
+| Data | Generator script (reproducible): PDFs, measurement (Aufmaß) Excel, mails (.eml), photos with EXIF, solution list. **[new 22.10., v3]** plus: company with 8 projects and clients, 6 field reports (photo, voice message as text transcript, timestamp) |
+| Data model | **[new 22.10., v3]** Levels company → client (GU) → project → objects. Every object with source, time, channel (folder, WhatsApp, later integration), status and confirmed-by; nothing is overwritten (history). Employees only as a role, never with names or performance data (§ 96a ArbVG) |
+| Document view | pdf.js with highlighting from the generator coordinates |
+| MVP state | Approvals in the browser, "Demo zurücksetzen" (reset demo); v1: EU database per company (from KW 46) |
+| Hosting | Demo with synthetic data: Vercel Frankfurt. Real data only in an EU environment, separated per company (choice open, Dossier v3 section 14). Code in `product/app/` of the team repo github.com/schlusswerk/schlusswerk (private), changes via branch and pull request |
+| AI | Phase 5: Claude reads the synthetic PDFs, result stored, accuracy measured against the solution list |
 
-## Reihenfolge
+## Sequence
 
-**[geändert 22.10., v3]** Phasen neu geschnitten: Firmenebene, Zurufe und Zeitachse kommen dazu, Vorprüfung und Schlussbesprechung wandern in v1.0.
+**[changed 22.10., v3]** Phases recut: company level, field reports and timeline are added, pre-check and final meeting move to v1.0.
 
-| Phase | Inhalt | Schätzung | Ziel |
+| Phase | Content | Estimate | Target |
 |---|---|---|---|
-| 0 | UI-Fundament; **Gate 2** mit Maxi. Vorher drei fehlende Bauteile aus Referenzen ergänzen: Projektliste mit Ampel, Zeitachse, Zuruf-Ansicht (WhatsApp-Szene) | ½ Tag | erledigt bis auf Gate 2 und die drei Bauteile |
-| 1a | Rechenkern mit Tests (W21) | erledigt | 58/58 Tests |
-| 1b | Lösungsliste v2 (`Demo_Faelle.md`: Firma, 7 weitere Projekte, 6 Zurufe; **erledigt 22.10.**). Datenmodell um Firma, Auftraggeber, Zuruf und Kanal erweitern, ohne die 58 Tests zu brechen. Generator: 7 kleine Projekte, die der Rechenkern rechnet; Zurufe; echte PDFs für alle Dokumente, die in einer Beweiskette vorkommen | 1½ Tage | |
-| 2 | App: Firmenübersicht, Projekt-Übersicht, Ordner mit Belegmatrix, Ledger (380 Positionen), Befunde, Beleg-Panel, zweistufige Freigabe, Zeitachse, WhatsApp-Szene (Mock) | 2½ Tage | **v0.9 Sa 31.10.** |
-| 3 | Anwendung Schlussrechnung vollständig: Vorprüfung aus GU-Sicht, Schlussbesprechungs-Blatt, Entwurf der Schlussrechnung, Excel-Export; GU-Historie auf Firmenebene | 1½ Tage | **v1.0 KW 45** |
-| 4 | Feinschliff, Handy, Deployment; optional Import-Moment; restliche PDFs | 1 Tag | |
-| 5 | Echte KI-Extraktion plus Genauigkeitsmessung | 1 Tag | nach v1.0 |
+| 0 | UI foundation; **gate 2** with Maxi. Before that, add three missing components from references: project list with traffic light, timeline, field report view (WhatsApp scene) | ½ day | done except gate 2 and the three components |
+| 1a | Calculation core with tests (W21) | done | 58/58 tests |
+| 1b | Solution list v2 (`Demo_Faelle.md`: company, 7 other projects, 6 field reports; **done 22.10.**). Extend the data model with company, client, field report and channel without breaking the 58 tests. Generator: 7 small projects calculated by the calculation core; field reports; real PDFs for all documents that appear in a chain of evidence | 1½ days | |
+| 2 | App: company overview, project overview, folder with evidence matrix, ledger (380 positions), findings, evidence panel, two-stage approval, timeline, WhatsApp scene (mock) | 2½ days | **v0.9 Sat 31.10.** |
+| 3 | Final invoice application complete: pre-check from the GU perspective, final meeting sheet, final invoice draft, Excel export; GC history at company level | 1½ days | **v1.0 KW 45** |
+| 4 | Polish, phone, deployment; optional import moment; remaining PDFs | 1 day | |
+| 5 | Real AI extraction plus accuracy measurement | 1 day | after v1.0 |
 
-Danach Stufe 0 nach Dossier v3, 15.4 (Datenmodell KW 45–46, Ordner-Import, LV-Parser, Regie, Bepreisung, Mails, Prüfkatalog, Ausgaben inkl. Kodierbogen mit Quelle des Belegs), Freeze 6.12.
+After that, stage 0 according to Dossier v3, 15.4 (data model KW 45–46, folder import, bill of quantities (LV) parser, daywork (Regie), pricing, mails, review catalogue, outputs incl. coding sheet with source of the evidence), freeze 6.12.
 
-**Zeitbudget (Annahme):** Maxi baut laut v3 höchstens die Hälfte seiner Zeit, solange R1 offen ist. Bis 31.10. sind das etwa 4 Arbeitstage für Phase 0 bis 2 (geschätzt 4½). Wenn es knapp wird, fällt zuerst die WhatsApp-Szene auf eine einfache Bildfolge zurück, nicht die Firmenübersicht.
+**Time budget (Annahme, assumption):** According to v3, Maxi builds at most half of his time while R1 is open. Until 31.10. that is about 4 working days for phases 0 to 2 (estimated 4½). If it gets tight, the WhatsApp scene falls back to a simple image sequence first, not the company overview.
 
-**Bau-Aufteilung:** Laut v3 macht Co-Founder A die synthetischen Demo-Daten (Firma mit mehreren Projekten, Zurufe). Vorschlag für die Sonntagsrunde 25.10.: A schreibt die Inhalte (Projektnamen, Zuruf-Texte, GU-Historie, Plausibilität), die Zahlen entstehen im Generator im Repo. Sonst entstehen zwei Datensätze.
+**Build split:** According to v3, co-founder A creates the synthetic demo data (company with several projects, field reports). Proposal for the Sunday round 25.10.: A writes the content (project names, field report texts, GC history, plausibility), the figures are produced in the generator in the repo. Otherwise two datasets come into existence.
 
-## Prüfen
+## Checks
 
-1. Rechenkern automatisch: alle eingebauten Fälle gefunden, 0 Fehlalarme, jeder Euro cent-genau. **[neu 22.10., v3]** Gilt auch für die 7 weiteren Projekte und die Firmensumme.
-2. Zahlen überall gleich (Firmenübersicht, Projekt, Listen, Blatt, Entwurf, Excel), automatisch.
-3. Typprüfung, Lint, Build.
-4. Echter Browser: 3-Minuten-Skript (**[geändert 22.10.]** Dossier v3, 15.3) mit Stoppuhr, hell/dunkel, 1280/1440 px, 390 px.
-5. Fachliche Plausibilität: Prüfer-Agent als HKLS-Abrechner, danach echte Bau-Menschen (KW 45).
-6. Unabhängiger UI- und Code-Prüfer pro Phase, Befunde selbst nachmessen, vorher/nachher an Maxi.
-7. **[neu 22.10., v3]** Keine Personaldaten: Zurufe und Freigaben zeigen beim Kunden nur Rollen, keine Auswertung pro Person.
+1. Calculation core automatically: all built-in cases found, 0 false alarms, every euro correct to the cent. **[new 22.10., v3]** Also applies to the 7 other projects and the company total.
+2. Figures identical everywhere (company overview, project, lists, sheet, draft, Excel), automatically.
+3. Type check, lint, build.
+4. Real browser: 3-minute script (**[changed 22.10.]** Dossier v3, 15.3) with stopwatch, light/dark, 1280/1440 px, 390 px.
+5. Professional plausibility: reviewer agent as HVAC and plumbing invoicing specialist (HKLS-Abrechner), then real construction people (KW 45).
+6. Independent UI and code reviewer per phase, measure findings ourselves, before/after to Maxi.
+7. **[new 22.10., v3]** No personnel data: field reports and approvals show only roles to the customer, no evaluation per person.
 
-## Stand
+## Status
 
-| Datum | Was |
+| Date | What |
 |---|---|
-| 22.10. | Plan freigegeben; Muster-Katalog, Umfang, Demo-Fälle (nachgerechnet, alle OK) geschrieben; Boards gebaut |
-| 22.10. | Phase 0: Boards A/B/C verworfen (eigener Stil). Neuer Weg: Referenzen messen → Gate 1 (Inter, kühl-neutral, Tinte) → UI-Fundament v1 → Prüfer („Liga nicht erreicht“) → v2 mit allen System-Befunden behoben. Gate 2 offen |
-| 22.10. | Phase 1a fertig: Rechenkern im Repo, 58/58 Tests, alle Fälle cent-genau. Offen: Phase 1b (PDFs), Phase 2 (App) |
-| 22.10. | Dossier v3 eingearbeitet: Firma → Projekt → Anwendung, Firmenübersicht mit 8 Projekten, Zurufe und WhatsApp-Szene, Zeitachse, Entwurf der Schlussrechnung in v1.0, Phasen neu geschnitten. Go von Maxi S. |
-| 22.10. | Lösungsliste v2 geschrieben (Firma, 7 Projekte, 6 Zurufe, GU-Historie), per Skript nachgerechnet, unabhängig geprüft. Nächster Schritt: drei UI-Bauteile, Gate 2 |
+| 22.10. | Plan approved; pattern catalogue, scope, demo cases (recalculated, all OK) written; boards built |
+| 22.10. | Phase 0: boards A/B/C rejected (own style). New approach: measure references → gate 1 (Inter, cool-neutral, ink) → UI foundation v1 → reviewer ("Liga nicht erreicht", league not reached) → v2 with all system findings fixed. Gate 2 open |
+| 22.10. | Phase 1a finished: calculation core in the repo, 58/58 tests, all cases correct to the cent. Open: phase 1b (PDFs), phase 2 (app) |
+| 22.10. | Dossier v3 incorporated: company → project → application, company overview with 8 projects, field reports and WhatsApp scene, timeline, final invoice draft in v1.0, phases recut. Go from Maxi S. |
+| 22.10. | Solution list v2 written (company, 7 projects, 6 field reports, GC history), recalculated by script, independently reviewed. Next step: three UI components, gate 2 |

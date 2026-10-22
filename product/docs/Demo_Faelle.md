@@ -1,263 +1,263 @@
-# Demo-Datensatz: eingebaute Fälle (Lösungsliste v2)
+# Demo dataset: built-in cases (solution list v2)
 
-Stand: 22.10.2026, **v2** nach Dossier v3 (Firma mit 8 Projekten, Zurufe, GU-Historie; Änderungen unten in „Änderungen gegenüber v1“). v1 kam aus der Prüferrunde (Befunde 1–40, „Änderungen gegenüber v0“). **Alles synthetisch und fiktiv.** Diese Liste ist das Ziel für den Generator: Der Rechenkern muss genau diese Fälle finden, mit genau diesen Beträgen und ohne Fehlalarme. Alle Zahlen sind per Skript cent-genau nachgerechnet. Fachlich noch nicht von einem Bau-Menschen geprüft: Annahmen sind mit **(Annahme)** markiert.
+As of: 22.10.2026, **v2** following Dossier v3 (company with 8 projects, field reports (Zurufe), GC history; changes below under "Changes compared to v1"). v1 came from the reviewer round (findings 1–40, "Changes compared to v0"). **Everything is synthetic and fictitious.** This list is the target for the generator: the calculation core must find exactly these cases, with exactly these amounts and without false alarms. All figures have been recalculated to the cent by script. Not yet reviewed professionally by someone from construction: assumptions are marked with **(Annahme)** (assumption).
 
-**Demo-Stichtag:** Donnerstag, 22.10.2026. Die Demo rechnet immer mit diesem „heute“, damit Ampel und Status gleich bleiben.
+**Demo reference date (Demo-Stichtag):** Thursday, 22.10.2026. The demo always calculates with this "today" so that traffic light and status stay the same.
 
-## Firma
+## Company
 
-- **Haustechnik Beispiel GmbH (fiktiv)**, HKLS, Sitz Wien. 8 Projekte im Zwilling, Auftragssummen zusammen 6.560.000,00 €.
-- Auftraggeber (alle fiktiv): **Hochbau Beispiel GmbH** (GU, 4 Projekte), **Generalbau Beispiel AG** (GU, 2 Projekte), **Gemeinde Beispielstadt** (öffentlicher AG, 1 Projekt), **Wohnbau Beispiel GmbH** (Bauträger, 1 Projekt).
-- Mitarbeiter erscheinen nur als Rolle (z. B. „Monteur, Trupp 2“), nie mit Namen.
-- Annahme für die Demo: LV, Aufmaß, Abschlagsrechnungen und Verträge liegen im ERP der Firma; Regieberichte auf Papier (Scan), Mails im Postfach, Zurufe per WhatsApp. Gebraucht für die Spalte „Belegquelle“.
+- **Haustechnik Beispiel GmbH (fiktiv)**, HVAC and plumbing (HKLS), based in Vienna. 8 projects in the twin, contract sums totalling 6.560.000,00 €.
+- Clients (all fictitious): **Hochbau Beispiel GmbH** (general contractor (GU), 4 projects), **Generalbau Beispiel AG** (GU, 2 projects), **Gemeinde Beispielstadt** (public client (öffentlicher AG), 1 project), **Wohnbau Beispiel GmbH** (property developer (Bauträger), 1 project).
+- Employees appear only as a role (e.g. "Monteur, Trupp 2" (fitter, crew 2)), never by name.
+- Assumption for the demo: bill of quantities (LV), measurements (Aufmaß), interim invoices (Abschlagsrechnungen) and contracts are in the company's ERP; daywork reports (Regieberichte) on paper (scan), mails in the mailbox, field reports (Zurufe) via WhatsApp. Needed for the column "Belegquelle" (evidence source).
 
-## Projekt W21 (voll ausgearbeitet)
+## Project W21 (fully worked out)
 
-- **Wohnhausanlage Wien 21, Bauplatz B, HKLS-Los** (Heizung, Klima, Lüftung, Sanitär)
-- Auftragnehmer: **Haustechnik Beispiel GmbH (fiktiv)**; GU: **Hochbau Beispiel GmbH (fiktiv)**. Namen bewusst ohne Ähnlichkeit zu echten Firmen.
-- Bauvertrag vom 14.11.2025; Auftragssumme 1.240.000,00 € netto; ÖNORM B 2110; Einheitspreisvertrag; veränderliche Preise (Preisumrechnung Lohn nach ÖNORM B 2111, Vertrag Pkt. 7.2)
-- **Schlussrechnung legen bis 31.10.2026** (reines Datum, keine Fristbewertung)
-- Regiesätze laut Vertrag: Monteur 62,50 €/h, Helfer 52,00 €/h
-- Mittellohnpreis laut eigener Kalkulation (K3): 56,80 €/h (Annahme)
-- Vertrag: Nachlass 3 % (Pkt. 5.1); Baustrom und Bauwasser 0,8 % (Pkt. 4.6); Deckungsrücklass 5 % auf Abschlagsrechnungen, aufgelöst mit der Schlussrechnung (Pkt. 9.1); Haftrücklass 3 % auf die Schlussrechnung, durch Bankgarantie ablösbar (Pkt. 9.2); Baustelleneinrichtung pauschal (Pkt. 4.3). **Keine** Bauschadensumlage im Vertrag.
-- Abschlagsrechnungen: AR1 31.03.2026 312.400,00 €; AR2 30.06.2026 418.900,00 €; AR3 30.09.2026 356.200,00 €; kumuliert 1.087.500,00 €
-- Ordner: 165 Dokumente, davon 12 Duplikate. Im Repo umgesetzt mit 57 Mails statt 60, dafür Stundenliste KW 23 (für G2), Indexblatt (für J8) und Schlussrechnungs-Entwurf (1.218.640,00 €) als eigene Dokumente. Sonst: 1 Vertrag, 1 LV, 1 K7, 14 Aufmaßblätter, 16 Regieberichte, 3 AR, 3 Zahlungsavisos, 40 Fotos, 24 Pläne (Index C/D/E), 1 GU-Abzugsschreiben, 1 GU-Korrekturblatt AR3. Beim Einlesen 31 Felder von Hand korrigiert.
-- LV: 380 Positionen (LG 22 Heizung 124, LG 24 Sanitär 138, LG 26 Lüftung 82, LG 28 MSR 36).
-- Regieberichte: 16, davon 11 verrechnet, 3 unterschrieben und nicht verrechnet (J2–J4), 2 nicht unterschrieben (O1, O2).
-- Plan H-201: Index C 1 Heizkörper je Top 7–13 (7 Stk), Index D 3 je Top (21 Stk, +14).
-- **Zurufe: 6** per WhatsApp (Kanal WhatsApp, nicht im Ordner; die 165 Dokumente bleiben). Je Zuruf: Sprachnachricht mit Transkript, bei 5 ein Foto, Zeitpunkt aus dem Nachrichtenzeitstempel (Annahme: WhatsApp entfernt EXIF, laut Dossier unbelegt, testen), Absender als Rolle, vom Absender bestätigt. 4 stützen vorhandene Posten, 2 haben keinen Regiebericht (O4, O5).
+- **Wohnhausanlage Wien 21, Bauplatz B, HKLS-Los** (residential complex Vienna 21, building plot B, HVAC and plumbing lot: heating, air conditioning, ventilation, sanitary)
+- Contractor: **Haustechnik Beispiel GmbH (fiktiv)**; GU: **Hochbau Beispiel GmbH (fiktiv)**. Names deliberately chosen without resemblance to real companies.
+- Construction contract (Bauvertrag) dated 14.11.2025; contract sum 1.240.000,00 € net; ÖNORM B 2110; unit price contract (Einheitspreisvertrag); variable prices (price adjustment of labour (Preisumrechnung Lohn) according to ÖNORM B 2111, contract item 7.2)
+- **Submit final invoice (Schlussrechnung) by 31.10.2026** (plain date, no assessment of deadlines)
+- Daywork rates (Regiesätze) per contract: fitter (Monteur) 62,50 €/h, helper (Helfer) 52,00 €/h
+- Average wage price (Mittellohnpreis) according to own calculation (K3): 56,80 €/h (Annahme)
+- Contract: discount (Nachlass) 3 % (item 5.1); site power and site water (Baustrom und Bauwasser) 0,8 % (item 4.6); performance retention (Deckungsrücklass) 5 % on interim invoices, released with the final invoice (item 9.1); warranty retention (Haftrücklass) 3 % on the final invoice, replaceable by bank guarantee (item 9.2); site setup (Baustelleneinrichtung) as a lump sum (item 4.3). **No** construction damage levy (Bauschadensumlage) in the contract.
+- Interim invoices (AR): AR1 31.03.2026 312.400,00 €; AR2 30.06.2026 418.900,00 €; AR3 30.09.2026 356.200,00 €; cumulative 1.087.500,00 €
+- Folder: 165 documents, of which 12 duplicates. Implemented in the repo with 57 mails instead of 60, and in exchange the timesheet for calendar week (KW) 23 (for G2), index sheet (Indexblatt, for J8) and final invoice draft (1.218.640,00 €) as separate documents. Otherwise: 1 contract, 1 LV, 1 K7, 14 measurement sheets (Aufmaßblätter), 16 daywork reports, 3 AR, 3 payment advices (Zahlungsavisos), 40 photos, 24 plans (index C/D/E), 1 GU deduction letter (GU-Abzugsschreiben), 1 GU correction sheet AR3 (GU-Korrekturblatt). During import, 31 fields corrected by hand.
+- LV: 380 positions (LG 22 heating 124, LG 24 sanitary 138, LG 26 ventilation 82, LG 28 MSR (measurement, control and regulation) 36).
+- Daywork reports: 16, of which 11 invoiced, 3 signed and not invoiced (J2–J4), 2 not signed (O1, O2).
+- Plan H-201: index C 1 radiator per unit (Top) 7–13 (7 pcs), index D 3 per unit (21 pcs, +14).
+- **Field reports (Zurufe): 6** via WhatsApp (channel WhatsApp, not in the folder; the 165 documents remain). Per field report: voice message with transcript, a photo in 5 cases, time taken from the message timestamp (Annahme: WhatsApp removes EXIF, unverified according to the dossier, to be tested), sender as a role, confirmed by the sender. 4 support existing items, 2 have no daywork report (O4, O5).
 
-| # | Zeitpunkt | Absender | Inhalt (Transkript, gekürzt) | Foto | Bezug |
+| # | Time | Sender | Content (transcript, shortened) | Photo | Reference |
 |---|---|---|---|---|---|
-| Z1 | 12.05.2026, 15:20 | Monteur, Trupp 1 | „Stiege 2, Top 7 bis 13: die zusätzlichen Heizkörper nach Plan D sind montiert.“ | ja | Beleg für J1 |
-| Z2 | 03.06.2026, 09:05 | Monteur, Trupp 2 | „Steigleitung Stiege 2 kollidiert mit der Lüftung, wir legen um, Bauleitung GU weiß Bescheid.“ | ja | Beleg für J3 (RB-11) |
-| Z3 | 24.06.2026, 13:40 | Monteur, Trupp 2 | „Heizung Stiege 1 nochmal entleert, der Polier vom GU hat es angeschafft.“ | nein | Beleg für O1 (RB-12) |
-| Z4 | 21.07.2026, 07:55 | Monteur, Trupp 1 | „Wasserschaden im Keller vom Fremdgewerk, wir haben notabgesperrt.“ | ja | Beleg für J4 (RB-14) |
-| Z5 | 19.08.2026, 16:10 | Monteur, Trupp 3 | „Top 4 und 5: Waschtischanschlüsse höher gesetzt, Bauleitung GU wollte das. Ein Mann, acht Stunden.“ | ja | **neuer Posten O5** |
-| Z6 | 08.09.2026, 14:30 | Monteur, Trupp 1 | „Stiege 2, Top 9: Heizkörper im Wohnzimmer versetzt, die Küche wurde anders geplant, der Polier vom GU hat es angeschafft. Zwei Mann, sechs Stunden.“ | ja | **neuer Posten O4**, Szene der Demo |
+| Z1 | 12.05.2026, 15:20 | Monteur, Trupp 1 (fitter, crew 1) | "Staircase 2, units 7 to 13: the additional radiators according to plan D are installed." | yes | Evidence for J1 |
+| Z2 | 03.06.2026, 09:05 | Monteur, Trupp 2 (fitter, crew 2) | "Riser in staircase 2 collides with the ventilation, we are rerouting, the GU site management knows." | yes | Evidence for J3 (RB-11) |
+| Z3 | 24.06.2026, 13:40 | Monteur, Trupp 2 (fitter, crew 2) | "Drained the heating in staircase 1 again, the GU's foreman (Polier) ordered it." | no | Evidence for O1 (RB-12) |
+| Z4 | 21.07.2026, 07:55 | Monteur, Trupp 1 (fitter, crew 1) | "Water damage in the basement caused by another trade, we did an emergency shut-off." | yes | Evidence for J4 (RB-14) |
+| Z5 | 19.08.2026, 16:10 | Monteur, Trupp 3 (fitter, crew 3) | "Units 4 and 5: washbasin connections set higher, the GU site management wanted that. One man, eight hours." | yes | **new item O5** |
+| Z6 | 08.09.2026, 14:30 | Monteur, Trupp 1 (fitter, crew 1) | "Staircase 2, unit 9: radiator in the living room relocated, the kitchen was planned differently, the GU's foreman ordered it. Two men, six hours." | yes | **new item O4**, demo scene |
 
-Regeln: „Zwei Mann“ = 1 Monteur + 1 Helfer (Annahme). Zurufe Z1 bis Z4 nennen bewusst keine Stunden, damit G2 (Stundenliste gegen Regiebericht) unverändert bleibt; Z5 (KW 34) und Z6 (KW 37) liegen in Wochen ohne Stundenliste. Der Agent bewertet nichts; ob ein Zuruf abrechenbar ist, entscheidet der Mensch. Wer laut Zuruf angewiesen hat, wird nur erfasst, nicht gewürdigt.
+Rules: "Two men" = 1 fitter + 1 helper (Annahme). Field reports Z1 to Z4 deliberately name no hours, so that G2 (timesheet against daywork report) stays unchanged; Z5 (KW 34) and Z6 (KW 37) fall in weeks without a timesheet. The agent assesses nothing; whether a field report is billable is decided by the human. Who gave the instruction according to the field report is only recorded, not assessed.
 
-**Für den Bau (Datenmodell und Tests):** Zurufe sind eigene Objekte im Projektzwilling (Kanal WhatsApp) mit eigener Kennung, nicht Teil der 165 Ordner-Dokumente. Die Regel „jeder Beleg zeigt auf ein vorhandenes Dokument“ gilt für Ordner-Dokumente **oder** Zurufe. Zuruf-Belege hängen sich an die Befunde J1, J3, J4 und O1 (J1 hat dann 7 statt 6 Belege). O4 und O5 sind keine Regieberichte und zählen nicht in die Regie-Statistik (bleibt 16 / 11 / 3 / 2).
+**For the build (data model and tests):** Field reports are separate objects in the project twin (channel WhatsApp) with their own identifier, not part of the 165 folder documents. The rule "every piece of evidence points to an existing document" applies to folder documents **or** field reports. Field report evidence attaches to findings J1, J3, J4 and O1 (J1 then has 7 instead of 6 pieces of evidence). O4 and O5 are not daywork reports and do not count in the daywork statistics (stays 16 / 11 / 3 / 2).
 
-## Liste 1: jetzt verrechenbar, 8 Posten, 27.410,00 €
+## List 1: billable now, 8 items, 27.410,00 €
 
-| # | Art | Position | Rechenweg | Betrag | Belege |
+| # | Type | Position | Calculation | Amount | Evidence |
 |---|---|---|---|---|---|
-| J1 | Mehrmenge aus Planänderung | 22.04.12B Plattenheizkörper Typ 22, 600/1000, inkl. Ventilunterteil | LV 86 Stk, Aufmaß 100, verrechnet 86 → (100 − 86) × 456,00 € (EP laut LV) | 6.384,00 € | LV Pos. 22.04.12B (Menge und EP); Plan H-201 Index C (12.02.: 1 Heizkörper je Top 7–13) → Index D (03.04.: Räume geteilt, je Top +2 Heizkörper, 7 Tops = 14 Stk); Mail GU-Bauleitung 07.04. „bitte gleich mitmachen“; Foto IMG_2291 (14.05.); Aufmaßblatt AB-12 (18.09., 100 Stk). Plausibilität K7: 1,30 h × 56,80 € = 73,84 € Lohn + 382,16 € Sonstiges = 456,00 € |
-| J2 | Regie | RB-07 Provisorische Bauwasserversorgung umlegen | 18 h Monteur × 62,50 € = 1.125,00 € + Material 186,40 € | 1.311,40 € | RB-07 unterschrieben, in keiner AR |
-| J3 | Regie | RB-11 Steigleitung umlegen (Kollision Lüftung) | 24 h Monteur × 62,50 € = 1.500,00 € + 16 h Helfer × 52,00 € = 832,00 € + Material 642,80 € | 2.974,80 € | RB-11 unterschrieben, in keiner AR |
-| J4 | Regie | RB-14 Notabsperrung nach Wasserschaden Fremdgewerk | 8 h Monteur × 62,50 € = 500,00 € + Material 96,20 € | 596,20 € | RB-14 unterschrieben, in keiner AR |
-| J5 | Mehrmenge | 24.02.05A Mehrschicht-Verbundrohr 20 × 2,0 inkl. Formteile | LV 640 m, Aufmaß 812, verrechnet 640 → 172 m × 18,40 € | 3.164,80 € | Aufmaßblätter AB-04, AB-09 |
-| J6 | Mehrmenge | 22.06.03C Rohrdämmung 13 mm für Rohr 15 mm | LV 900 m, Aufmaß 1.140, verrechnet 900 → 240 m × 9,85 € | 2.364,00 € | Aufmaßblatt AB-10 |
-| J7 | Mehrmenge | 26.03.04A Wickelfalzrohr DN 200 inkl. Formteile | LV 210 m, Aufmaß 286, verrechnet 210 → 76 m × 44,30 € | 3.366,80 € | Aufmaßblatt AB-13; Plan L-310 Index E |
-| J8 | Preisumrechnung | Lohnanteil der Leistungen ab 01.05.2026 (ÖNORM B 2111) | 190.736,84 € × 3,8 % (Index Lohn laut Vertrag Pkt. 7.2) | 7.248,00 € | Vertrag Pkt. 7.2; Indexblatt |
+| J1 | Additional quantity from plan change | 22.04.12B Panel radiator type 22, 600/1000, incl. valve bottom section | LV 86 pcs, measurement 100, invoiced 86 → (100 − 86) × 456,00 € (unit price (EP) per LV) | 6.384,00 € | LV pos. 22.04.12B (quantity and EP); plan H-201 index C (12.02.: 1 radiator per unit 7–13) → index D (03.04.: rooms divided, +2 radiators per unit, 7 units = 14 pcs); mail from GU site management 07.04. "bitte gleich mitmachen" (please do it right away); photo IMG_2291 (14.05.); measurement sheet AB-12 (18.09., 100 pcs). Plausibility check K7: 1,30 h × 56,80 € = 73,84 € labour + 382,16 € other = 456,00 € |
+| J2 | Daywork (Regie) | RB-07 Relocate temporary site water supply | 18 h fitter × 62,50 € = 1.125,00 € + material 186,40 € | 1.311,40 € | RB-07 signed, in no AR |
+| J3 | Daywork | RB-11 Reroute riser (collision with ventilation) | 24 h fitter × 62,50 € = 1.500,00 € + 16 h helper × 52,00 € = 832,00 € + material 642,80 € | 2.974,80 € | RB-11 signed, in no AR |
+| J4 | Daywork | RB-14 Emergency shut-off after water damage by another trade | 8 h fitter × 62,50 € = 500,00 € + material 96,20 € | 596,20 € | RB-14 signed, in no AR |
+| J5 | Additional quantity (Mehrmenge) | 24.02.05A Multilayer composite pipe 20 × 2,0 incl. fittings | LV 640 m, measurement 812, invoiced 640 → 172 m × 18,40 € | 3.164,80 € | Measurement sheets AB-04, AB-09 |
+| J6 | Additional quantity | 22.06.03C Pipe insulation 13 mm for 15 mm pipe | LV 900 m, measurement 1.140, invoiced 900 → 240 m × 9,85 € | 2.364,00 € | Measurement sheet AB-10 |
+| J7 | Additional quantity | 26.03.04A Spiral seam duct DN 200 incl. fittings | LV 210 m, measurement 286, invoiced 210 → 76 m × 44,30 € | 3.366,80 € | Measurement sheet AB-13; plan L-310 index E |
+| J8 | Price adjustment (Preisumrechnung) | Labour share of work from 01.05.2026 (ÖNORM B 2111) | 190.736,84 € × 3,8 % (labour index per contract item 7.2) | 7.248,00 € | Contract item 7.2; index sheet |
 
-Zusammensetzung: 4 Mehrmengen (J1, J5, J6, J7), 3 Regie (J2–J4), 1 Preisumrechnung (J8).
-Summe: 6.384,00 + 1.311,40 + 2.974,80 + 596,20 + 3.164,80 + 2.364,00 + 3.366,80 + 7.248,00 = **27.410,00 €**
+Composition: 4 additional quantities (J1, J5, J6, J7), 3 daywork (J2–J4), 1 price adjustment (J8).
+Total: 6.384,00 + 1.311,40 + 2.974,80 + 596,20 + 3.164,80 + 2.364,00 + 3.366,80 + 7.248,00 = **27.410,00 €**
 
-## Liste 2: angemeldet und offen, 5 Posten, 11.282,30 €
+## List 2: notified and open, 5 items, 11.282,30 €
 
-| # | Art | Inhalt | Rechenweg | Betrag |
+| # | Type | Content | Calculation | Amount |
 |---|---|---|---|---|
-| O1 | Regie | RB-12 zusätzliche Entleerungen Heizung Stiege 1, **nicht unterschrieben** (dazu Zuruf Z3) | 10 h × 62,50 € + 6 h × 52,00 € + Material 84,50 € | 1.021,50 € |
-| O2 | Regie | RB-15 Nachrüstung Strangregulierventile, **nicht unterschrieben** | 8 h × 62,50 € + Material 221,00 € | 721,00 € |
-| O3 | Änderung | Umplanung Technikraum Keller, angemeldet per Mail 14.03., nie bepreist | Untergrenze aus eigener Kalkulation: 96 h × 56,80 € (Mittellohnpreis) + Material 2.900,00 € | 8.352,80 € |
-| O4 | Regie aus Zuruf | Z6: Heizkörper Stiege 2, Top 9 versetzt, angewiesen vom Polier GU; **kein Regiebericht, keine Unterschrift** | 6 h Monteur × 62,50 € + 6 h Helfer × 52,00 € | 687,00 € |
-| O5 | Regie aus Zuruf | Z5: Waschtischanschlüsse Top 4 und 5 höher gesetzt, angewiesen von der Bauleitung GU; **kein Regiebericht, keine Unterschrift** | 8 h Monteur × 62,50 € | 500,00 € |
+| O1 | Daywork | RB-12 additional draining of heating in staircase 1, **not signed** (plus field report Z3) | 10 h × 62,50 € + 6 h × 52,00 € + material 84,50 € | 1.021,50 € |
+| O2 | Daywork | RB-15 retrofitting of balancing valves (Strangregulierventile), **not signed** | 8 h × 62,50 € + material 221,00 € | 721,00 € |
+| O3 | Change | Redesign of basement plant room, notified by mail 14.03., never priced | Lower bound from own calculation: 96 h × 56,80 € (average wage price) + material 2.900,00 € | 8.352,80 € |
+| O4 | Daywork from field report | Z6: radiator in staircase 2, unit 9 relocated, instructed by the GU foreman; **no daywork report, no signature** | 6 h fitter × 62,50 € + 6 h helper × 52,00 € | 687,00 € |
+| O5 | Daywork from field report | Z5: washbasin connections in units 4 and 5 set higher, instructed by the GU site management; **no daywork report, no signature** | 8 h fitter × 62,50 € | 500,00 € |
 
-Summe: 1.021,50 + 721,00 + 8.352,80 + 687,00 + 500,00 = **11.282,30 €**
+Total: 1.021,50 + 721,00 + 8.352,80 + 687,00 + 500,00 = **11.282,30 €**
 
-O4 und O5 ohne Material: Der Zuruf nennt keins, Preise erfindet das Werkzeug nicht. Bepreist mit den Regiesätzen des Vertrags wie O1 und O2 (Annahme). Die Alternative wäre eine Untergrenze aus dem Mittellohnpreis wie bei O3: O4 12 h × 56,80 € = 681,60 €, O5 8 h × 56,80 € = 454,40 €. Frage an den Insider (siehe unten). Abhilfe im Werkzeug: „Regiebericht nachträglich ausstellen und vom GU unterschreiben lassen.“
+O4 and O5 without material: the field report names none, and the tool does not invent prices. Priced with the contract's daywork rates like O1 and O2 (Annahme). The alternative would be a lower bound from the average wage price as for O3: O4 12 h × 56,80 € = 681,60 €, O5 8 h × 56,80 € = 454,40 €. Question for the insider (see below). Remedy in the tool: "Regiebericht nachträglich ausstellen und vom GU unterschreiben lassen." (Issue the daywork report retroactively and have the GU sign it.)
 
-Dazu ein **Hinweis ohne Betrag**: A1 „Terminänderung (Mail GU 02.07.: Fertigstellung Stiege 2 drei Wochen vorziehen)“ → **Braucht Anwalt**. Keine eigene rechtliche Einordnung (kein Wort „Forcierung“ im Produkt).
+Plus a **note without amount**: A1 "Terminänderung (Mail GU 02.07.: Fertigstellung Stiege 2 drei Wochen vorziehen)" (schedule change (GU mail 02.07.: bring forward completion of staircase 2 by three weeks)) → **"Braucht Anwalt"** (needs a lawyer). No legal classification of our own (no word "Forcierung" (acceleration) in the product).
 
-## Liste 3: verloren, 1 Posten, 1.180,00 €
+## List 3: lost, 1 item, 1.180,00 €
 
-| # | Inhalt | Grund | Betrag |
+| # | Content | Reason | Amount |
 |---|---|---|---|
-| V1 | Container der Baustelleneinrichtung zweimal versetzt | laut Vertrag Pkt. 4.3 pauschal enthalten | 1.180,00 € |
+| V1 | Site setup container relocated twice | included in the lump sum per contract item 4.3 | 1.180,00 € |
 
-## Vorprüfung aus GU-Sicht: 4 Positionen mit Kürzungsrisiko, 8.767,50 €
+## Pre-check from the GU perspective (Vorprüfung aus GU-Sicht): 4 positions at risk of deduction, 8.767,50 €
 
-| # | Position | Was der GU kürzen würde | Grund (feste Liste) | Abhilfe | Betrag |
+| # | Position | What the GU would cut | Reason (fixed list) | Remedy | Amount |
 |---|---|---|---|---|---|
-| G1 | 22.04.12B (J1) | Mehrmenge 14 Stk | Aufmaß nicht gegengezeichnet | Plan D und Mail 07.04. beilegen, gemeinsames Aufmaß nachholen | 6.384,00 € |
-| G2 | RB-11 (J3) | 3 h Monteur | Stunden weichen ab (Bericht 24 h, Stundenliste KW 23: 21 h) | Stunden korrigieren oder Stundenliste nachreichen | 187,50 € |
-| G3 | 24.05.02A | Rechenfehler aus AR3 (48 Stk × 112,60 € = 5.404,80 €, verrechnet 5.440,80 €) | Rechenfehler | Fehler korrigieren, sonst wird er in die Schlussrechnung übernommen | 36,00 € |
-| G4 | Z-01 Kernbohrungen DN 100, 12 Stk | ganze Position | außerhalb des LV, kein Nachtrag gefunden | Anweisung suchen oder herausnehmen | 2.160,00 € |
+| G1 | 22.04.12B (J1) | Additional quantity 14 pcs | Measurement not countersigned | Attach plan D and mail 07.04., arrange a joint measurement | 6.384,00 € |
+| G2 | RB-11 (J3) | 3 h fitter | Hours differ (report 24 h, timesheet KW 23: 21 h) | Correct the hours or submit the timesheet | 187,50 € |
+| G3 | 24.05.02A | Calculation error from AR3 (48 pcs × 112,60 € = 5.404,80 €, invoiced 5.440,80 €) | Calculation error | Correct the error, otherwise it will be carried over into the final invoice | 36,00 € |
+| G4 | Z-01 Core drilling DN 100, 12 pcs | entire position | outside the LV, no change order found | Look for the instruction or remove it | 2.160,00 € |
 
-Summe: **8.767,50 €**. Davon **bereits in AR3 gekürzt**: G3 und G4, zusammen **2.196,00 €** (fiktives GU-Korrekturblatt AR3). Die Vorprüfung erkennt beide (2 von 2) und findet 2 weitere (G1, G2). Die Vorprüfung **überschneidet sich** mit Liste 1 (G1 = J1, G2 ⊂ J3); nie addieren.
+Total: **8.767,50 €**. Of which **already cut in AR3**: G3 and G4, together **2.196,00 €** (fictitious GU correction sheet AR3). The pre-check detects both (2 of 2) and finds 2 more (G1, G2). The pre-check **overlaps** with list 1 (G1 = J1, G2 ⊂ J3); never add them up.
 
-**Hinweise ohne Betrag** (neutral, keine rechtliche Bewertung): Mengenänderung über 20 % bei J5 (+26,9 %), J6 (+26,7 %), J7 (+36,2 %): „Der GU kann hier einen neuen Einheitspreis prüfen.“ (Annahme zur ÖNORM-B-2110-Regel, mit Insider bestätigen.)
+**Notes without amount** (neutral, no legal assessment): quantity change over 20 % for J5 (+26,9 %), J6 (+26,7 %), J7 (+36,2 %): "Der GU kann hier einen neuen Einheitspreis prüfen." (The GU may examine a new unit price here.) (Annahme regarding the ÖNORM B 2110 rule, to be confirmed with the insider.)
 
-## Schlussrechnung (Entwurf) mit Prüfkaskade (Muster reebuild R-A)
+## Final invoice (draft) with review cascade (pattern reebuild R-A)
 
-| Zeile | Satz | Quelle | Prüfung | Betrag |
+| Line | Rate | Source | Check | Amount |
 |---|---|---|---|---|
-| Leistungssumme laut Entwurf, **inkl. Liste 1 (27.410,00 €)** | | eigener Entwurf | | 1.246.050,00 € |
-| Nachlass | 3,00 % | Vertrag Pkt. 5.1 | laut Vertrag | −37.381,50 € |
-| Summe nach Nachlass | | | | 1.208.668,50 € |
-| Baustrom und Bauwasser | 0,80 % | GU-Abzugsschreiben | laut Vertrag Pkt. 4.6 | −9.669,35 € |
-| Bauschadensumlage | 0,50 % | GU-Abzugsschreiben | **Abzug ohne Vertragspunkt** | −6.043,34 € |
-| Betrag vor Einbehalten | | | | 1.192.955,81 € |
-| Haftrücklass (durch Bankgarantie ablösbar) | 3,00 % | Vertrag Pkt. 9.2 | laut Vertrag | −35.788,67 € |
-| Schlussrechnungsbetrag vor Abzug der Zahlungen | | | | 1.157.167,14 € |
-| Zahlungen auf AR1–AR3 | | Zahlungsavisos | | −987.106,25 € |
-| **Restforderung** | | | | **170.060,89 €** |
+| Total work value per draft, **incl. list 1 (27.410,00 €)** | | own draft | | 1.246.050,00 € |
+| Discount (Nachlass) | 3,00 % | Contract item 5.1 | per contract | −37.381,50 € |
+| Total after discount | | | | 1.208.668,50 € |
+| Site power and site water | 0,80 % | GU deduction letter | per contract item 4.6 | −9.669,35 € |
+| Construction damage levy (Bauschadensumlage) | 0,50 % | GU deduction letter | **deduction without contract item** | −6.043,34 € |
+| Amount before retentions | | | | 1.192.955,81 € |
+| Warranty retention (Haftrücklass, replaceable by bank guarantee) | 3,00 % | Contract item 9.2 | per contract | −35.788,67 € |
+| Final invoice amount before deduction of payments | | | | 1.157.167,14 € |
+| Payments on AR1–AR3 | | Payment advices | | −987.106,25 € |
+| **Remaining balance (Restforderung)** | | | | **170.060,89 €** |
 
-Zahlungen (Rechenregel je AR, Prozente jeweils auf die Zwischensumme, kaufmännisch auf Cent gerundet): (AR − Kürzung laut Korrekturblatt) − 3 % Nachlass − 0,8 % Baustrom − 0,5 % Bauschaden − 5 % Deckungsrücklass.
+Payments (calculation rule per AR, percentages each applied to the subtotal, commercially rounded to the cent): (AR − cut per correction sheet) − 3 % discount − 0,8 % site power − 0,5 % construction damage − 5 % performance retention.
 
-| AR | Betrag | Kürzung | Nachlass | Baustrom | Bauschaden | Deckungsrücklass | Zahlung |
+| AR | Amount | Cut | Discount | Site power | Construction damage | Performance retention | Payment |
 |---|---|---|---|---|---|---|---|
 | AR1 | 312.400,00 | 0,00 | 9.372,00 | 2.424,22 | 1.515,14 | 14.954,43 | 284.134,21 |
 | AR2 | 418.900,00 | 0,00 | 12.567,00 | 3.250,66 | 2.031,67 | 20.052,53 | 380.998,14 |
 | AR3 | 356.200,00 | 2.196,00 | 10.620,12 | 2.747,07 | 1.716,92 | 16.945,99 | 321.973,90 |
-| Summe | | | | | | | **987.106,25** |
+| Total | | | | | | | **987.106,25** |
 
-## Belegquelle je Posten (W21, für Kodierbogen und Leithypothese)
+## Evidence source per item (W21, for coding sheet and lead hypothesis)
 
-Quelle des Belegs nach Dossier v3, 15.5. „Beleg“ heißt hier Nachweis der **Leistung**, nicht des Preises (Regiesätze und Einheitspreise kommen immer aus Vertrag und LV). „Nur außerhalb ERP“ heißt: kein Leistungsnachweis aus LV, Aufmaß, Rechnung oder Vertrag (Annahme oben unter „Firma“).
+Source of the evidence according to Dossier v3, 15.5. "Evidence" here means proof of the **work performed**, not of the price (daywork rates and unit prices always come from contract and LV). "Only outside ERP" means: no proof of work from LV, measurement, invoice or contract (assumption above under "Company").
 
-| Posten | Belegquellen | Nur außerhalb ERP |
+| Item | Evidence sources | Only outside ERP |
 |---|---|---|
-| J1 | Datei (LV, Plan C/D, Aufmaß AB-12), Mail, Foto, WhatsApp (Z1) | nein |
-| J2 | Papier (RB-07) | ja |
-| J3 | Papier (RB-11), WhatsApp (Z2) | ja |
-| J4 | Papier (RB-14), WhatsApp (Z4) | ja |
-| J5, J6 | Datei (Aufmaß) | nein |
-| J7 | Datei (Aufmaß, Plan L-310 E) | nein |
-| J8 | Datei (Vertrag, Indexblatt) | nein |
-| O1 | Papier (RB-12), WhatsApp (Z3) | ja |
-| O2 | Papier (RB-15) | ja |
-| O3 | Mail | ja |
-| O4, O5 | nur WhatsApp (Z6, Z5) | ja |
+| J1 | File (LV, plan C/D, measurement AB-12), mail, photo, WhatsApp (Z1) | no |
+| J2 | Paper (RB-07) | yes |
+| J3 | Paper (RB-11), WhatsApp (Z2) | yes |
+| J4 | Paper (RB-14), WhatsApp (Z4) | yes |
+| J5, J6 | File (measurement) | no |
+| J7 | File (measurement, plan L-310 E) | no |
+| J8 | File (contract, index sheet) | no |
+| O1 | Paper (RB-12), WhatsApp (Z3) | yes |
+| O2 | Paper (RB-15) | yes |
+| O3 | Mail | yes |
+| O4, O5 | WhatsApp only (Z6, Z5) | yes |
 
-Nur außerhalb ERP: J2 + J3 + J4 + Liste 2 = 1.311,40 + 2.974,80 + 596,20 + 11.282,30 = **16.164,70 €**. Nach Betrag sind das 41,8 % von Liste 1 und 2 (38.692,30 €), nach Anzahl 8 von 13 Posten (61,5 %). **Synthetisch, kein Beleg für die Leithypothese.** Die echte Zahl misst erst R3.
+Only outside ERP: J2 + J3 + J4 + list 2 = 1.311,40 + 2.974,80 + 596,20 + 11.282,30 = **16.164,70 €**. By amount, that is 41,8 % of lists 1 and 2 (38.692,30 €), by count 8 of 13 items (61,5 %). **Synthetic, no evidence for the lead hypothesis.** The real figure is only measured by R3.
 
-## Die 7 weiteren Projekte
+## The 7 other projects
 
-Klein, aber echte Datensätze: Der Rechenkern rechnet ihre Beträge wie bei W21. Keine von Hand gesetzten Summen.
+Small, but real datasets: the calculation core calculates their amounts as for W21. No sums set by hand.
 
-**Regel für laufende Projekte (ohne Schlussrechnungs-Entwurf):** erbracht gegen Abschlagsrechnungen. Ein Befund entsteht nur für Leistung, deren Aufmaßblatt oder Regiebericht **vor dem Datum der letzten Abschlagsrechnung** liegt und in keiner AR steht. Das gilt für beide Listen. Neuere Leistung ist normal und kommt in die nächste AR, sie ist kein Befund (Annahme, mit dem Insider prüfen). Unterschriebene Regie → Liste 1, nicht unterschriebene → Liste 2, wie bei W21. Neue Befundart „erbracht, nicht verrechnet“ für Mengen, die unter der LV-Menge bleiben.
+**Rule for ongoing projects (without final invoice draft):** work performed against interim invoices. A finding arises only for work whose measurement sheet or daywork report is dated **before the date of the last interim invoice** and is in no AR. This applies to both lists. Newer work is normal and goes into the next AR, it is not a finding (Annahme, to be checked with the insider). Signed daywork → list 1, unsigned → list 2, as for W21. New finding type "performed, not invoiced" (erbracht, nicht verrechnet) for quantities that stay below the LV quantity.
 
-**Was das Werkzeug für P2 bis P5 zeigt:** Übersicht, Ledger und Befunde. Vorprüfung und Kaskade nur bei W21 (Annahme für die Demo). P2 bis P8 haben alle Aufmaßblätter gegengezeichnet und keine Korrekturblätter zu offenen AR.
+**What the tool shows for P2 to P5:** overview, ledger and findings. Pre-check and cascade only for W21 (Annahme for the demo). P2 to P8 have all measurement sheets countersigned and no correction sheets for open ARs.
 
-| # | Projekt | Auftraggeber | Auftragssumme | Status | Datum | Jetzt verrechenbar | Angemeldet und offen | Ampel |
+| # | Project | Client | Contract sum | Status | Date | Billable now | Notified and open | Traffic light |
 |---|---|---|---|---|---|---|---|---|
-| W21 | Wohnhausanlage Wien 21, Bauplatz B, HKLS-Los | Hochbau Beispiel | 1.240.000,00 € | Schlussrechnung vorbereiten | legen bis 31.10.2026 | 27.410,00 € | 11.282,30 € | rot |
-| P2 | Wohnhausanlage Wien 22, Bauteil 3, HKLS | Hochbau Beispiel | 860.000,00 € | in Ausführung | letzte AR 30.09.2026 | 3.100,70 € | 250,00 € | gelb |
-| P3 | Bürogebäude Wien 3, Umbau 4. bis 6. OG, HKLS | Generalbau Beispiel | 410.000,00 € | Schlussrechnung vorbereiten | legen bis 04.12.2026 | 3.063,00 € | 0,00 € | gelb |
-| P4 | Volksschule Beispielstadt, Zubau, HKLS | Gemeinde Beispielstadt | 690.000,00 € | in Ausführung | letzte AR 30.09.2026 | 694,40 € | 0,00 € | gelb |
-| P5 | Pflegewohnhaus Beispielstadt, Sanierung Trakt B | Wohnbau Beispiel | 520.000,00 € | in Ausführung | letzte AR 30.09.2026 | 0,00 € | 0,00 € | grün |
-| P6 | Reihenhausanlage Wien 23, HKLS | Hochbau Beispiel | 340.000,00 € | Schlussrechnung gelegt | gelegt 15.09.2026 | – | – | grau |
-| P7 | Wohnhausanlage Wien 10, Bauplatz A, HKLS | Hochbau Beispiel | 1.020.000,00 € | abgeschlossen | Schlusszahlung 18.02.2026 | – | – | grau |
-| P8 | Hotel Wien 2, Haustechnik Neubau | Generalbau Beispiel | 1.480.000,00 € | abgeschlossen | Schlusszahlung 12.09.2025 | – | – | grau |
-| | **Summe offene Projekte** (W21 bis P5, 5 Projekte) | | 3.720.000,00 € | | | **34.268,10 €** | **11.532,30 €** | |
-| | **Summe alle Projekte** (8) | | 6.560.000,00 € | | | | | |
+| W21 | Wohnhausanlage Wien 21, Bauplatz B, HKLS-Los | Hochbau Beispiel | 1.240.000,00 € | Preparing final invoice | submit by 31.10.2026 | 27.410,00 € | 11.282,30 € | red |
+| P2 | Wohnhausanlage Wien 22, Bauteil 3, HKLS | Hochbau Beispiel | 860.000,00 € | in execution | last AR 30.09.2026 | 3.100,70 € | 250,00 € | yellow |
+| P3 | Bürogebäude Wien 3, Umbau 4. bis 6. OG, HKLS | Generalbau Beispiel | 410.000,00 € | Preparing final invoice | submit by 04.12.2026 | 3.063,00 € | 0,00 € | yellow |
+| P4 | Volksschule Beispielstadt, Zubau, HKLS | Gemeinde Beispielstadt | 690.000,00 € | in execution | last AR 30.09.2026 | 694,40 € | 0,00 € | yellow |
+| P5 | Pflegewohnhaus Beispielstadt, Sanierung Trakt B | Wohnbau Beispiel | 520.000,00 € | in execution | last AR 30.09.2026 | 0,00 € | 0,00 € | green |
+| P6 | Reihenhausanlage Wien 23, HKLS | Hochbau Beispiel | 340.000,00 € | Final invoice submitted | submitted 15.09.2026 | – | – | grey |
+| P7 | Wohnhausanlage Wien 10, Bauplatz A, HKLS | Hochbau Beispiel | 1.020.000,00 € | completed | final payment 18.02.2026 | – | – | grey |
+| P8 | Hotel Wien 2, Haustechnik Neubau | Generalbau Beispiel | 1.480.000,00 € | completed | final payment 12.09.2025 | – | – | grey |
+| | **Total open projects** (W21 to P5, 5 projects) | | 3.720.000,00 € | | | **34.268,10 €** | **11.532,30 €** | |
+| | **Total all projects** (8) | | 6.560.000,00 € | | | | | |
 
-Die Firmenübersicht zeigt **„jetzt verrechenbar“ (34.268,10 €) als Hauptzahl** und „angemeldet und offen“ (11.532,30 €) getrennt daneben, nie zusammengezählt. Das Dossier sagt dazu „offen verrechenbar“; im Werkzeug bleiben die beiden Listenbegriffe aus dem Projekt, damit Firma und Projekt dieselben Wörter haben.
+The company overview shows **"jetzt verrechenbar" (billable now, 34.268,10 €) as the main figure** and "angemeldet und offen" (notified and open, 11.532,30 €) separately next to it, never added together. The dossier calls this "offen verrechenbar" (open billable); in the tool, the two list terms from the project are kept so that company and project use the same words.
 
-**Ampel (feste Regel, nur Status, nie Akzentfarbe):** rot = Schlussrechnung legen bis höchstens 21 Tage nach dem Demo-Stichtag **und** jetzt + offen > 0; gelb = jetzt + offen > 0; grün = nichts offen; grau = Schlussrechnung gelegt oder abgeschlossen. Angezeigt wird das Datum, kein Countdown.
+**Traffic light (fixed rule, status only, never accent colour):** red = final invoice to be submitted no later than 21 days after the demo reference date **and** now + open > 0; yellow = now + open > 0; green = nothing open; grey = final invoice submitted or completed. The date is displayed, not a countdown.
 
-**Fälle je Projekt:**
+**Cases per project:**
 
-| Projekt | # | Art | Inhalt | Rechenweg | Betrag | Liste |
+| Project | # | Type | Content | Calculation | Amount | List |
 |---|---|---|---|---|---|---|
-| P2 | P2-J1 | Regie | RB-03 Provisorische Heizung Stiege A, 11.06.2026, unterschrieben, in keiner AR | 12 h × 62,50 € + 12 h × 52,00 € + Material 214,30 € | 1.588,30 € | jetzt |
-| P2 | P2-J2 | Regie | RB-05 Leitungen umgelegt wegen Fremdgewerk, 27.08.2026, unterschrieben, in keiner AR | 6 h × 62,50 € + Material 38,90 € | 413,90 € | jetzt |
-| P2 | P2-J3 | erbracht, nicht verrechnet | 24.02.04A Mehrschicht-Verbundrohr 16 × 2,0: LV 600 m, Aufmaß bis AB-04 (31.08.) 520 m, in AR1 bis AR3 (31.03., 30.06., 30.09.) zusammen 455 m | 65 m × 16,90 € | 1.098,50 € | jetzt |
-| P2 | P2-O1 | Regie | RB-06 Spülung Heizkreis Stiege B, 10.09.2026, **nicht unterschrieben** | 4 h × 62,50 € | 250,00 € | offen |
-| P3 | P3-J1 | Mehrmenge | 22.03.06A Kupferrohr 22 × 1,0: LV 180 m, Aufmaß 236 m, Entwurf 180 m | 56 m × 21,40 € | 1.198,40 € | jetzt |
-| P3 | P3-J2 | Regie | RB-02 Demontage Altanlage 5. OG, 18.08.2026, unterschrieben, nicht im Entwurf | 16 h × 64,00 € + 8 h × 53,50 € + Material 412,60 € | 1.864,60 € | jetzt |
-| P4 | P4-J1 | Regie | RB-04 Provisorische Wasserversorgung Container, 15.07.2026, unterschrieben, in keiner AR | 10 h × 59,80 € + Material 96,40 € | 694,40 € | jetzt |
+| P2 | P2-J1 | Daywork | RB-03 Temporary heating staircase A, 11.06.2026, signed, in no AR | 12 h × 62,50 € + 12 h × 52,00 € + material 214,30 € | 1.588,30 € | now |
+| P2 | P2-J2 | Daywork | RB-05 Pipes rerouted because of another trade, 27.08.2026, signed, in no AR | 6 h × 62,50 € + material 38,90 € | 413,90 € | now |
+| P2 | P2-J3 | performed, not invoiced | 24.02.04A Multilayer composite pipe 16 × 2,0: LV 600 m, measurement up to AB-04 (31.08.) 520 m, in AR1 to AR3 (31.03., 30.06., 30.09.) together 455 m | 65 m × 16,90 € | 1.098,50 € | now |
+| P2 | P2-O1 | Daywork | RB-06 Flushing heating circuit staircase B, 10.09.2026, **not signed** | 4 h × 62,50 € | 250,00 € | open |
+| P3 | P3-J1 | Additional quantity | 22.03.06A Copper pipe 22 × 1,0: LV 180 m, measurement 236 m, draft 180 m | 56 m × 21,40 € | 1.198,40 € | now |
+| P3 | P3-J2 | Daywork | RB-02 Dismantling of old system 5th floor, 18.08.2026, signed, not in the draft | 16 h × 64,00 € + 8 h × 53,50 € + material 412,60 € | 1.864,60 € | now |
+| P4 | P4-J1 | Daywork | RB-04 Temporary water supply for container, 15.07.2026, signed, in no AR | 10 h × 59,80 € + material 96,40 € | 694,40 € | now |
 
-Regiesätze laut Vertrag: Hochbau Beispiel 62,50 / 52,00 €/h (wie W21), Generalbau Beispiel 64,00 / 53,50 €/h, Gemeinde Beispielstadt 59,80 / 49,90 €/h, Wohnbau Beispiel 61,00 / 51,00 €/h (Monteur / Helfer).
+Daywork rates per contract: Hochbau Beispiel 62,50 / 52,00 €/h (as W21), Generalbau Beispiel 64,00 / 53,50 €/h, Gemeinde Beispielstadt 59,80 / 49,90 €/h, Wohnbau Beispiel 61,00 / 51,00 €/h (fitter / helper).
 
-**Hinweis ohne Betrag:** P3-J1 Mengenänderung +31,1 % (56 von 180 m): „Der GU kann hier einen neuen Einheitspreis prüfen.“ (gleiche Regel wie J5 bis J7).
+**Note without amount:** P3-J1 quantity change +31,1 % (56 of 180 m): "Der GU kann hier einen neuen Einheitspreis prüfen." (The GU may examine a new unit price here.) (same rule as J5 to J7).
 
-**Gegenproben (dürfen nichts finden):** P2: Aufmaßblatt AB-05 vom 15.10.2026 (nach der letzten AR) nicht in einer AR; RB-01, RB-02, RB-04 in AR verrechnet. P3: RB-01 in AR1. P4: RB-05 vom 08.10.2026, unterschrieben, nach der letzten AR, nicht verrechnet. P5: alles erbrachte vor dem 30.09. in AR1 bis AR3. P6 bis P8: kein Abgleich (Schlussrechnung gelegt bzw. abgeschlossen).
+**Counter-checks (must find nothing):** P2: measurement sheet AB-05 dated 15.10.2026 (after the last AR) not in an AR; RB-01, RB-02, RB-04 invoiced in an AR. P3: RB-01 in AR1. P4: RB-05 dated 08.10.2026, signed, after the last AR, not invoiced. P5: all work performed before 30.09. in AR1 to AR3. P6 to P8: no reconciliation (final invoice submitted or completed).
 
-Kontrolle: P2 1.588,30 + 413,90 + 1.098,50 = 3.100,70 €; P3 1.198,40 + 1.864,60 = 3.063,00 €; Firma 27.410,00 + 3.100,70 + 3.063,00 + 694,40 = 34.268,10 €; offen 11.282,30 + 250,00 = 11.532,30 €.
+Check: P2 1.588,30 + 413,90 + 1.098,50 = 3.100,70 €; P3 1.198,40 + 1.864,60 = 3.063,00 €; company 27.410,00 + 3.100,70 + 3.063,00 + 694,40 = 34.268,10 €; open 11.282,30 + 250,00 = 11.532,30 €.
 
-## GU-Historie (Firmenebene, ab v1.0)
+## GC history (GU-Historie, company level, from v1.0)
 
-Aus den abgeschlossenen Projekten, den Korrekturblättern und den Zahlungen. Nur Fakten, keine Bewertung des Auftraggebers. Getrennt nach **Kürzungen** (der GU streicht Positionen) und **Abzügen ohne Vertragspunkt** (der GU zieht einen Satz ab, den der Vertrag nicht nennt).
+From the completed projects, the correction sheets and the payments. Facts only, no assessment of the client. Separated into **cuts** (Kürzungen: the GU strikes positions) and **deductions without contract item** (Abzüge ohne Vertragspunkt: the GU deducts a rate that the contract does not mention).
 
-**Feste Liste der Gründe** (erweitert gegenüber v1; Schlüssel im Code, gleicher Wortlaut in Vorprüfung, Kaskade und Historie): Aufmaß nicht gegengezeichnet · Stunden weichen ab · Rechenfehler · außerhalb des LV, kein Nachtrag gefunden · **neu:** Regie nicht unterschrieben · Menge ohne Aufmaß-Nachweis · Abzug ohne Vertragspunkt. Die Kaskade zeigt bei der Bauschadensumlage künftig ebenfalls „Abzug ohne Vertragspunkt“ statt „kein Vertragspunkt gefunden“.
+**Fixed list of reasons** (extended compared to v1; key in the code, same wording in pre-check, cascade and history): measurement not countersigned (Aufmaß nicht gegengezeichnet) · hours differ (Stunden weichen ab) · calculation error (Rechenfehler) · outside the LV, no change order found (außerhalb des LV, kein Nachtrag gefunden) · **new:** daywork not signed (Regie nicht unterschrieben) · quantity without measurement proof (Menge ohne Aufmaß-Nachweis) · deduction without contract item (Abzug ohne Vertragspunkt). For the construction damage levy, the cascade will in future also show "Abzug ohne Vertragspunkt" (deduction without contract item) instead of "kein Vertragspunkt gefunden" (no contract item found).
 
-**Kürzungen:**
+**Cuts:**
 
-| Auftraggeber | Projekt | Rechnung | Position | Grund | Betrag |
+| Client | Project | Invoice | Position | Reason | Amount |
 |---|---|---|---|---|---|
-| Hochbau Beispiel | P7 | Schlussrechnung 20.11.2025 | 22.04.10A Plattenheizkörper Typ 11, 12 Stk × 351,00 € | Aufmaß nicht gegengezeichnet | 4.212,00 € |
-| Hochbau Beispiel | P7 | Schlussrechnung 20.11.2025 | 24.05.03A | Rechenfehler | 118,40 € |
-| Hochbau Beispiel | W21 | AR3 30.09.2026 | 24.05.02A | Rechenfehler | 36,00 € |
-| Hochbau Beispiel | W21 | AR3 30.09.2026 | Z-01 Kernbohrungen | außerhalb des LV, kein Nachtrag gefunden | 2.160,00 € |
-| Generalbau Beispiel | P8 | Schlussrechnung 30.06.2025 | RB-09 | Regie nicht unterschrieben | 2.310,00 € |
-| Generalbau Beispiel | P8 | Schlussrechnung 30.06.2025 | 26.02.03A | Menge ohne Aufmaß-Nachweis | 1.640,50 € |
+| Hochbau Beispiel | P7 | Final invoice 20.11.2025 | 22.04.10A Panel radiator type 11, 12 pcs × 351,00 € | Measurement not countersigned | 4.212,00 € |
+| Hochbau Beispiel | P7 | Final invoice 20.11.2025 | 24.05.03A | Calculation error | 118,40 € |
+| Hochbau Beispiel | W21 | AR3 30.09.2026 | 24.05.02A | Calculation error | 36,00 € |
+| Hochbau Beispiel | W21 | AR3 30.09.2026 | Z-01 Core drilling | outside the LV, no change order found | 2.160,00 € |
+| Generalbau Beispiel | P8 | Final invoice 30.06.2025 | RB-09 | Daywork not signed | 2.310,00 € |
+| Generalbau Beispiel | P8 | Final invoice 30.06.2025 | 26.02.03A | Quantity without measurement proof | 1.640,50 € |
 
-**Abzüge ohne Vertragspunkt:**
+**Deductions without contract item:**
 
-| Auftraggeber | Projekt | Rechnung | Abzug | Betrag |
+| Client | Project | Invoice | Deduction | Amount |
 |---|---|---|---|---|
-| Hochbau Beispiel | P7 | Schlussrechnung 20.11.2025 | Bauschadensumlage 0,5 % auf 1.046.300,00 € | 5.231,50 € |
-| Hochbau Beispiel | W21 | Zahlungen auf AR1 bis AR3 | Bauschadensumlage 0,5 %: 1.515,14 + 2.031,67 + 1.716,92 € | 5.263,73 € |
+| Hochbau Beispiel | P7 | Final invoice 20.11.2025 | Construction damage levy 0,5 % on 1.046.300,00 € | 5.231,50 € |
+| Hochbau Beispiel | W21 | Payments on AR1 to AR3 | Construction damage levy 0,5 %: 1.515,14 + 2.031,67 + 1.716,92 € | 5.263,73 € |
 
-**Je Auftraggeber:**
+**Per client:**
 
-| Auftraggeber | Projekte (abgeschlossen) | Kürzungen | Abzüge ohne Vertragspunkt | Nachträge akzeptiert | Tage bis Schlusszahlung |
+| Client | Projects (completed) | Cuts | Deductions without contract item | Change orders accepted | Days until final payment |
 |---|---|---|---|---|---|
-| Hochbau Beispiel | 4 (1) | 6.526,40 € in 4 Zeilen, 2 Projekten | 10.495,23 € in 2 Projekten | 2 von 3, 11.760,00 von 14.240,00 € (82,6 %) | 90 (P7: gelegt 20.11.2025, bezahlt 18.02.2026) |
-| Generalbau Beispiel | 2 (1) | 3.950,50 € in 2 Zeilen, 1 Projekt | – | 2 von 2, 18.260,00 € | 74 (P8: gelegt 30.06.2025, bezahlt 12.09.2025) |
+| Hochbau Beispiel | 4 (1) | 6.526,40 € in 4 rows, 2 projects | 10.495,23 € in 2 projects | 2 of 3, 11.760,00 of 14.240,00 € (82,6 %) | 90 (P7: submitted 20.11.2025, paid 18.02.2026) |
+| Generalbau Beispiel | 2 (1) | 3.950,50 € in 2 rows, 1 project | – | 2 of 2, 18.260,00 € | 74 (P8: submitted 30.06.2025, paid 12.09.2025) |
 | Gemeinde Beispielstadt | 1 (0) | – | – | – | – |
 | Wohnbau Beispiel | 1 (0) | – | – | – | – |
 
-Nachträge: Hochbau P7 N1 zusätzliche Heizkreisverteiler 8.640,00 € (akzeptiert), N2 Umlegung Grundleitung 3.120,00 € (akzeptiert), N3 Mehraufwand Winterbau 2.480,00 € (abgelehnt); Generalbau P8 N1 Zusatzkühlung Serverraum 12.400,00 €, N2 Mehrmengen Sanitär Wellness 5.860,00 € (beide akzeptiert).
+Change orders (Nachträge): Hochbau P7 N1 additional heating circuit manifolds 8.640,00 € (accepted), N2 rerouting of underground drainage pipe (Grundleitung) 3.120,00 € (accepted), N3 additional winter construction costs 2.480,00 € (rejected); Generalbau P8 N1 additional cooling for server room 12.400,00 €, N2 additional sanitary quantities for wellness area 5.860,00 € (both accepted).
 
-**Brücke zur Demo (Skript 2:35):** Bei W21 zeigt die Vorprüfung G1 „Aufmaß nicht gegengezeichnet“ (6.384,00 €) und die Kaskade die Bauschadensumlage „Abzug ohne Vertragspunkt“ (6.043,34 €). Beides hat Hochbau Beispiel in P7 schon gekürzt bzw. abgezogen. Abgleich über den Schlüssel des Grundes, nicht über den Text. Hinweis im Werkzeug, neutral: „Gleicher Grund bei diesem Auftraggeber schon in P7.“
+**Bridge to the demo (script 2:35):** For W21, the pre-check shows G1 "measurement not countersigned" (6.384,00 €) and the cascade shows the construction damage levy "deduction without contract item" (6.043,34 €). Hochbau Beispiel already cut or deducted both in P7. Matching via the key of the reason, not via the text. Note in the tool, neutral: "Gleicher Grund bei diesem Auftraggeber schon in P7." (Same reason with this client already in P7.)
 
-## WhatsApp-Szene (Mock, Skript 0:25 bis 0:55)
+## WhatsApp scene (mock, script 0:25 to 0:55)
 
-Vorgespielt, keine echte Nummer, kein echter Agent. Grundlage ist Zuruf Z6. Der Chat zeigt sichtbar das Datum 08.09.2026 („so kam der Zuruf herein“), damit Chat, Zeitachse und Demo-Stichtag zusammenpassen.
+Acted out, no real number, no real agent. Based on field report Z6. The chat visibly shows the date 08.09.2026 ("this is how the field report came in"), so that chat, timeline and demo reference date match.
 
-Gesprochener Satz im Skript (0:25, HKLS-Fassung statt „Steckdose“): „Heizkörper in Top 9 versetzt, weil der Polier es wollte. Zwanzig Sekunden, kein Regiebericht später.“
+Spoken sentence in the script (0:25, HVAC and plumbing version instead of "Steckdose" (power socket)): "Radiator in unit 9 relocated because the foreman wanted it. Twenty seconds, no daywork report later."
 
-1. Monteur, Trupp 1 schickt ein Foto (Heizkörper an der neuen Stelle) und eine Sprachnachricht (Transkript wie Z6).
-2. Agent antwortet: „Danke. So habe ich es verstanden: Wohnhausanlage Wien 21, Stiege 2, Top 9. Heizkörper im Wohnzimmer versetzt, keine LV-Position. 6 h Monteur, 6 h Helfer. Angewiesen vom Polier GU. Regiebericht: keiner. Stimmt das?“ Knöpfe: „Ja“, „Ändern“.
-3. Tipp auf „Ja“. Agent: „Gespeichert.“
-4. In der Zeitachse erscheint der Eintrag „08.09.2026, 14:30 · Zuruf · Heizkörper Top 9 versetzt“ mit Foto und Transkript, in Liste 2 der Posten O4 (687,00 €).
+1. Fitter, crew 1 sends a photo (radiator in the new place) and a voice message (transcript as Z6).
+2. Agent replies: "Thanks. This is how I understood it: Wohnhausanlage Wien 21, staircase 2, unit 9. Radiator in the living room relocated, no LV position. 6 h fitter, 6 h helper. Instructed by the GU foreman. Daywork report: none. Is that correct?" Buttons: "Ja" (Yes), "Ändern" (Change).
+3. Tap on "Ja". Agent: "Gespeichert." (Saved.)
+4. The timeline shows the entry "08.09.2026, 14:30 · Zuruf · Heizkörper Top 9 versetzt" (field report · radiator unit 9 relocated) with photo and transcript, and list 2 shows item O4 (687,00 €).
 
-Der Agent nennt keinen Betrag und sagt nicht, ob etwas abrechenbar ist. Den Betrag zeigt erst das Werkzeug, aus dem Rechenkern.
+The agent names no amount and does not say whether something is billable. The amount is only shown by the tool, from the calculation core.
 
-## Fragen an den Insider (KW 45)
+## Questions for the insider (KW 45)
 
-1. Zuruf-Regie ohne Bericht (O4, O5): mit Regiesatz (687,00 / 500,00 €) oder als Untergrenze aus dem Mittellohnpreis (681,60 / 454,40 €)?
-2. Heizkörper versetzen, 2 Mann × 6 h: realistisch oder Obergrenze? (Prüfer: haltbar, wenn Anbindeleitung umgelegt, Strang entleert und gefüllt, Druckprobe; sonst eher 4 bis 8 Mannstunden.)
-3. Taugt „der Polier vom GU hat es angeschafft“ als Grundlage, um einen Regiebericht nachträglich unterschreiben zu lassen?
-4. Laufende Projekte: Ist „nur Leistung vor der letzten AR“ die richtige Grenze für „vergessen“?
-5. Aus v1 weiter offen: Montagezeit J1, Mittellohnpreis 56,80 €/h, 20-%-Regel, Positions-Kurztexte.
+1. Field report daywork without a report (O4, O5): with the daywork rate (687,00 / 500,00 €) or as a lower bound from the average wage price (681,60 / 454,40 €)?
+2. Relocating a radiator, 2 men × 6 h: realistic or an upper bound? (Reviewer: defensible if the connection pipe is rerouted, the riser drained and refilled, pressure test; otherwise rather 4 to 8 man-hours.)
+3. Is "der Polier vom GU hat es angeschafft" (the GU's foreman ordered it) a sufficient basis for having a daywork report signed retroactively?
+4. Ongoing projects: is "only work before the last AR" the right boundary for "forgotten"?
+5. Still open from v1: installation time J1, average wage price 56,80 €/h, 20 % rule, short texts of positions.
 
-## Änderungen gegenüber v1 (Dossier v3, 22.10.)
+## Changes compared to v1 (Dossier v3, 22.10.)
 
-- Neu: Firma mit 8 Projekten und 4 Auftraggebern, Demo-Stichtag 22.10.2026, Ampel-Regel. Firmenübersicht zeigt „jetzt verrechenbar“ und „angemeldet und offen“ getrennt.
-- Neu: 6 Zurufe in W21; 4 als zusätzliche Belege (J1, J3, J4, O1), 2 als neue Posten O4 (687,00 €) und O5 (500,00 €). **Liste 2: 10.095,30 → 11.282,30 €; W21 hat 15 statt 13 Befunde.** Beträge von Liste 1 (27.410,00 €), Liste 3, Vorprüfung (8.767,50 €) und Kaskade (Restforderung 170.060,89 €) bleiben gleich. Die Belegliste von J1, J3, J4 und O1 wächst um den Zuruf (J1: 7 statt 6 Belege).
-- Neu: 7 kleine Projekte mit 7 Fällen, einem Hinweis (P3 +31,1 %) und Gegenproben; Regel für laufende Projekte (nur Leistung vor der letzten AR, für beide Listen).
-- Neu: GU-Historie, getrennt nach Kürzungen und Abzügen ohne Vertragspunkt, mit Nachträgen und Tagen bis zur Schlusszahlung. Feste Liste der Gründe um 3 erweitert; die Kaskade nennt die Bauschadensumlage jetzt „Abzug ohne Vertragspunkt“.
-- Neu: Belegquelle je Posten (Kodierung „Quelle des Belegs“), Anteil nach Betrag und nach Anzahl.
-- Neu: Text der WhatsApp-Szene und Skript-Satz, HKLS statt „Steckdose“ (Dossier v3 nannte ein Elektro-Beispiel).
-- Neu: Fragen an den Insider.
-- Für den Bau (Phase 1b): Lösungsdatei und Tests im Code stehen noch auf v1 (`loesung.ts`: offen 10.095,30 €, 13 Befunde) und werden mit Datenmodell und Generator auf v2 gezogen.
-- Unabhängig geprüft am 22.10.: alle Zahlen bestätigt, 15 Hinweise zu Regeln und Begriffen eingearbeitet.
+- New: company with 8 projects and 4 clients, demo reference date 22.10.2026, traffic light rule. Company overview shows "jetzt verrechenbar" (billable now) and "angemeldet und offen" (notified and open) separately.
+- New: 6 field reports in W21; 4 as additional evidence (J1, J3, J4, O1), 2 as new items O4 (687,00 €) and O5 (500,00 €). **List 2: 10.095,30 → 11.282,30 €; W21 has 15 instead of 13 findings.** Amounts of list 1 (27.410,00 €), list 3, pre-check (8.767,50 €) and cascade (remaining balance 170.060,89 €) stay the same. The evidence list of J1, J3, J4 and O1 grows by the field report (J1: 7 instead of 6 pieces of evidence).
+- New: 7 small projects with 7 cases, one note (P3 +31,1 %) and counter-checks; rule for ongoing projects (only work before the last AR, for both lists).
+- New: GC history, separated into cuts and deductions without contract item, with change orders and days until final payment. Fixed list of reasons extended by 3; the cascade now calls the construction damage levy "Abzug ohne Vertragspunkt" (deduction without contract item).
+- New: evidence source per item (coding "Quelle des Belegs" (source of the evidence)), share by amount and by count.
+- New: text of the WhatsApp scene and script sentence, HVAC and plumbing instead of "Steckdose" (Dossier v3 named an electrical example).
+- New: questions for the insider.
+- For the build (phase 1b): solution file and tests in the code are still on v1 (`loesung.ts`: open 10.095,30 €, 13 findings) and will be brought to v2 together with data model and generator.
+- Independently reviewed on 22.10.: all figures confirmed, 15 notes on rules and terms incorporated.
 
-## Änderungen gegenüber v0 (Prüferrunde 22.10.)
+## Changes compared to v0 (reviewer round 22.10.)
 
-- Firmennamen neu (alt „Strabel Bau“ klang nach STRABAG).
-- Einheitspreis J1 mit Quelle LV; K7 nur Plausibilität mit eigenem Mittellohnpreis 56,80 €/h und 1,30 h Montage statt 2,40 h. O3 neu bepreist mit dem Mittellohnpreis: 8.900,00 → 8.352,80 €, Liste 2: 10.642,50 → **10.095,30 €**.
-- J1 als „Mehrmenge aus Planänderung“, Plan C belegt nur Top 7–13 (die 86 Stk belegt das LV).
-- „Preisgleitung“ → „Preisumrechnung (ÖNORM B 2111)“; Verbundrohr 20 × 2,0 statt DN 20.
-- „Schlussrechnung fällig“ → „Schlussrechnung legen bis“.
-- A1 ohne „Forcierung“, als „Terminänderung (Mail GU)“.
-- Kaskade: Abzüge mit Quelle GU-Abzugsschreiben, Zahlungen und Restforderung ergänzt, Leistungssumme inkl. Liste 1 ausdrücklich.
-- Vorprüfung: „mit Kürzungsrisiko“, davon 2 bereits in AR3 gekürzt; Hinweise „Mengenänderung über 20 %“ ohne Betrag.
-- Ergänzt: Vertragsdatum 14.11.2025, 31 von Hand korrigierte Felder, Deckungsrücklass 5 %.
+- New company names (old "Strabel Bau" sounded like STRABAG).
+- Unit price J1 with source LV; K7 only as a plausibility check with own average wage price 56,80 €/h and 1,30 h installation instead of 2,40 h. O3 newly priced with the average wage price: 8.900,00 → 8.352,80 €, list 2: 10.642,50 → **10.095,30 €**.
+- J1 as "additional quantity from plan change", plan C only evidences units 7–13 (the 86 pcs are evidenced by the LV).
+- "Preisgleitung" (price escalation) → "Preisumrechnung (ÖNORM B 2111)" (price adjustment); composite pipe 20 × 2,0 instead of DN 20.
+- "Schlussrechnung fällig" (final invoice due) → "Schlussrechnung legen bis" (submit final invoice by).
+- A1 without "Forcierung" (acceleration), as "Terminänderung (Mail GU)" (schedule change (GU mail)).
+- Cascade: deductions with source GU deduction letter, payments and remaining balance added, total work value explicitly incl. list 1.
+- Pre-check: "mit Kürzungsrisiko" (at risk of deduction), of which 2 already cut in AR3; notes "Mengenänderung über 20 %" (quantity change over 20 %) without amount.
+- Added: contract date 14.11.2025, 31 fields corrected by hand, performance retention 5 %.

@@ -1,251 +1,251 @@
-# Lernen: Fehler und die Regeln daraus
+# Learning: mistakes and the rules derived from them (Lernen)
 
-Jeder Fehler des Agenten oder unserer Arbeit kommt hierher, neuester oben. Vor jeder Änderung am Agenten lesen. Eine Regel gilt erst, wenn ein Szenario oder Test sie absichert.
+Every mistake made by the agent or in our work goes here, newest at the top. Read before every change to the agent. A rule only counts once a scenario or test secures it.
 
-## Vorlage
+## Template (Vorlage)
 
 ```
-### JJJJ-MM-TT: kurzer Titel
-- Was: was ist passiert (Szenario-ID, Zitat aus dem Gespräch)
-- Ursache: warum (Prompt, Code, Daten, Testaufbau)
-- Regel: was ab jetzt gilt
-- Abgesichert durch: szenarien/<id>.json, Test
-- Status: offen | behoben | beobachten
+### YYYY-MM-DD: short title
+- What: what happened (scenario ID, quote from the conversation)
+- Cause: why (prompt, code, data, test setup)
+- Rule: what applies from now on
+- Secured by: szenarien/<id>.json, test
+- Status: open | fixed | observe
 ```
 
-## Einträge
+## Entries (Einträge)
 
-### 2026-10-22: Einbau in die App
+### 2026-10-22: Integration into the app
 
-### L21 Knöpfe und Zusammenfassung kannten nur die vorläufige Firma
-- Was: Mit der Firma der App (`opts.firma`) zeigten die Projektknöpfe die Kennung statt des Namens („p2-w22-bt3“), und die KI-Antwort wurde gegen die vorläufige Liste in `firma.ts` geprüft (Projekte der App wären verworfen worden).
-- Ursache: `texte.ts` (`projektKnopf`, `punktZeilen`) und `verstehen.ts` (`alsEintrag`, Kandidaten) riefen `projektNachId` ohne Firma auf, also immer mit `FIRMA`.
-- Regel: Jede Stelle, die ein Projekt nachschlägt, bekommt die Firma übergeben. `FIRMA` ist nur noch Vorgabe für Tests und Lernschleife.
-- Abgesichert durch: Test „nutzt die übergebene Firma für Knöpfe und Zusammenfassung“ in `agent.test.ts`.
-- Status: behoben.
+### L21 Buttons and summary only knew the provisional company
+- What: With the app's company (`opts.firma`), the project buttons showed the identifier instead of the name („p2-w22-bt3“), and the AI answer was checked against the provisional list in `firma.ts` (projects of the app would have been discarded).
+- Cause: `texte.ts` (`projektKnopf`, `punktZeilen`) and `verstehen.ts` (`alsEintrag`, candidates) called `projektNachId` without a company, so always with `FIRMA`.
+- Rule: Every place that looks up a project is passed the company. `FIRMA` is now only the default for tests and the learning loop.
+- Secured by: test „nutzt die übergebene Firma für Knöpfe und Zusammenfassung“ in `agent.test.ts`.
+- Status: fixed.
 
-### 2026-10-22: Aus dem eigenen Test im Simulator
+### 2026-10-22: From our own test in the simulator
 
-### L19 Quelle zeigte alle Nachrichten des Gesprächs
-- Was: Bei zwei Punkten (Heizkörper, Steckdose) standen in beiden Karten alle Nachrichten als Quelle.
-- Regel: Quelle pro Eintrag sind nur die Nachrichten, aus denen seine Angaben stammen. Fotos zählen dazu, wenn es nur einen Punkt gibt.
-- Abgesichert durch: Test „Quelle pro Eintrag“ in `abnahme1.test.ts`.
-- Status: behoben, noch kein Lernschleifen-Lauf danach.
+### L19 Source showed all messages of the conversation
+- What: With two items (radiator, socket), both cards listed all messages as the source.
+- Rule: The source per entry is only the messages its details come from. Photos count if there is only one item.
+- Secured by: test „Quelle pro Eintrag“ in `abnahme1.test.ts`.
+- Status: fixed, no learning loop run since.
 
-### L20 Zusammenfassung mit mehreren Punkten schwer lesbar
-- Was: Jeder Punkt in einer langen Zeile, auf dem Handy mühsam.
-- Regel: Pro Punkt eine Kopfzeile „1) Baustelle, Ort“, darunter eingerückte Unterzeilen.
-- Abgesichert durch: gleicher Test.
-- Status: behoben, noch kein Lernschleifen-Lauf danach.
+### L20 Summary with several items hard to read
+- What: Each item on one long line, tedious on a phone.
+- Rule: Per item a header line „1) Baustelle, Ort“ (1) site, location), with indented sub-lines below.
+- Secured by: same test.
+- Status: fixed, no learning loop run since.
 
-### 2026-10-22: Lauf 4 (50 sichtbar) und Abnahme 2, beide über das Claude-Abo
-- Lauf 4: 47/50, 0 erfunden, Felder 99 %, Rückfragen Max 2, Note Median 4,5 / Min 2. Antwortzeit über das Abo Median 9,5 s (über die API 2,5 s, nicht vergleichbar).
-- Abnahme 2 (frisches Holdout `h2-*`, nie gelesen): 9/10, 0 erfunden, Felder 98 %, Rückfragen Max 1, Note Median 4 / Min 2. Durchgefallen: laerm_bruchstueck. Note 2 trotz bestandener Prüfungen: mehrere_punkte. Abnahme 1 war 6/10.
-- Noch nicht ausgewertet (würde das Holdout verbrauchen): die beiden schwachen Holdout-Fälle. Nächster Schritt: Subagent wertet abstrakt aus.
+### 2026-10-22: Run 4 (50 visible) and acceptance 2, both via the Claude subscription
+- Run 4: 47/50, 0 invented, fields 99 %, follow-up questions max 2, rating median 4.5 / min 2. Response time via the subscription median 9.5 s (via the API 2.5 s, not comparable).
+- Acceptance 2 (fresh holdout `h2-*`, never read): 9/10, 0 invented, fields 98 %, follow-up questions max 1, rating median 4 / min 2. Failed: laerm_bruchstueck. Rating 2 despite passed checks: mehrere_punkte. Acceptance 1 was 6/10.
+- Not yet analysed (would use up the holdout): the two weak holdout cases. Next step: a subagent analyses them abstractly.
 
-### L17 Bündel: erster Teil der Meldung verloren
-- Was: `z-korrektur-top-und-stunden-nach-passt`. Sprachnachricht (Heizkörper) und Sekunden später Text (Bodenablauf) kamen als Bündel. Die KI las den Text als Nachtrag zu einem leeren Zuruf und gab nur den Bodenablauf zurück. Der Heizkörper fehlte in der Zusammenfassung, wurde mit „Passt“ bestätigt und war weg. Die spätere Korrektur fand ihn nicht und fing von vorn an. Note 2.
-- Ursache: Die erste Nachricht des Bündels stand im Prompt als „offener Zuruf“ mit leerem Stand.
-- Regel: Gebündelte Nachrichten stehen im Prompt als „NEUE NACHRICHTEN … zusammen EINE Meldung, kein Punkt darf fehlen“. Code als Sicherheitsnetz: Ohne offenen Zuruf wird „Nachtrag“ bei einem Bündel zu „zuruf“.
-- Abgesichert durch: Test L17 in `abnahme1.test.ts`, Szenario `z-korrektur-top-und-stunden-nach-passt` (jetzt Note 4).
-- Status: behoben.
+### L17 Bundle: first part of the report lost
+- What: `z-korrektur-top-und-stunden-nach-passt`. A voice note (radiator) and seconds later a text (floor drain) arrived as a bundle. The AI read the text as an addendum to an empty Zuruf and only returned the floor drain. The radiator was missing from the summary, was confirmed with „Passt“ and was gone. The later correction did not find it and started from scratch. Rating 2.
+- Cause: The first message of the bundle appeared in the prompt as an "open Zuruf" („offener Zuruf“) with an empty state.
+- Rule: Bundled messages appear in the prompt as „NEUE NACHRICHTEN … zusammen EINE Meldung, kein Punkt darf fehlen“ (NEW MESSAGES … together ONE report, no item may be missing). Code as a safety net: without an open Zuruf, „Nachtrag“ (addendum) in a bundle becomes „zuruf“.
+- Secured by: test L17 in `abnahme1.test.ts`, scenario `z-korrektur-top-und-stunden-nach-passt` (now rating 4).
+- Status: fixed.
 
-### L18 Reparatur ohne Anweiser, obwohl der Chef geschickt hat
-- Was: `abgeschlossen-tulln-verteiler`. Die Regel „bei Reparatur bleibt angewiesenVon leer“ war zu grob; „da Chef hat mi gschickt“ ging verloren. Dazu klang „War es wirklich Tulln?“ misstrauisch.
-- Regel: Bei Reparatur nur ohne Anweisung leer; wer den Einsatz geschickt hat, ist der Anweiser. Frage jetzt „Tulln ist bei uns schon abgeschlossen. Trotzdem dort eintragen?“ mit „Ja, dort“.
-- Status: behoben.
+### L18 Repair without instructing person, although the boss sent him
+- What: `abgeschlossen-tulln-verteiler`. The rule "for repairs angewiesenVon stays empty" was too coarse; „da Chef hat mi gschickt“ (the boss sent me) got lost. In addition, „War es wirklich Tulln?“ (Was it really Tulln?) sounded suspicious.
+- Rule: For repairs, empty only when there is no instruction; whoever sent him on the job is the instructing person. The question is now „Tulln ist bei uns schon abgeschlossen. Trotzdem dort eintragen?“ (Tulln is already closed on our side. Enter it there anyway?) with „Ja, dort“ (Yes, there).
+- Status: fixed.
 
-### Szenario-Erwartung zu streng
-- `m-erstkontakt-zweite-meldung-statt-ja` erwartete beim zweiten Punkt 1 Person, die Nachricht sagt das aber nicht. Der Agent hat richtig nicht geraten. Erwartung entfernt. Lehre: Bei durchgefallenen Szenarien immer zuerst prüfen, ob die Erwartung selbst stimmt.
+### Scenario expectation too strict
+- `m-erstkontakt-zweite-meldung-statt-ja` expected 1 person for the second item, but the message does not say so. The agent correctly did not guess. Expectation removed. Lesson: with failed scenarios, always first check whether the expectation itself is correct.
 
-### 2026-10-22: Muster aus der ersten Abnahme (A1 bis A12)
+### 2026-10-22: Patterns from the first acceptance (A1 bis A12)
 
-Ein Subagent hat die Holdout-Gespräche gelesen und nur abstrakte Muster gemeldet. Die Hauptsitzung kennt die Inhalte nicht. Das alte Holdout ist danach verbraucht und liegt jetzt bei den sichtbaren Szenarien (`z-*.json`); ein frisches Holdout (`zurueck/h2-*.json`) ist geschrieben. Zu jedem Muster gibt es ein neues sichtbares Szenario (`m-*.json`) und einen Test in `abnahme1.test.ts`.
+A subagent read the holdout conversations and only reported abstract patterns. The main session does not know the contents. The old holdout is used up after that and now sits with the visible scenarios (`z-*.json`); a fresh holdout (`zurueck/h2-*.json`) has been written. For every pattern there is a new visible scenario (`m-*.json`) and a test in `abnahme1.test.ts`.
 
-### A1 und A2 Datenverlust bei Nachtrag und Korrektur (schwerster Fehler bisher)
-- Was: Ein Nachtrag zu einer offenen Zusammenfassung wurde als neue Meldung behandelt, der erste Punkt still als unbestätigt abgelegt. Eine spätere Korrektur griff nur auf „zuletzt gespeichert“ zu, ordnete nach Position zu und überschrieb dadurch einen anderen, bestätigten Punkt. Der war danach weg. Der gemeldete „erfundene Wert“ war nur ein Folgefehler.
-- Ursache: `neuer_zuruf` legte ab und begann neu; `korrektur_gespeichert` kannte nur `letzteGespeicherte` und `ersetzt[i]` nach Index.
-- Regel: Nachträge werden angehängt, nie still abgelegt. Ohne neue Baustelle gilt die des offenen Zurufs. Korrekturen nennen die Id des gespeicherten Eintrags (`bezugId`), Kontext sind alle eigenen Einträge der letzten 3 Stunden. Unbeteiligte bleiben unverändert, nicht mehr belegte Angaben bleiben wie gespeichert. Korrekturen stellen keine Rückfragen.
-- Abgesichert durch: Tests A1, A2; Szenarien `m-nachtrag-zweiter-punkt-favoriten`, `m-korrektur-erster-von-zwei-moedling`.
-- Status: behoben, in Lauf 4 und Abnahme 2 prüfen.
+### A1 and A2 Data loss on addendum and correction (most serious bug so far)
+- What: An addendum to an open summary was treated as a new report, and the first item was silently filed as unconfirmed. A later correction only accessed "last saved", matched by position and thereby overwrote another, confirmed item. That item was gone afterwards. The reported "invented value" was only a follow-on error.
+- Cause: `neuer_zuruf` filed and started anew; `korrektur_gespeichert` only knew `letzteGespeicherte` and `ersetzt[i]` by index.
+- Rule: Addenda are appended, never silently filed. Without a new site, the site of the open Zuruf applies. Corrections name the id of the saved entry (`bezugId`), context is all of the sender's own entries from the last 3 hours. Uninvolved entries stay unchanged, details no longer supported stay as saved. Corrections do not ask follow-up questions.
+- Secured by: tests A1, A2; scenarios `m-nachtrag-zweiter-punkt-favoriten`, `m-korrektur-erster-von-zwei-moedling`.
+- Status: fixed, check in run 4 and acceptance 2.
 
-### A3 Teilkorrektur löscht den Rest des Felds
-- Regel (Prompt): Eine Korrektur ersetzt nur den genannten Teil („Top 19 statt 17“ lässt die Stiege stehen).
-- Abgesichert durch: Szenario `m-korrektur-nur-top-stiege-bleibt`.
-- Status: beobachten.
+### A3 Partial correction deletes the rest of the field
+- Rule (prompt): A correction only replaces the part named („Top 19 statt 17“, "Top 19 instead of 17", leaves the staircase as it is).
+- Secured by: scenario `m-korrektur-nur-top-stiege-bleibt`.
+- Status: observe.
 
-### A4 Rückfragen-Grenze pro Entwurf statt pro Absender
-- Was: Mit mehreren Entwürfen in einem Gespräch kamen 4 Rückfragen.
-- Regel: Höchstens 2 Rückfragen pro Absender in 30 Minuten.
-- Abgesichert durch: Test A4.
-- Status: behoben.
+### A4 Follow-up question limit per draft instead of per sender
+- What: With several drafts in one conversation, 4 follow-up questions came.
+- Rule: At most 2 follow-up questions per sender within 30 minutes.
+- Secured by: test A4.
+- Status: fixed.
 
-### A5 Ungeduld überhört
-- Regel: Die KI meldet `ungeduldig`. Danach keine Rückfrage mehr, sofort zusammenfassen, Fehlendes als „Offen“.
-- Abgesichert durch: Test A5, Szenario `m-ungeduld-duschkoepfe-garderobe`.
-- Status: behoben.
+### A5 Impatience ignored
+- Rule: The AI reports `ungeduldig`. After that no more follow-up questions, summarise immediately, missing items as „Offen“ (Open).
+- Secured by: test A5, scenario `m-ungeduld-duschkoepfe-garderobe`.
+- Status: fixed.
 
-### A6 Reparatur als Zusatzarbeit eingestuft, Einstufung schwankt
-- Regel: Neue Art `reparatur_schaden`: keine Anweiser-Frage, Hinweis „Verursacher klärt das Büro“. Eine einmal erkannte Art kippt nicht zurück auf „Auftrag“.
-- Abgesichert durch: Test A6, Szenario `m-schaden-trockenbauer-kaltwasser`.
-- Status: behoben.
+### A6 Repair classified as additional work, classification fluctuates
+- Rule: New type `reparatur_schaden`: no question about the instructing person, note „Verursacher klärt das Büro“ (the office clarifies who caused it). A type once recognised does not flip back to "contract work" („Auftrag“).
+- Secured by: test A6, scenario `m-schaden-trockenbauer-kaltwasser`.
+- Status: fixed.
 
-### A7 Doppelfrage nach dem Aufwand, auch bei Mengenarbeit
-- Regel: Nur „Wie lang hat es gedauert?“, und nur bei Zusatzarbeit ohne Menge, Leute und Stunden.
-- Abgesichert durch: Test A7, Szenario `m-klar-kondensatleitung-meter`.
-- Status: behoben.
+### A7 Double question about effort, even for quantity-based work
+- Rule: Only „Wie lang hat es gedauert?“ (How long did it take?), and only for additional work without quantity, people and hours.
+- Secured by: test A7, scenario `m-klar-kondensatleitung-meter`.
+- Status: fixed.
 
-### A8 Gefragt, aber nicht beantwortet, steht nicht als offen da
-- Regel: Jede Rückfrage, deren Feld leer bleibt, kommt nach `offen` und in die Zeile „Offen: …“.
-- Abgesichert durch: Test A5.
-- Status: behoben.
+### A8 Asked but not answered does not appear as open
+- Rule: Every follow-up question whose field stays empty goes into `offen` and into the line „Offen: …“.
+- Secured by: test A5.
+- Status: fixed.
 
-### A9 Angekündigte Aufzählung unterbrochen
-- Regel: Die KI meldet `angekuendigtePunkte`. Bis alle da sind, nur „Hab Punkt k, schick weiter.“
-- Abgesichert durch: Test A9, Szenario `m-aufzaehlung-drei-nachrichten-21er`.
-- Status: behoben.
+### A9 Announced list interrupted
+- Rule: The AI reports `angekuendigtePunkte`. Until all have arrived, only „Hab Punkt k, schick weiter.“ (Got item k, keep sending.)
+- Secured by: test A9, scenario `m-aufzaehlung-drei-nachrichten-21er`.
+- Status: fixed.
 
-### A10 Foto allein löst sofort eine Rückfrage aus
-- Ursache: Der Testaufbau schickte fast gleichzeitige Nachrichten einzeln. Auf WhatsApp kommen Foto und Text oft Sekunden auseinander.
-- Regel: Der Kanal sammelt Nachrichten kurz (Bündel), der Agent antwortet einmal (`verarbeiteBuendel`). Die Lernschleife stellt `ersteNachrichten` als Bündel zu. Für Phase 3: Sammelfenster im Webhook (Länge noch festzulegen, Annahme 15 bis 30 Sekunden).
-- Abgesichert durch: Test A10, Szenario `m-foto-dann-sprache-revisionsoeffnung`.
-- Status: behoben im Agenten, Sammelfenster im Kanal offen.
+### A10 Photo alone immediately triggers a follow-up question
+- Cause: The test setup sent almost simultaneous messages individually. On WhatsApp, photo and text often arrive seconds apart.
+- Rule: The channel collects messages briefly (bundle), the agent replies once (`verarbeiteBuendel`). The learning loop delivers `ersteNachrichten` as a bundle. For phase 3: collection window in the webhook (length still to be set, Annahme 15 to 30 seconds).
+- Secured by: test A10, scenario `m-foto-dann-sprache-revisionsoeffnung`.
+- Status: fixed in the agent, collection window in the channel open.
 
-### A11 Zweite Geldfrage: gleicher Satz und volle Zusammenfassung noch einmal
-- Regel: Beim zweiten Mal ein anderer, kürzerer Satz. War die Zusammenfassung gerade die letzte Nachricht, nur „Deine Meldung oben ist noch offen.“ mit Knöpfen.
-- Abgesichert durch: Test A11, Szenario `m-zwei-aergerfragen-badewanne`.
-- Status: behoben.
+### A11 Second money question: same sentence and full summary again
+- Rule: The second time a different, shorter sentence. If the summary was just the last message, only „Deine Meldung oben ist noch offen.“ (Your report above is still open.) with buttons.
+- Secured by: test A11, scenario `m-zwei-aergerfragen-badewanne`.
+- Status: fixed.
 
-### A12 Meldung vor der Zustimmung nicht quittiert, Begrüßung zu lang
-- Regel: „Deine Meldung hab ich. Ich leg sie ab, sobald du ja sagst.“ Begrüßung auf zwei Sätze plus Frage gekürzt.
-- Abgesichert durch: Test A12, Szenario `m-erstkontakt-zweite-meldung-statt-ja`.
-- Status: behoben.
+### A12 Report before consent not acknowledged, greeting too long
+- Rule: „Deine Meldung hab ich. Ich leg sie ab, sobald du ja sagst.“ (I have your report. I will file it as soon as you say yes.) Greeting shortened to two sentences plus a question.
+- Secured by: test A12, scenario `m-erstkontakt-zweite-meldung-statt-ja`.
+- Status: fixed.
 
-### A13 Auslöser und Vermittler beim Anweiser
-- Regel (Prompt): Der Vermittler ist der Anweiser, der Auslöser gehört in `grund`.
-- Status: beobachten.
+### A13 Trigger and intermediary for the instructing person
+- Rule (prompt): The intermediary is the instructing person, the trigger belongs in `grund`.
+- Status: observe.
 
-### Prüfwerkzeug
-- Bewerter sieht jetzt auch die Hinweise fürs Büro.
-- Ein fehlender Eintrag heißt „verloren“, nicht mehr „erfunden“ (Zuordnung nur bei passender Leistung).
+### Checking tool
+- The rater now also sees the notes for the office.
+- A missing entry is called "lost" („verloren“), no longer "invented" („erfunden“) (matching only with matching work performed).
 
-### 2026-10-22: Lauf 3 und erste Abnahme
-- Sichtbar (30): alle bestanden, Felder 100 % richtig, 0 erfunden, Rückfragen Median 0 / Max 2, Note Median 5 / Min 3, Antwort Median 3,1 s, 1,45 USD.
-- Zurückgehalten (10): nur 6 bestanden, Note Median 3,5 / Min 2, 1 erfundener Wert, Rückfragen Max 4, Felder 95 %. Durchgefallen: abgeschlossenes_projekt, korrektur, projekt_unklar, dialekt.
-- Lehre: Die sichtbaren Szenarien sind nach drei Runden zum Teil auswendig gelernt. Die Zahlen auf ihnen sagen wenig über neue Fälle. Gegenmittel: Holdout-Fehler nur als abstrakte Muster ansehen (Subagent fasst zusammen, ohne Inhalte), daraus neue sichtbare Szenarien schreiben, danach ein frisches Holdout.
-- Kennzahl „Nachrichten bis Bestätigung“ (Median 3) misst auch Szenarien mit Korrektur und Rückfrage mit. Für das Ziel „Median 2“ nur Szenarien ohne nötige Rückfrage zählen. Offen.
+### 2026-10-22: Run 3 and first acceptance
+- Visible (30): all passed, fields 100 % correct, 0 invented, follow-up questions median 0 / max 2, rating median 5 / min 3, response median 3.1 s, 1.45 USD.
+- Held back (10): only 6 passed, rating median 3.5 / min 2, 1 invented value, follow-up questions max 4, fields 95 %. Failed: abgeschlossenes_projekt, korrektur, projekt_unklar, dialekt.
+- Lesson: After three rounds the visible scenarios are partly learned by heart. The numbers on them say little about new cases. Countermeasure: look at holdout failures only as abstract patterns (a subagent summarises without contents), write new visible scenarios from them, then a fresh holdout.
+- The metric "messages until confirmation" (median 3) also includes scenarios with correction and follow-up question. For the target "median 2", count only scenarios without a necessary follow-up question. Open.
 
-### 2026-10-22: Lauf 2 (30 Szenarien, 25 bestanden, Note Median 4, Minimum 2, 0 erfundene Werte, 1,62 USD)
+### 2026-10-22: Run 2 (30 scenarios, 25 passed, rating median 4, minimum 2, 0 invented values, 1.62 USD)
 
-Die Noten stiegen deutlich (12 mal Note 5 statt 6), erfundene Werte auf 0. Drei der fünf neuen Fehlschläge hat der Fix L10 selbst verursacht. Lehre: Jede harte Regel im Code braucht auch eine Gegenprobe für den Normalfall (hier: Dialekt).
+The ratings rose clearly (12 times rating 5 instead of 6), invented values down to 0. Three of the five new failures were caused by fix L10 itself. Lesson: every hard rule in code also needs a counter-check for the normal case (here: dialect).
 
-### L12 Worttreue zu streng für Dialekt
-- Was: `mehrere-punkte-zwei-baustellen`, `dialekt-steirisch-urinale`, `dialekt-wienerisch-heizkoerper`. Weil „Bauleiter“ nicht wörtlich gesagt war („Bauleita“), ersetzte der Code den Wert durch das Zitat. So landeten Satzfetzen wie „da Bauleita vom GU gsogt“ und „des woa da Schuiwart“ in den Daten.
-- Ursache: L10 prüfte Wörter exakt. Außerdem waren die Zitate zu lang (mit Verb).
-- Regel: Ein Wort gilt als gesagt, wenn es fast so vorkommt (Abstand höchstens 30 % der Wortlänge) oder im kleinen Dialekt-Wörterbuch steht (Gmoa, Kuchl ...). Neue Wörter wie „Bauleiter“ aus „der vom GU“ bleiben verboten. Werte in Schriftdeutsch, Zitate nur die Person bzw. der Ort, ohne Verb.
-- Abgesichert durch: Tests „Dialekt: da Bauleita vom GU“, „Dialekt-Wörterbuch“, weiter „Worttreue“ aus L10.
-- Status: behoben, in Lauf 3 prüfen.
+### L12 Word fidelity too strict for dialect
+- What: `mehrere-punkte-zwei-baustellen`, `dialekt-steirisch-urinale`, `dialekt-wienerisch-heizkoerper`. Because „Bauleiter“ was not said literally („Bauleita“), the code replaced the value with the quote. That is how sentence fragments such as „da Bauleita vom GU gsogt“ and „des woa da Schuiwart“ ended up in the data.
+- Cause: L10 checked words exactly. In addition, the quotes were too long (including the verb).
+- Rule: A word counts as said if it occurs almost like that (distance at most 30 % of the word length) or is in the small dialect dictionary (Gmoa, Kuchl ...). New words such as „Bauleiter“ from „der vom GU“ remain forbidden. Values in standard German, quotes only the person or the location, without verb.
+- Secured by: tests „Dialekt: da Bauleita vom GU“, „Dialekt-Wörterbuch“, plus „Worttreue“ from L10.
+- Status: fixed, check in run 3.
 
-### L13 Anweiser übersehen, wenn nur gesagt wird, wer es wollte
-- Was: `klar-wc-vorwand-w10`. „weil architekt andere höhe will“, trotzdem Rückfrage „Wer hat das angeschafft?“. Antwort: „steht eh oben architekt“. Note 2. Die Ursache war die Prompt-Regel aus L10 („wessen Wunsch es war, ist nicht der Anweiser“).
-- Regel: Hat niemand ausdrücklich angeschafft, gilt der, der es wollte, als Anweiser.
-- Abgesichert durch: Prompt, Szenario `klar-wc-vorwand-w10`.
-- Status: behoben, in Lauf 3 prüfen.
+### L13 Instructing person overlooked when it is only said who wanted it
+- What: `klar-wc-vorwand-w10`. „weil architekt andere höhe will“ (because the architect wants a different height), yet the follow-up question „Wer hat das angeschafft?“ (Who ordered that?). Answer: „steht eh oben architekt“ (it says architect up there already). Rating 2. The cause was the prompt rule from L10 ("whose wish it was is not the instructing person").
+- Rule: If nobody explicitly ordered it, whoever wanted it counts as the instructing person.
+- Secured by: prompt, scenario `klar-wc-vorwand-w10`.
+- Status: fixed, check in run 3.
 
-### L14 Grund der Arbeit geht verloren
-- Was: „weil de Kuchl woanders hinkummt“, „weil s Lager hin woa“, „weil da Elektriker mit seiner Trasse ned vorbeikummt“ fehlten in Zusammenfassung und Ablage. Für das Büro ist der Grund oft das Wichtigste.
-- Regel: Neues Feld `grund`, nie aus Fotos. In der Zusammenfassung in Klammern hinter der Leistung.
-- Abgesichert durch: Tests „Grund steht in der Zusammenfassung“, „Grund nicht aus dem Foto“.
-- Status: behoben.
+### L14 Reason for the work gets lost
+- What: „weil de Kuchl woanders hinkummt“ (because the kitchen moves somewhere else), „weil s Lager hin woa“ (because the bearing was broken), „weil da Elektriker mit seiner Trasse ned vorbeikummt“ (because the electrician can't get past with his cable route) were missing from summary and storage. For the office the reason is often the most important thing.
+- Rule: New field `grund`, never from photos. In the summary in brackets after the work performed.
+- Secured by: tests „Grund steht in der Zusammenfassung“, „Grund nicht aus dem Foto“.
+- Status: fixed.
 
-### L15 Seufzer als Unsinn abgewiesen
-- Was: `frage-geld-kriegen-wir-das-bezahlt`. Auf „na hoffentlich“ kam „Das ist nichts für mich …“.
-- Regel: Wartet eine Zusammenfassung auf Bestätigung, ist eine Nachricht ohne Inhalt ein Kommentar: „Verstehe.“ und die offene Zusammenfassung mit Knöpfen, in einer Nachricht.
-- Abgesichert durch: Test „Seufzer bei offener Zusammenfassung“.
-- Status: behoben.
+### L15 Sigh rejected as nonsense
+- What: `frage-geld-kriegen-wir-das-bezahlt`. „na hoffentlich“ (well, hopefully) got the reply „Das ist nichts für mich …“ (That's not something for me …).
+- Rule: If a summary is waiting for confirmation, a message without content is a comment: „Verstehe.“ (I see.) and the open summary with buttons, in one message.
+- Secured by: test „Seufzer bei offener Zusammenfassung“.
+- Status: fixed.
 
-### L16 Bei mehreren Lücken die falsche zuerst gefragt
-- Was: `laerm-bruchstueck-flex`. Zuerst offene Frage nach dem Ort, die Leute blieben dann offen, obwohl ein Knopf gereicht hätte.
-- Regel: Jede unklare Angabe zählt als eigene Rückfrage (höchstens 2 insgesamt). Reihenfolge: Leute, Stunden, Menge, Anweiser, Ort, Tag, Leistung.
-- Abgesichert durch: Test „bei mehreren unklaren Stellen zuerst die Leute“.
-- Status: behoben.
+### L16 With several gaps, the wrong one asked first
+- What: `laerm-bruchstueck-flex`. First an open question about the location, the people then stayed open, although a button would have been enough.
+- Rule: Every unclear detail counts as its own follow-up question (at most 2 in total). Order: people, hours, quantity, instructing person, location, day, work performed.
+- Secured by: test „bei mehreren unklaren Stellen zuerst die Leute“.
+- Status: fixed.
 
-### Prüfwerkzeug: Länge falsch gezählt
-- Was: Die Längenprüfung zählte den vorangestellten Hinweis (Geldfrage) als Zeilen der Zusammenfassung.
-- Regel: Nur der Körper nach „… so:“ oder „… offen:“ zählt.
-- Status: behoben in `lernschleife.ts`.
+### Checking tool: length counted wrongly
+- What: The length check counted the prepended note (money question) as lines of the summary.
+- Rule: Only the body after „… so:“ or „… offen:“ counts.
+- Status: fixed in `lernschleife.ts`.
 
-### 2026-10-22: Lauf 1 (30 Szenarien, 28 bestanden, Note Median 4, Minimum 1, 1,64 USD)
+### 2026-10-22: Run 1 (30 scenarios, 28 passed, rating median 4, minimum 1, 1.64 USD)
 
-### L1 Menge und Leistung aus dem Foto geschlossen
-- Was: `nur-foto-ohne-text`. Bildbeschreibung „zwei neuen Bögen“ wurde zu Menge „2 Stk“, „frisch montiert“ zur Leistung „montiert“. Die Menge überstand sogar die Korrektur und wurde bestätigt gespeichert. Note 1.
-- Ursache: Die Belegprüfung akzeptierte jedes wörtliche Zitat, auch aus einer Bildbeschreibung. Ein Foto zeigt einen Zustand, nicht was gemacht wurde.
-- Regel: Aus Fotos zählen nur Baustelle und Ort. Alles andere muss aus Text oder Sprache kommen. Steht die Leistung nur im Foto, fragt der Agent „Was hast du gemacht?“.
-- Abgesichert durch: `belege.ts` (AUS_FOTO_ERLAUBT), Test „Foto: keine Menge oder Leistung“, Szenario `nur-foto-ohne-text`.
-- Status: behoben, in Lauf 2 prüfen.
+### L1 Quantity and work performed inferred from the photo
+- What: `nur-foto-ohne-text`. The image description „zwei neuen Bögen“ (two new bends) became quantity „2 Stk“ (2 pcs), „frisch montiert“ (freshly installed) became work performed „montiert“. The quantity even survived the correction and was saved as confirmed. Rating 1.
+- Cause: The evidence check accepted any literal quote, including one from an image description. A photo shows a state, not what was done.
+- Rule: From photos only site and location count. Everything else must come from text or voice. If the work performed is only in the photo, the agent asks „Was hast du gemacht?“ (What did you do?).
+- Secured by: `belege.ts` (AUS_FOTO_ERLAUBT), test „Foto: keine Menge oder Leistung“, scenario `nur-foto-ohne-text`.
+- Status: fixed, check in run 2.
 
-### L2 Unverständliches still weggelassen
-- Was: `laerm-bruchstueck-flex`. „[unverständlich] Mann“ und „Top [unverständlich] zwanzig“: keine Rückfrage, nicht als offen markiert, bestätigt gespeichert mit `offen: []`.
-- Ursache: Die KI hatte keinen Weg zu sagen „hier wurde etwas gesagt, aber nicht verstanden“.
-- Regel: Die KI meldet solche Felder als `unklar`. Der Code fragt sie nach (bei Personen mit Knöpfen Allein / Zu zweit / Zu dritt) und zeigt sie sonst als „Offen: …“ in der Zusammenfassung und in der Liste „offen“.
-- Abgesichert durch: Test „fragt Unverständliches nach“, Szenario `laerm-bruchstueck-flex`.
-- Status: behoben, in Lauf 2 prüfen.
+### L2 Unintelligible parts silently dropped
+- What: `laerm-bruchstueck-flex`. „[unverständlich] Mann“ ([unintelligible] men) and „Top [unverständlich] zwanzig“ (Top [unintelligible] twenty): no follow-up question, not marked as open, saved as confirmed with `offen: []`.
+- Cause: The AI had no way to say "something was said here, but not understood".
+- Rule: The AI reports such fields as `unklar`. The code asks about them (for people with buttons Allein / Zu zweit / Zu dritt, i.e. alone / two of us / three of us) and otherwise shows them as „Offen: …“ in the summary and in the "open" („offen“) list.
+- Secured by: test „fragt Unverständliches nach“, scenario `laerm-bruchstueck-flex`.
+- Status: fixed, check in run 2.
 
-### L3 Nein im Dialekt nicht erkannt, Endlosschleife bei der Zustimmung
-- Was: `erstkontakt-ablehnung`. „na, des wü i ned“ und „na hob i gsogt“ wurden ignoriert, dreimal dieselbe Frage. Note 2.
-- Ursache: Zustimmung nur per Knopf. Beim ersten Fix auch: „eh“ stand in den Ja-Wörtern, dadurch war „i schreib des eh auf“ zweideutig (vom neuen Test gefunden).
-- Regel: Ja und Nein auch als Text, Dialekt eingeschlossen. Nach der Begrüßung höchstens einmal nachfragen, danach schweigen und nichts speichern. Bei Nein ausdrücklich sagen, dass auch die erste Nachricht verworfen ist.
-- Abgesichert durch: Tests „erkennt Nein im Dialekt“, „fragt höchstens einmal nach“, Szenario `erstkontakt-ablehnung`.
-- Status: behoben, in Lauf 2 prüfen.
+### L3 No in dialect not recognised, endless loop on consent
+- What: `erstkontakt-ablehnung`. „na, des wü i ned“ (no, I don't want that) and „na hob i gsogt“ (I said no) were ignored, the same question three times. Rating 2.
+- Cause: Consent only by button. In the first fix also: „eh“ was among the yes words, which made „i schreib des eh auf“ (I write it down anyway) ambiguous (found by the new test).
+- Rule: Yes and no also as text, dialect included. After the greeting ask again at most once, then stay silent and save nothing. On no, say explicitly that the first message has also been discarded.
+- Secured by: tests „erkennt Nein im Dialekt“, „fragt höchstens einmal nach“, scenario `erstkontakt-ablehnung`.
+- Status: fixed, check in run 2.
 
-### L4 Wortgleiche Wiederholung bei Privatem
-- Was: `kein-zuruf-leberkaessemmeln`. Auf „hoppla falscher chat“ kam derselbe abweisende Satz noch einmal. Note 3.
-- Regel: Kein Satz zweimal hintereinander. Beim zweiten Mal reicht „Kein Problem.“ Erster Satz freundlicher.
-- Abgesichert durch: Test „wiederholt bei Privatem nicht“.
-- Status: behoben.
+### L4 Verbatim repetition for private matters
+- What: `kein-zuruf-leberkaessemmeln`. „hoppla falscher chat“ (oops, wrong chat) got the same dismissive sentence again. Rating 3.
+- Rule: No sentence twice in a row. The second time „Kein Problem.“ (No problem.) is enough. First sentence friendlier.
+- Secured by: test „wiederholt bei Privatem nicht“.
+- Status: fixed.
 
-### L5 „Liegt beim Büro für die Abrechnung“ klingt nach „wird bezahlt“
-- Was: Bewerter in `abgeschlossen-tulln-verteiler` und `frage-geld-kriegen-wir-das-bezahlt`: Die Abschlussnachricht legt nahe, dass abgerechnet wird. Bei Tulln (übergeben) kann es Gewährleistung sein.
-- Regel: Neutral: „Abgelegt. Das Büro schaut es sich an.“ Auch in der Begrüßung kein „für die Abrechnung“ mehr.
-- Abgesichert durch: Test „Geldfrage und Zusammenfassung in einer Nachricht“.
-- Status: behoben.
+### L5 „Liegt beim Büro für die Abrechnung“ sounds like "will be paid"
+- What: Rater in `abgeschlossen-tulln-verteiler` and `frage-geld-kriegen-wir-das-bezahlt`: the closing message („Liegt beim Büro für die Abrechnung“, "It is with the office for billing") suggests that it will be billed. With Tulln (handed over) it may be a warranty case.
+- Rule: Neutral: „Abgelegt. Das Büro schaut es sich an.“ (Filed. The office will look at it.) No more „für die Abrechnung“ in the greeting either.
+- Secured by: test „Geldfrage und Zusammenfassung in einer Nachricht“.
+- Status: fixed.
 
-### L6 Hinweis und Zusammenfassung als zwei Nachrichten
-- Was: Bei Geld- oder GU-Fragen kamen zwei Nachrichten hintereinander. Regel 1.
-- Regel: Hinweis und nächste Antwort in eine Nachricht.
-- Abgesichert durch: gleicher Test wie L5.
-- Status: behoben.
+### L6 Note and summary as two messages
+- What: For money or GU questions, two messages came one after the other. Rule 1.
+- Rule: Note and next reply in one message.
+- Secured by: same test as L5.
+- Status: fixed.
 
-### L7 Material doppelt oder erfunden
-- Was: `projekt-unklar-bereich-turnsaal`, `frage-recht-dem-gu-melden`, `nur-foto-ein-wort-regie`: „…umgebaut, 3 Stk, Thermostatarmaturen“, „Lüftungsgerät“ als Material, obwohl es nicht gesetzt werden konnte.
-- Regel: Material nur, wenn ausdrücklich als verbaut genannt und nicht schon in der Leistung. Die Zusammenfassung lässt Material weg, das in der Leistung steht.
-- Abgesichert durch: Prompt und `texte.ts`. Noch kein eigener Test.
-- Status: beobachten.
+### L7 Material duplicated or invented
+- What: `projekt-unklar-bereich-turnsaal`, `frage-recht-dem-gu-melden`, `nur-foto-ein-wort-regie`: „…umgebaut, 3 Stk, Thermostatarmaturen“ (…converted, 3 pcs, thermostatic fittings), „Lüftungsgerät“ (ventilation unit) as material, although it could not be installed.
+- Rule: Material only if explicitly named as installed and not already in the work performed. The summary omits material that is in the work performed.
+- Secured by: prompt and `texte.ts`. No dedicated test yet.
+- Status: observe.
 
-### L8 Bei Wartezeit gefragt, wer angeschafft hat
-- Was: `frage-recht-dem-gu-melden`. „Wer hat das angeschafft?“ bei einer Wartezeit; die Antwort „niemand“ ging verloren.
-- Regel: Die KI unterscheidet Auftrag, Zusatz/Änderung und Behinderung/Wartezeit. Nur bei Zusatz/Änderung wird nach dem Anweiser gefragt. Behinderung bekommt einen Hinweis fürs Büro. „niemand“ wird als „niemand (laut Absender)“ gespeichert.
-- Abgesichert durch: Test „Behinderung: keine Frage nach dem Anweiser“.
-- Status: behoben.
+### L8 Asked who gave the instruction for waiting time
+- What: `frage-recht-dem-gu-melden`. „Wer hat das angeschafft?“ (Who ordered that?) for a waiting time; the answer „niemand“ (nobody) got lost.
+- Rule: The AI distinguishes contract work, additional work/change and obstruction/waiting time. Only for additional work/change is the instructing person asked about. Obstruction gets a note for the office. „niemand“ is saved as „niemand (laut Absender)“ (nobody (according to sender)).
+- Secured by: test „Behinderung: keine Frage nach dem Anweiser“.
+- Status: fixed.
 
-### L9 Knöpfe beim Anweiser ohne echte Auswahl
-- Was: `nur-foto-ein-wort-regie`: nur „Weiß nicht“ und „Keiner extra“.
-- Regel: Knöpfe „Bauleiter GU“, „Bauherr“, „Weiß nicht“. Anderes per Text oder Sprache. Bei Zusatzarbeit ohne Leute und Stunden einmal nach dem Aufwand fragen.
-- Status: behoben, beobachten (mehr Rückfragen möglich).
+### L9 Buttons for the instructing person without a real choice
+- What: `nur-foto-ein-wort-regie`: only „Weiß nicht“ (Don't know) and „Keiner extra“ (Nobody in particular).
+- Rule: Buttons „Bauleiter GU“ (GU site manager), „Bauherr“ (client), „Weiß nicht“. Anything else by text or voice. For additional work without people and hours, ask once about the effort.
+- Status: fixed, observe (more follow-up questions possible).
 
-### L10 Wer angeschafft hat, wurde umgedeutet
-- Was: „der vom GU“ wurde „Bauleiter vom GU“; „weil die Schule das will, Bauleiter GU sagt machen“ wurde „Schule (Bauherr), freigegeben von Bauleiter GU“; „da Chef hat mi gschickt“ wurde „Bewohnerin (über Büro/Chef)“. Gerade dieses Feld zählt für die Abrechnung.
-- Ursache: Die Belegprüfung prüfte nur das Zitat, nicht den Wert.
-- Regel: Worttreue für Ort und Anweiser: Enthält der Wert Wörter, die der Absender nie gesagt hat, wird er durch das Zitat ersetzt. Prompt: direkter Anweiser, nicht wessen Wunsch es war.
-- Abgesichert durch: `belege.ts` (WORTTREU), Test „Worttreue“.
-- Status: behoben.
+### L10 Who gave the instruction was reinterpreted
+- What: „der vom GU“ (the guy from the GU) became „Bauleiter vom GU“; „weil die Schule das will, Bauleiter GU sagt machen“ (because the school wants it, GU site manager says do it) became „Schule (Bauherr), freigegeben von Bauleiter GU“; „da Chef hat mi gschickt“ became „Bewohnerin (über Büro/Chef)“. Precisely this field matters for billing.
+- Cause: The evidence check only checked the quote, not the value.
+- Rule: Word fidelity for location and instructing person: if the value contains words the sender never said, it is replaced by the quote. Prompt: the direct instructing person, not whose wish it was.
+- Secured by: `belege.ts` (WORTTREU), test „Worttreue“.
+- Status: fixed.
 
-### L11 „stopp“ mitten im Gespräch unklar
-- Was: `stopp-mitten-im-gespraech`. Antwort sagte nicht, dass der angefangene Zuruf verworfen ist; Wiedereinstieg nur mit dem Codewort „start“.
-- Regel: Bei stopp sagen, dass das Angefangene verworfen ist. Danach: Wer wieder schreibt, wird einmal gefragt „Soll ich wieder aufnehmen?“ (Knopf oder ja/nein), kein Codewort nötig.
-- Abgesichert durch: Test „stopp sagt, dass der angefangene Zuruf verworfen ist“.
-- Status: behoben.
+### L11 „stopp“ in the middle of the conversation unclear
+- What: `stopp-mitten-im-gespraech`. The reply did not say that the Zuruf in progress was discarded; re-entry only with the code word „start“.
+- Rule: On stopp, say that what was started has been discarded. After that: whoever writes again is asked once „Soll ich wieder aufnehmen?“ (Shall I start recording again?) (button or yes/no), no code word needed.
+- Secured by: test „stopp sagt, dass der angefangene Zuruf verworfen ist“.
+- Status: fixed.
 
-### Beobachtungen ohne Fehler
-- Antwortzeit Median 3,4 s pro Nachricht (ohne Persona). Erster Einzeltest 9,5 s. Für WhatsApp vermutlich in Ordnung, später messen.
-- Nachrichten bis zur Bestätigung: Median 3, Ziel 2. Grund vor allem Rückfragen und Korrekturen. Beobachten.
+### Observations without errors
+- Response time median 3.4 s per message (without persona). First single test 9.5 s. Probably fine for WhatsApp, measure later.
+- Messages until confirmation: median 3, target 2. Mainly due to follow-up questions and corrections. Observe.

@@ -1,9 +1,9 @@
 # Beweiskette
 
-Alle Belege eines Postens in zeitlicher Reihenfolge, das LV als erster Beleg.
+All evidence (Belege) for an item in chronological order, with the LV as the first piece of evidence.
 
-**Vorlage:** Linear-Aktivität (Zeitstrahl mit Punkten), Payapps „Variation History“ (Verlauf eines Nachtrags).
+**Reference:** Linear activity (timeline with dots), Payapps „Variation History“ (history of a change order (Nachtrag)).
 
-**Verwenden**
-- Datum links (Tabellenziffern, „–“ wenn zeitlos wie das LV), Titel `ui-strong`, Aussage in einem Satz, dann der Beleg-Chip.
-- Die Aussage beschreibt nur, was im Dokument steht. Keine Bewertung.
+**Usage**
+- Date on the left (tabular figures, „–“ if timeless like the LV), title `ui-strong`, statement in one sentence, then the Beleg-Chip.
+- The statement only describes what is in the document. No assessment.

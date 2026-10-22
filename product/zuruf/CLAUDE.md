@@ -1,44 +1,44 @@
-# Zuruf-Agent: Regeln für Claude Code
+# Zuruf agent: rules for Claude Code
 
-Der Zuruf-Agent ist der dritte Weg in den Zwilling (Dossier v3, Abschnitt 3.4): Ein Monteur oder Polier schickt Foto oder Sprachnachricht per WhatsApp, der Agent ordnet zu, fasst zusammen, der Absender bestätigt mit einem Tipp, im Projektzwilling entsteht ein Leistungsereignis mit Quelle.
+The Zuruf agent is the third way into the twin (Dossier v3, section 3.4): a fitter or site foreman sends a photo or voice note via WhatsApp, the agent assigns it, summarises it, the sender confirms with one tap, and a work event with a source is created in the project twin.
 
-Die Regeln in `../../CLAUDE.md` (Repo-Wurzel) und `../app/CLAUDE.md` gelten zusätzlich.
+The rules in `../../CLAUDE.md` (repo root) and `../app/CLAUDE.md` apply in addition.
 
-## Lesereihenfolge bei jedem Start
+## Reading order at every start (Lesereihenfolge)
 
-1. `UEBERGABE.md`: Wo stehen wir, was ist der nächste Schritt. **Immer zuerst.**
-2. `PLAN.md`: Ziel, Phasen, Abnahme, Entscheidungen.
-3. `GESTALTUNG.md`: Wie der Agent mit Menschen spricht. Gilt für jeden Prompt, jede Antwort, jeden Test.
-4. `LERNEN.md`: Fehler, die schon passiert sind, und die Regeln daraus. Nicht wiederholen.
+1. `UEBERGABE.md`: where we stand, what the next step is. **Always first.**
+2. `PLAN.md`: goal, phases, acceptance, decisions.
+3. `GESTALTUNG.md`: how the agent talks to people. Applies to every prompt, every reply, every test.
+4. `LERNEN.md`: mistakes that have already happened, and the rules derived from them. Do not repeat them.
 
-## Abgrenzung zum MVP
+## Boundary with the MVP (Abgrenzung zum MVP)
 
-- Im MVP (`../app/`, `../docs/Umfang_v1.md`) ist die WhatsApp-Szene ein Mock. Der echte Agent steht dort auf „nicht drin“. Dieser Ordner baut ihn parallel, ohne den MVP zu stören.
-- Nichts in `../app/` oder `../docs/` ändern ohne Go von Maxi S. Integration läuft über einen Vorschlag in `PLAN.md` (Abschnitt Integration) und einen eigenen Pull Request.
-- Beträge nie im Agenten. Der Agent erfasst Fakten (Projekt, Ort, Leistung, Menge, Aufwand, Anweiser). Bepreisen tut der Rechenkern, entscheiden tut der Mensch.
+- In the MVP (`../app/`, `../docs/Umfang_v1.md`) the WhatsApp scene is a mock. The real agent is listed there as "not included" („nicht drin“). This folder builds it in parallel without disturbing the MVP.
+- Do not change anything in `../app/` or `../docs/` without a go from Maxi S. Integration happens through a proposal in `PLAN.md` (section Integration) and a separate pull request.
+- Never amounts in the agent. The agent records facts (project, location, work performed, quantity, effort, person who gave the instruction). Pricing is done by the calculation core, decisions are made by a human.
 
-## Harte Regeln
+## Hard rules (Harte Regeln)
 
-- **Nur synthetische Daten.** Erfundene Firma (Haustechnik Beispiel GmbH), erfundene Baustellen, erfundene Personen. Echte Telefonnummern nur die eigenen Testhandys des Teams, keine echten Baustelleninhalte. Echte Kundendaten erst nach R4 und Betriebsrat.
-- Der Agent spricht nur mit Mitarbeitern der Kundenfirma, nie mit dem GU. Er entscheidet nie über Abrechenbarkeit, würdigt nichts rechtlich, sagt nichts zu Fristen oder Präklusion.
-- Keine Auswertung pro Mitarbeiter (§ 96a ArbVG): keine Zählungen, Ranglisten, Erinnerungen an Einzelne. Der Absender ist nur Herkunft des Eintrags.
-- Der Agent schreibt nie zuerst. Er antwortet nur in einem Gespräch, das der Mitarbeiter begonnen hat (§ 174 TKG ungeklärt, Dossier v3 Abschnitt 4).
-- Nichts wird überschrieben. Korrekturen sind neue Versionen mit Verweis auf die alte.
-- Keine inoffiziellen WhatsApp-Bibliotheken (Baileys, whatsapp-web.js). Nur die offizielle Cloud API von Meta.
-- Secrets nur in `.env` (ist ignoriert). `.env.example` zeigt die Namen ohne Werte.
-- Wort „Claim“ nie, auch nicht in Prompts oder Testdaten.
+- **Synthetic data only.** Fictitious company (Haustechnik Beispiel GmbH), fictitious construction sites, fictitious people. Real phone numbers only for the team's own test phones, no real construction site content. Real customer data only after R4 and the works council.
+- The agent only talks to employees of the customer company, never to the general contractor (GU). It never decides whether something is billable, never makes legal assessments, says nothing about deadlines or preclusion.
+- No evaluation per employee (§ 96a ArbVG): no counts, rankings, reminders to individuals. The sender is only the origin of the entry.
+- The agent never writes first. It only replies in a conversation the employee has started (§ 174 TKG unresolved, Dossier v3 section 4).
+- Nothing is overwritten. Corrections are new versions with a reference to the old one.
+- No unofficial WhatsApp libraries (Baileys, whatsapp-web.js). Only Meta's official Cloud API.
+- Secrets only in `.env` (it is ignored). `.env.example` shows the names without values.
+- Never the word "Claim", not even in prompts or test data.
 
-## Arbeitsweise
+## Way of working (Arbeitsweise)
 
-- Branch pro Arbeitspaket (`zuruf/...`), nach `main` nur über Pull Request.
-- Vor Code mit der Claude API den Skill `claude-api` laden (Modellnamen, Parameter, Caching).
-- Jede Änderung am Verhalten des Agenten: erst ein Szenario in `szenarien/`, das den Fehler zeigt, dann die Änderung, dann die Lernschleife laufen lassen (Ablauf in `PLAN.md`, Abschnitt Lernschleife).
-- Jeder gefundene Fehler kommt nach `LERNEN.md`, mit Ursache, Regel und dem Szenario, das ihn künftig abfängt.
-- Subagents für Arbeit, die parallel laufen kann: Szenarien schreiben, als Persona testen, Gespräche bewerten, Fakten recherchieren. Den Subagents immer `GESTALTUNG.md` und das Szenario mitgeben, nicht die eigene Vermutung.
-- Fakten über Meta, Preise, Recht: mit Quelle und Datum. Ohne Quelle „(unbelegt)“.
+- One branch per work package (`zuruf/...`), into `main` only via pull request.
+- Before writing code with the Claude API, load the skill `claude-api` (model names, parameters, caching).
+- Every change to the agent's behaviour: first a scenario in `szenarien/` that shows the bug, then the change, then run the learning loop (procedure in `PLAN.md`, section Lernschleife).
+- Every bug found goes into `LERNEN.md`, with cause, rule and the scenario that will catch it in future.
+- Subagents for work that can run in parallel: writing scenarios, testing as a persona, rating conversations, researching facts. Always give subagents `GESTALTUNG.md` and the scenario, not your own guess.
+- Facts about Meta, prices, law: with source and date. Without a source, "(unbelegt)" (unverified).
 
-## Ende jeder Sitzung (Account-Wechsel jederzeit möglich)
+## End of every session (account switch possible at any time) (Ende jeder Sitzung)
 
-1. `UEBERGABE.md` aktualisieren: Stand, letzter Schritt, nächster Schritt, offene Fragen, laufende Experimente.
-2. Neue Fehler in `LERNEN.md`.
-3. Commit auf den Arbeitsbranch und Push (nach Go des Menschen), damit ein anderer Account auf einem anderen Rechner weiterarbeiten kann.
+1. Update `UEBERGABE.md`: status, last step, next step, open questions, running experiments.
+2. New bugs into `LERNEN.md`.
+3. Commit to the working branch and push (after a go from the human), so that another account on another computer can continue.

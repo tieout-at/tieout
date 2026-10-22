@@ -1,10 +1,10 @@
 # Freigabeleiste
 
-Die Entscheidung über einen Posten in zwei Stufen, immer sichtbar am unteren Rand der Befund-Spalte: übernehmen (Prüfung, M), dann freigeben (Insider, I).
+The decision on an item in two stages, always visible at the bottom edge of the finding column: accept (review, M), then approve (insider, I).
 
-**Vorlage:** Linear-Triage (1 annehmen, 2 ablehnen mit Grund, H zurückstellen), reebuild-Freigabe-Workflow (nummerierte Stufen mit zuständiger Person, „freigegeben von …“ mit Zeit), Attio (Verlauf jeder Änderung).
+**Reference:** Linear triage (1 accept, 2 decline with reason, H snooze), reebuild approval workflow (numbered stages with the responsible person, „freigegeben von …“ (approved by …) with time), Attio (history of every change).
 
-**Verwenden**
-- Stufe 1 (M): Übernehmen 1, Verwerfen 2 (fragt nach Grund aus fester Liste), Braucht Anwalt 3, Zurückstellen H.
-- Stufe 2 (I): „Freigeben als Insider“ F oder „Zurück an Prüfung“.
-- Unter den Knöpfen: Stand, Person mit Kürzel, echte Uhrzeit, nächster Schritt. Jede Entscheidung bekommt einen Eintrag im Verlauf; Rückgängig nimmt den letzten Eintrag zurück.
+**Usage**
+- Stage 1 (M): Übernehmen (accept) 1, Verwerfen (discard) 2 (asks for a reason from a fixed list), Braucht Anwalt (needs lawyer) 3, Zurückstellen (defer) H.
+- Stage 2 (I): „Freigeben als Insider“ (approve as insider) F or „Zurück an Prüfung“ (back to review).
+- Below the buttons: status, person with initials, real time of day, next step. Every decision gets an entry in the history; undo reverts the last entry.
