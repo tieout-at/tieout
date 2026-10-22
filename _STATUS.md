@@ -55,4 +55,4 @@
 - 23.10.: aufgeräumt. `business/` und `video/` (nur Absichtserklärungen) in `docs/README.md` unter „Geplant“ zusammengeführt, Website-Check vom 22.10. ins Archiv, Banner-Entwürfe nach `brand/linkedin/entwuerfe/`. Neues README mit Architektur-Diagramm. GitHub-Organisation zeigt Logo und Anzeigenamen tieout.
 
 - 22.10.: aufgeräumt. v2 nach `docs/archiv/`, Kuro/reebuild-Fakten aus v2 nach `docs/research_notes/Kuro_reebuild_Fakten.md`.
-- 22.10.: privates GitHub Repository angelegt, liegt in der Organisation `schlusswerk` (github.com/schlusswerk/schlusswerk) (Monorepo: `docs/`, `product/`, `website/`, `brand/`). Repo außerhalb OneDrive: erledigt.
+- 22.10.: privates GitHub Repository angelegt, liegt in der Organisation `tieout-at` (vorher `schlusswerk`) (github.com/tieout-at/tieout) (Monorepo: `docs/`, `product/`, `website/`, `brand/`). Repo außerhalb OneDrive: erledigt.
