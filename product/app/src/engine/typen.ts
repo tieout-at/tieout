@@ -15,7 +15,8 @@ export interface Beleg {
 export interface Rechenweg {
   /** Ganzer Rechenweg in einer Zeile, z. B. „(100 − 86) Stk × 456,00 € = 6.384,00 €“. */
   text: string;
-  schritte: { bezeichnung: string; wert: string; betrag?: Cent }[];
+  /** Schritte für die Tabelle; „summe“ markiert die Schlusszeile, die den Betrag ergibt. */
+  schritte: { bezeichnung: string; wert: string; betrag?: Cent; summe?: boolean }[];
   /** Zusätzliche Plausibilität (z. B. K7), fließt nicht in den Betrag ein. */
   plausibilitaet?: string;
 }

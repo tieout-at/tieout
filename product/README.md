@@ -12,18 +12,21 @@ Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnun
 |---|---|
 | Plan und Umfang | `docs/Plan_MVP.md`, `docs/Umfang_v1.md`, an Dossier v3 angepasst, freigegeben von Maxi S. (22.10.) |
 | Lösungsliste | `docs/Demo_Faelle.md` v2: Firma mit 8 Projekten, W21 voll ausgearbeitet (Liste 1 27.410,00 €, Liste 2 11.282,30 €), 6 Zurufe, GU-Historie, Fragen an den Insider. **Maßgeblich für alle Beträge** |
-| Datenmodell und Rechenkern | `app/src/domain`, `app/src/engine`: Firma → Auftraggeber → Projekt, Zurufe, 7 kleine Projekte. Tests treffen Lösungsliste v2 cent-genau (W21 und Firma), unabhängig geprüft (PR #4). GU-Historie und echte PDFs folgen |
-| UI-Fundament | Tokens und Bauteile v2 sind in die App übernommen (`app/src/ui/styles`); **ab jetzt ist die App die Quelle**, das Artifact bleibt Referenz v2. Gate 2 (annehmen) macht Maxi S. an den echten Bildschirmen. Ein Test sperrt freie Farben und Stile (`app/src/ui/fundament.test.ts`) |
-| App | Gerüst (Seitenleiste Firma/Projekt, Kopfzeile, hell/dunkel), Firmenübersicht mit Projektliste und Ampel. Weitere Bildschirme folgen einzeln |
-| Prüfungen | GitHub Actions bei jedem PR: Typen, Lint, Tests, Build. Schutz von main (Merge nur mit grüner CI) braucht einen bezahlten GitHub-Plan, deshalb noch nicht aktiv |
+| Datenmodell und Rechenkern | `app/src/domain`, `app/src/engine`: Firma → Auftraggeber → Projekt, Zurufe, 7 kleine Projekte. Tests treffen Lösungsliste v2 cent-genau (W21 und Firma), unabhängig geprüft (PR #4) |
+| App | Firmenübersicht, Projekt-Übersicht, Befunde, Befund-Seite mit Original (aus dem Datensatz gezeichnet, A4), Beweiskette und zweistufiger Freigabe (Verlauf im Browser, Rückgängig, Demo zurücksetzen). Seitenleiste einklappbar. Drei unabhängige Prüfungen (Code, Design gegen Linear/Attio/reebuild, Schlussprüfung), Befunde eingearbeitet (PR #5) |
+| UI-Fundament | In der App (`app/src/ui`, Regeln in `app/src/ui/README.md`), **die App ist die Quelle**; das Artifact bleibt Referenz v2. Weißer Grund, keine Kästen, wenig Text. Gate 2 (annehmen) durch Maxi S. an der laufenden App offen. `fundament.test.ts` sperrt freie Farben, Stile, Trennpunkte, verbotene Wörter |
+| Prüfungen | GitHub Actions bei jedem PR: Typen, Lint, Tests, Build. Schutz von main braucht einen bezahlten GitHub-Plan (offen). Screenshots: `app/scripts/qa/screens.mjs` |
+| Online | noch nicht. Optionen siehe unten „Nächste Schritte“ |
 
 Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.12.
 
 ## Nächste Schritte (Reihenfolge)
 
-1. Bildschirme bis v0.9, je fertig und geprüft: Projekt-Übersicht, Befund mit Beleg-Panel und Freigabe, Ledger, Ordner, Zeitachse, WhatsApp-Szene. Pflichtpunkte aus `docs/Pruefberichte_UI.md`. Gate 2 mit Maxi S. an den ersten Bildschirmen.
-2. Echte PDFs für alle Belege, die in einer Beweiskette vorkommen.
-3. Phase 3 bis v1.0 (KW 45): Vorprüfung, Schlussbesprechungs-Blatt, Entwurf der Schlussrechnung, Excel-Export, GU-Historie.
+1. Gate 2 mit Maxi S. an der laufenden App.
+2. Bildschirme bis v0.9: Ledger (380 Positionen), Ordner mit Belegmatrix, Zeitachse, WhatsApp-Szene. Echte PDFs für Belege (pdf.js mit Markierung aus den Quell-Koordinaten).
+3. Online stellen (eigener Strang, Kosten mit Maxi S.): Die App ist komplett statisch und braucht für die Demo keine Datenbank.
+4. Offene Befunde der Prüfer: Vorprüfung/Kaskade nur bei W21 zeigen, Dokument-Kennungen firmenweit eindeutig, gelegte Schlussrechnung und kumulierte AR im Datenmodell, Schlüssel der Kürzungsgründe im Korrekturblatt, Prüfstand je Wert im Rechenweg.
+5. Phase 3 bis v1.0 (KW 45): Vorprüfung, Schlussbesprechungs-Blatt, Entwurf der Schlussrechnung, Excel-Export, GU-Historie.
 
 ## Aufbau
 
@@ -31,7 +34,8 @@ Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.1
 |---|---|
 | `docs/` | Plan, Umfang, Lösungsliste, Muster aus reebuild und Kuro, UI-Messblatt, Prüfberichte |
 | `app/` | Code: Next.js 16, TypeScript, Vitest. Regeln für Agenten in `app/CLAUDE.md` |
-| `app/src/app/` | Bildschirme (Routen): `/` Firmenübersicht, `/projekte/[projekt]` … |
+| `app/src/app/` | Bildschirme (Routen): `/` Firmenübersicht, `/projekte/[projekt]`, `/projekte/[projekt]/befunde`, `/projekte/[projekt]/befunde/[befund]` |
+| `app/src/zustand/` | Freigabe als Verlauf (reine Logik mit Tests) und Speicher im Browser; später Datenbank |
 | `app/src/ui/` | Bauteile aus dem UI-Fundament (React) und Stile (`styles/tokens.css`, `bauteile.css`, `anordnung.css`) |
 | `app/src/daten/` | Datenzugriff der Bildschirme; heute der synthetische Firmenzwilling, später die Datenbank pro Firma |
 | `ui-fundament/` | Design-System v2 als Referenz und die Skripte, die es erzeugt haben (`LIESMICH.md`) |

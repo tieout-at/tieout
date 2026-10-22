@@ -1,6 +1,7 @@
 "use client";
 
 // Toast (Vorlage: Linear, Playbook „Rückgängig statt Bestätigungsdialog“): ein Satz, Rückgängig, nach 5 Sekunden weg.
+// Hält an, solange Maus oder Fokus darauf liegen; Strg+Z (Cmd+Z) löst Rückgängig aus, solange er sichtbar ist.
 
 import { Undo2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ export function zeigeToast(text: string, rueckgaengig?: () => void) {
 
 export function ToastBereich() {
   const [m, setM] = useState<Meldung | null>(null);
+  const [angehalten, setAngehalten] = useState(false);
 
   useEffect(() => {
     melden = setM;
@@ -30,19 +32,41 @@ export function ToastBereich() {
   }, []);
 
   useEffect(() => {
-    if (!m) return;
+    if (!m || angehalten) return;
     const t = setTimeout(() => setM(null), 5000);
     return () => clearTimeout(t);
+  }, [m, angehalten]);
+
+  useEffect(() => {
+    if (!m?.rueckgaengig) return;
+    const taste = (ev: KeyboardEvent) => {
+      if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && ev.key.toLowerCase() === "z") {
+        ev.preventDefault();
+        m.rueckgaengig?.();
+        setM(null);
+      }
+    };
+    window.addEventListener("keydown", taste);
+    return () => window.removeEventListener("keydown", taste);
   }, [m]);
 
   if (!m) return null;
   return (
-    <div className="toast-wrap" role="status" aria-live="polite">
+    <div
+      className="toast-wrap"
+      role="status"
+      aria-live="polite"
+      onMouseEnter={() => setAngehalten(true)}
+      onMouseLeave={() => setAngehalten(false)}
+      onFocus={() => setAngehalten(true)}
+      onBlur={() => setAngehalten(false)}
+    >
       <div className="sw-toast">
         <span>{m.text}</span>
         {m.rueckgaengig && (
           <button
             type="button"
+            title="Rückgängig (Strg+Z)"
             onClick={() => {
               m.rueckgaengig?.();
               setM(null);

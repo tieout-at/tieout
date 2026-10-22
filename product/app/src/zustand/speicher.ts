@@ -1,6 +1,8 @@
 "use client";
 
 // Speicher des Freigabe-Verlaufs im Browser (MVP), je Projekt. „Demo zurücksetzen“ leert ihn.
+// Jeder Lese- und Schreibzugriff geht frisch an den localStorage, damit mehrere Tabs sich nichts überschreiben;
+// der Zwischenspeicher hängt am Rohtext und liefert nur eine stabile Referenz für React.
 // Im Server-Rendering ist der Verlauf leer; nach dem Laden liest React den gespeicherten Stand.
 
 import { useSyncExternalStore } from "react";
@@ -9,45 +11,56 @@ import type { Eintrag } from "./freigabe";
 const PRAEFIX = "sw-freigabe-v1:";
 const LEER: readonly Eintrag[] = [];
 const hoerer = new Set<() => void>();
-const zwischen = new Map<string, readonly Eintrag[]>();
+const zwischen = new Map<string, { roh: string | null; verlauf: readonly Eintrag[] }>();
+/** Ersatz, wenn der Browser keinen Speicher erlaubt (privater Modus): gilt bis zum Neuladen. */
+const ohneSpeicher = new Map<string, readonly Eintrag[]>();
+
+function benachrichtigen() {
+  hoerer.forEach((h) => h());
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === null || e.key.startsWith(PRAEFIX)) benachrichtigen();
+  });
+}
 
 function lesen(projektId: string): readonly Eintrag[] {
-  const vorhanden = zwischen.get(projektId);
-  if (vorhanden) return vorhanden;
-  let verlauf: readonly Eintrag[] = LEER;
+  let roh: string | null;
   try {
-    const roh = localStorage.getItem(PRAEFIX + projektId);
-    if (roh) verlauf = JSON.parse(roh) as Eintrag[];
+    roh = localStorage.getItem(PRAEFIX + projektId);
   } catch {
-    verlauf = LEER;
+    return ohneSpeicher.get(projektId) ?? LEER;
   }
-  zwischen.set(projektId, verlauf);
+  const z = zwischen.get(projektId);
+  if (z && z.roh === roh) return z.verlauf;
+  let verlauf: readonly Eintrag[] = LEER;
+  if (roh) {
+    try {
+      const wert: unknown = JSON.parse(roh);
+      if (Array.isArray(wert)) verlauf = wert as Eintrag[];
+    } catch {
+      verlauf = LEER;
+    }
+  }
+  zwischen.set(projektId, { roh, verlauf });
   return verlauf;
 }
 
 function schreiben(projektId: string, verlauf: readonly Eintrag[]) {
-  zwischen.set(projektId, verlauf);
   try {
     if (verlauf.length) localStorage.setItem(PRAEFIX + projektId, JSON.stringify(verlauf));
     else localStorage.removeItem(PRAEFIX + projektId);
   } catch {
-    // privater Modus: Verlauf gilt nur bis zum Neuladen
+    ohneSpeicher.set(projektId, verlauf);
   }
-  hoerer.forEach((h) => h());
+  benachrichtigen();
 }
 
 function abonnieren(h: () => void) {
   hoerer.add(h);
-  const beiAenderung = (e: StorageEvent) => {
-    if (e.key?.startsWith(PRAEFIX)) {
-      zwischen.delete(e.key.slice(PRAEFIX.length));
-      h();
-    }
-  };
-  window.addEventListener("storage", beiAenderung);
   return () => {
     hoerer.delete(h);
-    window.removeEventListener("storage", beiAenderung);
   };
 }
 
@@ -63,28 +76,30 @@ export function eintragen(projektId: string, e: Eintrag) {
   schreiben(projektId, [...lesen(projektId), e]);
 }
 
-/** Nimmt den letzten Eintrag zurück (mehrfach möglich). */
-export function rueckgaengig(projektId: string): Eintrag | null {
+/** Nimmt genau diesen Eintrag zurück (nicht den letzten des Projekts, der könnte aus einem anderen Tab sein). */
+export function rueckgaengig(projektId: string, e: Eintrag) {
   const verlauf = lesen(projektId);
-  if (!verlauf.length) return null;
-  schreiben(projektId, verlauf.slice(0, -1));
-  return verlauf[verlauf.length - 1];
+  const i = verlauf.findLastIndex((x) => x.schluessel === e.schluessel && x.zeit === e.zeit && x.aktion === e.aktion);
+  if (i < 0) return;
+  schreiben(projektId, [...verlauf.slice(0, i), ...verlauf.slice(i + 1)]);
 }
 
-export function zuruecksetzen(projektId: string) {
-  schreiben(projektId, LEER);
-}
-
-/** „Demo zurücksetzen“: alle Freigaben aller Projekte im Browser löschen. */
-export function allesZuruecksetzen() {
-  const ids = new Set(zwischen.keys());
+/** „Demo zurücksetzen“: alle Freigaben aller Projekte löschen; liefert den alten Stand für Rückgängig. */
+export function allesZuruecksetzen(): Map<string, readonly Eintrag[]> {
+  const ids = new Set(ohneSpeicher.keys());
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
       if (k?.startsWith(PRAEFIX)) ids.add(k.slice(PRAEFIX.length));
     }
   } catch {
-    // ohne Speicher gibt es nur den Zwischenstand
+    // ohne Speicher gibt es nur den Ersatz
   }
+  const vorher = new Map([...ids].map((id) => [id, lesen(id)] as const));
   ids.forEach((id) => schreiben(id, LEER));
+  return vorher;
+}
+
+export function wiederherstellen(stand: Map<string, readonly Eintrag[]>) {
+  stand.forEach((verlauf, id) => schreiben(id, verlauf));
 }

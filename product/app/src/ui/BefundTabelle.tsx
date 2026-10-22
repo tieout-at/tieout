@@ -104,7 +104,7 @@ function GruppenZeilen({
             <td className="r">{b.betrag !== null && betrag(b.betrag)}</td>
             <td className="risk nur-breit">
               {risiken.has(b.schluessel) && (
-                <span className="sw-risk" title="Kürzungsrisiko aus GU-Sicht" aria-label="Kürzungsrisiko aus GU-Sicht">
+                <span className="sw-risk" role="img" title="Kürzungsrisiko aus GU-Sicht" aria-label="Kürzungsrisiko aus GU-Sicht">
                   <Ico icon={TriangleAlert} />
                 </span>
               )}

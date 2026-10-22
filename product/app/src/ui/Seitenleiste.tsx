@@ -24,9 +24,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavProjekt } from "@/daten/demo";
 import { Ico } from "./Ico";
-import { navWechseln, themaWechseln } from "./thema";
+import { navWechseln, themaWechseln, useNavZu } from "./thema";
 import { zeigeToast } from "./Toast";
-import { allesZuruecksetzen } from "@/zustand/speicher";
+import { allesZuruecksetzen, wiederherstellen } from "@/zustand/speicher";
 import { useEffect } from "react";
 
 interface Eintrag {
@@ -69,16 +69,26 @@ export function Seitenleiste({
 }) {
   const pfad = usePathname();
 
-  // Kurztaste „[“ klappt die Seitenleiste ein und aus (Linear); nicht mit Strg, Alt, Cmd oder in Eingabefeldern.
+  const zu = useNavZu();
+
+  // Kurztaste „[“ klappt die Seitenleiste ein und aus (Linear); nicht mit Cmd oder in Eingabefeldern.
   useEffect(() => {
     const taste = (ev: KeyboardEvent) => {
-      if (ev.key !== "[" || ev.ctrlKey || ev.altKey || ev.metaKey || ev.repeat) return;
+      // „[“ liegt auf österreichischen Tastaturen auf AltGr+8 (Chromium meldet das als Strg+Alt).
+      if (ev.key !== "[" || ev.metaKey || ev.repeat) return;
+      if ((ev.ctrlKey || ev.altKey) && !ev.getModifierState("AltGraph") && !(ev.ctrlKey && ev.altKey)) return;
       if (ev.target instanceof Element && ev.target.closest("input, textarea, select")) return;
       navWechseln();
     };
     window.addEventListener("keydown", taste);
     return () => window.removeEventListener("keydown", taste);
   }, []);
+
+  // Auf dem Handy liegt die Navigation waagrecht: den aktiven Eintrag ins Bild holen.
+  useEffect(() => {
+    if (window.innerWidth > 900) return;
+    document.querySelector(".sw-sidebar [aria-current=\"page\"]")?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [pfad]);
   const projektId = pfad.match(/^\/projekte\/([^/]+)/)?.[1];
   const p = projekte.find((x) => x.id === projektId);
 
@@ -109,7 +119,7 @@ export function Seitenleiste({
           </span>
           <span className="brand-name">Schlusswerk</span>
         </div>
-        <button type="button" className="nav-toggle" onClick={navWechseln} title="Seitenleiste ein- oder ausklappen ( [ )" aria-label="Seitenleiste ein- oder ausklappen">
+        <button type="button" className="nav-toggle" onClick={navWechseln} title="Seitenleiste ein- oder ausklappen ( [ )" aria-label="Seitenleiste ein- oder ausklappen" aria-expanded={!zu}>
           <Ico icon={PanelLeft} />
         </button>
       </div>
@@ -149,8 +159,8 @@ export function Seitenleiste({
           type="button"
           title="Alle Freigaben dieser Demo im Browser löschen"
           onClick={() => {
-            allesZuruecksetzen();
-            zeigeToast("Demo zurückgesetzt");
+            const vorher = allesZuruecksetzen();
+            zeigeToast("Demo zurückgesetzt", () => wiederherstellen(vorher));
           }}
         >
           <Ico icon={RotateCcw} />

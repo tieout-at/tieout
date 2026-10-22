@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { navDaten } from "@/daten/demo";
 import { Seitenleiste } from "@/ui/Seitenleiste";
-import { THEMA_SKRIPT } from "@/ui/thema";
+import { THEMA_SKRIPT } from "@/ui/thema-skript";
 import { ToastBereich } from "@/ui/Toast";
 import "./globals.css";
 

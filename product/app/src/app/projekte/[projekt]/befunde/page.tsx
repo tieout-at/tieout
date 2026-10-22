@@ -1,6 +1,7 @@
 // Befunde eines Projekts: alle Posten nach Liste gruppiert; Klick, Enter oder j/k öffnet den Befund mit Beleg.
 
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
 import { BefundTabelle } from "@/ui/BefundTabelle";
 import { Panel } from "@/ui/Panel";
@@ -22,6 +23,7 @@ export default async function Befunde({ params }: Props) {
   const id = (await params).projekt;
   const { d, e } = projekt(id);
   const { daten } = firma();
+  if (!e.abgleich) notFound();
   const risiken = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
   return (
     <>

@@ -1,10 +1,12 @@
-// Befund mit Beleg-Panel: Betrag, Rechenweg, Beweiskette, zweistufige Freigabe; rechts das Original mit Markierung.
+// Befund mit Beleg-Panel: Betrag, Kürzungsrisiko, Rechenweg, Beweiskette, zweistufige Freigabe;
+// rechts das Original mit markierter Fundstelle.
 
-import { TriangleAlert } from "lucide-react";
+import { Info, TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
-import { befund, befundSlug, firma, projektIds, projekt } from "@/daten/demo";
+import { befund, befundSlug, firma, projekt, projektIds } from "@/daten/demo";
 import type { DokumentArt } from "@/domain/typen";
 import { prozentText } from "@/engine/geld";
+import { KUERZUNGSGRUND_TEXT, type Beleg } from "@/engine";
 import { ART_TEXT, LISTEN, teileTitel } from "@/ui/befund-texte";
 import { Befundflaeche, type BelegAnsicht, type BelegTyp } from "@/ui/Befundflaeche";
 import { Belegseite, belegDatei } from "@/ui/Belegseite";
@@ -12,7 +14,6 @@ import { betrag, datum } from "@/ui/format";
 import { Freigabeleiste } from "@/ui/Freigabeleiste";
 import { Ico } from "@/ui/Ico";
 import { Seitenkopf } from "@/ui/Seitenkopf";
-import { Statusmarke } from "@/ui/Statusmarke";
 
 type Props = { params: Promise<{ projekt: string; befund: string }> };
 
@@ -23,8 +24,8 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { projekt: id, befund: slug } = await params;
-  const { b } = befund(id, slug);
-  return { title: teileTitel(b.titel).text };
+  const { d, b } = befund(id, slug);
+  return { title: `${d.projekt.kurz} ${b.titel}` };
 }
 
 const KURZ: Partial<Record<DokumentArt, string>> = {
@@ -67,7 +68,16 @@ export default async function BefundSeite({ params }: Props) {
   const risiko = e.vorpruefung?.risiken.find((r) => r.befundSchluessel === b.schluessel);
   const hinweis = e.hinweise.find((h) => h.befundSchluessel === b.schluessel);
 
-  const belege: BelegAnsicht[] = b.belege.map((x, i) => {
+  // Belege des Befunds, dazu die Belege des Kürzungsrisikos (z. B. Stundenliste), ohne Dubletten
+  const gesehen = new Set<string>();
+  const alle: Beleg[] = [...b.belege, ...(risiko?.belege ?? [])].filter((x) => {
+    const k = `${x.quelle.dokumentId}|${x.quelle.stelle ?? ""}`;
+    if (gesehen.has(k)) return false;
+    gesehen.add(k);
+    return true;
+  });
+
+  const belege: BelegAnsicht[] = alle.map((x, i) => {
     const zuruf = d.zurufe.find((z) => z.id === x.quelle.dokumentId);
     const dok = d.dokumente.find((y) => y.id === x.quelle.dokumentId);
     const plan = dok?.art === "plan" ? d.plaene.find((p) => p.dokumentId === dok.id) : undefined;
@@ -85,57 +95,69 @@ export default async function BefundSeite({ params }: Props) {
       seiteInhalt: <Belegseite d={d} beleg={x} />,
     };
   });
-  const start = Math.max(0, belege.findIndex((x) => x.typ !== "lv"));
+  // Start beim aussagekräftigsten Beleg: Aufmaß oder Bericht, sonst der erste, der nicht das LV ist
+  const start = Math.max(
+    0,
+    belege.findIndex((x) => x.typ === "aufmass" || x.typ === "tabelle") >= 0
+      ? belege.findIndex((x) => x.typ === "aufmass" || x.typ === "tabelle")
+      : belege.findIndex((x) => x.typ !== "lv"),
+  );
+
+  const schritte = (b.rechenweg?.schritte ?? []).filter((s) => !s.summe && s.betrag !== 0);
+  const summe = b.rechenweg?.schritte.find((s) => s.summe);
+  const nurBetrag = (wert: string, cent?: number) => cent !== undefined && wert.replace(/\s/g, "") === betrag(cent).replace(/\s/g, "");
 
   const kopf = (
     <>
       <div className="fhead">
         <div className="sw-row">
-          <Statusmarke ton={liste.ton}>{liste.text}</Statusmarke>
+          <span className={liste.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${liste.ton}`}>{liste.text}</span>
           <span className="meta sw-muted">{ART_TEXT[b.art]}</span>
         </div>
-        <h1 className="section-title">
+        <h2 className="section-title">
           {t.kennung && <span className="sw-pos-nr">{t.kennung}</span>}
           {t.text}
-        </h1>
+        </h2>
         {b.betrag !== null && <span className="kpi">{betrag(b.betrag)}</span>}
       </div>
       {risiko && (
-        <div className="callout">
+        <div className="flag flag--warn">
           <Ico icon={TriangleAlert} />
           <div>
-            <b>Kürzungsrisiko aus GU-Sicht</b>
-            {risiko.detail}. {risiko.abhilfe}.
+            <b>
+              Kürzungsrisiko {betrag(risiko.betrag)}, {KUERZUNGSGRUND_TEXT[risiko.grund]}
+            </b>
+            <span>{risiko.detail}</span>
+            <span>{risiko.abhilfe}</span>
           </div>
         </div>
       )}
       {hinweis && (
-        <div className="callout callout--neutral">
-          <Ico icon={TriangleAlert} />
+        <div className="flag">
+          <Ico icon={Info} />
           <div>
             <b>Mengenänderung +{prozentText(hinweis.aenderung)}</b>
-            {hinweis.text}
+            <span>{hinweis.text}</span>
           </div>
         </div>
       )}
-      {b.rechenweg && b.rechenweg.schritte.length > 0 && (
-        <section className="sw-panel">
-          <table className="sw-table">
-            <tbody>
-              {b.rechenweg.schritte
-                .filter((s, i, alle) => !(alle.length > 1 && i === alle.length - 1 && s.betrag === b.betrag))
-                .map((s) => (
-                <tr key={s.bezeichnung}>
-                  <td>{s.bezeichnung}</td>
-                  <td className="r">{s.wert}</td>
-                </tr>
-              ))}
-              <tr className="sum">
-                <td colSpan={2}>{b.rechenweg.text}</td>
+      {b.rechenweg && (
+        <table className="sw-table rechenweg">
+          <tbody>
+            {schritte.map((s) => (
+              <tr key={s.bezeichnung}>
+                <td>{s.bezeichnung}</td>
+                <td className="r calc">{nurBetrag(s.wert, s.betrag) ? "" : s.wert}</td>
+                <td className="r">{s.betrag !== undefined && betrag(s.betrag)}</td>
               </tr>
-            </tbody>
-          </table>
-        </section>
+            ))}
+            <tr className="sum">
+              <td>Betrag</td>
+              <td className="r calc">{summe?.wert ?? ""}</td>
+              <td className="r">{b.betrag !== null && betrag(b.betrag)}</td>
+            </tr>
+          </tbody>
+        </table>
       )}
       {b.rechenweg?.plausibilitaet && <p className="meta sw-muted plain">{b.rechenweg.plausibilitaet}</p>}
     </>
@@ -149,7 +171,7 @@ export default async function BefundSeite({ params }: Props) {
           { text: d.projekt.kurz, href: `/projekte/${id}` },
           { text: "Befunde", href: `/projekte/${id}/befunde` },
         ]}
-        titel={t.kennung ? `${t.kennung} ${t.text}` : t.text}
+        titel={t.kennung ?? ART_TEXT[b.art]}
       />
       <Befundflaeche
         kopf={kopf}

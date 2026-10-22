@@ -36,6 +36,8 @@
 ## Produkt
 
 - 22.10.: Produktstand von Maxi S. nach `product/` übernommen: Plan und Umfang (an v3 angepasst), Lösungsliste der Demo-Fälle, Rechenkern mit 58 Tests, UI-Fundament. Überblick in `product/README.md`.
+- 22.10. abends (Maxi S.): Datenmodell Firma → Auftraggeber → Projekt mit Zurufen und 7 kleinen Projekten (Tests treffen die Lösungsliste v2 cent-genau). Demo-App mit Firmenübersicht, Projekt-Übersicht, Befunden und Befund-Seite mit Original und zweistufiger Freigabe. CI prüft jeden PR. Stand und nächste Schritte in `product/README.md`.
+- Offen fürs Team: Hosting der Demo (Vercel Hobby deployt keine privaten Org-Repos), GitHub-Plan für den Schutz von main, Name, Logo, Akzentfarbe (in der App Platzhalter).
 - Offen: Wer baut was (Produkt, Website), Entscheidung in der Sonntagsrunde 25.10.
 
 ## Noch nicht angelegt

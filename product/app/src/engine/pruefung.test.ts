@@ -64,7 +64,7 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
 
   it("O4 und O5: Regie aus Zuruf, Regiesätze des Vertrags, kein Material", () => {
     expect(e.befunde.find((b) => b.schluessel === "zuruf:Z6")?.rechenweg?.text).toBe(
-      "6 h Monteur × 62,50 € = 375,00 € + 6 h Helfer × 52,00 € = 312,00 € = 687,00 €",
+      "6 h Monteur × 62,50 € + 6 h Helfer × 52,00 € = 687,00 €",
     );
     expect(e.befunde.find((b) => b.schluessel === "zuruf:Z5")?.rechenweg?.text).toBe("8 h Monteur × 62,50 € = 500,00 €");
   });

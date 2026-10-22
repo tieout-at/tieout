@@ -116,7 +116,7 @@ body {
 .split {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(440px, 600px) minmax(0, 1fr);
+  grid-template-columns: minmax(400px, 42%) minmax(0, 1fr);
   min-height: 0;
 }
 .split-left {
@@ -140,10 +140,11 @@ body {
 .split-right {
   display: flex;
   min-height: 0;
-  padding: var(--space-4);
 }
 .split-right .sw-viewer {
   flex: 1;
+  border: 0;
+  border-radius: 0;
 }
 .fhead {
   display: flex;
@@ -323,25 +324,151 @@ body {
 .sw-ev {
   text-align: left;
 }
+/* Zoom über die Layout-Größe (CSS zoom), damit die vergrößerte Seite scrollbar bleibt statt abgeschnitten */
 .doc-zoom {
   width: 100%;
   max-width: 560px;
-  transform-origin: top center;
+  flex: none;
 }
 .doc-zoom--80 {
-  transform: scale(0.8);
+  zoom: 0.8;
 }
 .doc-zoom--90 {
-  transform: scale(0.9);
+  zoom: 0.9;
 }
 .doc-zoom--110 {
-  transform: scale(1.1);
+  zoom: 1.1;
 }
 .doc-zoom--125 {
-  transform: scale(1.25);
+  zoom: 1.25;
 }
 .doc-zoom--150 {
-  transform: scale(1.5);
+  zoom: 1.5;
+}
+.sw-viewer__canvas {
+  justify-content: safe center;
+}
+
+/* Belegseiten im A4-Format (reebuild, Kuro: ganze Seite), Plan mit Rahmen, Zuruf als Chat */
+.sw-page {
+  aspect-ratio: 1 / 1.414;
+}
+.doc-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+.doc-sum {
+  text-align: right;
+  font-weight: 600;
+}
+.doc-plan {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-sans);
+}
+.doc-note {
+  font-size: 12px;
+}
+.sw-page--chat {
+  background: var(--doc-figure-soft);
+}
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+.chat__kopf {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--doc-line);
+  color: var(--doc-ink-secondary);
+  font-size: 12px;
+}
+.chat__kopf b {
+  color: var(--doc-ink);
+  font-size: 13px;
+}
+.chat__msg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-width: 80%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--doc-paper);
+  color: var(--doc-ink);
+}
+.chat__msg--ein {
+  align-self: flex-start;
+}
+.chat__msg--aus {
+  align-self: flex-end;
+  background: var(--doc-mark);
+}
+.chat__msg--kurz {
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.chat__msg .sw-photo {
+  width: 220px;
+}
+.chat__label {
+  color: var(--doc-ink-secondary);
+  font-size: 11px;
+}
+.chat__zeit {
+  align-self: flex-end;
+  color: var(--doc-muted);
+  font-size: 11px;
+}
+
+/* Hinweise am Befund ohne Farbfläche (Ramp, reebuild: Status an der Zeile) */
+.flag {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+.flag .sw-ico {
+  margin-top: 2px;
+  color: var(--text-muted);
+}
+.flag > div {
+  display: flex;
+  flex-direction: column;
+}
+.flag b {
+  font-weight: 600;
+}
+.flag span {
+  color: var(--text-secondary);
+}
+.flag--warn .sw-ico,
+.flag--warn b {
+  color: var(--warn);
+}
+.rechenweg {
+  border-top: 1px solid var(--line-strong);
+}
+.sw-decide__step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+[data-nav="zu"] .sw-nav a,
+[data-nav="zu"] .sw-nav button {
+  justify-content: center;
+  padding: 0;
+}
+@media (hover: none) {
+  .sw-kbd {
+    display: none;
+  }
 }
 
 /* Tabellenbreiten als Klasse (nicht inline), damit das Handy-Layout sie aufheben kann */
@@ -472,6 +599,12 @@ body {
   }
   .split-right {
     min-height: 560px;
+  }
+  .sw-viewer__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sw-viewer__rail {
+    display: none;
   }
   .sw-steps {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
