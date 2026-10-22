@@ -8,7 +8,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { spiele, type Ergebnis } from "../src/lernschleife.ts";
-import { kostenUsd, verbrauch } from "../src/llm.ts";
+import { kiWeg, kostenUsd, verbrauch } from "../src/llm.ts";
 import { SzenarioSchema, type Szenario } from "../src/szenario.ts";
 import { kiVersteher } from "../src/verstehen.ts";
 
@@ -32,7 +32,7 @@ if (!szenarien.length) {
   console.log("Keine Szenarien gefunden.");
   process.exit(1);
 }
-console.log(`${szenarien.length} Szenarien, ${bewerten ? "mit" : "ohne"} Bewerter, ${parallel} parallel`);
+console.log(`${szenarien.length} Szenarien, ${bewerten ? "mit" : "ohne"} Bewerter, ${parallel} parallel, KI über ${kiWeg() === "abo" ? "Claude-Abo" : "API"}`);
 
 const versteher = kiVersteher();
 const ergebnisse: Ergebnis[] = [];
@@ -75,6 +75,8 @@ const kennzahlen = {
   verworfeneAngaben: ergebnisse.reduce((s, e) => s + e.verworfen, 0),
   technischeFehler: ergebnisse.reduce((s, e) => s + e.fehler.length, 0),
   anfragen: verbrauch.anfragen,
+  kiWeg: kiWeg(),
+  // Beim Abo nur Vergleichswert zum Listenpreis; abgerechnet wird über das Abo-Limit.
   kostenUsd: Number(kostenUsd().toFixed(2)),
 };
 console.log(JSON.stringify(kennzahlen, null, 1));

@@ -181,7 +181,10 @@ async function ladeBuero() {
     k.append(q);
     liste.append(k);
   }
-  document.getElementById("kosten").textContent = `API-Kosten dieser Sitzung: ca. ${d.kostenUsd.toFixed(2)} USD`;
+  document.getElementById("kosten").textContent =
+    d.kiWeg === "abo"
+      ? `KI über dein Claude-Abo (zählt gegen das Abo-Limit). Zum Vergleich, zum API-Preis: ca. ${d.kostenUsd.toFixed(2)} USD`
+      : `API-Kosten dieser Sitzung: ca. ${d.kostenUsd.toFixed(2)} USD`;
 }
 ladeBuero();
 </script>

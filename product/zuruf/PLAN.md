@@ -26,6 +26,7 @@ Ein WhatsApp-Agent, dem ein Monteur in Sekunden zurufen kann, was er gemacht hat
 | 22.10.2026 | Antworten des Agenten sind feste Sätze im Code, nicht KI-formuliert. Vorhersehbar, kurz, keine Ausrutscher bei Geld und Recht. Die KI liest nur |
 | 22.10.2026 | Modell Claude Opus 5.5 für Agent, Persona und Bewerter (Standard laut Claude-API-Referenz). Ein günstigeres Modell nur mit Go des Teams |
 | 22.10.2026 | Der Agent fragt nur bei Zusatz- oder Änderungsarbeit nach, wer angeschafft hat. Bei normaler Arbeit laut Auftrag nicht |
+| 22.10.2026 | Schalter `ZURUF_KI`: `abo` nutzt Claude Code (`claude -p`) mit dem eigenen Claude-Abo, nur zum Entwickeln und Testen. `api` (Standard) nutzt den API-Key und ist Pflicht im Echtbetrieb. Vor Abnahmen und Vorführungen einmal mit `api` nachmessen, weil Antwortzeiten und Feineinstellungen abweichen |
 | 22.10.2026 (Vorschlag) | Jedes erkannte Feld trägt das Zitat aus dem Zuruf, das es belegt. Der Code prüft, dass das Zitat wirklich im Transkript steht. Ohne Zitat bleibt das Feld leer („nicht raten“) |
 
 ## Aufbau

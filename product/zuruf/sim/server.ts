@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ZurufAgent } from "../src/agent.ts";
 import { FIRMA } from "../src/firma.ts";
-import { kostenUsd } from "../src/llm.ts";
+import { kiWeg, kostenUsd } from "../src/llm.ts";
 import { aktuellerStand, Arbeitsspeicher } from "../src/speicher.ts";
 import type { Nachricht, NachrichtArt, Rolle } from "../src/typen.ts";
 import { kiVersteher } from "../src/verstehen.ts";
@@ -45,7 +45,7 @@ createServer(async (req, res) => {
         quellen: e.nachrichtIds.map((id) => speicher.nachricht(id)).filter(Boolean),
         versionen: liste.filter((x) => x.id === e.id).length,
       }));
-      return json(res, 200, { stand, kostenUsd: kostenUsd() });
+      return json(res, 200, { stand, kostenUsd: kostenUsd(), kiWeg: kiWeg() });
     }
     if (req.method === "POST" && req.url === "/nachricht") {
       const b = await koerper(req);

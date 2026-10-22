@@ -2,7 +2,7 @@
 import { ZurufAgent } from "../src/agent.ts";
 import { Arbeitsspeicher } from "../src/speicher.ts";
 import { kiVersteher } from "../src/verstehen.ts";
-import { kostenUsd, verbrauch } from "../src/llm.ts";
+import { kiWeg, kostenUsd, verbrauch } from "../src/llm.ts";
 
 const speicher = new Arbeitsspeicher();
 speicher.setzeEinwilligung("probe", "monteur");
@@ -21,4 +21,4 @@ for (const text of process.argv.slice(2)) {
 }
 console.log(JSON.stringify(speicher.ereignisse().map((e) => ({ status: e.status, offen: e.offen, eintrag: Object.fromEntries(Object.entries(e.eintrag).map(([k, v]) => [k, v.wert])) })), null, 1));
 console.log("verworfen:", agent.protokoll.verworfen, "fehler:", agent.protokoll.fehler);
-console.log(`Anfragen ${verbrauch.anfragen}, ca. ${kostenUsd().toFixed(4)} USD`);
+console.log(`Anfragen ${verbrauch.anfragen} über ${kiWeg()}, Listenpreis ca. ${kostenUsd().toFixed(4)} USD`);

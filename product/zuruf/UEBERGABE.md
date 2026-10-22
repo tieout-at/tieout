@@ -49,13 +49,16 @@ Abnahme 1 fand den schwersten Fehler bisher: Datenverlust bei Nachtrag plus Korr
 
 29 Lernpunkte in `LERNEN.md`. 40 Unit-Tests grün (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 Szenarien (50 sichtbar, 10 zurückgehalten).
 
+## KI über Abo oder API
+
+In `product/zuruf/.env` steht `ZURUF_KI=abo`: Agent, Persona und Bewerter laufen über Claude Code mit dem Claude-Abo (`claude` muss angemeldet sein, `claude auth status`). Kostet kein API-Guthaben, zählt aber gegen das Abo-Limit und ist langsamer (ca. 5 bis 16 s pro Antwort statt 2,5 s). Ein Lauf über 4 Szenarien dauerte 1:13 min, über 50 Szenarien also grob 15 bis 20 min und ca. 200 Aufrufe. Mit `ZURUF_KI=api` läuft alles wieder über den API-Key (Guthaben war am 22.10. aufgebraucht). Auf einem anderen Account: dort `claude` anmelden, dann gilt dessen Abo.
+
 ## Nächster Schritt
 
-1. API-Guthaben aufladen (console.anthropic.com, Billing).
-2. `npm run lauf` über alle 50 sichtbaren Szenarien vollständig, Fehler nach `LERNEN.md`.
-3. Abnahme 2: `npm run lauf -- --zurueck`. Bei Fehlern wieder nur abstrakt auswerten lassen (Subagent mit `--mit-protokoll`, Hauptsitzung liest das Protokoll nicht), danach frisches Holdout.
-4. Offen aus A10: Sammelfenster im WhatsApp-Kanal (Phase 3).
-5. Danach Phase 2 (Sprache und Foto) oder Phase 3 (echte Nummer), Entscheidung beim Team.
+1. `npm run lauf` über alle 50 sichtbaren Szenarien vollständig (über das Abo), Fehler nach `LERNEN.md`.
+2. Abnahme 2: `npm run lauf -- --zurueck`. Bei Fehlern wieder nur abstrakt auswerten lassen (Subagent mit `--mit-protokoll`, Hauptsitzung liest das Protokoll nicht), danach frisches Holdout.
+3. Offen aus A10: Sammelfenster im WhatsApp-Kanal (Phase 3).
+4. Danach Phase 2 (Sprache und Foto) oder Phase 3 (echte Nummer), Entscheidung beim Team.
 
 ## Offene Fragen
 
