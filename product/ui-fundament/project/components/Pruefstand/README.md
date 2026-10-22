@@ -1,9 +1,9 @@
 # Prüfstand
 
-Zeigt an einem einzelnen Wert, ob ihn die Maschine gelesen, ein Mensch bestätigt oder eine Regel blockiert hat.
+Shows for a single value whether the machine read it, a human confirmed it, or a rule blocked it.
 
-**Vorlage:** Rossum (gelb = ausgelesen und ungeprüft, grün = vom Menschen geprüft, rot = blockiert die Bestätigung), Harvey Review Tables (Zelle nach Freigabe gesperrt).
+**Reference:** Rossum (yellow = extracted and unreviewed, green = reviewed by a human, red = blocks confirmation), Harvey Review Tables (cell locked after approval).
 
-**Verwenden**
-- Rechts neben jedem Wert im Rechenweg eines Befunds und an Ledger-Zellen.
-- Export erst, wenn kein „Blockiert“ offen ist.
+**Usage**
+- To the right of every value in the calculation of a finding (Befund) and on ledger cells.
+- Export only once no „Blockiert“ (blocked) is open.

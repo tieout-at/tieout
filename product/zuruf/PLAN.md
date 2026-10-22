@@ -1,117 +1,117 @@
-# Zuruf-Agent: Plan
+# Zuruf agent: plan
 
-Stand: 22.10.2026, Entwurf. Grundlage: Dossier v3, Abschnitte 3.4, 4, 11, 15.
+Status: 22.10.2026, draft. Basis: Dossier v3, sections 3.4, 4, 11, 15.
 
-## Ziel
+## Goal (Ziel)
 
-Ein WhatsApp-Agent, dem ein Monteur in Sekunden zurufen kann, was er gemacht hat, und der daraus einen sauberen Eintrag mit Quelle im Projektzwilling macht. Erst im Simulator, dann an einer echten WhatsApp-Testnummer, am Ende eingebaut in die App. Wie er mit Menschen spricht, steht in `GESTALTUNG.md`.
+A WhatsApp agent to which a fitter can call out in seconds what he has done, and which turns that into a clean entry with a source in the project twin. First in the simulator, then on a real WhatsApp test number, finally integrated into the app. How it talks to people is set out in `GESTALTUNG.md`.
 
-**Fertig heißt:** Ein Teammitglied schickt vom eigenen Handy eine Sprachnachricht zu einer erfundenen Baustelle, bestätigt mit einem Tipp, und der Eintrag erscheint mit Foto, Ton und Transkript in der Zeitachse der App. Die Messwerte aus `GESTALTUNG.md` halten auf allen Szenarien, auch auf den zurückgehaltenen.
+**Done means:** A team member sends a voice note about a fictitious site from their own phone, confirms with one tap, and the entry appears with photo, audio and transcript in the app's timeline. The metrics from `GESTALTUNG.md` hold on all scenarios, including the held-back ones.
 
-## Verhältnis zum Plan des Teams
+## Relation to the team's plan (Verhältnis zum Plan des Teams)
 
-- Dossier v3 15.2: Stufe 2 (Zuruf) ist als Prototyp ab Januar geplant, nach R3. Der MVP (`../docs/Umfang_v1.md`) hat nur eine vorgespielte WhatsApp-Szene, der echte Agent steht dort auf „nicht drin“.
-- Dieser Ordner zieht den Prototyp vor, getrennt vom MVP. Wer daran wie viel Zeit arbeitet, gehört in die Sonntagsrunde am 25.10. (Bau-Aufteilung, offene Frage 14). Der MVP v0.9 am 31.10. darf darunter nicht leiden.
-- Nur synthetische Daten. Echte Mitarbeiter und echte Baustellen erst nach R4 und Klärung mit dem Betriebsrat.
+- Dossier v3 15.2: Stage 2 (Zuruf) is planned as a prototype from January, after R3. The MVP (`../docs/Umfang_v1.md`) only has a staged WhatsApp scene, the real agent is listed there as "not included" („nicht drin“).
+- This folder brings the prototype forward, separate from the MVP. Who works on it and for how long belongs in the Sunday meeting on 25.10. (build split, open question 14). The MVP v0.9 on 31.10. must not suffer from it.
+- Synthetic data only. Real employees and real sites only after R4 and clarification with the works council.
 
-## Entscheidungen
+## Decisions (Entscheidungen)
 
-| Datum | Entscheidung |
+| Date | Decision |
 |---|---|
-| 22.10.2026 | Reihenfolge: erst Simulator mit Lernschleife, dann echte Nummer |
-| 22.10.2026 | Kanal: WhatsApp Cloud API direkt bei Meta, kein Zwischenanbieter |
-| 22.10.2026 | Testleute: noch niemand vom Bau. Erst synthetische Personas und das Team |
-| 22.10.2026 | Eigener Ordner `product/zuruf/`, TypeScript wie `../app/`, eigenes `package.json` |
-| 22.10.2026 (Vorschlag) | Die KI liest und formuliert, der Code entscheidet. Welche Felder fehlen, ob nachgefragt wird und wann gespeichert wird, ist deterministischer Code. So ist das Verhalten testbar |
-| 22.10.2026 | Antworten des Agenten sind feste Sätze im Code, nicht KI-formuliert. Vorhersehbar, kurz, keine Ausrutscher bei Geld und Recht. Die KI liest nur |
-| 22.10.2026 | Modell Claude Opus 5.5 für Agent, Persona und Bewerter (Standard laut Claude-API-Referenz). Ein günstigeres Modell nur mit Go des Teams |
-| 22.10.2026 | Der Agent fragt nur bei Zusatz- oder Änderungsarbeit nach, wer angeschafft hat. Bei normaler Arbeit laut Auftrag nicht |
-| 22.10.2026 | Schalter `ZURUF_KI`: `abo` nutzt Claude Code (`claude -p`) mit dem eigenen Claude-Abo, nur zum Entwickeln und Testen. `api` (Standard) nutzt den API-Key und ist Pflicht im Echtbetrieb. Vor Abnahmen und Vorführungen einmal mit `api` nachmessen, weil Antwortzeiten und Feineinstellungen abweichen |
-| 22.10.2026 (Vorschlag) | Jedes erkannte Feld trägt das Zitat aus dem Zuruf, das es belegt. Der Code prüft, dass das Zitat wirklich im Transkript steht. Ohne Zitat bleibt das Feld leer („nicht raten“) |
+| 22.10.2026 | Order: first simulator with learning loop, then real number |
+| 22.10.2026 | Channel: WhatsApp Cloud API directly with Meta, no intermediary provider |
+| 22.10.2026 | Testers: nobody from construction yet. First synthetic personas and the team |
+| 22.10.2026 | Own folder `product/zuruf/`, TypeScript like `../app/`, own `package.json` |
+| 22.10.2026 (proposal) | The AI reads and phrases, the code decides. Which fields are missing, whether to ask a follow-up and when to save is deterministic code. This makes the behaviour testable |
+| 22.10.2026 | The agent's replies are fixed sentences in code, not phrased by the AI. Predictable, short, no slips on money and law. The AI only reads |
+| 22.10.2026 | Model Claude Opus 5.5 for agent, persona and rater (default according to the Claude API reference). A cheaper model only with a go from the team |
+| 22.10.2026 | The agent only asks who gave the instruction for additional or change work. Not for normal work under the contract |
+| 22.10.2026 | Switch `ZURUF_KI`: `abo` uses Claude Code (`claude -p`) with one's own Claude subscription, only for development and testing. `api` (default) uses the API key and is mandatory in production. Before acceptance runs and demos, re-measure once with `api`, because response times and fine tuning differ |
+| 22.10.2026 (proposal) | Every recognised field carries the quote from the Zuruf that supports it. The code checks that the quote really appears in the transcript. Without a quote the field stays empty ("do not guess") |
 
-## Aufbau
+## Architecture (Aufbau)
 
 ```
-Kanal: Simulator (Browser, lokal) | WhatsApp Cloud API (Webhook)
-  → Eingang: Nachricht vereinheitlichen (Text, Ton, Bild, Zeitstempel, Absender)
-  → Verstehen: Sprache zu Text, Foto beschreiben
-  → Herauslesen (KI): Projekt, Ort, Leistung, Menge, Aufwand, Anweiser, je mit Zitat
-  → Gesprächsführung (Code): fehlt etwas Wichtiges? Rückfrage oder speichern
-  → Formulieren (Code): feste, kurze Sätze nach GESTALTUNG.md, Knöpfe (src/texte.ts)
-  → Ablage: Zuruf und Leistungsereignis mit Quelle, nur anhängen, nie überschreiben
+Channel: simulator (browser, local) | WhatsApp Cloud API (webhook)
+  → Intake: normalise the message (text, audio, image, timestamp, sender)
+  → Understanding: speech to text, describe photo
+  → Extraction (AI): project, location, work performed, quantity, effort, instructing person, each with a quote
+  → Conversation control (code): is something important missing? Follow-up question or save
+  → Phrasing (code): fixed, short sentences following GESTALTUNG.md, buttons (src/texte.ts)
+  → Storage: Zuruf and work event (Leistungsereignis) with source, append only, never overwrite
 ```
 
-Der Agent kennt die aktiven Projekte, Bauteile oder Tops und die LV-Kurztexte aus einem kleinen synthetischen Firmen-Zwilling (Haustechnik Beispiel GmbH, Projekt Wien 21 aus `../app/src/demo/w21/` plus erfundene weitere). Ablage in Phase 1 als Datei (eine Zeile pro Ereignis), Datenbank erst bei der Integration.
+The agent knows the active projects, building sections or units (Tops) and the short texts of the bill of quantities (LV) from a small synthetic company twin (Haustechnik Beispiel GmbH, project Wien 21 from `../app/src/demo/w21/` plus further invented ones). In phase 1 storage is a file (one line per event), a database only at integration.
 
-## Phasen
+## Phases (Phasen)
 
-| Phase | Inhalt | Abnahme |
+| Phase | Content | Acceptance |
 |---|---|---|
-| **0 Grundlagen** | Ordner, Regeln, Gestaltung, Plan. Anthropic API Key mit Ausgabenlimit anlegen | Team hat `GESTALTUNG.md` gelesen und Go gegeben |
-| **1 Kern und Simulator** | Datenmodell Zuruf, kleiner Firmen-Zwilling, Herauslesen mit Zitat, Gesprächsführung, Simulator im Browser (nur Text), 30 Szenarien plus 10 zurückgehaltene, Lernschleife | Messwerte aus `GESTALTUNG.md` auf allen Szenarien erreicht |
-| **2 Sprache und Foto** | Sprache zu Text: zwei bis drei Anbieter mit eigenen Testaufnahmen vergleichen (EU-Anbieter bevorzugt). Testaufnahmen spricht das Team mit erfundenem Inhalt ein, auch mit Dialekt und Baulärm darunter. Fotos beschreiben lassen | Bei schlechter Aufnahme fragt der Agent nach, statt zu raten. Anbieter gewählt mit Begründung |
-| **3 Echte Nummer** | Meta Testnummer, Webhook, Antwortknöpfe, Medien herunterladen, Testhandys des Teams | 20 Zurufe vom echten Handy, gleiche Messwerte wie im Simulator |
-| **4 Integration** | Vorschlag an Maxi S.: Typen Zuruf und Leistungsereignis in `../app/src/domain/typen.ts`, Zurufe in Zeitachse und Liste „offen“, Mock-Szene durch aufgezeichneten echten Ablauf ersetzen | Pull Request mit Go von Maxi S. |
+| **0 Foundations** | Folder, rules, design, plan. Create an Anthropic API key with a spending limit | Team has read `GESTALTUNG.md` and given a go |
+| **1 Core and simulator** | Zuruf data model, small company twin, extraction with quote, conversation control, simulator in the browser (text only), 30 scenarios plus 10 held back, learning loop | Metrics from `GESTALTUNG.md` reached on all scenarios |
+| **2 Voice and photo** | Speech to text: compare two to three providers with our own test recordings (EU providers preferred). The team records the test recordings with invented content, including dialect and construction noise underneath. Have photos described | With a poor recording the agent asks instead of guessing. Provider chosen with justification |
+| **3 Real number** | Meta test number, webhook, reply buttons, downloading media, the team's test phones | 20 Zurufe from a real phone, same metrics as in the simulator |
+| **4 Integration** | Proposal to Maxi S.: types Zuruf and Leistungsereignis in `../app/src/domain/typen.ts`, Zurufe in timeline and "open" („offen“) list, replace the mock scene with a recorded real run | Pull request with a go from Maxi S. |
 
-Termine legt das Team fest. Phase 1 braucht nur den Anthropic Key, Phase 3 zusätzlich das Meta-Konto.
+The team sets the dates. Phase 1 only needs the Anthropic key, phase 3 additionally the Meta account.
 
-## Lernschleife
+## Learning loop (Lernschleife)
 
-So lernt das System aus Fehlern, ohne dass jemand vom Bau dabei ist.
+This is how the system learns from mistakes without anyone from construction being involved.
 
-1. **Szenario** (`szenarien/*.json`): Persona (Rolle, Sprechweise, Geduld), die Wahrheit (was wirklich passiert ist), Störungen (Dialekt, zwei Themen, falsche Baustelle, verspätete Nachricht, nur Foto), Erwartung (Felder, höchstens Rückfragen, verbotene Inhalte).
-2. **Spielen:** Ein Sprachmodell spielt den Monteur. Es kennt nur Persona und Wahrheit, nicht die Regeln des Agenten. Es redet mit dem Agenten, bis bestätigt oder abgebrochen ist.
-3. **Bewerten:** Harte Prüfungen im Code (Felder richtig, nichts erfunden, Zahl der Rückfragen, Antwortlänge, verbotene Wörter) plus eine Bewertung nach `GESTALTUNG.md` durch ein zweites Modell, das das Gespräch blind liest.
-4. **Lernen:** Jeder Fehler wird in `LERNEN.md` eingetragen (was, Ursache, Regel, Szenario). Dann die kleinste Änderung, dann alle Szenarien neu. Was vorher grün war, muss grün bleiben.
-5. **Gegen Schönrechnen:** 10 Szenarien schreibt ein Subagent, und sie werden während der Arbeit nicht gelesen (`szenarien/zurueck/`). Sie laufen nur bei der Abnahme einer Phase.
+1. **Scenario** (`szenarien/*.json`): persona (role, way of speaking, patience), the truth (what really happened), disruptions (dialect, two topics, wrong site, delayed message, photo only), expectation (fields, maximum follow-up questions, forbidden content).
+2. **Play:** A language model plays the fitter. It only knows the persona and the truth, not the agent's rules. It talks to the agent until confirmed or aborted.
+3. **Rate:** Hard checks in code (fields correct, nothing invented, number of follow-up questions, reply length, forbidden words) plus a rating according to `GESTALTUNG.md` by a second model that reads the conversation blind.
+4. **Learn:** Every mistake is entered in `LERNEN.md` (what, cause, rule, scenario). Then the smallest change, then all scenarios again. What was green before must stay green.
+5. **Against flattering the numbers:** 10 scenarios are written by a subagent, and they are not read during the work (`szenarien/zurueck/`). They only run at the acceptance of a phase.
 
-Rollen der Subagents in Claude Code: Szenarien schreiben (gezielt dort, wo der Agent zuletzt schwach war), durchgefallene Gespräche auf die Ursache untersuchen, Antworten unabhängig gegen `GESTALTUNG.md` lesen, Fakten zu Meta und Anbietern mit Quelle recherchieren. Entscheiden und ändern tut die Hauptsitzung.
+Roles of the subagents in Claude Code: writing scenarios (targeted where the agent was last weak), investigating failed conversations for the cause, reading replies independently against `GESTALTUNG.md`, researching facts about Meta and providers with sources. Deciding and changing is done by the main session.
 
-Grenze: Synthetische Monteure sind nicht echte Monteure. Die Schleife findet Logikfehler und Ton-Ausrutscher, nicht ob jemand auf der Baustelle das wirklich benutzt. Das prüft erst ein Test mit Leuten vom Bau.
+Limit: synthetic fitters are not real fitters. The loop finds logic errors and slips in tone, not whether someone on the site will really use it. Only a test with people from construction checks that.
 
-## Zugänge (Schritt für Schritt, wenn es so weit ist)
+## Access (step by step, when the time comes) (Zugänge)
 
-**Phase 1: Anthropic API Key**
-1. Auf console.anthropic.com ein Konto anlegen (das ist nicht dasselbe wie das Claude-Abo).
-2. Unter Billing ein kleines Guthaben und ein monatliches Ausgabenlimit setzen.
-3. Unter API Keys einen Key anlegen und in `product/zuruf/.env` als `ANTHROPIC_API_KEY=` eintragen. Nie in den Chat, nie in Git.
+**Phase 1: Anthropic API key**
+1. Create an account on console.anthropic.com (this is not the same as the Claude subscription).
+2. Under Billing, set a small credit balance and a monthly spending limit.
+3. Under API Keys, create a key and enter it in `product/zuruf/.env` as `ANTHROPIC_API_KEY=`. Never into the chat, never into Git.
 
 **Phase 3: WhatsApp Cloud API**
-1. Auf developers.facebook.com mit einem Facebook-Konto ein Entwicklerkonto anlegen, eine App vom Typ Business erstellen, das Produkt WhatsApp hinzufügen. Meta legt dabei ein Test-Geschäftskonto und eine Testnummer an.
-2. Unter WhatsApp, API Setup bis zu fünf eigene Handynummern als Empfänger eintragen und per Code bestätigen.
-3. Webhook-Adresse eintragen. Zum Entwickeln über einen Tunnel auf den eigenen Rechner, später auf EU-Hosting.
-4. Für Dauerbetrieb einen Systembenutzer mit dauerhaftem Token anlegen, als `WHATSAPP_TOKEN=` in `.env`.
+1. On developers.facebook.com, create a developer account with a Facebook account, create an app of type Business, add the WhatsApp product. Meta then creates a test business account and a test number.
+2. Under WhatsApp, API Setup, enter up to five of your own mobile numbers as recipients and confirm them by code.
+3. Enter the webhook address. For development via a tunnel to your own computer, later on EU hosting.
+4. For continuous operation, create a system user with a permanent token, as `WHATSAPP_TOKEN=` in `.env`.
 
-## Fakten zur WhatsApp Cloud API
+## Facts on the WhatsApp Cloud API (Fakten zur WhatsApp Cloud API)
 
-Stand der Recherche 22.10.2026. Vor Phase 3 erneut bei Meta prüfen.
+Research as of 22.10.2026. Check again with Meta before phase 3.
 
-| Fakt | Quelle |
+| Fact | Source |
 |---|---|
-| Beim Hinzufügen von WhatsApp zu einer App legt Meta ein Test-Geschäftskonto und eine Testnummer an, die bis zu fünf Empfänger kostenlos anschreiben kann | [Meta, Get Started](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started/) |
-| Preise pro Nachricht seit 1.7.2025; Nachrichten ohne Vorlage sind innerhalb des offenen Kundenservice-Fensters kostenlos | [Meta, Pricing](https://developers.facebook.com/docs/whatsapp/pricing) (Seite laut Recherche zuletzt geändert 30.3.2026) |
-| Ab 1.10.2026 sollen auch Service-Nachrichten kosten, mit 1.000 freien pro Monat und Nummer | (unbelegt) nur Drittanbieter: [respond.io](https://respond.io/id/blog/whatsapp-pricing-change-2026.md), [EngageLab](https://www.engagelab.com/blog/whatsapp-pricing-2026-service-message-cost). Bei Meta prüfen |
-| Freie Nachrichten und Knöpfe nur innerhalb von 24 Stunden nach der letzten Nachricht des Nutzers; danach nur genehmigte Vorlagen | (unbelegt) nur Drittanbieter, z. B. [Interactive Messages](https://singhamandeep.com/?p=1542). Passt zu Regel 8 (nie zuerst schreiben) |
-| Antwortknöpfe: höchstens drei pro Nachricht, Beschriftung höchstens 20 Zeichen | (unbelegt) gleiche Quelle. Bei Meta prüfen |
-| Option „Local Storage“: Nachrichteninhalt ruhend in der EU (Deutschland), Verarbeitung bis zu 60 Minuten auch außerhalb. Nur einstellbar, solange die Nummer nicht registriert ist | [Meta, Local Storage](https://developers.facebook.com/documentation/business-messaging/whatsapp/local-storage/) |
-| Gruppen über die Cloud API | (unbelegt) offen |
+| When WhatsApp is added to an app, Meta creates a test business account and a test number that can message up to five recipients free of charge | [Meta, Get Started](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started/) |
+| Per-message pricing since 1.7.2025; non-template messages are free within the open customer service window | [Meta, Pricing](https://developers.facebook.com/docs/whatsapp/pricing) (page last changed 30.3.2026 according to research) |
+| From 1.10.2026 service messages are also said to cost money, with 1,000 free per month and number | (unbelegt) third-party providers only: [respond.io](https://respond.io/id/blog/whatsapp-pricing-change-2026.md), [EngageLab](https://www.engagelab.com/blog/whatsapp-pricing-2026-service-message-cost). Check with Meta |
+| Free-form messages and buttons only within 24 hours of the user's last message; after that only approved templates | (unbelegt) third-party providers only, e.g. [Interactive Messages](https://singhamandeep.com/?p=1542). Consistent with rule 8 (never write first) |
+| Reply buttons: at most three per message, label at most 20 characters | (unbelegt) same source. Check with Meta |
+| "Local Storage" option: message content at rest in the EU (Germany), processing for up to 60 minutes also outside. Only configurable as long as the number is not registered | [Meta, Local Storage](https://developers.facebook.com/documentation/business-messaging/whatsapp/local-storage/) |
+| Groups via the Cloud API | (unbelegt) open |
 
-## Risiken
+## Risks (Risiken)
 
-| Risiko | Gegenmittel |
+| Risk | Countermeasure |
 |---|---|
-| Zeit fehlt beim MVP v0.9 (31.10.) | Sonntagsrunde entscheidet; Zuruf-Arbeit pausiert, wenn der MVP es braucht |
-| Synthetische Tests täuschen Qualität vor | zurückgehaltene Szenarien; so früh wie möglich ein echter Monteur mit erfundenem Inhalt (über R1 oder Co-Founder B) |
-| Dialekt und Lärm machen Transkripte schlecht | Phase 2 vergleicht Anbieter mit eigenen Aufnahmen; Agent fragt nach statt zu raten |
-| Kosten der Modelle in der Lernschleife | Ausgabenlimit im Konto; kleine Läufe, volle Läufe nur bei Abnahme |
-| Meta ändert Regeln oder Preise | Kanal ist austauschbar, der Kern hängt nicht an WhatsApp |
-| Datenschutz und Betriebsrat (Dossier v3 Risiko 12) | nur synthetisch; R4-Fragenliste; keine Auswertung pro Person im Datenmodell |
+| Not enough time for the MVP v0.9 (31.10.) | Sunday meeting decides; Zuruf work pauses if the MVP needs it |
+| Synthetic tests fake quality | held-back scenarios; as early as possible a real fitter with invented content (via R1 or co-founder B) |
+| Dialect and noise make transcripts poor | Phase 2 compares providers with our own recordings; agent asks instead of guessing |
+| Model costs in the learning loop | spending limit in the account; small runs, full runs only at acceptance |
+| Meta changes rules or prices | the channel is replaceable, the core does not depend on WhatsApp |
+| Data protection and works council (Dossier v3 risk 12) | synthetic only; R4 question list; no evaluation per person in the data model |
 
-## Integration (Go Maxi S. 22.10.2026, eingebaut)
+## Integration (go from Maxi S. 22.10.2026, implemented) (Integration)
 
-- Datenmodell: kein zweiter Typ. `product/app/src/zuruf/abbildung.ts` bildet ein Leistungsereignis auf den App-Typ `Zuruf` ab; jede Angabe behält ihr Zitat als Quelle (`Quelle.stelle`).
-- Beträge: neue Zurufe ohne Betrag. Stunden bleiben 0 (der Agent trennt nicht Monteur und Helfer), auf der Liste „offen“ als „Neu per Zuruf, ohne Betrag“, Stand „Regiebericht fehlt“. Der Rechenkern sieht sie nie, die Summen der Demo bleiben.
-- Server: Route `POST /api/zuruf/nachricht` (`worker/route.ts`), ohne Server-Zustand (Browser schickt den Gesprächsstand mit). Läuft im Worker der App hinter der Anmeldung (Supabase-Sitzung, Haupt-Chat) und lokal in `worker/lokal.ts`. KI nur über `apiFrage` (ki.ts) mit dem Schlüssel als Cloudflare-Secret; `llm.ts` und `speicher-datei.ts` sind nur Node.
-- Schutz: Schalter `ZURUF_ECHT` im Worker, zur Laufzeit (Standard aus), höchstens 40 KI-Aufrufe pro Tag und 20 US-Dollar pro Monat nach den echten Kosten jeder Antwort, für alle zusammen (nie pro Person); harte Grenze ist das Monatslimit in der Anthropic-Konsole knapp unter 25 € (Vorgabe Maxi S.). Grenze erreicht oder Agent nicht erreichbar: Die App spielt die Szene vor, ohne Fehlermeldung.
-- Ablage: Schnittstelle `ZurufAblage` (`product/app/src/zustand/zurufe.ts`), heute im Browser; später Supabase (Tabelle je Firma, nur anhängen, Row Level Security).
-- Firma: aus dem Firmenzwilling der App (`product/app/src/zuruf/firma.ts`, vom Generator als `data/generated/zuruf-firma.json` geschrieben). `src/firma.ts` bleibt für Tests und Lernschleife.
+- Data model: no second type. `product/app/src/zuruf/abbildung.ts` maps a work event (Leistungsereignis) onto the app type `Zuruf`; every item keeps its quote as its source (`Quelle.stelle`).
+- Amounts: new Zurufe without an amount. Hours stay 0 (the agent does not distinguish between fitter and helper), on the "open" („offen“) list as „Neu per Zuruf, ohne Betrag“ (new via Zuruf, without amount), status „Regiebericht fehlt“ (time-and-materials report missing). The calculation core never sees them, the demo totals stay unchanged.
+- Server: route `POST /api/zuruf/nachricht` (`worker/route.ts`), without server state (the browser sends the conversation state along). Runs in the app's worker behind the login (Supabase session, main chat) and locally in `worker/lokal.ts`. AI only via `apiFrage` (ki.ts) with the key as a Cloudflare secret; `llm.ts` and `speicher-datei.ts` are Node only.
+- Protection: switch `ZURUF_ECHT` in the worker, read at runtime (default off), at most 40 AI calls per day and 20 US dollars per month based on the actual cost of each reply, for everyone together (never per person); the hard limit is the monthly limit in the Anthropic console just under 25 € (requirement from Maxi S.). Limit reached or agent unreachable: the app plays the staged scene, without an error message.
+- Storage: interface `ZurufAblage` (`product/app/src/zustand/zurufe.ts`), currently in the browser; later Supabase (table per company, append only, Row Level Security).
+- Company: from the app's company twin (`product/app/src/zuruf/firma.ts`, written by the generator as `data/generated/zuruf-firma.json`). `src/firma.ts` remains for tests and the learning loop.

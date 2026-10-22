@@ -1,9 +1,9 @@
 # Stand
 
-Wie weit ein Posten bearbeitet ist: Symbol plus Wort, ohne Rahmen.
+How far an item has been processed: icon plus word, without a border.
 
-**Vorlage:** Linear-Statusspalte (Kreis-Symbol plus Wort), reebuild-Freigabe (Stufen).
+**Reference:** Linear status column (circle icon plus word), reebuild approval (stages).
 
-**Verwenden**
-- Prüfen → Übernommen (M) → Freigegeben (I). Daneben: Verworfen (mit Grund), Braucht Anwalt, Zurückgestellt.
-- Nur „Freigegeben“ ist farbig (`pos`), „Braucht Anwalt“ in `law`; alles andere neutral. Der Akzent wird nie für Status verwendet.
+**Usage**
+- Prüfen (review) → Übernommen (accepted) (M) → Freigegeben (approved) (I). Alongside: Verworfen (discarded, with reason), Braucht Anwalt (needs lawyer), Zurückgestellt (deferred).
+- Only „Freigegeben“ is colored (`pos`), „Braucht Anwalt“ in `law`; everything else is neutral. The accent is never used for status.

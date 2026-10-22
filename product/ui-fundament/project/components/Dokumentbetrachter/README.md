@@ -1,11 +1,11 @@
 # Dokumentbetrachter
 
-Das Original neben dem Befund: Fundstelle markiert, Risiko-Stellen eigens markiert, die Belege der Kette als echte Miniaturen.
+The original next to the finding (Befund): source location highlighted, risk locations highlighted separately, the evidence in the chain shown as real thumbnails.
 
-**Vorlage:** Kuro „Risiken erkennen“ (Dateiname, „S. 14 / 86“, markierte Stelle, Seitenminiaturen mit umrandeter aktiver Seite), Rossum (Rahmen um den Wert im Original).
+**Reference:** Kuro „Risiken erkennen“ (detect risks; file name, „S. 14 / 86“, highlighted location, page thumbnails with the active page outlined), Rossum (frame around the value in the original).
 
-**Verwenden**
-- Kopf: voller Dateiname in `mono`, Blättern, „S. x / y“, Zoom.
-- Papier `doc-paper` in beiden Themen. Fundstelle `doc-mark` mit Unterstrich `doc-mark-line`; Stelle mit Kürzungsrisiko (z. B. fehlende GU-Unterschrift) `doc-risk` mit Rahmen `doc-risk-line`.
-- Jede Seite trägt die Marke „Synthetisch“ (`doc-muted`, ≥ 4,5:1), solange Demo-Daten geladen sind.
-- Fotos ohne echtes Bild als ehrlich beschrifteter Platzhalter.
+**Usage**
+- Header: full file name in `mono`, paging, „S. x / y“ (page x / y), zoom.
+- Paper `doc-paper` in both themes. Source location `doc-mark` with underline `doc-mark-line`; location with a deduction risk (e.g. missing GU signature) `doc-risk` with frame `doc-risk-line`.
+- Every page carries the mark „Synthetisch“ (synthetic) (`doc-muted`, ≥ 4.5:1) as long as demo data is loaded.
+- Photos without a real image appear as an honestly labeled placeholder.

@@ -1,57 +1,57 @@
-# Produkt
+# Product
 
-**Name: tieout** (klein, ohne Punkt, wie Website v7 vom 22.10.2026; vorher Tieout). Intern heißen Repository, Paket und Worker vorerst weiter `schlusswerk`.
+**Name: tieout** (lowercase, no period, as on website v7 of 22.10.2026; previously Tieout). Internally, the repository, package and Worker keep the name `schlusswerk` for now.
 
-Der Zwilling: Datenmodell Firma → Projekt → Objekte (mit Quelle, Verlauf, Status), Einlesen, Ledger, Abschluss-Lauf, Ausgaben. Stufen und Demo-Skript stehen in `docs/dossier-v3.md`, Abschnitt 15.
+The twin: data model company → project → objects (with source, history, status), ingestion, ledger, closing run (Abschluss-Lauf), outputs. Stages and the demo script are in `docs/dossier-v3.md`, section 15.
 
-Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnung ist deterministischer Code. Jede Zahl führt per Klick zum Original. Nur synthetische Daten.
+Principles: The AI delivers facts with a source, the human confirms, the calculation is deterministic code. Every number leads to the original with one click. Synthetic data only.
 
-**In Arbeit.** Verantwortlich bisher: Maxi S. In den Produktdateien meint „Maxi“ Maxi S.
+**Work in progress.** Responsible so far: Maxi S. In the product files, "Maxi" means Maxi S.
 
-## Stand (22.10.2026, spät)
+## Status (22.10.2026, late)
 
-| Teil | Stand |
+| Part | Status |
 |---|---|
-| Plan und Umfang | `docs/Plan_MVP.md`, `docs/Umfang_v1.md`, an Dossier v3 angepasst, freigegeben von Maxi S. (22.10.) |
-| Lösungsliste | `docs/Demo_Faelle.md` v2: Firma mit 8 Projekten, W21 voll ausgearbeitet (Liste 1 27.410,00 €, Liste 2 11.282,30 €), 6 Zurufe, GU-Historie, Fragen an den Insider. **Maßgeblich für alle Beträge** |
-| Datenmodell und Rechenkern | `app/src/domain`, `app/src/engine`: Firma → Auftraggeber → Projekt, Zurufe, 7 kleine Projekte. Tests treffen Lösungsliste v2 cent-genau (W21 und Firma), unabhängig geprüft (PR #4) |
-| App | Firmenübersicht, Projekt-Übersicht, Befunde, Befund-Seite mit Original (aus dem Datensatz gezeichnet, A4), Beweiskette und zweistufiger Freigabe (Verlauf im Browser, Rückgängig, Demo zurücksetzen). Seitenleiste einklappbar. Drei unabhängige Prüfungen (Code, Design gegen Linear/Attio/reebuild, Schlussprüfung), Befunde eingearbeitet (PR #5) |
-| Bildschirme v0.9 (Maxi S., 22.10. nachts) | Seitenleiste neu (Firma oben, Projekte als Baum mit Ampelpunkt), Zeitachse mit Filtern, WhatsApp-Szene (vorgespielt: Sprachnachricht wird Eintrag in der Zeitachse), Ledger mit allen LV-Positionen, Ordner mit Belegmatrix (Position × Belegart) und Dokumentliste, Beleg im Original je Dokument und Zuruf (`/projekte/[projekt]/ordner/[beleg]`). PR #14, #15, #16, #18 und dieser |
-| Politur v0.10 (Maxi S. mit Claude, 22.10. spät) | Ablauf 1 bis 4 auf der Projektübersicht mit Zahlen und Links, keine Ampelpunkte und Farbflächen, Status als Wort, alle Tabellen 36 px mit festen Spalten (nichts verschiebt sich), Tokens für Schriftgrößen. PRs #24, #27, #28, #29, #33, #35, unabhängig geprüft. Nächste Schritte: `../_UEBERGABE.md` (Rebranding Tieout., UI an die Website, Tempo, Zuruf-Agent) |
-| Zuruf-Agent in der App (22.10. spät) | Agent von Santino (`zuruf/`, PR #25) hinter dem Schalter `ZURUF_ECHT` im Worker, zur Laufzeit (Standard aus: Demo pixelgleich, Szene vorgespielt; Grenze erreicht: ebenfalls vorgespielt). An: echter Chat in der Zeitachse, neue Zurufe in Zeitachse und Liste „offen“ (ohne Betrag, „Regiebericht fehlt“), Beleg mit Zitat je Angabe (`…/zuruf/?id=`). Ablage im Browser, Rechenkern unberührt. Route `/api/zuruf/nachricht` (`zuruf/worker/route.ts`) im Worker hinter der Anmeldung, online aus (Variable `ZURUF_ECHT`), Tageszähler in Supabase (`zuruf/worker/supabase.sql`). Z6 heißt wie in der Lösungsliste „Heizkörper im Wohnzimmer versetzt“. Szene und Belegseite sagen jetzt denselben Satz wie die Lösungsliste |
-| Marke Tieout (23.10.) | Logo und Wortmarke oben in der Seitenleiste (`app/src/ui/Logo.tsx`, gleiche Geometrie wie die Website), Seitentitel „Tieout“, Akzent Ultramarin #1D3BFF statt Blau. Grautöne, Grund und Dunkelmodus bewusst unverändert (Entscheidung Maxi S.). Seit v7 der Website klein und ohne Punkt: „tieout“ in Wortmarke, Seitentitel und Beschreibung. |
-| Restliste Prüfbericht (23.10.) | Handy: Firmenliste mit Kopf, Ampel und Datum; breite Tabellen blenden rechts aus, solange Spalten folgen. Rechenweg als Liste wie die übrigen Tabellen (Kopf, 36 px, Beträge rechts). Kennzahlen ohne Linien. Ein Seitentitel für Projekt, Befund und Beleg. „Zu entscheiden“ zählt wie „x von y freigegeben“ ohne „Braucht Anwalt“ |
-| Einstellungen und Anmeldung (23.10.) | Seite Einstellungen (Thema, Freigaben zurücksetzen) statt „Demo zurücksetzen“ in der Seitenleiste. Anmeldung mit Supabase (Projekt `tieout-app`, Frankfurt, nur auf Einladung, Einladen per Anmeldelink, Prüfskript `app/worker/index.ts`) ist fertig, aber per Schalter `ANMELDUNG_EIN` aus: Juroren und Investoren öffnen die App per Link |
-| Tempo (23.10.) | Gemessen lokal mit Edge headless, Vorher und Nachher abwechselnd. Ledger und Belegmatrix filtern in zwei Schritten: Treffer auf dem Bildschirm sofort, der Rest der 380 Zeilen danach (`useStufenweise`); Zeilen memoisiert; Matrix-Zellen als schlichte Links mit gemeinsamem Klick und Vorladen beim Zeigen (`useLinkFolgen`) statt über 1.000 `next/link`; Ledger schickt nur die angezeigten Felder. Antwort auf Filter und Suche schnell 32 bis 72 ms statt 88 bis 176 ms, gebremst (CPU 4x) 112 bis 240 ms statt 608 bis 992 ms; Vorladen im Ordner 140 statt 291 KB. Pixelgleich (69 Bilder). Messskripte und Zahlen im PR |
-| UI-Fundament | In der App (`app/src/ui`, Regeln in `app/src/ui/README.md`), **die App ist die Quelle**; das Artifact bleibt Referenz v2. Weißer Grund, keine Kästen, wenig Text. Gate 2 (annehmen) durch Maxi S. an der laufenden App offen. `fundament.test.ts` sperrt freie Farben, Stile, Trennpunkte, verbotene Wörter |
-| Prüfungen | GitHub Actions bei jedem PR: Typen, Lint, Tests, Build. Schutz von main braucht einen bezahlten GitHub-Plan (offen). Screenshots: `app/scripts/qa/screens.mjs` |
-| Online | https://app.tieout.workers.dev, geschützt per E-Mail-Code, neu gebaut bei jedem Merge auf main (seit 22.10.). Siehe „Online (Cloudflare)“ |
+| Plan and scope | `docs/Plan_MVP.md`, `docs/Umfang_v1.md`, aligned with dossier v3, approved by Maxi S. (22.10.) |
+| Solution list | `docs/Demo_Faelle.md` v2: company with 8 projects, W21 fully worked out (list 1 27.410,00 €, list 2 11.282,30 €), 6 field reports (Zurufe), general contractor (GU) history, questions for the insider. **Authoritative for all amounts** |
+| Data model and calculation core | `app/src/domain`, `app/src/engine`: company → client (Auftraggeber) → project, field reports, 7 small projects. Tests match solution list v2 to the cent (W21 and company), independently reviewed (PR #4) |
+| App | Company overview, project overview, findings (Befunde), finding page with the original (drawn from the dataset, A4), evidence chain (Beweiskette) and two-stage approval (history in the browser, undo, reset demo). Collapsible sidebar. Three independent reviews (code, design against Linear/Attio/reebuild, final review), findings incorporated (PR #5) |
+| Screens v0.9 (Maxi S., night of 22.10.) | New sidebar (company at the top, projects as a tree with a traffic-light dot), timeline with filters, WhatsApp scene (simulated: a voice message becomes an entry in the timeline), ledger with all bill of quantities (LV) items, folder with evidence matrix (Belegmatrix, item × evidence type) and document list, evidence (Beleg) in the original per document and field report (`/projekte/[projekt]/ordner/[beleg]`). PR #14, #15, #16, #18 and this one |
+| Polish v0.10 (Maxi S. with Claude, late 22.10.) | Flow 1 to 4 on the project overview with figures and links, no traffic-light dots and colored areas, status as a word, all tables 36 px with fixed columns (nothing shifts), tokens for font sizes. PRs #24, #27, #28, #29, #33, #35, independently reviewed. Next steps: `../_UEBERGABE.md` (rebranding Tieout., UI aligned with the website, speed, field report agent) |
+| Field report agent in the app (late 22.10.) | Agent by Santino (`zuruf/`, PR #25) behind the switch `ZURUF_ECHT` in the Worker, at runtime (default off: demo pixel-identical, scene simulated; limit reached: also simulated). On: real chat in the timeline, new field reports in the timeline and in the list „offen“ (open) (without amount, „Regiebericht fehlt“ (time-and-materials report missing)), evidence with a quote per statement (`…/zuruf/?id=`). Stored in the browser, calculation core untouched. Route `/api/zuruf/nachricht` (`zuruf/worker/route.ts`) in the Worker behind the sign-in, off online (variable `ZURUF_ECHT`), daily counter in Supabase (`zuruf/worker/supabase.sql`). Z6 is named as in the solution list „Heizkörper im Wohnzimmer versetzt“ (radiator in the living room moved). Scene and evidence page now say the same sentence as the solution list |
+| Brand Tieout (23.10.) | Logo and wordmark at the top of the sidebar (`app/src/ui/Logo.tsx`, same geometry as the website), page title „Tieout“, accent ultramarine #1D3BFF instead of blue. Grays, background and dark mode deliberately unchanged (decision Maxi S.). Since website v7 lowercase and without a period: „tieout“ in wordmark, page title and description. |
+| Remaining items from the review report (23.10.) | Phone: company list with header, traffic light and date; wide tables fade out on the right while more columns follow. Calculation as a list like the other tables (header, 36 px, amounts right-aligned). Key figures without lines. One page title for project, finding and evidence. „Zu entscheiden“ (to decide) counts like „x von y freigegeben“ (x of y approved) without „Braucht Anwalt“ (needs lawyer) |
+| Settings and sign-in (23.10.) | Settings page (theme, reset approvals) instead of „Demo zurücksetzen“ (reset demo) in the sidebar. Sign-in with Supabase (project `tieout-app`, Frankfurt, invitation only, invite via sign-in link, check script `app/worker/index.ts`) is done, but switched off via `ANMELDUNG_EIN`: judges and investors open the app via link |
+| Speed (23.10.) | Measured locally with Edge headless, before and after alternating. Ledger and evidence matrix filter in two steps: matches on screen immediately, the rest of the 380 rows afterwards (`useStufenweise`); rows memoized; matrix cells as plain links with a shared click handler and prefetch on hover (`useLinkFolgen`) instead of over 1,000 `next/link`; ledger sends only the displayed fields. Response to filter and search fast 32 to 72 ms instead of 88 to 176 ms, throttled (CPU 4x) 112 to 240 ms instead of 608 to 992 ms; prefetch in the folder 140 instead of 291 KB. Pixel-identical (69 images). Measurement scripts and figures in the PR |
+| UI foundation | In the app (`app/src/ui`, rules in `app/src/ui/README.md`), **the app is the source**; the Artifact remains reference v2. White background, no boxes, little text. Gate 2 (acceptance) by Maxi S. on the running app open. `fundament.test.ts` blocks free colors, styles, separator dots, forbidden words |
+| Checks | GitHub Actions on every PR: types, lint, tests, build. Protecting main requires a paid GitHub plan (open). Screenshots: `app/scripts/qa/screens.mjs` |
+| Online | https://app.tieout.workers.dev, protected by email code, rebuilt on every merge to main (since 22.10.). See "Online (Cloudflare)" |
 
-Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.12.
+Next goals: v0.9 Sat 31.10. (#glaubandich), v1.0 calendar week 45, stage 0 freeze Sun 6.12.
 
-## Nächste Schritte (Reihenfolge)
+## Next steps (in order)
 
-1. Gate 2 mit Maxi S. an der laufenden App.
-2. Bildschirme bis v0.9: gebaut (22.10.). Offen: unabhängige Prüfung, echte PDFs für Belege (pdf.js mit Markierung aus den Quell-Koordinaten).
-3. Team-Adressen in die Zugangsregel eintragen (siehe „Online (Cloudflare)“).
-4. Offene Befunde der Prüfer: Vorprüfung/Kaskade nur bei W21 zeigen, Dokument-Kennungen firmenweit eindeutig, gelegte Schlussrechnung und kumulierte AR im Datenmodell, Schlüssel der Kürzungsgründe im Korrekturblatt, Prüfstand je Wert im Rechenweg.
-5. Phase 3 bis v1.0 (KW 45): Vorprüfung, Schlussbesprechungs-Blatt, Entwurf der Schlussrechnung, Excel-Export, GU-Historie.
+1. Gate 2 with Maxi S. on the running app.
+2. Screens up to v0.9: built (22.10.). Open: independent review, real PDFs for evidence (pdf.js with highlighting from the source coordinates).
+3. Add team addresses to the access rule (see "Online (Cloudflare)").
+4. Open findings from the reviewers: show pre-check (Vorprüfung)/cascade only for W21, document IDs unique across the company, submitted final invoice (Schlussrechnung) and cumulative interim invoices (AR) in the data model, keys of the deduction reasons in the correction sheet, review status (Prüfstand) per value in the calculation.
+5. Phase 3 up to v1.0 (calendar week 45): pre-check, final meeting sheet (Schlussbesprechungs-Blatt), draft of the final invoice, Excel export, GU history.
 
-## Aufbau
+## Structure
 
-| Pfad | Inhalt |
+| Path | Content |
 |---|---|
-| `docs/` | Plan, Umfang, Lösungsliste, Muster aus reebuild und Kuro, UI-Messblatt, Prüfberichte |
-| `app/` | Code: Next.js 16, TypeScript, Vitest. Regeln für Agenten in `app/CLAUDE.md` |
-| `app/src/app/` | Bildschirme (Routen): `/` Firmenübersicht, `/projekte/[projekt]`, `…/befunde`, `…/befunde/[befund]`, `…/ledger`, `…/zeitachse`, `…/ordner`, `…/ordner/[beleg]` |
-| `app/src/zustand/` | Freigabe als Verlauf (reine Logik mit Tests) und Speicher im Browser, dazu neue Zurufe (`zurufe.ts`); später Datenbank |
-| `app/src/zuruf/` | Einbau des Zuruf-Agenten: Schalter, Firma für den Agenten, Abbildung Leistungsereignis → Zuruf |
-| `zuruf/` | Zuruf-Agent (WhatsApp): Kern, Simulator, Lernschleife, Route für die App (`worker/`). Regeln in `zuruf/CLAUDE.md` |
-| `app/src/ui/` | Bauteile aus dem UI-Fundament (React) und Stile (`styles/tokens.css`, `bauteile.css`, Layout je Bereich wie `rahmen.css`, `tabellen.css`) |
-| `app/src/daten/` | Datenzugriff der Bildschirme; heute der synthetische Firmenzwilling, später die Datenbank pro Firma |
-| `ui-fundament/` | Design-System v2 als Referenz und die Skripte, die es erzeugt haben (`LIESMICH.md`) |
+| `docs/` | Plan, scope, solution list, patterns from reebuild and Kuro, UI measurement sheet, review reports |
+| `app/` | Code: Next.js 16, TypeScript, Vitest. Rules for agents in `app/CLAUDE.md` |
+| `app/src/app/` | Screens (routes): `/` company overview, `/projekte/[projekt]`, `…/befunde`, `…/befunde/[befund]`, `…/ledger`, `…/zeitachse`, `…/ordner`, `…/ordner/[beleg]` |
+| `app/src/zustand/` | Approval as history (pure logic with tests) and storage in the browser, plus new field reports (`zurufe.ts`); later a database |
+| `app/src/zuruf/` | Integration of the field report agent: switch, company for the agent, mapping work event → field report |
+| `zuruf/` | Field report agent (WhatsApp): core, simulator, learning loop, route for the app (`worker/`). Rules in `zuruf/CLAUDE.md` |
+| `app/src/ui/` | Components from the UI foundation (React) and styles (`styles/tokens.css`, `bauteile.css`, layout per area such as `rahmen.css`, `tabellen.css`) |
+| `app/src/daten/` | Data access for the screens; today the synthetic company twin, later the database per company |
+| `ui-fundament/` | Design system v2 as reference and the scripts that generated it (`LIESMICH.md`) |
 
-## Starten
+## Running
 
 ```bash
 cd product/app
@@ -61,30 +61,30 @@ npm run build
 npm run start
 ```
 
-Danach http://localhost:3000 öffnen. `npm run build` legt die fertigen Seiten als Dateien in `app/out/` ab (statischer Export), `npm run start` liefert genau diese Dateien aus. `npm run generate` schreibt die synthetischen Datensätze nach `app/data/generated/` (nicht im Repository). Vor jedem Pull Request: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
+Then open http://localhost:3000. `npm run build` writes the finished pages as files to `app/out/` (static export), `npm run start` serves exactly these files. `npm run generate` writes the synthetic datasets to `app/data/generated/` (not in the repository). Before every pull request: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
 
 ## Online (Cloudflare)
 
-Die Demo liegt bei Cloudflare als Worker mit statischen Dateien (Workers Builds, Gratis-Plan) und ist durch Cloudflare Access geschützt: Wer die Adresse öffnet, gibt seine E-Mail-Adresse ein und bekommt einen Code. Nur freigeschaltete Adressen kommen hinein.
+The demo runs on Cloudflare as a Worker with static files (Workers Builds, free plan) and is protected by Cloudflare Access: whoever opens the address enters their email address and receives a code. Only approved addresses get in.
 
-| Was | Wo |
+| What | Where |
 |---|---|
-| Demo (Stand von `main`) | https://app.tieout.workers.dev |
-| Vorschau je Branch und Pull Request | Cloudflare schreibt die Adresse als Kommentar in den Pull Request |
-| Einstellungen | Cloudflare-Dashboard (Konto von Maxi S.), Workers & Pages, `app` (vorher `schlusswerk-demo`) |
-| Konfiguration im Repository | `app/wrangler.jsonc` |
+| Demo (state of `main`) | https://app.tieout.workers.dev |
+| Preview per branch and pull request | Cloudflare posts the address as a comment in the pull request |
+| Settings | Cloudflare dashboard (account of Maxi S.), Workers & Pages, `app` (previously `schlusswerk-demo`) |
+| Configuration in the repository | `app/wrangler.jsonc` |
 
-So läuft es:
-- Jeder Merge auf `main` baut die Demo neu und stellt sie online (2 bis 3 Minuten). Jeder andere Branch bekommt eine eigene Vorschau-Adresse, ebenfalls geschützt.
-- Cloudflare baut selbst aus dem Repository (Stammverzeichnis `product/app`, Build `npm run build`, Deploy `npx wrangler deploy`, Vorschau `npx wrangler preview`). Die GitHub-Prüfungen (`.github/workflows/produkt-app.yml`) laufen unabhängig davon weiter.
-- Anmelden: Adresse öffnen, E-Mail eingeben, Code aus der Mail eintippen. Die Anmeldung hält 24 Stunden.
-- Zugang verwalten: Cloudflare-Dashboard, Zero Trust, Access controls, Policies, Regel „Team Schlusswerk (E-Mail-Code)“. Dort E-Mail-Adressen hinzufügen oder entfernen und speichern, wirkt sofort. Die zweite Regel „Cloudflare account members“ lässt Mitglieder des Cloudflare-Kontos über „Cloudflare“ hinein. Zero Trust Free: 0 $, bis 50 Personen.
-- Freigaben in der Demo liegen weiter nur im Browser des Nutzers (localStorage), es gibt online keine Datenbank. Nur synthetische Daten.
+How it works:
+- Every merge to `main` rebuilds the demo and puts it online (2 to 3 minutes). Every other branch gets its own preview address, also protected.
+- Cloudflare builds directly from the repository (root directory `product/app`, build `npm run build`, deploy `npx wrangler deploy`, preview `npx wrangler preview`). The GitHub checks (`.github/workflows/produkt-app.yml`) continue to run independently.
+- Signing in: open the address, enter your email, type in the code from the email. The session lasts 24 hours.
+- Managing access: Cloudflare dashboard, Zero Trust, Access controls, Policies, rule „Team Schlusswerk (E-Mail-Code)“. Add or remove email addresses there and save; takes effect immediately. The second rule „Cloudflare account members“ lets members of the Cloudflare account in via „Cloudflare“. Zero Trust Free: $0, up to 50 people.
+- Approvals in the demo are still stored only in the user's browser (localStorage); there is no database online. Synthetic data only.
 
-Lokal unter Windows meldet die Browser-Konsole beim Vorladen einige 404 für Dateien `__next.*.txt`. Das ist ein Fehler im Export von Next.js unter Windows (falsche Pfadtrenner), die Seiten laden trotzdem. Cloudflare baut unter Linux, dort tritt er nicht auf.
+Locally on Windows, the browser console reports some 404s for `__next.*.txt` files during prefetch. This is a bug in the Next.js export on Windows (wrong path separators); the pages still load. Cloudflare builds on Linux, where it does not occur.
 
-## Regeln
+## Rules
 
-- UI nur aus dem UI-Fundament, keine eigenen Farben oder Abstände.
-- Alle Beträge aus dem Rechenkern. Die Lösungsliste ändert sich nur mit Go, der Code richtet sich nach ihr.
-- Vor jedem Pull Request: typecheck, lint, Tests, Build grün; Bildschirme im echten Browser geprüft (hell, dunkel, 1440 und 390 px) und von einem unabhängigen Prüfer angesehen.
+- UI only from the UI foundation, no custom colors or spacing.
+- All amounts from the calculation core. The solution list changes only with a go-ahead; the code follows it.
+- Before every pull request: typecheck, lint, tests, build green; screens checked in a real browser (light, dark, 1440 and 390 px) and looked at by an independent reviewer.

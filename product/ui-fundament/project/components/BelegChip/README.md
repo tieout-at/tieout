@@ -1,10 +1,10 @@
 # Beleg-Chip
 
-Verweis auf eine Fundstelle: voller Dateiname und Seite; ein Klick öffnet das Original an dieser Stelle.
+Reference to a source location: full file name and page; a click opens the original at that location.
 
-**Vorlage:** Kuro „Fundstellen“ (Chip „Leistungsbeschreibung_GU.pdf, S. 14“ unter jeder Aussage), Hebbia (Quellenspalte).
+**Reference:** Kuro „Fundstellen“ (source locations; chip „Leistungsbeschreibung_GU.pdf, S. 14“ under every statement), Hebbia (source column).
 
-**Verwenden**
-- Voller Dateiname wie im Betrachter, dazu „S. x“ oder „Blatt x“. Kompakt (nur so breit wie der Text).
-- Symbol nach Typ: Plan `map`, Mail `mail`, Aufmaß `ruler`, Foto `image`, Tabelle `table`, sonst `file-text`.
-- Rand `field-border` (≥ 3:1), gewählt `accent` auf `accent-soft`. Fehlender Beleg: gestrichelt „kein Beleg“.
+**Usage**
+- Full file name as in the viewer, plus „S. x“ (page x) or „Blatt x“ (sheet x). Compact (only as wide as the text).
+- Icon by type: plan `map`, mail `mail`, measurement record (Aufmaß) `ruler`, photo `image`, spreadsheet `table`, otherwise `file-text`.
+- Border `field-border` (≥ 3:1), selected `accent` on `accent-soft`. Missing evidence (Beleg): dashed „kein Beleg“ (no evidence).

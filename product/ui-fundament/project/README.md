@@ -1,78 +1,78 @@
-Schlusswerk ist ein internes Prüfwerkzeug für österreichische HKLS- und Elektro-Subunternehmer: Vor der Schlussrechnung gleicht es LV, Aufmaß, Regie, Rechnungen, Pläne und Mails ab und zeigt jeden Euro mit Beleg. Dieses UI-Fundament ist **nicht erfunden, sondern aus professioneller Software abgeleitet**. Jeder Wert und jedes Bauteil nennt seine Vorlage.
+Schlusswerk is an internal review tool for Austrian HVAC/plumbing (HKLS) and electrical subcontractors: before the final invoice (Schlussrechnung), it reconciles the bill of quantities (LV), measurement records (Aufmaß), time-and-materials work (Regie), invoices, plans and mails and shows every euro with its evidence (Beleg). This UI foundation is **not invented but derived from professional software**. Every value and every component names its reference.
 
-## Woher die Werte kommen
+## Where the values come from
 
-- **Leitreferenzen:** reebuild (Bau-Backoffice, Produktansichten), Kuro (Fundstellen mit Original, Uploadverlauf), Stratos (Digital Twin als Schichtenbild).
-- **Benchmarks:** Linear (Dichte, Dunkelmodus, Triage), Attio (heller Werkzeug-Look, Datensatz-Verlauf), Harvey (Zellen mit Zitat und Sperre), Ramp (Abgleich an der Zeile), Rossum (Prüfstand gelb/grün/rot).
-- **Muster ohne Screenshot:** BuildPass und Oracle Textura (Kürzungsgrund aus fester Liste), Siteline (Eingabe vs. gerechnet), Payapps (Verlauf je Nachtrag), Trunk Tools (Planvergleich), Document Crunch („fehlt im Vertrag“).
-- Gemessen am 22.10.2026 mit `getComputedStyle` und Pixelanalyse. Entscheidungen aus Gate 1 (Maxi, 22.10.): Schrift Inter, Grundton kühl-neutral, Primärknopf in Tinte, Akzent als Platzhalter bis zur Abstimmung mit der Marke.
+- **Lead references:** reebuild (construction back office, product views), Kuro (source locations with the original, upload history), Stratos (digital twin as a layered picture).
+- **Benchmarks:** Linear (density, dark mode, triage), Attio (light tool look, record history), Harvey (cells with quote and lock), Ramp (reconciliation on the row), Rossum (review status yellow/green/red).
+- **Patterns without screenshots:** BuildPass and Oracle Textura (deduction reason from a fixed list), Siteline (input vs. calculated), Payapps (history per change order (Nachtrag)), Trunk Tools (plan comparison), Document Crunch („fehlt im Vertrag“, missing from the contract).
+- Measured on 22.10.2026 with `getComputedStyle` and pixel analysis. Decisions from Gate 1 (Maxi, 22.10.): typeface Inter, cool-neutral base tone, primary button in ink, accent as a placeholder until aligned with the brand.
 
-## Sprache und Inhalt
+## Language and content
 
-- Deutsch (Österreich), kurz, sachlich, ohne Ausrufezeichen. Kein Erklärtext unter Überschriften; Leerzustand: „Keine Treffer.“
-- Jede Ansicht beginnt mit **einem Satz mit Zahlen**: „12 Posten aus 165 Dokumenten. 27.410,00 € jetzt verrechenbar.“ (Kuro, Linear).
-- Beträge: `27.410,00 €`, Minus als `−`, Tabellenziffern. Mengen mit Einheit: `14 Stk`, `172 m`. Datum `18.09.2026`, mit Uhrzeit `22.10.2026, 14:12`.
-- **Feste Begriffe** (immer genau so): Jetzt verrechenbar · Angemeldet und offen · Verloren · Braucht Anwalt · Vorprüfung aus GU-Sicht · Kürzungsrisiko · Übernommen · Freigegeben · Schlussrechnung legen bis · Preisumrechnung (ÖNORM B 2111) · Mehrmenge · Regie.
-- **Nie:** das Wort „Claim“; Aussagen, ob eine Frist präklusiv ist; rechtliche Einordnungen wie „Forcierung“; Countdowns. Behinderung und strittige Klauseln bekommen nur „Braucht Anwalt“.
-- Status immer als **Punkt plus Wort**, nie nur Farbe.
-- Synthetische Daten tragen in jeder Kopfzeile die Marke „Synthetisch“ und auf jeder Belegseite die Marke „Synthetisch“ (`doc-muted`, ≥ 4,5:1).
-- Was es noch nicht gibt, ist deaktiviert mit Tooltip („folgt in Phase 2/3“). Nichts darf bedienbar aussehen und nichts tun.
+- German (Austria), short, factual, without exclamation marks. No explanatory text below headings; empty state: „Keine Treffer.“ (no matches).
+- Every view starts with **one sentence with figures**: „12 Posten aus 165 Dokumenten. 27.410,00 € jetzt verrechenbar.“ (12 items from 165 documents, 27.410,00 € billable now) (Kuro, Linear).
+- Amounts: `27.410,00 €`, minus as `−`, tabular figures. Quantities with unit: `14 Stk`, `172 m`. Date `18.09.2026`, with time `22.10.2026, 14:12`.
+- **Fixed terms** (always exactly like this): Jetzt verrechenbar · Angemeldet und offen · Verloren · Braucht Anwalt · Vorprüfung aus GU-Sicht · Kürzungsrisiko · Übernommen · Freigegeben · Schlussrechnung legen bis · Preisumrechnung (ÖNORM B 2111) · Mehrmenge · Regie. (Billable now, notified and open, lost, needs lawyer, pre-check from the general contractor's (GU) perspective, deduction risk, accepted, approved, submit final invoice by, price adjustment, additional quantity, time-and-materials work.)
+- **Never:** the word „Claim“; statements on whether a deadline is preclusive; legal classifications such as „Forcierung“ (acceleration); countdowns. Hindrance and disputed clauses only get „Braucht Anwalt“ (needs lawyer).
+- Status always as **dot plus word**, never color alone.
+- Synthetic data carries the mark „Synthetisch“ (synthetic) in every header and the mark „Synthetisch“ on every evidence page (`doc-muted`, ≥ 4.5:1).
+- Anything that does not exist yet is disabled with a tooltip („folgt in Phase 2/3“, follows in phase 2/3). Nothing may look usable and do nothing.
 
-## Farben
+## Colors
 
-- Flächen: `bg` (App-Grund) → `surface` (Panels, Tabellen) → `surface-subtle` (Seitenleiste, Tabellenkopf) → `surface-hover` → `surface-selected` (gewählt, aktiv).
-- **Linien statt Schatten** (Linear, Attio; reebuild nutzt weiche Schatten, das übernehmen wir nicht): `line` zwischen Zeilen, `line-strong` für Panel-Rahmen, Kopfzeile und Zwischensummen. Schatten nur `shadow-overlay` (Toast, Menü) und `shadow-page` (Dokumentseite).
-- Text: `text` für Inhalt und Zahlen, `text-secondary` für Unterzeilen, `text-muted` für Labels und Zeiten, `text-disabled` nur für Deaktiviertes. Alle Textfarben erfüllen 4,5:1 auf allen Flächen in hell und dunkel (gemessen, 70 Paare).
-- **Primärknopf in Tinte:** `action` mit `on-action`. Die Liga (reebuild, Attio, Harvey, Ramp) färbt Primärknöpfe nicht in der Markenfarbe.
-- `accent` ist ein **Platzhalter** (Attio-Blau) für Fokusring, Links und gewählte Belege, nie für Status. Wird nach Abstimmung mit der Marke getauscht.
-- Semantik nach Rossum und reebuild: `pos` bestätigt / laut Vertrag / jetzt verrechenbar; `warn` maschinell / Abweichung / offen / Kürzungsrisiko; `neg` blockiert / Rechenfehler; `law` nur „Braucht Anwalt“. Auf Marken immer mit dem passenden `-soft`-Grund.
-- Belege: Papier `doc-paper` bleibt in beiden Themen weiß; Fundstelle `doc-mark` mit Unterstrich `doc-mark-line`.
-- Besetzt und nicht verwenden: Petrol (reebuild), Orange (Kuro, Stratos), Gelbgrün (Ramp).
+- Surfaces: `bg` (app background) → `surface` (panels, tables) → `surface-subtle` (sidebar, table header) → `surface-hover` → `surface-selected` (selected, active).
+- **Lines instead of shadows** (Linear, Attio; reebuild uses soft shadows, we do not adopt that): `line` between rows, `line-strong` for panel borders, header and subtotals. Shadows only `shadow-overlay` (toast, menu) and `shadow-page` (document page).
+- Text: `text` for content and numbers, `text-secondary` for sublines, `text-muted` for labels and times, `text-disabled` only for disabled elements. All text colors meet 4.5:1 on all surfaces in light and dark (measured, 70 pairs).
+- **Primary button in ink:** `action` with `on-action`. The league (reebuild, Attio, Harvey, Ramp) does not color primary buttons in the brand color.
+- `accent` is a **placeholder** (Attio blue) for focus ring, links and selected evidence, never for status. It will be replaced after alignment with the brand.
+- Semantics following Rossum and reebuild: `pos` confirmed / per contract / billable now; `warn` machine / deviation / open / deduction risk; `neg` blocked / calculation error; `law` only „Braucht Anwalt“. On markers always with the matching `-soft` background.
+- Evidence: paper `doc-paper` stays white in both themes; source location `doc-mark` with underline `doc-mark-line`.
+- Taken and not to be used: petrol (reebuild), orange (Kuro, Stratos), yellow-green (Ramp).
 
-## Schrift
+## Typography
 
-- **Inter** für alles, **JetBrains Mono** für Positionsnummern, Dateinamen und Seitenangaben.
-- Stufen: `kpi` 28/32 (Beträge in Kennzahlen), `page-title` 20/28, `section-title` 15/22, `body` 14/21 (Sätze), `ui` 13/20 (Tabellen, Listen; Grundgröße im Werkzeug wie Linear), `ui-strong` 13/20 w500 (Knöpfe, Zeilentitel), `meta` 12/18, `label` 11/16 w500 in Großbuchstaben mit Sperrung, `mono` 12/18.
-- Gewichte nur 400, 500, 600. Leicht negative Sperrung ab 13 px (−1 %), positive bei Labels (+6 %).
+- **Inter** for everything, **JetBrains Mono** for item numbers, file names and page references.
+- Levels: `kpi` 28/32 (amounts in key figures), `page-title` 20/28, `section-title` 15/22, `body` 14/21 (sentences), `ui` 13/20 (tables, lists; base size in the tool like Linear), `ui-strong` 13/20 w500 (buttons, row titles), `meta` 12/18, `label` 11/16 w500 in capitals with letter spacing, `mono` 12/18.
+- Weights only 400, 500, 600. Slightly negative letter spacing from 13 px (−1 %), positive for labels (+6 %).
 
-## Abstände, Radien, Größen
+## Spacing, radii, sizes
 
-- 4er-Raster: `space-1` 4 bis `space-8` 32. Panels innen `space-4`, zwischen Panels `space-5`, Seitenrand `space-6`.
-- Radien: `radius-sm` 4 (Marken, Chips), `radius-md` 6 (Knöpfe, Felder, Navigation), `radius-lg` 8 (Panels, Karten). Konsens aus reebuild, Linear, Attio.
-- `control-h` 32 für Knöpfe und Felder, `row-h` 40 für Tabellenzeilen mit Unterzeile, `sidebar-w` 232.
-- Fokus: 2 px `accent`, 2 px Abstand, auf jedem bedienbaren Element.
+- 4-point grid: `space-1` 4 to `space-8` 32. Panel padding `space-4`, between panels `space-5`, page margin `space-6`.
+- Radii: `radius-sm` 4 (markers, chips), `radius-md` 6 (buttons, fields, navigation), `radius-lg` 8 (panels, cards). Consensus of reebuild, Linear, Attio.
+- `control-h` 32 for buttons and fields, `row-h` 40 for table rows with a subline, `sidebar-w` 232.
+- Focus: 2 px `accent`, 2 px offset, on every interactive element.
 
-## Bauteile und ihre Vorlagen
+## Components and their references
 
-| Bauteil | Vorlage | Wofür |
+| Component | Reference | Purpose |
 |---|---|---|
-| AppShell, Seitenleiste | Attio, Linear, reebuild-Produkt | Rahmen und Navigation in Ablauf-Reihenfolge |
-| Seitenkopf | reebuild-Projektkopf, Linear | Titel, Fakten, eine Primäraktion |
-| Kennzeichnung „Synthetisch“ (im Seitenkopf) | Pflicht aus dem Umfang; Form wie eine Linear-Marke | Demo-Daten auf jeder Seite kennzeichnen |
-| Stand | Linear-Statusspalte, reebuild-Freigabe | Prüfen → Übernommen → Freigegeben |
-| Belegmatrix | Hebbia-Matrix, Harvey Review Table, Stratos-Idee „Digital Twin“ | Projektzwilling als Tabelle: Position × Belegart |
-| Knopf | reebuild, Attio, Linear-Triage | Aktionen mit Tastenkürzel |
-| Statusmarke | Linear-Labels | Liste und Bearbeitungsstand |
-| Prüfstand | Rossum, Harvey | maschinell / bestätigt / blockiert an jedem Wert |
-| Kennzahl | reebuild R-C | die drei Listen als Beträge |
-| Schrittleiste | reebuild-Ablauf, Kuro „x von y“ | Stand des Checks |
-| Tabelle | reebuild R-B, Linear, Hebbia, Siteline, Ramp | Ledger und Befundlisten |
-| Beleg-Chip | Kuro-Fundstellen, Hebbia | Verweis auf Datei und Seite |
-| Dokumentbetrachter | Kuro K-A, Rossum | Original mit markierter Fundstelle |
-| Beweiskette | Linear-Aktivität, Payapps | Belege eines Postens in Zeitfolge |
-| Freigabeleiste | Linear-Triage, reebuild-Freigabe | übernehmen (M) → freigeben (I) |
-| Prüfkaskade | reebuild R-A, BuildPass, Document Crunch | Schlussrechnung aus GU-Sicht bis zur Restforderung |
-| Upload-Verlauf | Kuro K-B, PlanRadar | neue Dokumente, Versionen, Duplikate |
-| Toast | Linear, Playbook | Bestätigung mit Rückgängig |
+| AppShell, Seitenleiste | Attio, Linear, reebuild product | Frame and navigation in flow order |
+| Seitenkopf | reebuild project header, Linear | Title, facts, one primary action |
+| „Synthetisch“ label (in the Seitenkopf) | Mandatory per the scope; shaped like a Linear label | Mark demo data on every page |
+| Stand | Linear status column, reebuild approval | Prüfen → Übernommen → Freigegeben (review, accepted, approved) |
+| Belegmatrix | Hebbia matrix, Harvey Review Table, Stratos idea „Digital Twin“ | Project twin as a table: item × evidence type |
+| Knopf | reebuild, Attio, Linear triage | Actions with keyboard shortcut |
+| Statusmarke | Linear labels | List and processing status |
+| Prüfstand | Rossum, Harvey | machine / confirmed / blocked on every value |
+| Kennzahl | reebuild R-C | the three lists as amounts |
+| Schrittleiste | reebuild flow, Kuro „x von y“ (x of y) | Status of the Check |
+| Tabelle | reebuild R-B, Linear, Hebbia, Siteline, Ramp | Ledger and findings (Befunde) lists |
+| Beleg-Chip | Kuro source locations, Hebbia | Reference to file and page |
+| Dokumentbetrachter | Kuro K-A, Rossum | Original with highlighted source location |
+| Beweiskette | Linear activity, Payapps | Evidence for an item in chronological order |
+| Freigabeleiste | Linear triage, reebuild approval | accept (M) → approve (I) |
+| Prüfkaskade | reebuild R-A, BuildPass, Document Crunch | Final invoice from the GU's perspective down to the remaining amount due |
+| Upload-Verlauf | Kuro K-B, PlanRadar | new documents, versions, duplicates |
+| Toast | Linear, playbook | Confirmation with undo |
 
-Noch nicht gebaut: Schlussbesprechungs-Blatt (Druck), Ledger mit allen 380 Positionen, Planvergleich als Überlagerung (Trunk Tools), Excel-Export.
+Not built yet: final meeting sheet (Schlussbesprechungs-Blatt, print), ledger with all 380 items, plan comparison as an overlay (Trunk Tools), Excel export.
 
-Größen-Token: `head-h` 48 (Kopfzeile), `panel-head-h` 44 (jeder Panel-Kopf gleich), `row-h` 36 / `row-h-2` 48 (Tabellenzeilen über Innenabstand), `chip-h` 22, `tab-h` 28, `control-h` 32.
+Size tokens: `head-h` 48 (header), `panel-head-h` 44 (every panel header the same), `row-h` 36 / `row-h-2` 48 (table rows via padding), `chip-h` 22, `tab-h` 28, `control-h` 32.
 
-## Symbole
+## Icons
 
-Lucide (ISC-Lizenz), 16 px, Strich 1,75, in `text-muted`; aktiv in `text`. Dieselbe Familie wie `lucide-react` im App-Code. Belegtypen: Plan `map`, Mail `mail`, Aufmaß `ruler`, Foto `image`, sonstiges `file-text`; Anwalt `scale`; Prüfstand `bot`, `user-check`, `lock`. Keine Emojis.
+Lucide (ISC license), 16 px, stroke 1.75, in `text-muted`; active in `text`. The same family as `lucide-react` in the app code. Evidence types: plan `map`, mail `mail`, measurement record `ruler`, photo `image`, other `file-text`; lawyer `scale`; review status `bot`, `user-check`, `lock`. No emojis.
 
-## Nicht verwenden
+## Do not use
 
-Verläufe, Glas- oder Glow-Effekte, farbige Karten-Ränder links, Emojis, Schatten auf Panels, mehr als eine Akzentfarbe, KI-Chat als Einstieg (Kuro-Muster bewusst nicht übernommen), Echtzeit-Kostenkurven (Live-Betrieb ist verworfen).
+Gradients, glass or glow effects, colored left card borders, emojis, shadows on panels, more than one accent color, AI chat as the entry point (Kuro pattern deliberately not adopted), real-time cost curves (live operation has been rejected).

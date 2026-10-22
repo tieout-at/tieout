@@ -1,10 +1,10 @@
 # Statusmarke
 
-Pille mit Punkt und Wort: zu welcher Liste ein Posten gehört. Nur für Listen und Kürzungsgründe, nicht für den Bearbeitungsstand.
+Pill with dot and word: which list an item belongs to. Only for lists and deduction reasons, not for processing status.
 
-**Vorlage:** Linear-Labels (Pille mit Rand, farbiger Punkt, Text in normaler Farbe).
+**Reference:** Linear labels (pill with border, colored dot, text in normal color).
 
-**Verwenden**
-- Listen: „Jetzt verrechenbar“ (`pos`), „Angemeldet und offen“ (`warn`), „Verloren“ (neutral), „Braucht Anwalt“ (`law`).
-- Kürzungsgründe aus der festen Liste ohne Punkt (`sw-chip--plain`).
-- In Tabellen steht die Liste als Gruppenkopf, nicht in jeder Zeile.
+**Usage**
+- Lists: „Jetzt verrechenbar“ (billable now) (`pos`), „Angemeldet und offen“ (notified and open) (`warn`), „Verloren“ (lost) (neutral), „Braucht Anwalt“ (needs lawyer) (`law`).
+- Deduction reasons from the fixed list without a dot (`sw-chip--plain`).
+- In tables the list appears as a group header, not in every row.

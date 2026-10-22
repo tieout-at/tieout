@@ -1,10 +1,10 @@
 # AppShell
 
-Der Rahmen jeder Seite: Seitenleiste links, eine Kopfzeile von 48 px, darunter der Inhalt auf `bg`.
+The frame of every page: sidebar on the left, a 48 px header, and below it the content on `bg`.
 
-**Vorlage:** Attio (helle Seitenleiste auf `surface-subtle`, Inhalt weiß), Linear (Kopfzeile mit Pfad und Aktionen in einer Zeile, 13 px), reebuild-Produkt (App-Grund `#f4f4f8` mit weißen Panels).
+**Reference:** Attio (light sidebar on `surface-subtle`, white content), Linear (header with path and actions in one row, 13 px), reebuild product (app background `#f4f4f8` with white panels).
 
-**Verwenden**
-- Seitenleiste `sidebar-w`, Kopf `head-h`, Inhalt mit `space-6` Rand und `space-5` Abstand zwischen Panels.
-- Projektfakten (GU, Auftrag, Vertragsart, Datum der Schlussrechnung) stehen nur auf der Übersicht, nicht in jeder Kopfzeile.
-- Unter 900 px wird die Seitenleiste zu einer waagrechten Leiste oben.
+**Usage**
+- Sidebar `sidebar-w`, header `head-h`, content with `space-6` margin and `space-5` spacing between panels.
+- Project facts (general contractor (GU), contract, contract type, date of the final invoice (Schlussrechnung)) appear only on the overview, not in every header.
+- Below 900 px the sidebar becomes a horizontal bar at the top.

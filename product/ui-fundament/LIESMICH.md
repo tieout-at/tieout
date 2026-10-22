@@ -1,23 +1,23 @@
-# UI-Fundament: Quellen
+# UI foundation: sources
 
-Online (privat im claude.ai-Konto von Maxi S.; für andere erst nach Teilen über das Menü der Seite sichtbar):
-- [Design-System „Schlusswerk UI-Fundament“ v2](https://claude.ai/artifact/2yx5HB3X95GRzud9xi7Kqk)
-- [Schlüsselbildschirme v2](https://claude.ai/artifact/1mec2zqoGB7KHNRpMoHP9n)
+Online (private in the claude.ai account of Maxi S.; visible to others only after sharing via the page menu):
+- [Design system „Schlusswerk UI-Fundament“ v2](https://claude.ai/artifact/2yx5HB3X95GRzud9xi7Kqk)
+- [Key screens v2](https://claude.ai/artifact/1mec2zqoGB7KHNRpMoHP9n)
 
-Ohne Zugang: `Schlusswerk-Bildschirme.html` in diesem Ordner im Browser öffnen, Vorschau jedes Bauteils unter `project/components/<Name>/preview.html`.
+Without access: open `Schlusswerk-Bildschirme.html` in this folder in the browser; preview of every component under `project/components/<Name>/preview.html`.
 
-Die Referenz-Screenshots (Produkte von reebuild, Kuro, Linear usw., etwa 16 MB) liegen bewusst nicht im Repository: fremdes Material. Die Messwerte daraus stehen in `../docs/UI-Messblatt.md` und `../../docs/research_notes/UI_Referenzen.md`.
+The reference screenshots (products by reebuild, Kuro, Linear etc., about 16 MB) are deliberately not in the repository: third-party material. The measurements taken from them are in `../docs/UI-Messblatt.md` and `../../docs/research_notes/UI_Referenzen.md`.
 
-| Datei | Was |
+| File | What |
 |---|---|
-| `make-tokens.mjs` | schreibt `project/tokens.json` und prüft alle Farbkontraste (80 Paare, hell und dunkel) |
-| `content.js` | **eine** Quelle für Inhalte und Bausteine (Befunde, Belege, Kaskade, Matrix); von Vorschauen und Bildschirmen gemeinsam genutzt |
-| `gen-components.mjs` | schreibt `project/tokens.css` und alle 18 Bauteile (`project/components/<Name>/preview.html` + `README.md`) |
-| `gen-screens.mjs` | baut `Schlusswerk-Bildschirme.html` (Pfad als Argument) nur aus Bauteilen |
-| `qa-screens.ps1`, `measure-probe.ps1`, `overflow.ps1` | Screenshots mit Edge headless; Höhen, Überlauf |
-| `screenshots/` | Stand v2, hell und dunkel |
-| `project/` | genau der Inhalt des Design-System-Artifacts |
+| `make-tokens.mjs` | writes `project/tokens.json` and checks all color contrasts (80 pairs, light and dark) |
+| `content.js` | **one** source for content and building blocks (findings, evidence, cascade, matrix); shared by previews and screens |
+| `gen-components.mjs` | writes `project/tokens.css` and all 18 components (`project/components/<Name>/preview.html` + `README.md`) |
+| `gen-screens.mjs` | builds `Schlusswerk-Bildschirme.html` (path as argument) from components only |
+| `qa-screens.ps1`, `measure-probe.ps1`, `overflow.ps1` | screenshots with Edge headless; heights, overflow |
+| `screenshots/` | state v2, light and dark |
+| `project/` | exactly the content of the design system Artifact |
 
-Reihenfolge nach einer Änderung: `node make-tokens.mjs` → `node gen-components.mjs` → `node gen-screens.mjs "<Pfad>\Schlusswerk-Bildschirme.html"` → Screenshots und Messung → veröffentlichen (Design-System: nur geänderte Dateien unter `project/`, `design-system.json` zuletzt mit neuem `lastChange`).
+Order after a change: `node make-tokens.mjs` → `node gen-components.mjs` → `node gen-screens.mjs "<Pfad>\Schlusswerk-Bildschirme.html"` → screenshots and measurement → publish (design system: only changed files under `project/`, `design-system.json` last with a new `lastChange`).
 
-Dateien nur mit Node oder dem Write-Werkzeug ändern, nicht mit PowerShell `Set-Content` (zerstört Umlaute). Die Skripte erwarten die Dateien im selben Ordner wie sich selbst.
+Change files only with Node or the Write tool, not with PowerShell `Set-Content` (destroys umlauts). The scripts expect the files in the same folder as themselves.

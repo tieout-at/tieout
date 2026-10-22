@@ -1,9 +1,9 @@
 # Upload-Verlauf
 
-Was ein Ordner-Upload geändert hat: neue Versionen, Duplikate, neu zugeordnete Dokumente.
+What a folder upload changed: new versions, duplicates, newly assigned documents.
 
-**Vorlage:** Kuro „Änderungen verstehen“ (alter und neuer Stand verbunden, Status pro Dokument), PlanRadar (Planversionen).
+**Reference:** Kuro „Änderungen verstehen“ (understand changes; old and new state connected, status per document), PlanRadar (plan versions).
 
-**Verwenden**
-- Oben ein Satz mit Zahlen („165 Dokumente, davon 12 Duplikate“). Linie in `accent` bei neuer Version.
-- Status-Wörter: „Neu“, „Neue Version“, „Duplikat“, „Zugeordnet“, „Prüfen“.
+**Usage**
+- At the top one sentence with figures („165 Dokumente, davon 12 Duplikate“, 165 documents, 12 of them duplicates). Line in `accent` for a new version.
+- Status words: „Neu“ (new), „Neue Version“ (new version), „Duplikat“ (duplicate), „Zugeordnet“ (assigned), „Prüfen“ (review).

@@ -1,10 +1,10 @@
 # Seitenleiste
 
-Navigation durch einen Check in fester Reihenfolge, mit Zählern; noch nicht gebaute Schritte sind sichtbar, aber deaktiviert.
+Navigation through a Check in a fixed order, with counters; steps not yet built are visible but disabled.
 
-**Vorlage:** Attio-Navigation (hell, Symbol + Wort), Linear (aktiver Eintrag als graue Fläche, Zähler rechts, 28 px Einträge), reebuild (Projekt-Umschalter oben).
+**Reference:** Attio navigation (light, icon + word), Linear (active entry as a gray area, counter on the right, 28 px entries), reebuild (project switcher at the top).
 
-**Verwenden**
-- Reihenfolge = Ablauf: Übersicht, Ordner, Ledger, Befunde, Vorprüfung aus GU-Sicht, Schlussbesprechung, Export.
-- Einträge sind echte Links (`<a href>`), damit Tastatur und Fokus funktionieren. Aktiv: `aria-current="page"`. Noch nicht verfügbar: `aria-disabled="true"` mit Tooltip.
-- Nur die Wortmarke „Schlusswerk“, bis es ein Logo gibt. Hell/Dunkel-Schalter unten mit `sun-moon`.
+**Usage**
+- Order = flow: Übersicht (overview), Ordner (folder), Ledger, Befunde (findings), Vorprüfung aus GU-Sicht (pre-check from the GU's perspective), Schlussbesprechung (final meeting), Export.
+- Entries are real links (`<a href>`) so that keyboard and focus work. Active: `aria-current="page"`. Not yet available: `aria-disabled="true"` with a tooltip.
+- Only the wordmark „Schlusswerk“ until there is a logo. Light/dark toggle at the bottom with `sun-moon`.
