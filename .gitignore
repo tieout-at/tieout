@@ -1,0 +1,30 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Abhängigkeiten und Builds
+node_modules/
+.venv/
+__pycache__/
+dist/
+build/
+.next/
+.vercel/
+coverage/
+
+# Echte Kundendaten gehören nie ins Repository (Gate R4)
+**/real_data/
+**/kundendaten/
+
+# Große Mediendateien (Videos im Drive ablegen, hier nur Skript und Quellen)
+*.mp4
+*.mov
+*.mkv
+*.wav
+
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
