@@ -102,10 +102,16 @@
   --control-h: 32px;
   --row-h: 36px;
   --row-h-2: 48px;
+  --table-head-h: 32px;
   --head-h: 48px;
   --panel-head-h: 44px;
   --chip-h: 22px;
   --tab-h: 28px;
+  /* Schriftgrößen der Oberfläche (Fließtext 13 px im body) */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-lg: 14px;
   --sidebar-w: 232px;
   --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;

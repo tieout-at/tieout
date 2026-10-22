@@ -4,7 +4,7 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 
 | Bauteil | Datei | Vorlage |
 |---|---|---|
-| Seitenleiste: Firma oben, Projekte als Baum mit Ampelpunkt, aktives Projekt aufgeklappt | `Seitenleiste.tsx` | Linear (Arbeitsbereich oben, „Your teams“ als Baum, aktiver Eintrag als Fläche, Zähler rechts), Attio (Gruppen-Label) |
+| Seitenleiste: Firma oben, Projekte als Baum ohne Ampelpunkt (Ampel-Wort im Tooltip), aktives Projekt aufgeklappt | `Seitenleiste.tsx` | Linear (Arbeitsbereich oben, „Your teams“ als Baum, aktiver Eintrag als Fläche, Zähler rechts), Attio (Gruppen-Label) |
 | Seitenkopf | `Seitenkopf.tsx` | Linear-Kopfzeile, Attio |
 | Kennzahl | `Kennzahl.tsx` | reebuild-Projektübersicht R-C |
 | Panel | `Panel.tsx` | Linear, Attio (Rand statt Schatten) |
@@ -15,15 +15,15 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 | Zeilennavigation | `Zeilennavigation.tsx` | Linear (Klick, Enter, j/k) |
 | Zeitachse | `Zeitachse.tsx` | Linear-Aktivität (Symbol auf der Linie), Attio-Zeitleiste (Monatsköpfe), Filter als Reiter mit Zähler |
 | Zuruf-Szene (Mock) | `ZurufSzene.tsx` | Chat eines Messengers, neutral ohne fremde Marke; Papierfarben wie Belege |
-| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear „Group by“, Attio-Suche über der Tabelle |
-| Belegmatrix und Dokumentliste | `Ordner.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B |
+| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear „Group by“, Attio-Suche über der Tabelle. Zeile 36 px, Kopf 32 px ohne Fläche, feste Spalten (`.tab-liste`); Spalte „Nächste AR“ zeigt die Menge aus dem Rechenkern, keine Marke je Zeile |
+| Belegmatrix und Dokumentliste | `Ordner.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B. Einzeilig, leere Zelle heißt kein Beleg (kein Wort), Zeile mit Befund öffnet ihn per Klick, Enter, j/k |
 | **Projektliste mit Ampel** (neu) | `../app/page.tsx` | Linear-Projektliste (Gruppen nach Zustand, Zähler im Gruppenkopf), reebuild R-B (Beträge rechtsbündig, Summen), Statusmarke für die Ampel |
 
 ## Projektliste mit Ampel
 
-- Eine Zeile pro Projekt: Kurzzeichen (mono, gedämpft) und Name, darunter der Auftraggeber. Ampel, Datum mit Bedeutung darunter, Auftrag, die zwei Listen getrennt.
+- Eine Zeile pro Projekt, einzeilig (36 px): Kurzzeichen (gedämpft, feste Breite) und Name, Auftraggeber als eigene gedämpfte Spalte, Ampel als Wort, Datum, Auftrag, die zwei Listen getrennt.
 - Gruppen: „Im Abgleich“ mit Summen, „Schlussrechnung gelegt oder abgeschlossen“ ohne Beträge. Darunter die Summe aller Aufträge.
-- **Ampel als Punkt plus eigenes Wort**, nie nur Farbe. Regel im Rechenkern (`engine/firma.ts`), Wörter fest:
+- **Ampel als Wort ohne Punkt**, Farbe nur als Schriftfarbe bei „Bald legen“ und „Beträge offen“ (seit Politur 22.10., `marken.css`). Regel im Rechenkern (`engine/firma.ts`), Wörter fest:
 
 | Ampel | Wort | Token | Bedeutung |
 |---|---|---|---|
