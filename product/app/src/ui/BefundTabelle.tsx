@@ -1,10 +1,10 @@
 // Befunde als dichte Arbeitstabelle (Vorlage: Linear „Group by“ mit Gruppenkopf, reebuild R-B, Ramp: Hinweis an der Zeile).
-// Gruppiert nach Liste mit Zwischensumme; Kürzungsrisiko als Warnsymbol am Betrag. Eine Zeile je Posten, die Art als
+// Gruppiert nach Liste mit Zwischensumme aus dem Rechenkern (`summen`); Kürzungsrisiko als Warnsymbol am Betrag. Eine Zeile je Posten, die Art als
 // gedämpfte Spalte, die in schmalen Spalten wegfällt (tabellen.css).
 
 import { TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import type { Befund } from "@/engine/typen";
+import type { Befund, Ergebnis } from "@/engine/typen";
 import { ART_TEXT, LISTEN, teileTitel } from "./befund-texte";
 import { betrag } from "./format";
 import { Ico } from "./Ico";
@@ -14,11 +14,14 @@ import { Zeilennavigation } from "./Zeilennavigation";
 export function BefundTabelle({
   projektId,
   befunde,
+  summen,
   risiken,
   href,
 }: {
   projektId: string;
   befunde: Befund[];
+  /** Summen je Liste aus dem Rechenkern, die Oberfläche addiert nichts. */
+  summen: Ergebnis["summen"];
   /** Schlüssel der Befunde mit Kürzungsrisiko aus GU-Sicht. */
   risiken: Set<string>;
   /** Ziel einer Zeile; ohne: Zeilen sind nicht anklickbar. */
@@ -48,12 +51,12 @@ export function BefundTabelle({
           {gruppen.length === 0 && (
             <tr>
               <td colSpan={5} className="sw-muted">
-                Keine Treffer.
+                Nichts offen.
               </td>
             </tr>
           )}
           {gruppen.map((g) => (
-            <GruppenZeilen key={g.liste} g={g} projektId={projektId} risiken={risiken} href={href} />
+            <GruppenZeilen key={g.liste} g={g} summe={g.liste === "anwalt" ? null : summen[g.liste]} projektId={projektId} risiken={risiken} href={href} />
           ))}
         </tbody>
       </table>
@@ -63,16 +66,17 @@ export function BefundTabelle({
 
 function GruppenZeilen({
   g,
+  summe,
   projektId,
   risiken,
   href,
 }: {
   g: (typeof LISTEN)[number] & { posten: Befund[] };
+  summe: number | null;
   projektId: string;
   risiken: Set<string>;
   href?: (b: Befund) => string;
 }) {
-  const summe = g.posten.reduce((s, b) => s + (b.betrag ?? 0), 0);
   return (
     <>
       <tr className="grp">
@@ -81,7 +85,7 @@ function GruppenZeilen({
           <span className="sw-count">{g.posten.length}</span>
         </td>
         <td className="befund-art nur-breit" />
-        <td className="r">{g.liste === "anwalt" ? "" : betrag(summe)}</td>
+        <td className="r">{summe === null ? "" : betrag(summe)}</td>
         <td className="nur-breit" />
         <td className="nur-breit" />
       </tr>

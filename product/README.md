@@ -6,7 +6,7 @@ Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnun
 
 **In Arbeit.** Verantwortlich bisher: Maxi S. In den Produktdateien meint „Maxi“ Maxi S.
 
-## Stand (22.10.2026, nachts)
+## Stand (22.10.2026, spät)
 
 | Teil | Stand |
 |---|---|
@@ -15,6 +15,7 @@ Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnun
 | Datenmodell und Rechenkern | `app/src/domain`, `app/src/engine`: Firma → Auftraggeber → Projekt, Zurufe, 7 kleine Projekte. Tests treffen Lösungsliste v2 cent-genau (W21 und Firma), unabhängig geprüft (PR #4) |
 | App | Firmenübersicht, Projekt-Übersicht, Befunde, Befund-Seite mit Original (aus dem Datensatz gezeichnet, A4), Beweiskette und zweistufiger Freigabe (Verlauf im Browser, Rückgängig, Demo zurücksetzen). Seitenleiste einklappbar. Drei unabhängige Prüfungen (Code, Design gegen Linear/Attio/reebuild, Schlussprüfung), Befunde eingearbeitet (PR #5) |
 | Bildschirme v0.9 (Maxi S., 22.10. nachts) | Seitenleiste neu (Firma oben, Projekte als Baum mit Ampelpunkt), Zeitachse mit Filtern, WhatsApp-Szene (vorgespielt: Sprachnachricht wird Eintrag in der Zeitachse), Ledger mit allen LV-Positionen, Ordner mit Belegmatrix (Position × Belegart) und Dokumentliste, Beleg im Original je Dokument und Zuruf (`/projekte/[projekt]/ordner/[beleg]`). PR #14, #15, #16, #18 und dieser |
+| Politur v0.10 (Maxi S. mit Claude, 22.10. spät) | Ablauf 1 bis 4 auf der Projektübersicht mit Zahlen und Links, keine Ampelpunkte und Farbflächen, Status als Wort, alle Tabellen 36 px mit festen Spalten (nichts verschiebt sich), Tokens für Schriftgrößen. PRs #24, #27, #28, #29, #33, #35, unabhängig geprüft. Nächste Schritte: `../_UEBERGABE.md` (Rebranding Tieout., UI an die Website, Tempo, Zuruf-Agent) |
 | UI-Fundament | In der App (`app/src/ui`, Regeln in `app/src/ui/README.md`), **die App ist die Quelle**; das Artifact bleibt Referenz v2. Weißer Grund, keine Kästen, wenig Text. Gate 2 (annehmen) durch Maxi S. an der laufenden App offen. `fundament.test.ts` sperrt freie Farben, Stile, Trennpunkte, verbotene Wörter |
 | Prüfungen | GitHub Actions bei jedem PR: Typen, Lint, Tests, Build. Schutz von main braucht einen bezahlten GitHub-Plan (offen). Screenshots: `app/scripts/qa/screens.mjs` |
 | Online | https://schlusswerk-demo.maximilian-seipl.workers.dev, geschützt per E-Mail-Code, neu gebaut bei jedem Merge auf main (seit 22.10.). Siehe „Online (Cloudflare)“ |

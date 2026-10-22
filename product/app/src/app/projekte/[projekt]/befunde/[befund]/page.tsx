@@ -68,14 +68,11 @@ export default async function BefundSeite({ params }: Props) {
   const risiko = e.vorpruefung?.risiken.find((r) => r.befundSchluessel === b.schluessel);
   const hinweis = e.hinweise.find((h) => h.befundSchluessel === b.schluessel);
 
-  // Belege des Befunds, dazu die Belege des Kürzungsrisikos (z. B. Stundenliste), ohne Dubletten
-  const gesehen = new Set<string>();
-  const alle: Beleg[] = [...b.belege, ...(risiko?.belege ?? [])].filter((x) => {
-    const k = `${x.quelle.dokumentId}|${x.quelle.stelle ?? ""}`;
-    if (gesehen.has(k)) return false;
-    gesehen.add(k);
-    return true;
-  });
+  // Belege des Befunds, dazu nur die Belege des Kürzungsrisikos aus Dokumenten, die der Befund noch nicht zeigt
+  // (z. B. Stundenliste); nach Datum, Belege ohne Datum am Ende
+  const imBefund = new Set(b.belege.map((x) => x.quelle.dokumentId));
+  const dazu = (risiko?.belege ?? []).filter((x, i, l) => !imBefund.has(x.quelle.dokumentId) && l.findIndex((y) => y.quelle.dokumentId === x.quelle.dokumentId) === i);
+  const alle: Beleg[] = [...b.belege, ...dazu].sort((x, y) => (x.datum ?? "9999").localeCompare(y.datum ?? "9999"));
 
   const belege: BelegAnsicht[] = alle.map((x, i) => {
     const zuruf = d.zurufe.find((z) => z.id === x.quelle.dokumentId);

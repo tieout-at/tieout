@@ -146,7 +146,7 @@ export function Seitenleiste({
             const offen = x.id === p?.id;
             return (
               <div key={x.id} className="nav-projekt" data-offen={offen || undefined}>
-                <Link href={`/projekte/${x.id}`} className="nav-projekt__kopf" title={`${x.kurz} ${x.name}, ${AMPEL_WORT[x.ampel]}`}>
+                <Link href={`/projekte/${x.id}/`} className="nav-projekt__kopf" title={`${x.kurz} ${x.name}, ${AMPEL_WORT[x.ampel]}`}>
                   <span className="nav-text">{x.name}</span>
                 </Link>
                 {offen && (

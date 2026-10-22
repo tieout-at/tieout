@@ -28,7 +28,7 @@ export default async function Befunde({ params }: Props) {
     <>
       <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}` }]} titel="Befunde" />
       <main className="scr-body">
-        <BefundTabelle projektId={id} befunde={e.befunde} risiken={risiken} href={(b) => `/projekte/${id}/befunde/${befundSlug(b.schluessel)}`} />
+        <BefundTabelle projektId={id} befunde={e.befunde} summen={e.summen} risiken={risiken} href={(b) => `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/`} />
       </main>
     </>
   );

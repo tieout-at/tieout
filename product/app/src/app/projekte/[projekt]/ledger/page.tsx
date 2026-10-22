@@ -25,7 +25,7 @@ export default async function Ledger({ params }: Props) {
   if (!e.abgleich) notFound();
   const zeilen: LedgerReihe[] = e.ledger.map((z) => {
     const b = e.befunde.find((x) => x.schluessel.endsWith(`:${z.positionNr}`));
-    return { ...z, befundHref: b ? `/projekte/${id}/befunde/${befundSlug(b.schluessel)}` : null };
+    return { ...z, befundHref: b ? `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/` : null };
   });
   return (
     <>

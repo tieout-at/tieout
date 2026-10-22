@@ -22,7 +22,7 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 ## Projektliste mit Ampel
 
 - Eine Zeile pro Projekt, einzeilig (36 px): Kurzzeichen (gedämpft, feste Breite) und Name, Auftraggeber als eigene gedämpfte Spalte, Ampel als Wort, Datum, Auftrag, die zwei Listen getrennt.
-- Gruppen: „Im Abgleich“ mit Summen, „Schlussrechnung gelegt oder abgeschlossen“ ohne Beträge. Darunter die Summe aller Aufträge.
+- Gruppen: „Im Abgleich“ mit Beträgen je Projekt, „Schlussrechnung gelegt oder abgeschlossen“ ohne Beträge, Gruppenkopf nur mit Zähler. Letzte Zeile: Summen aller Projekte aus dem Rechenkern.
 - **Ampel als Wort ohne Punkt**, Farbe nur als Schriftfarbe bei „Bald legen“ und „Beträge offen“ (seit Politur 22.10., `marken.css`). Regel im Rechenkern (`engine/firma.ts`), Wörter fest:
 
 | Ampel | Wort | Token | Bedeutung |
