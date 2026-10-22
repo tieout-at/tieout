@@ -60,13 +60,13 @@
         {
           "k": "erp",
           "label": "ERP",
-          "detail": "Projekte, Rechnungen",
+          "detail": "Rechnungen",
           "g": 0
         },
         {
           "k": "ava",
           "label": "AVA",
-          "detail": "Kalkulation, Preise",
+          "detail": "Preise",
           "g": 0
         },
         {
@@ -107,8 +107,8 @@
         },
         {
           "k": "foto",
-          "label": "Fotos, Sprachnachrichten",
-          "detail": "",
+          "label": "Fotos",
+          "detail": "Sprachnachrichten",
           "g": 2
         }
       ],
