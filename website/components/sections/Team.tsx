@@ -7,7 +7,10 @@ const LOGO_ALT: Record<string, string> = {
   tacto: "Tacto",
   enpal: "Enpal",
   hanswomen: "Hans(wo)men Group",
-  usc: "University of Southern California",
+  simonkucher: "Simon-Kucher",
+  icons: "icons consulting by students",
+  start: "START Vienna",
+  feldwerke: "Feldwerke",
 };
 
 export function Team({ t }: { t: Messages["team"] }) {
