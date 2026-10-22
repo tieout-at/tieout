@@ -1,0 +1,16 @@
+// Cloudflare: die Demo als statische Dateien (Worker nur mit Assets, kein Server-Code).
+// Cloudflare baut bei jedem Push selbst (Workers Builds, Stammverzeichnis product/app):
+// main geht online, jeder andere Branch bekommt eine eigene Vorschau-Adresse.
+// Zugangsschutz über Cloudflare Access, eingestellt im Dashboard, nicht hier.
+{
+  "name": "schlusswerk-demo",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true,
+  "preview_urls": true,
+  // Pflicht für `wrangler preview` (Vorschau je Branch). Leer: die Vorschau nimmt die Assets von oben.
+  "previews": {}
+}

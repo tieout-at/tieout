@@ -1,0 +1,268 @@
+/* Ablauf und Projektübersicht: Ablauf (vier Schritte), Faktenzeile, Seitentitel, Kennzahlen, Eigenschaftenliste.
+ * Nur Layout, alle Werte aus tokens.css. */
+
+
+/* Einleitungssatz mit Zahlen (Kuro, Linear) */
+.lead {
+  margin: 0;
+}
+.lead b {
+  font-weight: 600;
+}
+.lead a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.lead a:hover {
+  text-decoration: underline;
+}
+
+/* Fakten in einer Zeile (Projektkopf) */
+.facts {
+  gap: var(--space-4);
+}
+.facts b {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Schlüssel-Wert-Liste in Seitenpanels */
+.kv {
+  display: flex;
+  flex-direction: column;
+}
+.kv > div,
+.kv > a {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+.kv > *:last-child {
+  border-bottom: 0;
+}
+.kv span {
+  color: var(--text-secondary);
+}
+.kv b {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Seitentitel im Inhalt (reebuild „Projekt: …“, Linear-Titel) mit Faktenzeile darunter */
+.ptitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+}
+.ptitle h2 {
+  margin: 0;
+}
+
+/* Ablauf (Vorlage: Linear-Projekt „Milestones“, Stripe-Zahlungszeitleiste, reebuild R-E): vier Spalten auf einer Linie.
+ * Marke links auf der Linie, darunter Titel, Zahl mit Einheit und eine Zeile. Die ganze Spalte ist ein Link. */
+.ab-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.ab-step {
+  min-width: 0;
+}
+.ab-step__a {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  color: inherit;
+  text-decoration: none;
+}
+.ab-step__a:hover {
+  background: var(--surface-hover);
+}
+.ab-step__track {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 20px;
+  margin-bottom: var(--space-2);
+  margin-right: calc(-1 * var(--space-3));
+}
+.ab-step__track::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line-strong);
+}
+.ab-step:last-child .ab-step__track::after {
+  visibility: hidden;
+}
+.ab-step__mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--field-border);
+  color: var(--text-muted);
+  background: var(--surface);
+}
+.ab-step__mark .sw-ico {
+  width: 12px;
+  height: 12px;
+}
+.ab-step--done .ab-step__mark {
+  border-color: var(--pos-soft);
+  background: var(--pos-soft);
+  color: var(--pos);
+}
+.ab-step--now .ab-step__mark {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--on-action);
+}
+.ab-step__titel {
+  font-size: var(--fs-md);
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.ab-step--now .ab-step__titel {
+  color: var(--text);
+}
+.ab-step__wert {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  white-space: nowrap;
+}
+.ab-step__zahl {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+}
+.ab-step__einheit {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ab-step__zeile {
+  display: flex;
+  align-items: center;
+  min-height: 18px;
+  font-size: var(--fs-sm);
+  line-height: 18px;
+  color: var(--text-muted);
+}
+/* Ein Strich je Posten, fest in Reihenfolge und Breite (nichts springt beim Freigeben) */
+.ab-striche {
+  display: flex;
+  gap: 2px;
+  width: 100%;
+  max-width: 220px;
+}
+.ab-strich {
+  flex: 1;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--line-strong);
+}
+.ab-strich--uebernommen {
+  background: var(--text-muted);
+}
+.ab-strich--freigegeben {
+  background: var(--pos);
+}
+.ab-strich--verworfen {
+  background: var(--text-disabled);
+}
+.ab-strich--anwalt {
+  background: var(--law);
+}
+
+/* Übersicht: gleichmäßiger Abstand zwischen den Bändern */
+.ab-uebersicht .ptitle {
+  padding-bottom: var(--space-2);
+}
+
+/* Eigenschaftenliste rechts (Linear-Projekt „Properties“): Gruppenkopf, Zeilen ohne Linien, Zahl rechts */
+.ab-props {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-top: var(--space-3);
+}
+.ab-props__gruppe {
+  display: flex;
+  flex-direction: column;
+}
+.ab-props__kopf {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+  padding: 0 var(--space-3);
+  font-size: var(--fs-sm);
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.ab-props__kopf a {
+  color: inherit;
+  text-decoration: none;
+}
+.ab-props__kopf a:hover {
+  color: var(--text);
+}
+.ab-prop {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  line-height: 20px;
+}
+.ab-prop span {
+  color: var(--text-secondary);
+}
+.ab-prop b {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 900px) {
+  .ab-steps {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .ab-step:nth-child(2) .ab-step__track::after {
+    visibility: hidden;
+  }
+}
+
+@media (max-width: 640px) {
+  .sw-kpis {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(180px, 1fr);
+    grid-template-columns: none;
+    overflow-x: auto;
+  }
+  .sw-kpi .kpi {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}

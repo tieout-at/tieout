@@ -1,0 +1,137 @@
+/* Befund: links Befund, rechts Original; Hinweise, Freigabe.
+ * Teil der früheren anordnung.css, Politur 22.10. Nur Layout, alle Werte aus tokens.css. */
+
+
+/* Befund: links Befund, rechts Original */
+.split {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(400px, 42%) minmax(0, 1fr);
+  min-height: 0;
+}
+.split-left {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+.split-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.split-scroll > * {
+  flex: none;
+}
+.split-right {
+  display: flex;
+  min-height: 0;
+}
+.split-right .sw-viewer {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+}
+.fhead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.fhead h1 {
+  margin: 0;
+}
+
+.toast-wrap {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+}
+.zoom {
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Befund: Plausibilität, Beweiskette, Zoom im Betrachter */
+.plain {
+  margin: 0;
+}
+.sw-ev {
+  text-align: left;
+}
+
+/* Hinweise am Befund ohne Farbfläche (Ramp, reebuild: Status an der Zeile) */
+.flag {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+.flag .sw-ico {
+  margin-top: 2px;
+  color: var(--text-muted);
+}
+.flag > div {
+  display: flex;
+  flex-direction: column;
+}
+.flag b {
+  font-weight: 500;
+}
+.flag span {
+  color: var(--text-secondary);
+}
+/* Warnfarbe nur am Symbol, der Satz bleibt in Textfarbe */
+.flag--warn .sw-ico {
+  color: var(--warn);
+}
+.rechenweg {
+  border-top: 1px solid var(--line-strong);
+}
+/* Beweiskette ruhiger: der gewählte Beleg ist an der Fläche erkennbar, Punkt und Quelle ohne Akzent und ohne Rahmen */
+.sw-ev[aria-current="true"] .sw-ev__rail::before {
+  border-color: var(--text);
+  background: var(--text);
+}
+.sw-chain .sw-source,
+.sw-chain .sw-source[aria-pressed="true"] {
+  height: auto;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-muted);
+}
+.sw-chain .sw-source[aria-pressed="true"],
+.sw-chain .sw-source:hover {
+  color: var(--text);
+}
+.sw-chain .sw-source[aria-pressed="true"] .sw-ico {
+  color: var(--text-muted);
+}
+.sw-decide__step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (max-width: 900px) {
+  .split-left {
+    min-height: auto;
+  }
+  .split-scroll {
+    flex: none;
+    overflow: visible;
+  }
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    overflow: auto;
+  }
+  .split-right {
+    min-height: 560px;
+  }
+}

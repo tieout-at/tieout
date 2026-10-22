@@ -1,6 +1,7 @@
 // Ergebnis des Rechenkerns. Alles abgeleitet aus dem Datensatz, nichts eingetippt.
 
-import type { AbzugArt, Bp, Cent, Datum, Einheit, Pruefstand, Quelle } from "@/domain/typen";
+import type { AbzugArt, Auftraggeber, Bp, Cent, Datum, Einheit, ProjektStatus, Pruefstand, Quelle } from "@/domain/typen";
+import type { Belegquelle } from "./belegquelle";
 
 export interface Beleg {
   /** Was der Beleg zeigt, z. B. „Plan H-201, Index D“. */
@@ -14,7 +15,8 @@ export interface Beleg {
 export interface Rechenweg {
   /** Ganzer Rechenweg in einer Zeile, z. B. „(100 − 86) Stk × 456,00 € = 6.384,00 €“. */
   text: string;
-  schritte: { bezeichnung: string; wert: string; betrag?: Cent }[];
+  /** Schritte für die Tabelle; „summe“ markiert die Schlusszeile, die den Betrag ergibt. */
+  schritte: { bezeichnung: string; wert: string; betrag?: Cent; summe?: boolean }[];
   /** Zusätzliche Plausibilität (z. B. K7), fließt nicht in den Betrag ein. */
   plausibilitaet?: string;
 }
@@ -22,7 +24,9 @@ export interface Rechenweg {
 export type BefundArt =
   | "mehrmenge_plan"
   | "mehrmenge"
+  | "nicht_verrechnet"
   | "regie"
+  | "regie_zuruf"
   | "preisumrechnung"
   | "aenderung"
   | "pauschale"
@@ -37,6 +41,8 @@ export interface Befund {
   art: BefundArt;
   liste: Liste;
   titel: string;
+  /** Kurze Unterzeile für Listen, z. B. „+14 Stk über LV“ oder „nicht unterschrieben“. */
+  untertitel: string;
   positionNr: string | null;
   /** null bei Hinweisen ohne Betrag („braucht Anwalt“). */
   betrag: Cent | null;
@@ -49,13 +55,19 @@ export type Kuerzungsgrund =
   | "aufmass_nicht_gegengezeichnet"
   | "stunden_weichen_ab"
   | "rechenfehler"
-  | "ausserhalb_lv_kein_nachtrag";
+  | "ausserhalb_lv_kein_nachtrag"
+  | "regie_nicht_unterschrieben"
+  | "menge_ohne_aufmass"
+  | "abzug_ohne_vertragspunkt";
 
 export const KUERZUNGSGRUND_TEXT: Record<Kuerzungsgrund, string> = {
   aufmass_nicht_gegengezeichnet: "Aufmaß nicht gegengezeichnet",
   stunden_weichen_ab: "Stunden weichen ab",
   rechenfehler: "Rechenfehler",
   ausserhalb_lv_kein_nachtrag: "außerhalb des LV, kein Nachtrag gefunden",
+  regie_nicht_unterschrieben: "Regie nicht unterschrieben",
+  menge_ohne_aufmass: "Menge ohne Aufmaß-Nachweis",
+  abzug_ohne_vertragspunkt: "Abzug ohne Vertragspunkt",
 };
 
 export interface Kuerzungsrisiko {
@@ -92,10 +104,12 @@ export interface LedgerZeile {
   ep: Cent;
   lvMenge: number;
   aufmassMenge: number;
-  /** Menge im eigenen Schlussrechnungs-Entwurf. */
+  /** Menge im eigenen Schlussrechnungs-Entwurf; ohne Entwurf in den Abschlagsrechnungen. */
   verrechnetMenge: number;
   verrechnetBetrag: Cent;
   inAbschlaegenMenge: number;
+  /** Ohne Entwurf: nach der letzten AR aufgemessen, kommt in die nächste AR (kein Befund, nicht in der Differenz). */
+  naechsteArMenge: number;
   /** In bezahlten Abschlagsrechnungen enthalten, abzüglich Kürzungen des GU (vor Nachlass und Rücklässen). */
   bezahltBetrag: Cent;
   /** Aufmaß minus verrechnet. */
@@ -110,7 +124,8 @@ export interface KaskadenZeile {
   abzugArt: AbzugArt | null;
   satz: Bp | null;
   quelle: "entwurf" | "vertrag" | "gu_abzug" | "zahlungen" | null;
-  pruefung: "laut_vertrag" | "abweichung" | "kein_vertragspunkt" | null;
+  /** „abzug_ohne_vertragspunkt“ ist derselbe Schlüssel wie der Kürzungsgrund (Abgleich mit der GU-Historie). */
+  pruefung: "laut_vertrag" | "abweichung" | "abzug_ohne_vertragspunkt" | null;
   vertragspunkt: string | null;
   betrag: Cent;
 }
@@ -124,24 +139,80 @@ export interface ImportStand {
   nachArt: Record<string, number>;
 }
 
+export interface Vorpruefung {
+  risiken: Kuerzungsrisiko[];
+  summe: Cent;
+  bereitsGekuerzt: { anzahl: number; betrag: Cent };
+  korrekturblatt: { gekuerzt: Cent; zeilen: number; erkannt: number };
+}
+
+export interface Kaskade {
+  zeilen: KaskadenZeile[];
+  leistungssumme: Cent;
+  schlussrechnungsbetrag: Cent;
+  zahlungen: Cent;
+  restforderung: Cent;
+}
+
 export interface Ergebnis {
+  projektId: string;
+  /** false bei gelegter Schlussrechnung oder abgeschlossenem Projekt: dann kein Abgleich, keine Befunde. */
+  abgleich: boolean;
+  /** Ohne Entwurf: Datum der letzten AR; nur Leistung bis einschließlich dieses Tages kann ein Befund sein. */
+  grenze: Datum | null;
   import: ImportStand;
   ledger: LedgerZeile[];
   befunde: Befund[];
+  /** Quelle des Belegs je Befund (Schlüssel → Quellen). */
+  belegquellen: Record<string, Belegquelle[]>;
+  /** Posten der Listen 1 und 2, die nur außerhalb des ERP belegt sind (synthetisch, kein Beleg der Leithypothese). */
+  ausserhalbErp: { betrag: Cent; anzahl: number; vonBetrag: Cent; vonAnzahl: number };
   summen: { jetzt: Cent; offen: Cent; verloren: Cent };
-  vorpruefung: {
-    risiken: Kuerzungsrisiko[];
-    summe: Cent;
-    bereitsGekuerzt: { anzahl: number; betrag: Cent };
-    korrekturblatt: { gekuerzt: Cent; zeilen: number; erkannt: number };
-  };
+  vorpruefung: Vorpruefung | null;
   hinweise: Hinweis[];
-  kaskade: {
-    zeilen: KaskadenZeile[];
-    leistungssumme: Cent;
-    schlussrechnungsbetrag: Cent;
-    zahlungen: Cent;
-    restforderung: Cent;
+  kaskade: Kaskade | null;
+  /** Nicht verrechnete Berichte zählen nur bis zur Grenze; spätere stehen unter „nachGrenze“ (kommen in die nächste AR). */
+  regie: { gesamt: number; verrechnet: number; unterschriebenNichtVerrechnet: number; nichtUnterschrieben: number; nachGrenze: number };
+}
+
+export type Ampel = "rot" | "gelb" | "gruen" | "grau";
+
+/** Welches Datum die Firmenübersicht je Projekt zeigt. */
+export type ProjektDatumArt = "legen_bis" | "letzte_ar" | "gelegt" | "schlusszahlung";
+
+export interface ProjektZeile {
+  projektId: string;
+  kurz: string;
+  name: string;
+  los: string;
+  auftraggeber: Auftraggeber;
+  status: ProjektStatus;
+  auftragssumme: Cent;
+  datum: { art: ProjektDatumArt; wert: Datum } | null;
+  /** null, wenn das Projekt nicht abgeglichen wird (Schlussrechnung gelegt, abgeschlossen). */
+  jetzt: Cent | null;
+  offen: Cent | null;
+  befunde: number;
+  ampel: Ampel;
+}
+
+export interface FirmenErgebnis {
+  stichtag: Datum;
+  projekte: ProjektZeile[];
+  ergebnisse: Record<string, Ergebnis>;
+  summen: {
+    projekte: number;
+    offeneProjekte: number;
+    auftragssumme: Cent;
+    auftragssummeOffen: Cent;
+    jetzt: Cent;
+    offen: Cent;
+    /** Anzahl der Posten in Liste 1 bzw. 2 über alle offenen Projekte. */
+    postenJetzt: number;
+    postenOffen: number;
+    projekteMitJetzt: number;
+    projekteMitOffen: number;
   };
-  regie: { gesamt: number; verrechnet: number; unterschriebenNichtVerrechnet: number; nichtUnterschrieben: number };
+  /** Früheste „Schlussrechnung legen bis“ ab dem Stichtag unter den offenen Projekten. */
+  naechsteSchlussrechnung: { projektId: string; datum: Datum } | null;
 }

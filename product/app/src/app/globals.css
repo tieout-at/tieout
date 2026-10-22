@@ -1,0 +1,17 @@
+/* Einstieg der Stile: Tokens → Bauteile → Anordnung je Bereich (Reihenfolge nicht ändern). Keine eigenen Farben oder Abstände außerhalb der Tokens. */
+@import "../ui/styles/tokens.css";
+@import "../ui/styles/bauteile.css";
+@import "../ui/styles/rahmen.css";
+@import "../ui/styles/marken.css";
+@import "../ui/styles/ablauf.css";
+@import "../ui/styles/tabellen.css";
+@import "../ui/styles/befund.css";
+@import "../ui/styles/beleg.css";
+@import "../ui/styles/zeitachse.css";
+
+/* Schriften selbst ausgeliefert (next/font), Namen aus den Tokens bleiben als Rückfall */
+:root {
+  --font-sans: var(--font-inter), Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --font-display: var(--font-inter-tight), "Inter Tight", var(--font-inter), Inter, system-ui, sans-serif;
+}

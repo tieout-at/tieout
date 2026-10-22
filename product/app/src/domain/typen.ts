@@ -9,6 +9,7 @@ export type Bp = number;
 export type Datum = string;
 
 export interface Quelle {
+  /** Kennung eines Ordner-Dokuments oder eines Zurufs (beides sind Belege). */
   dokumentId: string;
   seite: number;
   /** Lesbare Stelle, z. B. „Zeile 22.04.12B“ oder „Absatz 2“. */
@@ -43,7 +44,10 @@ export interface Freigabe {
   freigegeben: FreigabeSchritt | null;
 }
 
-// ---------- Ordner ----------
+// ---------- Ordner und Kanäle ----------
+
+/** Wie ein Beleg in den Zwilling kam: Ordner (Einspielen), WhatsApp (Zurufen), später Anbindung (ERP, Mail). */
+export type Kanal = "ordner" | "whatsapp" | "anbindung";
 
 export type DokumentArt =
   | "vertrag"
@@ -65,6 +69,7 @@ export type DokumentArt =
 export interface Dokument {
   id: string;
   art: DokumentArt;
+  kanal: Kanal;
   dateiname: string;
   datum: Datum;
   seiten: number;
@@ -72,16 +77,38 @@ export interface Dokument {
   inhaltHash: string;
 }
 
-// ---------- Projekt und Vertrag ----------
+// ---------- Firma, Auftraggeber, Projekt ----------
+
+export interface Firma {
+  id: string;
+  name: string;
+  gewerk: string;
+  sitz: string;
+}
+
+export type AuftraggeberArt = "gu" | "oeffentlich" | "bautraeger";
+
+export interface Auftraggeber {
+  id: string;
+  name: string;
+  art: AuftraggeberArt;
+}
+
+/** Wo ein Projekt steht. Nur „in Ausführung“ und „Schlussrechnung vorbereiten“ werden abgeglichen. */
+export type ProjektStatus = "in_ausfuehrung" | "sr_vorbereiten" | "sr_gelegt" | "abgeschlossen";
 
 export interface Projekt {
   id: string;
+  /** Kurzzeichen in Listen, z. B. „W21“. */
+  kurz: string;
   name: string;
   los: string;
-  auftragnehmer: string;
-  auftraggeber: string;
-  /** Fälligkeit der Schlussrechnung (fester Wert, kein Countdown). */
-  schlussrechnungFaellig: Datum;
+  auftraggeberId: string;
+  status: ProjektStatus;
+  /** Schlussrechnung legen bis (reines Datum, kein Countdown). */
+  schlussrechnungLegenBis: Datum | null;
+  schlussrechnungGelegt: Datum | null;
+  schlusszahlung: Datum | null;
 }
 
 export type AbzugArt = "nachlass" | "baustrom_bauwasser" | "bauschadensumlage" | "deckungsruecklass" | "haftruecklass";
@@ -320,8 +347,42 @@ export interface Nachtrag {
   beauftragt: Feld<boolean>;
 }
 
+// ---------- Zurufe (WhatsApp) ----------
+
+/**
+ * Ein Zuruf: Foto und Sprachnachricht von der Baustelle, vom Agenten als Text erfasst und vom Absender bestätigt.
+ * Eigener Beleg neben den Ordner-Dokumenten. Der Agent erfasst nur; ob etwas abrechenbar ist, entscheidet der Mensch.
+ * Quellen der Felder zeigen auf die Kennung des Zurufs.
+ */
+export interface Zuruf {
+  id: string;
+  /** Kurzzeichen, z. B. „Z6“. */
+  nr: string;
+  kanal: "whatsapp";
+  /** Zeitpunkt aus dem Nachrichtenzeitstempel, „JJJJ-MM-TTThh:mm“. */
+  zeitpunkt: string;
+  /** Absender nur als Rolle, nie mit Namen (§ 96a ArbVG). */
+  absender: string;
+  transkript: Feld<string>;
+  /** Dateiname des Fotos oder null, wenn nur eine Sprachnachricht kam. */
+  foto: string | null;
+  ort: Feld<string>;
+  taetigkeit: Feld<string>;
+  /** Genannte Stunden in Hundertstel; 0, wenn der Zuruf keine nennt. */
+  stundenMonteur: Feld<number>;
+  stundenHelfer: Feld<number>;
+  /** Wer laut Zuruf angewiesen hat; nur erfasst, nicht gewürdigt. */
+  angewiesenVon: Feld<string> | null;
+  bezugPositionen: Feld<string[]>;
+  /** Regiebericht, den der Zuruf stützt, oder null. */
+  bezugRegie: Feld<string> | null;
+  /** Bestätigung durch den Absender („Ja“ im Chat). */
+  bestaetigt: { von: string; zeitpunkt: string };
+}
+
 // ---------- Gesamter Datensatz ----------
 
+/** Der Projektzwilling: alles zu einem Projekt, jedes Feld mit Quelle. */
 export interface Datensatz {
   projekt: Projekt;
   vertrag: Vertrag;
@@ -331,7 +392,8 @@ export interface Datensatz {
   regie: Regiebericht[];
   stundenlisten: Stundenliste[];
   abschlaege: Rechnung[];
-  entwurf: Rechnung;
+  /** Eigener Schlussrechnungs-Entwurf; null, solange das Projekt in Ausführung ist. */
+  entwurf: Rechnung | null;
   zahlungen: Zahlung[];
   plaene: Plan[];
   mails: Mail[];
@@ -340,4 +402,16 @@ export interface Datensatz {
   guAbzug: GuAbzugsschreiben | null;
   korrekturblaetter: Korrekturblatt[];
   nachtraege: Nachtrag[];
+  zurufe: Zuruf[];
+}
+
+/** Der Firmenzwilling: Firma, Auftraggeber und alle Projekte. Ein Datensilo pro Firma. */
+export interface Firmendaten {
+  /** Synthetische Demo-Daten: jede Seite trägt dann die Marke „Synthetisch“. */
+  synthetisch: boolean;
+  firma: Firma;
+  auftraggeber: Auftraggeber[];
+  projekte: Datensatz[];
+  /** „Heute“ der Demo; Ampel und Status rechnen immer mit diesem Tag. */
+  stichtag: Datum;
 }

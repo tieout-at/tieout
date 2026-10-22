@@ -10,14 +10,21 @@ Auftraggeber ist Maxi S. (kein Entwickler): Deutsch, Ergebnis zuerst, einfache S
   - `Plan_MVP.md`, `Umfang_v1.md` (inkl. Nicht-Liste und Entscheidungen), `Inspiration_Muster.md`, `Pruefberichte_UI.md`.
   - `Demo_Faelle.md`: Lösungsliste der eingebauten Fälle. **Maßgeblich für Beträge.** Nicht im Code ändern, Abweichungen melden; Änderungen an der Liste nur mit Go von Maxi S.
 - UI: nur aus `../ui-fundament/` (Design-System, `LIESMICH.md`).
-- `src/domain/typen.ts`: Datenmodell „Datensatz mit Quelle“. Jedes Feld aus einem Dokument ist `Feld<T>` mit Quelle (Datei, Seite, Stelle, Rechteck) und Prüfstand (maschinell / bestätigt / blockiert). Freigabe zweistufig (übernommen M, freigegeben I) als eigener Typ außerhalb des Datensatzes.
-- `src/engine/`: Rechenkern, reine Funktionen. `pruefe(datensatz)` in `index.ts` liefert Import-Stand, Ledger, Befunde (drei Listen plus Hinweis „braucht Anwalt“), Vorprüfung aus GU-Sicht, Hinweise, Prüfkaskade.
-  - `befunde.ts`: Mehrmenge, Regie, Preisumrechnung (ÖNORM B 2111), Anmeldungen, Termin-/Behinderungs-Hinweise.
+- `src/domain/typen.ts`: Datenmodell Firma → Auftraggeber → Projekt (`Firmendaten`, `Datensatz` = Projektzwilling). Projektstatus (in Ausführung, Schlussrechnung vorbereiten, gelegt, abgeschlossen); nur die ersten beiden werden abgeglichen. Belege kommen über einen Kanal (Ordner, WhatsApp, später Anbindung); Zurufe (`Zuruf`) sind eigene Belege neben den Ordner-Dokumenten, Quellen zeigen auf Dokument oder Zuruf. Jedes Feld aus einem Dokument ist `Feld<T>` mit Quelle (Datei, Seite, Stelle, Rechteck) und Prüfstand (maschinell / bestätigt / blockiert). Freigabe zweistufig (übernommen M, freigegeben I) als eigener Typ außerhalb des Datensatzes.
+- `src/engine/`: Rechenkern, reine Funktionen. `pruefeFirma(firmendaten)` (`firma.ts`) liefert Projektliste mit Ampel, Datum und Summen; `pruefe(datensatz)` (`pruefe.ts`) je Projekt Import-Stand, Ledger, Befunde (drei Listen plus Hinweis „braucht Anwalt“), Vorprüfung aus GU-Sicht, Hinweise, Prüfkaskade.
+  - `befunde.ts`: Mehrmenge bzw. „erbracht, nicht verrechnet“, Regie, Regie aus Zuruf, Preisumrechnung (ÖNORM B 2111), Anmeldungen, Termin-/Behinderungs-Hinweise. Ohne Entwurf (in Ausführung) zählt nur Leistung vor der letzten AR (`kontext.ts`, `grenze`).
+  - `belegquelle.ts`: Quelle des Belegs (Datei, Papier, Mail, Foto, WhatsApp), Anteil „nur außerhalb ERP“.
   - `vorpruefung.ts`: Kürzungsrisiken mit festen Gründen (`Kuerzungsgrund`), Hinweise „Mengenänderung über 20 %“.
   - `kaskade.ts`: Leistungssumme → Nachlass → Abzüge → Einbehalte → Zahlungen → Restforderung, Abgleich mit dem Vertrag.
   - `geld.ts`: Cent-Rechnung, Rundung, Formatierung.
-- `src/demo/w21/`: synthetischer Datensatz „Wohnhausanlage Wien 21, HKLS-Los“ (`erzeuge.ts`, deterministisch), Katalog der 380 LV-Positionen, Lösungsliste für Tests (`loesung.ts`).
-- `scripts/generate/`: schreibt `data/generated/w21.json` (läuft auch vor `build`).
+- `src/demo/w21/`: synthetischer Datensatz „Wohnhausanlage Wien 21, HKLS-Los“ (`erzeuge.ts`, deterministisch, mit 6 Zurufen), Katalog der 380 LV-Positionen, Lösungsliste für Tests (`loesung.ts`).
+- `src/demo/firma/`: Firmenzwilling Haustechnik Beispiel GmbH: 4 Auftraggeber, W21 plus 7 kleine Projekte (`erzeuge.ts`, Bauhelfer `bauen.ts`), Lösungsliste für Tests (`loesung.ts`).
+- `src/app/`: Bildschirme (Next.js App Router, alles statisch vorberechnet). `/` Firmenübersicht, `/projekte/[projekt]/…` Projekt und Anwendung.
+- `src/ui/`: Bauteile als React-Komponenten (Seitenleiste, Seitenkopf, Kennzahl, Panel, Statusmarke, Zeilennavigation) und Stile in `styles/`: `tokens.css` (einzige Stelle für Farben, Abstände, Größen), `bauteile.css` (Bauteile mit Vorlage), Layout je Bereich: `rahmen.css` (Seite, Seitenleiste, Kopf, Spalten), `marken.css` (Status als Wort), `ablauf.css` (Schrittleiste, Projektübersicht), `tabellen.css` (alle Tabellen), `befund.css`, `beleg.css` (Betrachter, Belegseiten), `zeitachse.css` (mit Szene). Die App ist seit 22.10. die Quelle des UI-Fundaments; das Artifact bleibt Referenz v2. Kein Tailwind in den Bildschirmen: Klassen aus `bauteile.css` und den Bereichsdateien, Inline-Stile nur für Spaltenbreiten. `fundament.test.ts` sperrt freie Farben, Stile und verbotene Wörter.
+- `src/zustand/`: Freigabe zweistufig als Verlauf (`freigabe.ts`, reine Funktionen, Tests), Speicher im Browser (`speicher.ts`, liest bei jedem Zugriff frisch, damit mehrere Tabs sich nichts überschreiben).
+- `src/ui/thema-skript.ts`: Skript im `<head>` (Thema, eingeklappte Seitenleiste); Client-Logik dazu in `thema.ts`. Server-Dateien dürfen keine Client-Hooks importieren.
+- `src/daten/`: einziger Datenzugriff der Bildschirme (`server-only`). Heute Generator + Rechenkern, später Datenbank pro Firma.
+- `scripts/generate/`: schreibt `data/generated/firma.json` und `w21.json` (läuft auch vor `build`).
 
 ## Regeln
 - **Die KI liefert Fakten mit Quelle, die Rechnung ist Code.** Der Rechenkern liest nur den Datensatz, nie die Lösungsliste.
@@ -30,7 +37,7 @@ Auftraggeber ist Maxi S. (kein Entwickler): Deutsch, Ergebnis zuerst, einfache S
 ## Arbeitsweise
 - `npm run typecheck`, `npm run lint`, `npm test` vor jedem Commit grün.
 - Neue Regel = positiver Test und Gegenprobe in `regeln.test.ts`. Änderungen am Datensatz: `pruefung.test.ts` muss weiter genau die Lösungsliste treffen.
-- Arbeit auf einem eigenen Branch, nach `main` nur über Pull Request. Push nur nach Go von Maxi S. Danach `../README.md` (Abschnitt „Stand“) nachziehen.
+- Arbeit auf einem eigenen Branch, nach `main` nur über Pull Request. Pull Requests darf Claude selbst erstellen und mergen, wenn es keine Konflikte gibt; vorher kurz reviewen (Diff, typecheck, lint, Tests) und Maxi S. berichten (Erlaubnis 22.10.2026). Danach `../README.md` (Abschnitt „Stand“) nachziehen.
 
 ## Fachliche Annahmen (mit dem Insider prüfen)
 - Mehrmenge: abgerechnet wird die Aufmaßmenge zum EP laut LV; K7 dient nur der Plausibilität. Mittellohnpreis 56,80 €/h aus der eigenen Kalkulation (K3).

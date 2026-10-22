@@ -1,0 +1,135 @@
+/* Tieout: Tokens (Farben hell und dunkel, Abstände, Radien, Größen, Schriftstufen).
+ * Übernommen aus dem UI-Fundament v2 (product/ui-fundament/project/tokens.css), Stand v2 vom 22.10.2026.
+ * Ab jetzt ist diese Datei die Quelle: Änderungen hier, nicht im Artifact. Nur Werte aus tokens.css.
+ * 23.10.: Akzent auf Ultramarin der Tieout-CI (#1D3BFF, website/app/globals.css), im Dunkeln aufgehellt (Kontrast über 4,5).
+ * Sonst unverändert: Grautöne, Grund und Dunkelmodus bleiben (Entscheidung Maxi S.). */
+:root, [data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff; /* 22.10.: Inhalt auf Weiß wie Linear und Attio, nur die Seitenleiste getönt */
+  --surface: #ffffff;
+  --surface-subtle: #fafafb;
+  --surface-hover: #f0f0f4;
+  --surface-selected: #e8e9ef;
+  --line: #e6e6ec;
+  --line-strong: #d4d4dc;
+  --field-border: #838892;
+  --text: #101112;
+  --text-secondary: #3b4049;
+  --text-muted: #5f656e;
+  --text-disabled: #9ca1aa;
+  --action: #242629;
+  --action-hover: #101112;
+  --on-action: #ffffff;
+  --accent: #1d3bff;
+  --accent-soft: #eef1ff;
+  --on-accent: #ffffff;
+  --brand: #1d3bff;
+  --brand-ink: #101112;
+  --pos: #13703f;
+  --pos-soft: #e6f4ec;
+  --warn: #935500;
+  --warn-soft: #fcf1df;
+  --neg: #b42318;
+  --neg-soft: #fdecea;
+  --law: #6438bd;
+  --law-soft: #f1ecfb;
+  --doc-paper: #ffffff;
+  --doc-ink: #1b1c1f;
+  --doc-viewer: #e9eaee;
+  --doc-mark: #dfe5ff;
+  --doc-mark-line: #1d3bff;
+  --doc-risk: #fcf1df;
+  --doc-risk-line: #935500;
+  --doc-line: #dfe1e6;
+  --doc-ink-secondary: #4a4f58;
+  --doc-muted: #5f656e;
+  --doc-figure: #2b2f36;
+  --doc-figure-soft: #e3e5e9;
+  --shadow-overlay: 0 8px 24px rgba(16,17,18,0.12), 0 0 0 1px rgba(16,17,18,0.06);
+  --shadow-page: 0 1px 3px rgba(16,17,18,0.16);
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1011;
+  --surface: #0f1011;
+  --surface-subtle: #141516;
+  --surface-hover: #1a1b1d;
+  --surface-selected: #222326;
+  --line: #232425;
+  --line-strong: #2e2e32;
+  --field-border: #6b707a;
+  --text: #f7f8f8;
+  --text-secondary: #d0d6e0;
+  --text-muted: #8f949d;
+  --text-disabled: #5c6068;
+  --action: #f7f8f8;
+  --action-hover: #ffffff;
+  --on-action: #08090a;
+  --accent: #7d8fff;
+  --accent-soft: #171c3a;
+  --on-accent: #08090a;
+  --brand: #1d3bff;
+  --brand-ink: #f7f8f8;
+  --pos: #4cc38a;
+  --pos-soft: #0f2a1d;
+  --warn: #e7a83e;
+  --warn-soft: #2d2210;
+  --neg: #f6786d;
+  --neg-soft: #2f1512;
+  --law: #b69cf2;
+  --law-soft: #231a37;
+  --doc-paper: #ffffff;
+  --doc-ink: #1b1c1f;
+  --doc-viewer: #141516;
+  --doc-mark: #dfe5ff;
+  --doc-mark-line: #1d3bff;
+  --doc-risk: #fcf1df;
+  --doc-risk-line: #935500;
+  --doc-line: #dfe1e6;
+  --doc-ink-secondary: #4a4f58;
+  --doc-muted: #5f656e;
+  --doc-figure: #2b2f36;
+  --doc-figure-soft: #e3e5e9;
+  --shadow-overlay: 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+  --shadow-page: 0 1px 3px rgba(0,0,0,0.6);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+  --control-h: 32px;
+  --row-h: 36px;
+  --row-h-2: 48px;
+  --table-head-h: 32px;
+  --head-h: 48px;
+  --panel-head-h: 44px;
+  --chip-h: 22px;
+  --tab-h: 28px;
+  /* Schriftgrößen der Oberfläche (Fließtext 13 px im body) */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-lg: 14px;
+  --sidebar-w: 232px;
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  /* nur für die Wortmarke Tieout (Schrift der Website) */
+  --font-display: "Inter Tight", Inter, system-ui, sans-serif;
+}
+.kpi { font-family: var(--font-sans); font-size: 28px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; }
+.page-title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.015em; }
+.section-title { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 600; letter-spacing: -0.01em; }
+.body { font-family: var(--font-sans); font-size: 14px; line-height: 21px; font-weight: 400; }
+.ui { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 400; letter-spacing: -0.01em; }
+.ui-strong { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 500; letter-spacing: -0.01em; }
+.meta { font-family: var(--font-sans); font-size: 12px; line-height: 18px; font-weight: 400; }
+.label { font-family: var(--font-sans); font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: 0.06em; }
+.mono { font-family: var(--font-mono); font-size: 12px; line-height: 18px; font-weight: 400; }

@@ -21,6 +21,7 @@ coverage/
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+.wrangler/
 
 # System
 .DS_Store
@@ -28,3 +29,5 @@ Thumbs.db
 npm-debug.log*
 *.local.sql
 .claude/settings.local.json
+qa-screens/
+qa-shots/

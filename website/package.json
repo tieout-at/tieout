@@ -1,0 +1,25 @@
+{
+  "name": "tieout-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3210",
+    "build": "next build",
+    "start": "npx serve out -l 3210",
+    "typecheck": "tsc --noEmit",
+    "check:platzhalter": "node scripts/platzhalter.mjs",
+    "deploy": "next build && npx wrangler@4 pages deploy out --project-name endpoint-preview --branch main",
+    "deploy:geschuetzt": "next build && npx wrangler@4 pages deploy out --project-name endpoint-preview --branch vorschau"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "5.9.3"
+  }
+}

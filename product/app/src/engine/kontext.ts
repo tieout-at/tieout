@@ -16,7 +16,7 @@ export interface Kontext {
   d: Datensatz;
   lv: Map<string, LvPosition>;
   aufmass: Map<string, AufmassFund[]>;
-  /** Zeilen des eigenen Schlussrechnungs-Entwurfs je Position. */
+  /** Zeilen des eigenen Schlussrechnungs-Entwurfs je Position (leer ohne Entwurf). */
   entwurf: Map<string, ZeilenFund[]>;
   /** Zeilen aller Abschlagsrechnungen je Position. */
   abschlaege: Map<string, ZeilenFund[]>;
@@ -26,6 +26,14 @@ export interface Kontext {
   kuerzungen: Map<string, number>;
   /** Rechnungsnummern mit Zahlung. */
   bezahlteRechnungen: Set<string>;
+  /**
+   * Ohne Entwurf (Projekt in Ausführung): Datum der letzten Abschlagsrechnung. Nur Leistung bis einschließlich
+   * dieses Tages gilt als vergessen; neuere Leistung kommt in die nächste AR und ist kein Befund.
+   * Mit Entwurf: null (alles zählt).
+   */
+  grenze: string | null;
+  /** Weder Entwurf noch AR: Es wurde noch nichts abgerechnet, also kann auch nichts vergessen sein. */
+  nochNichtsAbgerechnet: boolean;
 }
 
 function anhaengen<K, V>(m: Map<K, V[]>, k: K, v: V) {
@@ -48,12 +56,12 @@ export function baueKontext(d: Datensatz): Kontext {
   for (const blatt of d.aufmass) for (const zeile of blatt.zeilen) anhaengen(aufmass, zeile.positionNr.wert, { blatt, zeile });
 
   const entwurf = new Map<string, ZeilenFund[]>();
-  positionsZeilen(d.entwurf, entwurf);
+  if (d.entwurf) positionsZeilen(d.entwurf, entwurf);
   const abschlaege = new Map<string, ZeilenFund[]>();
   for (const ar of d.abschlaege) positionsZeilen(ar, abschlaege);
 
   const regieVerrechnet = new Set<string>();
-  for (const r of [...d.abschlaege, d.entwurf])
+  for (const r of d.entwurf ? [...d.abschlaege, d.entwurf] : d.abschlaege)
     for (const z of r.zeilen) if (z.typ === "regie") regieVerrechnet.add(z.regieNr.wert);
 
   const kuerzungen = new Map<string, number>();
@@ -62,15 +70,38 @@ export function baueKontext(d: Datensatz): Kontext {
 
   const bezahlteRechnungen = new Set(d.zahlungen.map((z) => z.rechnungNr.wert));
 
-  return { d, lv, aufmass, entwurf, abschlaege, regieVerrechnet, kuerzungen, bezahlteRechnungen };
+  const arDaten = d.abschlaege.map((r) => r.datum.wert).sort();
+  const grenze = d.entwurf ? null : (arDaten.at(-1) ?? null);
+
+  const nochNichtsAbgerechnet = !d.entwurf && d.abschlaege.length === 0;
+
+  return { d, lv, aufmass, entwurf, abschlaege, regieVerrechnet, kuerzungen, bezahlteRechnungen, grenze, nochNichtsAbgerechnet };
 }
 
-export function aufmassMenge(k: Kontext, nr: string): number {
-  return (k.aufmass.get(nr) ?? []).reduce((s, f) => s + f.zeile.menge.wert, 0);
+/** Liegt ein Datum bis einschließlich der Grenze (oder gibt es keine)? Ohne jede Abrechnung: nie. */
+export function vorGrenze(k: Kontext, datum: string): boolean {
+  if (k.nochNichtsAbgerechnet) return false;
+  return k.grenze === null || datum <= k.grenze;
+}
+
+/** Aufgemessene Menge einer Position; mit `nurVorGrenze` nur aus Blättern bis zur letzten AR. */
+export function aufmassMenge(k: Kontext, nr: string, nurVorGrenze = false): number {
+  return (k.aufmass.get(nr) ?? [])
+    .filter((f) => !nurVorGrenze || vorGrenze(k, f.blatt.datum.wert))
+    .reduce((s, f) => s + f.zeile.menge.wert, 0);
 }
 
 export function entwurfMenge(k: Kontext, nr: string): number {
   return (k.entwurf.get(nr) ?? []).reduce((s, f) => s + f.zeile.menge.wert, 0);
+}
+
+/** Verrechnete Zeilen einer Position: im Entwurf, oder ohne Entwurf in den Abschlagsrechnungen. */
+export function verrechneteZeilen(k: Kontext, nr: string): ZeilenFund[] {
+  return (k.d.entwurf ? k.entwurf.get(nr) : k.abschlaege.get(nr)) ?? [];
+}
+
+export function verrechnetMenge(k: Kontext, nr: string): number {
+  return verrechneteZeilen(k, nr).reduce((s, f) => s + f.zeile.menge.wert, 0);
 }
 
 /** Vergleich von ISO-Daten als Text ist korrekt, weil das Format fest „JJJJ-MM-TT“ ist. */

@@ -1,6 +1,6 @@
 # Schlusswerk: Umfang MVP und v1
 
-Stand: 22.10.2026, angepasst an Dossier v3 am 22.10.2026 (Go von Maxi offen). Grundlage: **Dossier v3**, Abschnitte 3, 12, 13, 15 (vorher v2). Spätere Entscheidungen gehen vor und werden hier mit Datum eingetragen.
+Stand: 22.10.2026, angepasst an Dossier v3 am 22.10.2026 (Go von Maxi S. am 22.10.2026). Grundlage: **Dossier v3**, Abschnitte 3, 12, 13, 15 (vorher v2). Spätere Entscheidungen gehen vor und werden hier mit Datum eingetragen.
 
 ## Ziel
 
@@ -81,7 +81,7 @@ Freigaben werden im MVP im Browser gespeichert, mit „Demo zurücksetzen“.
 | 22.10.2026 | UI nicht im eigenen Stil, sondern aus professionellen Referenzen abgeleitet (Maxi). Vorgehen: Referenz-Set → Messblatt → Gate 1 → Bauteil-Liste → Design-System → Schlüsselbildschirme → Gate 2 |
 | 22.10.2026 | **Gate 1 (Maxi):** Liga = reebuild, Kuro, Stratos + Linear, Attio, Harvey, Ramp, Rossum. Schrift Inter. Grundton kühl-neutral (reebuild-Produkt, Attio), Dunkelmodus nach Linear. Primärknopf Tinte. Akzent = neutraler Platzhalter, später mit Website-Team abstimmen |
 | 22.10.2026 | Boards A/B/C überholt; Richtung C und das Wort „Forcierung“ verworfen |
-| 22.10.2026 | **Dossier v3 maßgeblich** (Maxi D.). Umfang erweitert um Firmenebene, Zeitachse, WhatsApp-Szene, Entwurf der Schlussrechnung, Quelle des Belegs. Begriffe „Check“ und „Ledger“ bleiben. Go von Maxi offen |
-| 22.10.2026 | **Offen, Vorschlag:** Die 7 weiteren Projekte bekommen kleine eigene Datensätze, ihre Beträge rechnet der Rechenkern (keine von Hand gesetzten Summen) |
-| 22.10.2026 | **Offen, Vorschlag:** Die 6 Zurufe sind zusätzliche Belege für vorhandene Posten; die 2 Zurufe ohne Regiebericht werden 2 neue Posten in „angemeldet und offen“. Liste 1 bleibt 27.410,00 €, Liste 2 wächst. Neue Lösungsliste v2 vor dem Bau |
-| 22.10.2026 | **Offen, Vorschlag:** Beispiel in der WhatsApp-Szene HKLS statt Elektro (v3 nennt „Steckdose versetzt“, das Projekt ist ein HKLS-Los) |
+| 22.10.2026 | **Dossier v3 maßgeblich** (Maxi D.). Umfang erweitert um Firmenebene, Zeitachse, WhatsApp-Szene, Entwurf der Schlussrechnung, Quelle des Belegs. Begriffe „Check“ und „Ledger“ bleiben. Go von Maxi S. |
+| 22.10.2026 | **Entschieden (Go Maxi S.):** Die 7 weiteren Projekte bekommen kleine eigene Datensätze, ihre Beträge rechnet der Rechenkern (keine von Hand gesetzten Summen) |
+| 22.10.2026 | **Entschieden (Go Maxi S.):** Die 6 Zurufe sind zusätzliche Belege für vorhandene Posten; die 2 Zurufe ohne Regiebericht werden 2 neue Posten in „angemeldet und offen“. Liste 1 bleibt 27.410,00 €, Liste 2 wächst. Umgesetzt in `Demo_Faelle.md` v2 (Liste 2: 11.282,30 €) |
+| 22.10.2026 | **Entschieden (Go Maxi S.):** Beispiel in der WhatsApp-Szene HKLS statt Elektro (v3 nennt „Steckdose versetzt“, das Projekt ist ein HKLS-Los) |

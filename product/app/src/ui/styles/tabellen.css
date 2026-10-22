@@ -1,0 +1,209 @@
+/* Tabellen: Projektliste, Befunde, Ledger, Belegmatrix, Dokumentliste.
+ * Nur Layout, alle Werte aus tokens.css.
+ *
+ * Maße für alle Listen (Vorlage: Linear-Issueliste, Attio-Records-Tabelle), Klasse .tab-liste:
+ * Kopfzeile 32 px ohne Fläche, Zeile und Gruppenkopf --row-h (36 px), immer einzeilig, Zellen 0 / --space-3.
+ * Spaltenbreiten fest (colgroup, table-layout: fixed), nur die erste Textspalte dehnt sich.
+ * So verschiebt sich nichts, wenn Filter, Suche, Seitenleiste oder Freigabe den Inhalt ändern. */
+
+
+/* Tabellen in einem eigenen Bildlauf, damit nichts abgeschnitten wird oder die Seite verbreitert */
+.tw {
+  min-width: 0;
+  overflow-x: auto;
+  container-type: inline-size;
+}
+
+.tab-liste {
+  table-layout: fixed;
+}
+.tab-liste th {
+  height: var(--table-head-h);
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tab-liste td {
+  height: var(--row-h);
+  padding: 0 var(--space-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+.tab-liste .r {
+  font-variant-numeric: tabular-nums;
+}
+.tab-liste .sw-num {
+  font-variant-numeric: tabular-nums;
+}
+.tab-liste .grp td {
+  height: var(--row-h);
+  color: var(--text);
+}
+.tab-liste td > .sw-count {
+  margin-left: var(--space-2);
+}
+.tab-liste .sum td {
+  font-weight: 500;
+}
+/* Marke in der Zeile: inline statt inline-flex, damit das Wort auf der Grundlinie der Nachbarzellen steht */
+.tab-liste .sw-dotlabel {
+  display: inline;
+}
+/* Gedämpfte Nebenspalte (Auftraggeber, Art, Einheit) */
+.tab-liste .neben {
+  color: var(--text-muted);
+}
+/* Kennung vor dem Namen: feste Breite je Tabelle, damit die Namen eine gerade Kante bilden */
+.tab-liste .sw-pos-nr {
+  display: inline-block;
+  margin-right: var(--space-2);
+}
+
+/* Zeilen, die als Ganzes ein Link sind (Projektliste, Befundliste, Ledger, Belegmatrix) */
+.sw-table tbody tr[data-href] {
+  cursor: pointer;
+}
+.sw-table tbody tr[data-href]:hover td {
+  background: var(--surface-hover);
+}
+.row-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Warnsymbol in eigener schmaler Spalte, damit die Ziffernkante gerade bleibt (reebuild, Ramp) */
+.sw-table td.risk {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+}
+.sw-table td.risk .sw-risk {
+  margin-left: 0;
+}
+
+/* Projektliste: Ampel als Wort (Farbe aus marken.css), in normaler Stärke wie die übrigen Zellen */
+.tab-firma {
+  min-width: 960px;
+}
+.tab-firma td .sw-dotlabel {
+  font-weight: 400;
+}
+.tab-firma .sw-pos-nr {
+  min-width: 36px;
+}
+
+/* Befunde: Art nur, wenn die Tabelle breit genug ist (Projektübersicht hat eine schmale Spalte) */
+.tab-befunde {
+  min-width: 560px;
+}
+.tab-befunde .sw-pos-nr {
+  min-width: 72px;
+}
+@container (max-width: 899px) {
+  .tab-befunde .befund-art {
+    display: none;
+  }
+}
+
+/* Handy: Tabellen als einzeilige Liste (Linear mobil) */
+@media (max-width: 640px) {
+  .tab-firma,
+  .tab-befunde {
+    min-width: 0;
+    table-layout: auto;
+  }
+  .sw-table.liste-mobil thead,
+  .sw-table.liste-mobil colgroup,
+  .sw-table.liste-mobil .nur-breit {
+    display: none;
+  }
+  .sw-table.liste-mobil tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+  .sw-table.liste-mobil td {
+    border-bottom: 0;
+    align-content: center;
+  }
+}
+
+/* Ledger: Tabelle über die volle Breite, am Handy waagrecht scrollbar; Aufmaß über LV-Menge betont */
+.ledger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ledger-rahmen {
+  overflow-x: auto;
+}
+.tab-ledger {
+  min-width: 960px;
+}
+.tab-ledger td.sw-pos-nr {
+  display: table-cell;
+  margin: 0;
+}
+.ledger-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ledger-ueber {
+  font-weight: 500;
+}
+.sw-suche {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--control-h);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  background: var(--surface);
+}
+.sw-suche:focus-within {
+  border-color: var(--field-border);
+}
+.sw-suche input {
+  width: 200px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+/* Belegmatrix (Hebbia, Harvey): Zellen sind Links aufs Original, leere Zelle heißt kein Beleg */
+.tab-matrix {
+  min-width: 988px;
+}
+.tab-dokumente {
+  min-width: 720px;
+}
+.matrix-zelle > * + * {
+  margin-left: var(--space-2);
+}
+.matrix-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.matrix-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.dok-datei {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+.dok-duplikat td,
+.dok-duplikat .dok-datei {
+  color: var(--text-muted);
+}

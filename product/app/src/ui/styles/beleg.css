@@ -1,0 +1,137 @@
+/* Beleg: Betrachter, Zoom, Belegseiten, Chat, ganzes Dokument.
+ * Teil der früheren anordnung.css, Politur 22.10. Nur Layout, alle Werte aus tokens.css. */
+
+
+/* Zoom über die Layout-Größe (CSS zoom), damit die vergrößerte Seite scrollbar bleibt statt abgeschnitten */
+.doc-zoom {
+  width: 100%;
+  max-width: 560px;
+  flex: none;
+}
+.doc-zoom--80 {
+  zoom: 0.8;
+}
+.doc-zoom--90 {
+  zoom: 0.9;
+}
+.doc-zoom--110 {
+  zoom: 1.1;
+}
+.doc-zoom--125 {
+  zoom: 1.25;
+}
+.doc-zoom--150 {
+  zoom: 1.5;
+}
+.sw-viewer__canvas {
+  justify-content: safe center;
+}
+
+/* Belegseiten im A4-Format (reebuild, Kuro: ganze Seite), Plan mit Rahmen, Zuruf als Chat.
+ * Chat wie die Zuruf-Szene: weißes Papier, Monteur rechts in Grau, Agent links mit feiner Linie; Blau nur für die Fundstelle. */
+.sw-page {
+  aspect-ratio: 1 / 1.414;
+}
+.doc-title {
+  display: block;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+.doc-sum {
+  text-align: right;
+  font-weight: 600;
+}
+.doc-plan {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-sans);
+}
+.doc-note {
+  font-size: var(--fs-sm);
+}
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--fs-md);
+}
+.chat__kopf {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--doc-line);
+  color: var(--doc-ink-secondary);
+  font-size: var(--fs-sm);
+}
+.chat__kopf b {
+  color: var(--doc-ink);
+  font-size: var(--fs-md);
+}
+.chat__msg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-width: 80%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--doc-line);
+  border-radius: var(--radius-lg);
+  background: var(--doc-paper);
+  color: var(--doc-ink);
+}
+.chat__msg--ein {
+  align-self: flex-start;
+}
+.chat__msg--aus {
+  align-self: flex-end;
+  border-color: var(--doc-figure-soft);
+  background: var(--doc-figure-soft);
+}
+.chat__msg--kurz {
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.chat__msg .sw-photo {
+  width: 220px;
+}
+/* Foto in der grauen Blase des Monteurs: auf Papier, sonst verschwindet das Feld */
+.chat__msg--aus .sw-photo {
+  background: var(--doc-paper);
+}
+.chat__label {
+  color: var(--doc-ink-secondary);
+  font-size: var(--fs-xs);
+}
+.chat__zeit {
+  align-self: flex-end;
+  color: var(--doc-muted);
+  font-size: var(--fs-xs);
+}
+
+/* Beleg einzeln: nur die Seite, ohne Miniaturen */
+.beleg-body {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Ganzes Dokument im Ordner: keine feste A4-Höhe, Sprung zur Position per Anker markiert diese Zeile */
+.sw-page--ganz {
+  aspect-ratio: auto;
+}
+.sw-dt tr:target td,
+.sw-dt tr[data-ziel] td {
+  background: var(--doc-mark);
+}
+.sw-dt tr[id] {
+  scroll-margin-top: var(--space-8);
+}
+
+@media (max-width: 900px) {
+  .sw-viewer__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sw-viewer__rail {
+    display: none;
+  }
+}
