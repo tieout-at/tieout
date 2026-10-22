@@ -1,6 +1,8 @@
-/* Schlusswerk: Tokens (Farben hell und dunkel, Abstände, Radien, Größen, Schriftstufen).
+/* Tieout: Tokens (Farben hell und dunkel, Abstände, Radien, Größen, Schriftstufen).
  * Übernommen aus dem UI-Fundament v2 (product/ui-fundament/project/tokens.css), Stand v2 vom 22.10.2026.
- * Ab jetzt ist diese Datei die Quelle: Änderungen hier, nicht im Artifact. Nur Werte aus tokens.css. */
+ * Ab jetzt ist diese Datei die Quelle: Änderungen hier, nicht im Artifact. Nur Werte aus tokens.css.
+ * 23.10.: Akzent auf Ultramarin der Tieout-CI (#1D3BFF, website/app/globals.css), im Dunkeln aufgehellt (Kontrast über 4,5).
+ * Sonst unverändert: Grautöne, Grund und Dunkelmodus bleiben (Entscheidung Maxi S.). */
 :root, [data-theme="light"] {
   color-scheme: light;
   --bg: #ffffff; /* 22.10.: Inhalt auf Weiß wie Linear und Attio, nur die Seitenleiste getönt */
@@ -18,9 +20,11 @@
   --action: #242629;
   --action-hover: #101112;
   --on-action: #ffffff;
-  --accent: #2563e0;
-  --accent-soft: #e9f0fd;
+  --accent: #1d3bff;
+  --accent-soft: #eef1ff;
   --on-accent: #ffffff;
+  --brand: #1d3bff;
+  --brand-ink: #101112;
   --pos: #13703f;
   --pos-soft: #e6f4ec;
   --warn: #935500;
@@ -32,8 +36,8 @@
   --doc-paper: #ffffff;
   --doc-ink: #1b1c1f;
   --doc-viewer: #e9eaee;
-  --doc-mark: #cfe0fc;
-  --doc-mark-line: #2563e0;
+  --doc-mark: #dfe5ff;
+  --doc-mark-line: #1d3bff;
   --doc-risk: #fcf1df;
   --doc-risk-line: #935500;
   --doc-line: #dfe1e6;
@@ -61,9 +65,11 @@
   --action: #f7f8f8;
   --action-hover: #ffffff;
   --on-action: #08090a;
-  --accent: #6d9cf8;
-  --accent-soft: #16223a;
+  --accent: #7d8fff;
+  --accent-soft: #171c3a;
   --on-accent: #08090a;
+  --brand: #1d3bff;
+  --brand-ink: #f7f8f8;
   --pos: #4cc38a;
   --pos-soft: #0f2a1d;
   --warn: #e7a83e;
@@ -75,8 +81,8 @@
   --doc-paper: #ffffff;
   --doc-ink: #1b1c1f;
   --doc-viewer: #141516;
-  --doc-mark: #cfe0fc;
-  --doc-mark-line: #2563e0;
+  --doc-mark: #dfe5ff;
+  --doc-mark-line: #1d3bff;
   --doc-risk: #fcf1df;
   --doc-risk-line: #935500;
   --doc-line: #dfe1e6;
@@ -115,6 +121,8 @@
   --sidebar-w: 232px;
   --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  /* nur für die Wortmarke Tieout (Schrift der Website) */
+  --font-display: "Inter Tight", Inter, system-ui, sans-serif;
 }
 .kpi { font-family: var(--font-sans); font-size: 28px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; }
 .page-title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.015em; }

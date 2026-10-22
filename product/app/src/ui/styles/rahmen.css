@@ -138,7 +138,7 @@ body {
   }
 }
 
-/* Marke (Platzhalter bis Name und Logo feststehen) und Einklappen der Seitenleiste (Linear: nur Symbole) */
+/* Marke Tieout oben, darunter die Firma als Arbeitsbereich (Linear, Attio); Einklappen der Seitenleiste (Linear: nur Symbole) */
 .brand-row {
   display: flex;
   align-items: center;
@@ -148,18 +148,30 @@ body {
 .sw-brand {
   gap: var(--space-2);
 }
+.nav-firma {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--tab-h);
+  padding: 0 var(--space-2);
+  color: var(--text);
+  font-weight: 500;
+  min-width: 0;
+}
 .brand-mark {
   display: inline-grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex: none;
   border-radius: var(--radius-sm);
-  background: var(--action);
-  color: var(--on-action);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text-secondary);
   font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: normal;
+  box-sizing: border-box;
 }
 .nav-toggle {
   display: inline-grid;
@@ -187,8 +199,13 @@ body {
 [data-nav="zu"] .sw-sidebar .sw-count,
 [data-nav="zu"] .sw-sidebar .sw-switch,
 [data-nav="zu"] .sw-sidebar .nav-group > .label,
-[data-nav="zu"] .sw-sidebar .brand-name {
+[data-nav="zu"] .sw-sidebar .brand-name,
+[data-nav="zu"] .sw-sidebar .logo-wort {
   display: none;
+}
+[data-nav="zu"] .nav-firma {
+  justify-content: center;
+  padding: 0;
 }
 [data-nav="zu"] .brand-row {
   flex-direction: column;
@@ -238,6 +255,8 @@ body {
   }
   .sw-sidebar .brand-name,
   [data-nav="zu"] .sw-sidebar .brand-name,
+  .sw-sidebar .nav-firma,
+  .sw-sidebar .logo-wort,
   .nav-projekt:not([data-offen]),
   .sw-nav .nav-projekt__kopf {
     display: none;

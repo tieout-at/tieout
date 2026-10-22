@@ -173,7 +173,12 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 
 /* Seitenleiste (Vorlage: Attio-Navigation hell; Linear: aktiver Eintrag als Fläche, Zähler rechts) */
 .sw-sidebar { width: var(--sidebar-w); flex: none; background: var(--surface-subtle); border-right: 1px solid var(--line-strong); display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-3) var(--space-2); box-sizing: border-box; min-height: 100%; }
-.sw-brand { display: flex; align-items: center; height: var(--tab-h); padding: 0 var(--space-2); font-weight: 600; font-size: var(--fs-lg); letter-spacing: -0.01em; }
+.sw-brand { display: flex; align-items: center; height: var(--tab-h); padding: 0 var(--space-2); color: var(--text); text-decoration: none; }
+/* Tieout-Marke (Vorlage: Kopf der Website, Bildmarke 26 px und Wortmarke Inter Tight 600, hier verkleinert auf Seitenleisten-Maß wie Linear) */
+.logo-mark { flex: none; display: block; }
+.logo-mark__ecken { stroke: var(--brand-ink); }
+.logo-mark__punkt { fill: var(--brand); }
+.logo-wort { font-family: var(--font-display); font-weight: 600; font-size: 17px; line-height: 1; letter-spacing: -0.03em; }
 .sw-switch { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); border: 0; border-radius: var(--radius-md); background: transparent; cursor: pointer; color: var(--text-muted); font: inherit; text-align: left; } /* Kontext als Zeile ohne Rahmen (Linear, Attio) */
 .sw-switch__t { display: flex; flex-direction: column; min-width: 0; flex: 1; color: var(--text); }
 .sw-switch__t b { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
