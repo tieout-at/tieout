@@ -23,7 +23,7 @@ Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnun
 | Einstellungen und Anmeldung (23.10.) | Seite Einstellungen (Thema, Freigaben zurücksetzen) statt „Demo zurücksetzen“ in der Seitenleiste. Anmeldung mit Supabase (Projekt `tieout-app`, Frankfurt, nur auf Einladung, Einladen per Anmeldelink, Prüfskript `app/worker/index.ts`) ist fertig, aber per Schalter `ANMELDUNG_EIN` aus: Juroren und Investoren öffnen die App per Link |
 | UI-Fundament | In der App (`app/src/ui`, Regeln in `app/src/ui/README.md`), **die App ist die Quelle**; das Artifact bleibt Referenz v2. Weißer Grund, keine Kästen, wenig Text. Gate 2 (annehmen) durch Maxi S. an der laufenden App offen. `fundament.test.ts` sperrt freie Farben, Stile, Trennpunkte, verbotene Wörter |
 | Prüfungen | GitHub Actions bei jedem PR: Typen, Lint, Tests, Build. Schutz von main braucht einen bezahlten GitHub-Plan (offen). Screenshots: `app/scripts/qa/screens.mjs` |
-| Online | https://schlusswerk-demo.maximilian-seipl.workers.dev, geschützt per E-Mail-Code, neu gebaut bei jedem Merge auf main (seit 22.10.). Siehe „Online (Cloudflare)“ |
+| Online | https://app.tieout.workers.dev, geschützt per E-Mail-Code, neu gebaut bei jedem Merge auf main (seit 22.10.). Siehe „Online (Cloudflare)“ |
 
 Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.12.
 
@@ -65,9 +65,9 @@ Die Demo liegt bei Cloudflare als Worker mit statischen Dateien (Workers Builds,
 
 | Was | Wo |
 |---|---|
-| Demo (Stand von `main`) | https://schlusswerk-demo.maximilian-seipl.workers.dev |
+| Demo (Stand von `main`) | https://app.tieout.workers.dev |
 | Vorschau je Branch und Pull Request | Cloudflare schreibt die Adresse als Kommentar in den Pull Request |
-| Einstellungen | Cloudflare-Dashboard (Konto von Maxi S.), Workers & Pages, `schlusswerk-demo` |
+| Einstellungen | Cloudflare-Dashboard (Konto von Maxi S.), Workers & Pages, `app` (vorher `schlusswerk-demo`) |
 | Konfiguration im Repository | `app/wrangler.jsonc` |
 
 So läuft es:
