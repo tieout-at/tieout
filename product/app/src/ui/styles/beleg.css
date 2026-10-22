@@ -34,7 +34,7 @@
 }
 .doc-title {
   display: block;
-  font-size: 14px;
+  font-size: var(--fs-lg);
   font-weight: 600;
 }
 .doc-sum {
@@ -49,13 +49,13 @@
   font-family: var(--font-sans);
 }
 .doc-note {
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 .chat {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
 .chat__kopf {
   display: flex;
@@ -63,11 +63,11 @@
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--doc-line);
   color: var(--doc-ink-secondary);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 .chat__kopf b {
   color: var(--doc-ink);
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
 .chat__msg {
   display: flex;
@@ -102,12 +102,12 @@
 }
 .chat__label {
   color: var(--doc-ink-secondary);
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 .chat__zeit {
   align-self: flex-end;
   color: var(--doc-muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 /* Beleg einzeln: nur die Seite, ohne Miniaturen */

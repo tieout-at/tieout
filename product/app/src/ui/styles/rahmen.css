@@ -23,6 +23,7 @@ body {
 .scr-body {
   flex: 1;
   overflow: auto;
+  scrollbar-gutter: stable;
   padding: var(--space-5) var(--space-6) var(--space-8);
   display: flex;
   flex-direction: column;
@@ -93,17 +94,6 @@ body {
   gap: var(--space-5);
 }
 
-/* „Synthetisch“ im Kopf als ruhiges Wort statt Pille in Großbuchstaben (Kennzeichnung bleibt auf jeder Seite) */
-.sw-pagehead .sw-synth {
-  height: auto;
-  padding: 0;
-  border: 0;
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: normal;
-  text-transform: none;
-}
 
 /* Seitentitel in der Kopfzeile als Überschrift (wie <b> im Fundament) */
 .sw-pagehead__path h1 {
@@ -167,7 +157,7 @@ body {
   border-radius: var(--radius-sm);
   background: var(--action);
   color: var(--on-action);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: normal;
 }

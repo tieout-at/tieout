@@ -17,15 +17,9 @@
 .tab-liste {
   table-layout: fixed;
 }
-/* Platz für den Rollbalken immer frei halten: sonst wird die Tabelle um dessen Breite schmaler, sobald ein Filter
- * aus wenigen Zeilen viele macht. Gehört eigentlich nach rahmen.css (.scr-body), siehe PR „Für den Haupt-Chat“. */
-.scr-body:has(.tab-liste) {
-  scrollbar-gutter: stable;
-}
 .tab-liste th {
-  height: 32px;
+  height: var(--table-head-h);
   padding: 0 var(--space-3);
-  background: transparent;
   border-bottom: 1px solid var(--line);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -206,7 +200,7 @@
 }
 .dok-datei {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text);
 }
 .dok-duplikat td,
