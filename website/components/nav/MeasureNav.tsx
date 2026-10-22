@@ -43,7 +43,7 @@ export function MeasureNav({ labels, aria }: { labels: string[]; aria: string })
       setDark(
         DARK_IDS.some((id) => {
           const r = document.getElementById(id)?.getBoundingClientRect();
-          return !!r && r.top + 160 < mid && r.bottom > mid;
+          return !!r && r.top < mid && r.bottom > mid;
         }),
       );
     };

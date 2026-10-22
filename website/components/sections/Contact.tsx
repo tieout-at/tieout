@@ -40,8 +40,10 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
       <div className="wrap contact">
         <div className="contact__intro">
           <p className="eyebrow">{t.eyebrow}</p>
-          <h2 className="h-section">{t.title}</h2>
-          <p className="lead">{t.sub}</p>
+          <div className="contact__headline">
+            <h2 className="h-section">{t.title}</h2>
+            <p className="lead">{t.sub}</p>
+          </div>
           <ul className="contact__points">
             {t.points.map((p) => (
               <li key={p}>{p}</li>
@@ -51,6 +53,10 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
             <span>{t.mailLabel}: </span>
             <Ph text={t.mail} />
           </p>
+        </div>
+
+        <div className="contact__cal">
+          <Calendar t={t} locale={locale} value={slot} onChange={pickSlot} error={errors.slot} />
         </div>
 
         {sent ? (
@@ -66,8 +72,7 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
             </div>
           </div>
         ) : (
-          <form className="form" onSubmit={onSubmit} noValidate>
-            <Calendar t={t} locale={locale} value={slot} onChange={pickSlot} error={errors.slot} />
+          <form className="form form--side" onSubmit={onSubmit} noValidate>
 
             <div className="form__row2">
               <div className="field">

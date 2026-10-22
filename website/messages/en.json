@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "EndPoint. Final invoices for electrical and MEP contractors",
-    "description": "EndPoint. checks the final invoice of electrical and MEP contractors against everything that happened on the project. Every line backed by evidence, no earned euro forgotten."
+    "title": "Tieout. Final invoices for electrical and MEP contractors",
+    "description": "Tieout. checks the final invoice of electrical and MEP contractors against everything that happened on the project. Every line backed by evidence, no earned euro forgotten."
   },
   "nav": {
     "cta": "Book a demo",
@@ -23,7 +23,7 @@
     "eyebrow": "For electrical and MEP contractors",
     "title1": "Final invoices",
     "title2": "that leave nothing behind.",
-    "sub": "EndPoint. checks your final invoice against everything that happened on the project. Every line backed by evidence, no earned euro forgotten.",
+    "sub": "Tieout. checks your final invoice against everything that happened on the project. Every line backed by evidence, no earned euro forgotten.",
     "cta": "Book a demo",
     "secondary": "How it works",
     "cards": {
@@ -46,7 +46,7 @@
     "title": "At the end of a project, money that was earned long ago is missing.",
     "problem": "Hourly work (daywork) without a signature, extra quantities, changes agreed on site: what was arranged on the job often never makes it into the final invoice. The evidence is scattered across emails, plans, photos and people's heads. And clients increasingly check invoices with software.",
     "solutionEyebrow": "03 · Solution",
-    "solution": "EndPoint. connects all the data of your business into a digital twin and uses it to check every final invoice: what was built ends up on the invoice.",
+    "solution": "Tieout. connects all the data of your business into a digital twin and uses it to check every final invoice: what was built ends up on the invoice.",
     "flow": {
       "inputs": "Your data",
       "twin": "Digital twin",
@@ -154,14 +154,6 @@
       ],
       "evidenceWord": "records",
       "detailTitle": "Project Vienna 21 · Item 03.12.004",
-      "position": "6 outlets 2nd floor",
-      "positionValue": "+ 6 pcs · €2,736",
-      "evidence": [
-        "Email site mgmt",
-        "Plan rev. D",
-        "Photo 14 Mar",
-        "WhatsApp request"
-      ],
       "caption": "One twin for the whole business, with insight into every project",
       "outputTitle": "Final invoice",
       "outputProject": "Project Vienna 21",
@@ -177,29 +169,54 @@
       "sample": "Sample data",
       "level1": "Level 1 · Your business",
       "level2": "Level 2 · Project Vienna 21",
-      "positionsLabel": "Items with evidence",
-      "positions2": [
+      "projectWord": "Project",
+      "level2Caption": "Work: ordered, built, invoiced",
+      "tableHead": [
+        "Item",
+        "BoQ",
+        "Built",
+        "Invoiced",
+        "Open"
+      ],
+      "tableRows": [
         [
-          "Daywork 11",
-          "€1,290"
+          "Flush socket",
+          "120",
+          "126",
+          "120",
+          "+ €2,736"
         ],
         [
-          "Socket room 5",
-          "€780"
+          "Cable tray",
+          "340 m",
+          "340 m",
+          "340 m",
+          "✓"
+        ],
+        [
+          "Daywork plant room",
+          "–",
+          "6 h",
+          "0 h",
+          "+ €390"
         ],
         [
           "Stairwell lights",
-          "€1,640"
+          "24",
+          "28",
+          "24",
+          "+ €1,640"
         ]
       ],
-      "projectWord": "Project"
+      "tableTotalLabel": "Open to invoice",
+      "tableTotal": "+ €4,766"
     },
     "timeline": {
       "timelineTitle": "Project Vienna 21 · Example",
       "trackSite": "On site",
       "trackInvoice": "Final invoice",
       "without": "Today",
-      "with": "With EndPoint.",
+      "with": "With Tieout.",
       "missing": "missing",
       "billed": "invoiced",
       "found": "found",
@@ -257,14 +274,14 @@
   },
   "video": {
     "eyebrow": "04 · Product video",
-    "title": "EndPoint. in three minutes.",
+    "title": "Tieout. in three minutes.",
     "placeholder": "[[PLACEHOLDER: product video]]",
     "soon": "Video coming soon.",
     "play": "Play video"
   },
   "team": {
     "eyebrow": "05 · About us",
-    "title": "Who builds EndPoint.",
+    "title": "Who builds Tieout.",
     "role": "Co-Founder",
     "linkedin": "LinkedIn",
     "members": [
@@ -308,7 +325,7 @@
   "contact": {
     "eyebrow": "06 · Demo",
     "title": "Book a demo.",
-    "sub": "We show you EndPoint. on a sample project. Afterwards you decide whether it fits your business.",
+    "sub": "We show you Tieout. on a sample project. Afterwards you decide whether it fits your business.",
     "points": [
       "30 minutes, online",
       "Live on a sample project",
@@ -325,7 +342,7 @@
     },
     "optional": "optional",
     "messagePlaceholder": "Trade, size, what matters to you …",
-    "consent": "I agree that EndPoint. may contact me about this request by email or phone. I can withdraw my consent at any time. Details in the privacy policy.",
+    "consent": "I agree that Tieout. may contact me about this request by email or phone. I can withdraw my consent at any time. Details in the privacy policy.",
     "submit": "Request demo",
     "errorName": "Please enter your name.",
     "errorEmail": "Please enter a valid email address.",

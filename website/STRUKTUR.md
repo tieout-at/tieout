@@ -1,20 +1,22 @@
 # Website: Struktur v1
 
 **Stand:** 22.10.2026. Gebaut (v1 Vorschau), siehe `README.md`. Abweichungen vom Plan stehen in Abschnitt 10.
-**Arbeitstitel:** EndPoint. (mit Punkt). Name nicht final, Markenprüfung offen.
+**Arbeitstitel:** Tieout. (mit Punkt). Name nicht final, Markenprüfung offen.
 **Zuständig:** Maxi (allein). Gearbeitet wird auf dem Branch `website/build`, nur im Ordner `website/`. `product/` und alles andere fasst die Website-Arbeit nicht an.
 
 > **Update v2 (22.10.2026, Feedback Maxi D.):** Aufbau jetzt: 01 Hero (Text links, drei Fotos mit Produktausschnitten rechts), 02 Problem und Lösung mit animiertem Ablauf (Eingänge ERP, E-Mail, PDF, Pläne, Excel, Foto, Sprachnachricht, WhatsApp → Zwilling des Betriebs aus Projekten → Schlussrechnung mit Prüfungen), 03 Produktvideo, 04 Über uns (LinkedIn-Fotos, alle Co-Founder, Logos in Ultramarin), 05 Demo buchen. Hauptprodukt nach außen ist die Schlussrechnung, der Zwilling ist die Grundlage. Keine Navigation oben, Messpunkt-Navigation links, Schiebeschalter DE/EN. Entfallen: Legende/Prinzipien, Bau-Insider-Karte, klickbarer Zwilling. Bildquellen: `public/hero/QUELLEN.md`.
 
 > **Update v3 (22.10.2026):** Hero ohne Zielgruppen-Kacheln, drei Fotos mit je einem Nutzen (vergessene Leistung, Mehrmenge aus Planänderung, alle Belege an einem Ort). Problem und Lösung untereinander, ohne Zahlen (keine belastbare Quelle für AT/DE gefunden). Eingänge MECE nach Datenart: Systeme, Dokumente, Kommunikation. Zwilling als Betrieb mit Firmenwissen, Projektübersicht und Einblick bis zur Position mit Belegen. Messpunkt-Navigation rechts mit allen Namen. Demo mit Terminwahl (Dummy, Kalender-Anbindung offen), Verlauf Papier zu Ultramarin.
 
-> **Update v4 (22.10.2026):** Logo „Ecke“ (zwei Plan-Ecken, Punkt in Ultramarin). Hero-Karte 2 zeigt eine per Mail angeordnete Änderung statt Mehrmenge. Problem als animierte Projekt-Zeitleiste mit Schalter „Heute | Mit EndPoint.“. Zwilling in zwei Ebenen (Betrieb, Projekt). Blauer Übergang wie bei Dryft beim Video. Demo mit Monatskalender und freien Zeiten (Dummy).
+> **Update v4 (22.10.2026):** Logo „Ecke“ (zwei Plan-Ecken, Punkt in Ultramarin). Hero-Karte 2 zeigt eine per Mail angeordnete Änderung statt Mehrmenge. Problem als animierte Projekt-Zeitleiste mit Schalter „Heute | Mit Tieout.“. Zwilling in zwei Ebenen (Betrieb, Projekt). Blauer Übergang wie bei Dryft beim Video. Demo mit Monatskalender und freien Zeiten (Dummy).
+
+> **Update v6 (22.10.2026):** Arbeitstitel jetzt **Tieout.** (vorher EndPoint.). Domains: nur tieout.at frei (DNS), tieout.com und tieout.ai vergeben. Projekt-Ebene im Zwilling als Aufstellung (Position, LV, gebaut, verrechnet, offen). Abschnitte mit gleichen Abständen, Blau beim Video mit harter Kante wie bei Dryft. Demo: Kopfzeile über volle Breite, darunter Kalender und Formular gleich hoch. Logo-Auswahl für Tieout offen.
 
 ---
 
 ## 1. Ziel
 
-Die Seite erklärt in wenigen Sekunden: **EndPoint. ist der digitale Zwilling eines Elektro- oder HKLS-Betriebs.** Die Schlussrechnung ist die erste Anwendung, nicht das Produkt.
+Die Seite erklärt in wenigen Sekunden: **Tieout. ist der digitale Zwilling eines Elektro- oder HKLS-Betriebs.** Die Schlussrechnung ist die erste Anwendung, nicht das Produkt.
 
 - GTM, Angebote und Preise sind offen: keine Preise, keine Pakete, kein „Check anfragen“.
 - CTA neutral: **„Kontakt aufnehmen“** `[[PLATZHALTER: finaler CTA]]`.
@@ -62,7 +64,7 @@ Die Seite erklärt in wenigen Sekunden: **EndPoint. ist der digitale Zwilling ei
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ EndPoint.     Zwilling  Anwendungen  Team   DE|EN  [CTA] │  Navigation
+│ Tieout.     Zwilling  Anwendungen  Team   DE|EN  [CTA] │  Navigation
 ├──────────────────────────────────────────────────────┬───┤
 │ 01 HERO        Ihr Betrieb. Auf einem Plan.          │ ⌖ │  Messpunkt-
 │                Raster zeichnet sich → Zwilling       │ │ │  Navigation
@@ -81,7 +83,7 @@ Die Seite erklärt in wenigen Sekunden: **EndPoint. ist der digitale Zwilling ei
 
 | # | Abschnitt | Inhalt | Interaktion | Platzhalter |
 |---|---|---|---|---|
-| 00 | **Navigation** | Wortmarke „EndPoint.“, Anker, `DE \| EN`, CTA | bleibt oben, wird beim Scrollen schmaler | CTA-Text |
+| 00 | **Navigation** | Wortmarke „Tieout.“, Anker, `DE \| EN`, CTA | bleibt oben, wird beim Scrollen schmaler | CTA-Text |
 | 01 | **Hero** | „Ihr Betrieb. Auf einem Plan.“ / „Your business. On one plan.“ Unterzeile: der digitale Zwilling für Elektro- und HKLS-Betriebe | Rasterlinien zeichnen sich, eine Maßkette misst „8 Projekte“, Übergang in den Zwilling | Unterzeile |
 | 02 | **Problem** | Wissen verstreut (ERP, Mails, Papier, Köpfe); vieles informell (Telefon, Zuruf, WhatsApp); geht ein PL, geht sein Wissen; Auftraggeber prüfen mit KI | Karten zeichnen sich beim Scrollen ein | Zahlen nur mit Quelle (Dossier Abschnitt 2) |
 | 03 | **Zwilling** | Herzstück, siehe Abschnitt 6 | interaktiv | Daten synthetisch, gekennzeichnet |

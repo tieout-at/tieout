@@ -111,54 +111,56 @@ function Twin({ t }: { t: T }) {
   };
   const wien = tile(0);
 
-  // Ebene 2: Position mit Belegen
-  const ev = [
-    { bx: 78, y: 304 },
-    { bx: 78, y: 354 },
-    { bx: 328, y: 304 },
-    { bx: 328, y: 354 },
-  ];
-  const evW = 88;
-  const cy0 = 318;
-  const c = { x: 182 + shift(P2, cy0), y: cy0, w: 124, h: 46 };
-  const posY = 390;
+  // Ebene 2: das Projekt als einfache Aufstellung seiner Leistungen
+  const left = (y: number) => 86 + shift(P2, y);
+  const tw = 326;
+  const cols = [0, 128, 178, 240, tw]; // Position links, Zahlen rechtsbündig
+  const headY = 300;
+  const rowY = [322, 344, 366, 388];
+  const totalY = 414;
 
   return (
     <svg viewBox="0 0 440 452" role="img" aria-label={`${t.twin}: ${t.level1}, ${t.level2}`}>
       {/* Verbindung: Projekt aus Ebene 1 öffnet Ebene 2 */}
-      <path d={`M${wien.x},${wien.y + 30} L${c.x},${c.y}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
-      <path d={`M${wien.x + w1},${wien.y + 30} L${c.x + c.w},${c.y}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
+      <path d={`M${wien.x},${wien.y + 30} L${left(headY)},${headY - 12}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
+      <path d={`M${wien.x + w1},${wien.y + 30} L${left(headY) + tw},${headY - 12}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
 
       {/* Ebene 2: Projekt */}
       <Plane y={P2.y} h={P2.h} label={t.level2} active />
-      <text x={92 + shift(P2, 292)} y="292" fontFamily="var(--font-mono)" fontSize="9" fill={INK} fillOpacity=".45" letterSpacing="1">
-        {t.positionsLabel.toUpperCase()}
+      <text x={left(282)} y="282" fontFamily="var(--font-mono)" fontSize="9" fill={INK} fillOpacity=".45" letterSpacing=".8">
+        {t.level2Caption.toUpperCase()}
       </text>
-      {ev.map((e, i) => {
-        const x = e.bx + shift(P2, e.y);
-        const left = i < 2;
-        const ex = left ? x + evW : x;
-        const ey = e.y + 11;
-        const cx = left ? c.x : c.x + c.w;
-        const cyy = c.y + c.h / 2;
+      {t.tableHead.map((h, i) => (
+        <text key={h} x={left(headY) + cols[i]} y={headY} textAnchor={i === 0 ? "start" : "end"} fontFamily="var(--font-mono)" fontSize="8" fill={INK} fillOpacity=".5" letterSpacing=".6">
+          {h.toUpperCase()}
+        </text>
+      ))}
+      <line x1={left(headY + 6)} y1={headY + 6} x2={left(headY + 6) + tw} y2={headY + 6} stroke={INK} strokeOpacity=".6" />
+      {t.tableRows.map((r, ri) => {
+        const y = rowY[ri];
+        const x0 = left(y);
+        const open = r[4] !== "✓";
         return (
-          <g key={i}>
-            <path d={`M${ex},${ey} C${(ex + cx) / 2},${ey} ${(ex + cx) / 2},${cyy} ${cx},${cyy}`} stroke={ULTRA} strokeOpacity=".55" fill="none" />
-            <Box x={x} y={e.y} w={evW} h={22} top={t.evidence[i]} flash={2.4 + i * 0.7} />
+          <g key={r[0]}>
+            {open && <rect x={x0 - 6} y={y - 14} width={tw + 12} height="20" fill={ULTRA} fillOpacity=".08" style={{ animation: `evFlash ${LOOP}s ease ${(2.4 + ri * 0.7).toFixed(1)}s infinite` }} />}
+            <text x={x0} y={y} fontFamily="var(--font-sans)" fontSize="10.5" fontWeight="600" fill={INK}>
+              {r[0]}
+            </text>
+            {r.slice(1).map((v, ci) => (
+              <text key={ci} x={x0 + cols[ci + 1]} y={y} textAnchor="end" fontFamily="var(--font-mono)" fontSize="9.5" fill={ci === 3 ? ULTRA : INK} fillOpacity={ci === 3 ? 1 : 0.75} fontWeight={ci === 3 ? 600 : 400}>
+                {v}
+              </text>
+            ))}
+            <line x1={x0} y1={y + 7} x2={x0 + tw} y2={y + 7} stroke={INK} strokeOpacity=".1" />
           </g>
         );
       })}
-      <rect x={c.x} y={c.y} width={c.w} height={c.h} fill={ULTRA} />
-      <text x={c.x + c.w / 2} y={c.y + 19} textAnchor="middle" fontFamily="var(--font-sans)" fontSize="12" fontWeight="600" fill="#ffffff">
-        {t.position}
+      <text x={left(totalY)} y={totalY} fontFamily="var(--font-mono)" fontSize="9" fill={INK} fillOpacity=".6" letterSpacing=".6">
+        {t.tableTotalLabel.toUpperCase()}
       </text>
-      <text x={c.x + c.w / 2} y={c.y + 35} textAnchor="middle" fontFamily="var(--font-mono)" fontSize="9.5" fill="#ffffff" fillOpacity=".85">
-        {t.positionValue}
+      <text x={left(totalY) + tw} y={totalY} textAnchor="end" fontFamily="var(--font-sans)" fontSize="13" fontWeight="600" fill={ULTRA}>
+        {t.tableTotal}
       </text>
-      {t.positions2.map((p, i) => {
-        const [name, val] = p as [string, string];
-        return <Box key={name} x={[92, 196, 300][i] + shift(P2, posY)} y={posY} w={96} h={28} top={name} bottom={val} />;
-      })}
 
       {/* Ebene 1: Betrieb */}
       <Plane y={P1.y} h={P1.h} label={t.level1} />
@@ -181,7 +183,7 @@ function Twin({ t }: { t: T }) {
 
       {/* Punkt, der von Ebene 1 in Ebene 2 wandert */}
       <circle r="3.5" fill={ULTRA}>
-        <animateMotion dur="2.2s" repeatCount="indefinite" path={`M${wien.x + w1 / 2},${wien.y + 30} L${c.x + c.w / 2},${c.y}`} />
+        <animateMotion dur="2.2s" repeatCount="indefinite" path={`M${wien.x + w1 / 2},${wien.y + 30} L${left(headY) + tw / 2},${headY - 12}`} />
       </circle>
     </svg>
   );

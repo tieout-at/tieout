@@ -25,10 +25,10 @@ export function Header({ locale, t }: { locale: Locale; t: Messages["nav"] }) {
     <header className={`header ${scrolled ? "header--scrolled" : ""}`}>
       <a className="skip" href="#inhalt">{t.skip}</a>
       <div className="wrap header__inner">
-        <a className="wordmark" href={homePath(locale)} aria-label="EndPoint.">
+        <a className="wordmark" href={homePath(locale)} aria-label="Tieout.">
           <LogoMark size={26} />
           <span>
-            EndPoint<span className="wordmark__dot">.</span>
+            Tieout<span className="wordmark__dot">.</span>
           </span>
         </a>
         <div className="header__right">

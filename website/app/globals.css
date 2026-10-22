@@ -1,4 +1,4 @@
-/* EndPoint. Planraster-CI. Drei Farben: Papier, Tinte, Ultramarin. Rasterlinien nur als Hintergrund. */
+/* Tieout. Planraster-CI. Drei Farben: Papier, Tinte, Ultramarin. Rasterlinien nur als Hintergrund. */
 :root {
   --paper: #f4f6f9;
   --ink: #0a1020;
@@ -66,9 +66,7 @@ img { display: block; max-width: 100%; }
 .btn .arrow { font-family: var(--font-mono); }
 
 /* Abschnitte */
-.section { padding: clamp(56px, 7vw, 96px) 0; position: relative; }
-.section--tight { padding-bottom: clamp(24px, 3vw, 40px); }
-.section--tight + .section { border-top: 0; padding-top: clamp(24px, 3vw, 40px); }
+.section { padding: clamp(64px, 8vw, 104px) 0; position: relative; }
 .section + .section { border-top: 1px solid var(--grid-major); }
 
 /* Maßkette */
@@ -280,10 +278,16 @@ img { display: block; max-width: 100%; }
 
 .chip--on { border-color: var(--ultra) !important; background: var(--ultra-10); }
 
-/* Video: Übergang von Papier in Ultramarin mit feinem Korn, wie ein ausgerollter Plan (Vorbild Dryft) */
-.section--blue { background: linear-gradient(180deg, rgba(244,246,249,0) 0, rgba(29,59,255,.55) 120px, var(--ultra) 240px, var(--ultra) 100%); color: var(--white); border-top: 0 !important; overflow: hidden; padding-top: clamp(150px, 16vw, 230px); }
-.section--blue::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.14) 1px, transparent 1px); background-size: 96px 96px; -webkit-mask-image: linear-gradient(180deg, transparent 80px, #000 260px); mask-image: linear-gradient(180deg, transparent 80px, #000 260px); pointer-events: none; }
-.section--blue::after { content: ""; position: absolute; inset: 0; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); opacity: .14; mix-blend-mode: soft-light; pointer-events: none; }
+/* Video: sattes Ultramarin mit harter Kante, feinem Raster, Messpunkten und Korn (Vorbild Dryft) */
+.section--blue { background-color: var(--ultra); color: var(--white); border-top: 0 !important; overflow: hidden; }
+.section--blue::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.9) 1.5px, transparent 2px),
+    linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px);
+  background-size: 384px 384px, 96px 96px, 96px 96px;
+  background-position: -2px -2px, 0 0, 0 0; }
+.section--blue::after { content: ""; position: absolute; inset: 0; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); opacity: .12; mix-blend-mode: soft-light; pointer-events: none; }
 .section--blue .wrap { position: relative; z-index: 1; }
 .section--blue .eyebrow { color: rgba(255,255,255,.8); }
 .section--blue .h-section { color: var(--white); }
@@ -309,7 +313,7 @@ img { display: block; max-width: 100%; }
 @media (max-width: 560px) { .slots__days { grid-template-columns: repeat(5, minmax(0, 1fr)); } .slot--day { height: 50px; } .slots__times { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 @keyframes barX { 0% { transform: scaleX(.1); } 30%, 90% { transform: scaleX(1); } 100% { transform: scaleX(.1); } }
-@keyframes evFlash { 0%, 100% { fill-opacity: 0; } 4% { fill-opacity: .9; } 14% { fill-opacity: .12; } 80% { fill-opacity: .12; } }
+@keyframes evFlash { 0%, 100% { fill-opacity: .08; } 5% { fill-opacity: .3; } 16% { fill-opacity: .08; } }
 
 /* Kleine Nutzen-Karten: Titel und Wert untereinander */
 .vcard__row { flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -408,3 +412,29 @@ img { display: block; max-width: 100%; }
 .tl__glossary span { flex: none; width: 18px; height: 18px; display: grid; place-items: center; border: 1px solid var(--ultra); color: var(--ultra); font-family: var(--font-mono); font-size: 11px; margin-top: 1px; }
 
 .chip--pulse { border-color: var(--ultra); box-shadow: 0 0 0 3px var(--ultra-20); }
+
+/* Demo: links Text und Kalender, rechts kompaktes Formular */
+.contact { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+.contact__points { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 22px 0 26px; }
+.contact__points li { font-size: 15px; }
+.contact .cal { margin-top: 4px; }
+.form--side { position: sticky; top: calc(var(--header) + 24px); }
+@media (max-width: 900px) { .form--side { position: static; } }
+
+/* Demo v2: Kopfzeile über die volle Breite, darunter Kalender und Formular gleich hoch */
+.contact { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px 40px; align-items: stretch; }
+.contact__intro { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 8px 48px; align-items: end; }
+.contact__intro .eyebrow { grid-column: 1 / -1; margin-bottom: 0; }
+.contact__headline .h-section { margin-bottom: 12px; }
+.contact__points { margin: 0; flex-direction: column; gap: 10px; }
+.contact__intro .mail-line { grid-column: 2; margin-top: 4px; }
+.contact__cal { background: var(--white); border: 1px solid var(--ink-15); padding: 24px; box-shadow: 10px 10px 0 var(--ultra-10); }
+.contact__cal .cal { height: 100%; }
+.form--side { position: static; gap: 14px; }
+.form--side .field textarea { min-height: 64px; }
+@media (max-width: 900px) {
+  .contact { grid-template-columns: 1fr; }
+  .contact__intro { grid-template-columns: 1fr; }
+  .contact__intro .mail-line { grid-column: 1; }
+  .contact__cal { padding: 16px; }
+}

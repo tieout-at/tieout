@@ -46,7 +46,7 @@ Wo v2 und v3 abweichen, gilt v3.
 
 ## Wenn es um die Website geht
 
-Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „EndPoint.“, CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Online offen erreichbar unter endpoint-preview.pages.dev (noindex, Entscheidung Maxi D. 22.10.), Details in `website/README.md`. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA neutral („Kontakt aufnehmen“) mit Einwilligungs-Häkchen. Hintergrund in Dossier v3 Abschnitt 9.
+Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „Tieout.“ (vorher „EndPoint.“), CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Online offen erreichbar unter endpoint-preview.pages.dev (noindex, Entscheidung Maxi D. 22.10.), Details in `website/README.md`. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA neutral („Kontakt aufnehmen“) mit Einwilligungs-Häkchen. Hintergrund in Dossier v3 Abschnitt 9.
 
 ## Wenn es um den Bau geht
 
