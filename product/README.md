@@ -16,7 +16,7 @@ Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnun
 | App | Firmenübersicht, Projekt-Übersicht, Befunde, Befund-Seite mit Original (aus dem Datensatz gezeichnet, A4), Beweiskette und zweistufiger Freigabe (Verlauf im Browser, Rückgängig, Demo zurücksetzen). Seitenleiste einklappbar. Drei unabhängige Prüfungen (Code, Design gegen Linear/Attio/reebuild, Schlussprüfung), Befunde eingearbeitet (PR #5) |
 | UI-Fundament | In der App (`app/src/ui`, Regeln in `app/src/ui/README.md`), **die App ist die Quelle**; das Artifact bleibt Referenz v2. Weißer Grund, keine Kästen, wenig Text. Gate 2 (annehmen) durch Maxi S. an der laufenden App offen. `fundament.test.ts` sperrt freie Farben, Stile, Trennpunkte, verbotene Wörter |
 | Prüfungen | GitHub Actions bei jedem PR: Typen, Lint, Tests, Build. Schutz von main braucht einen bezahlten GitHub-Plan (offen). Screenshots: `app/scripts/qa/screens.mjs` |
-| Online | vorbereitet: statischer Export, Cloudflare-Konfiguration. Einrichten offen, siehe „Online (Cloudflare)“ |
+| Online | https://schlusswerk-demo.maximilian-seipl.workers.dev, geschützt per E-Mail-Code, neu gebaut bei jedem Merge auf main (seit 22.10.). Siehe „Online (Cloudflare)“ |
 
 Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.12.
 
@@ -24,7 +24,7 @@ Nächste Ziele: v0.9 Sa 31.10. (#glaubandich), v1.0 KW 45, Stufe-0-Freeze So 6.1
 
 1. Gate 2 mit Maxi S. an der laufenden App.
 2. Bildschirme bis v0.9: Ledger (380 Positionen), Ordner mit Belegmatrix, Zeitachse, WhatsApp-Szene. Echte PDFs für Belege (pdf.js mit Markierung aus den Quell-Koordinaten).
-3. Online stellen (eigener Strang, Kosten mit Maxi S.): Die App ist komplett statisch und braucht für die Demo keine Datenbank.
+3. Team-Adressen in die Zugangsregel eintragen (siehe „Online (Cloudflare)“).
 4. Offene Befunde der Prüfer: Vorprüfung/Kaskade nur bei W21 zeigen, Dokument-Kennungen firmenweit eindeutig, gelegte Schlussrechnung und kumulierte AR im Datenmodell, Schlüssel der Kürzungsgründe im Korrekturblatt, Prüfstand je Wert im Rechenweg.
 5. Phase 3 bis v1.0 (KW 45): Vorprüfung, Schlussbesprechungs-Blatt, Entwurf der Schlussrechnung, Excel-Export, GU-Historie.
 
@@ -58,15 +58,16 @@ Die Demo liegt bei Cloudflare als Worker mit statischen Dateien (Workers Builds,
 
 | Was | Wo |
 |---|---|
-| Demo (Stand von `main`) | [[PLATZHALTER: Adresse nach dem Einrichten]] |
+| Demo (Stand von `main`) | https://schlusswerk-demo.maximilian-seipl.workers.dev |
 | Vorschau je Branch und Pull Request | Cloudflare schreibt die Adresse als Kommentar in den Pull Request |
-| Einstellungen | Cloudflare-Dashboard, Workers & Pages, `schlusswerk-demo` |
+| Einstellungen | Cloudflare-Dashboard (Konto von Maxi S.), Workers & Pages, `schlusswerk-demo` |
 | Konfiguration im Repository | `app/wrangler.jsonc` |
 
 So läuft es:
 - Jeder Merge auf `main` baut die Demo neu und stellt sie online (2 bis 3 Minuten). Jeder andere Branch bekommt eine eigene Vorschau-Adresse, ebenfalls geschützt.
 - Cloudflare baut selbst aus dem Repository (Stammverzeichnis `product/app`, Build `npm run build`, Deploy `npx wrangler deploy`, Vorschau `npx wrangler preview`). Die GitHub-Prüfungen (`.github/workflows/produkt-app.yml`) laufen unabhängig davon weiter.
-- Zugang: Cloudflare-Dashboard, Zero Trust, Access, Policies. Dort E-Mail-Adressen hinzufügen oder entfernen. Gratis bis 50 Personen.
+- Anmelden: Adresse öffnen, E-Mail eingeben, Code aus der Mail eintippen. Die Anmeldung hält 24 Stunden.
+- Zugang verwalten: Cloudflare-Dashboard, Zero Trust, Access controls, Policies, Regel „Team Schlusswerk (E-Mail-Code)“. Dort E-Mail-Adressen hinzufügen oder entfernen und speichern, wirkt sofort. Die zweite Regel „Cloudflare account members“ lässt Mitglieder des Cloudflare-Kontos über „Cloudflare“ hinein. Zero Trust Free: 0 $, bis 50 Personen.
 - Freigaben in der Demo liegen weiter nur im Browser des Nutzers (localStorage), es gibt online keine Datenbank. Nur synthetische Daten.
 
 Lokal unter Windows meldet die Browser-Konsole beim Vorladen einige 404 für Dateien `__next.*.txt`. Das ist ein Fehler im Export von Next.js unter Windows (falsche Pfadtrenner), die Seiten laden trotzdem. Cloudflare baut unter Linux, dort tritt er nicht auf.
