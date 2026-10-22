@@ -480,8 +480,9 @@ img { display: block; max-width: 100%; }
 .header .btn { width: 176px; justify-content: center; }
 .hero__ctas .btn, .hero .btn { min-width: 200px; justify-content: center; }
 
-/* Blauer senkrechter Strich bei Textpassagen nach der Abschnittsüberschrift (nicht im Hero) */
-.ps__problem, .contact .lead { border-left: 3px solid var(--ultra); padding-left: 22px; }
+/* Blauer senkrechter Strich an den fetten Abschnittsüberschriften (nicht im Hero), wie beim Lösungssatz */
+.h-section { border-left: 3px solid var(--ultra); padding-left: 22px; }
+.section--blue .h-section { border-left-color: var(--white); }
 
 /* Zeitleiste: lange Wörter trennen statt über den Kartenrand zu ragen */
 .tl__event p { hyphens: auto; overflow-wrap: break-word; }
