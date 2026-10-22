@@ -6,7 +6,11 @@
 export const SUPABASE_URL: string = "https://skvctanwhocirlmozmon.supabase.co";
 export const SUPABASE_PUBLISHABLE_KEY: string = "sb_publishable_WhOVwkI6q-iuCFwbJLYlUA_bsEi1xT0";
 
-export const ANMELDUNG_AN = SUPABASE_URL !== "" && SUPABASE_PUBLISHABLE_KEY !== "";
+/** Login vorerst aus (Entscheidung Maxi S., 22.10.): Juroren und Investoren öffnen die App per Link ohne Anmeldung.
+ * Auf true stellen, dann prüft der Worker vor jeder Seite die Sitzung und die Einstellungen zeigen Profil und Mitglieder. */
+const ANMELDUNG_EIN = false;
+
+export const ANMELDUNG_AN = ANMELDUNG_EIN && SUPABASE_URL !== "" && SUPABASE_PUBLISHABLE_KEY !== "";
 
 /** „Mit Google fortfahren“ zeigen (erst, wenn Google im Supabase-Projekt eingerichtet ist). */
 export const GOOGLE_AN = false;
