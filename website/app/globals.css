@@ -96,7 +96,7 @@ img { display: block; max-width: 100%; }
 /* Messpunkt-Navigation, rechts. Namen immer sichtbar, aktiver Abschnitt in Ultramarin. */
 .mnav { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 40; }
 .mnav__rail { position: relative; }
-.mnav__rail::before { content: ""; position: absolute; right: 10px; top: 0; bottom: 0; width: 1px; background: var(--ink-15); }
+.mnav__rail::before { content: ""; position: absolute; right: 10px; top: 0; bottom: 0; width: 1px; background: var(--rail, var(--ink-15)); }
 .mnav__progress { position: absolute; right: 10px; width: 1px; background: var(--ultra); transition: top .25s, height .25s; }
 .mnav__list { list-style: none; margin: 0; padding: 6px 0; display: flex; flex-direction: column; gap: 24px; }
 .mnav__item a { display: flex; align-items: center; justify-content: flex-end; gap: 8px; text-decoration: none; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-40); height: 16px; transition: color .25s; }
@@ -189,6 +189,7 @@ img { display: block; max-width: 100%; }
   .flow__cols { display: none; }
   .flow__grid { grid-template-columns: 1fr; height: auto; }
   .connector--h { display: none; }
+  .twin__ports { display: none; }
   .connector--v { display: block; }
   .flow__mhead { display: block !important; }
   .inputs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -219,8 +220,9 @@ img { display: block; max-width: 100%; }
 .member__body { padding: 16px 16px 12px; display: grid; gap: 4px; }
 .member__name { font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
 .member__role { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--ultra); }
-.member__logos { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-top: 1px dashed var(--ink-15); min-height: 56px; }
-.member__logos img { height: 24px; width: auto; max-width: 88px; min-width: 0; flex: 0 1 auto; object-fit: contain; }
+/* Drei Stationen pro Person, gleich breite Spalten */
+.member__logos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; justify-items: center; gap: 12px; padding: 14px 16px; border-top: 1px dashed var(--ink-15); min-height: 60px; }
+.member__logos img { display: block; height: 26px; width: 100%; object-fit: contain; }
 .member__li { margin-top: auto; padding: 12px 16px; border-top: 1px solid var(--ink-15); font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ultra); text-decoration: none; display: flex; justify-content: space-between; }
 .member__li:hover { background: var(--ultra); color: var(--white); }
 @media (max-width: 1000px) { .team { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -407,12 +409,11 @@ img { display: block; max-width: 100%; }
 @media (max-width: 640px) { .cal__body { grid-template-columns: 1fr; } .cal__month { border-right: 0; border-bottom: 1px solid var(--ink-15); } .cal__times { min-height: 0; } }
 
 /* Messpunkt-Navigation auf blauem Grund */
-.mnav--dark .mnav__label { background: transparent; }
-.mnav--dark .mnav__item a { color: rgba(255,255,255,.55); }
-.mnav--dark .mnav__item[aria-current="true"] a { color: var(--white); }
-.mnav--dark .mnav__tick::after { background: rgba(255,255,255,.6); }
-.mnav--dark .mnav__rail::before { background: rgba(255,255,255,.3); }
-.mnav--dark .mnav__progress { background: var(--white); }
+.mnav__item--dark .mnav__label { background: transparent; }
+.mnav__item--dark a { color: rgba(255,255,255,.6) !important; }
+.mnav__item--dark[aria-current="true"] a { color: var(--white) !important; }
+.mnav__item--dark .mnav__tick::after { background: rgba(255,255,255,.6); }
+.mnav__progress.is-dark { background: var(--white); }
 .mnav__label, .mnav__tick::after, .mnav__rail::before { transition: background .3s, color .3s; }
 
 .chip--pulse { border-color: var(--ultra); box-shadow: 0 0 0 3px var(--ultra-20); }

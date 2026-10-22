@@ -32,8 +32,8 @@ def render(svg_or_html, w, h, scale, name):
     print(png)
 
 
-render(LOGO, 400, 400, 1, "tieout_linkedin_logo_400")
-render(LOGO, 400, 400, 3, "tieout_linkedin_logo_1200")
+render(LOGO, 400, 400, 1, "tieout_linkedin_logo_400px")
+render(LOGO, 400, 400, 3, "tieout_linkedin_logo")
 for v in ("weiss", "blau"):
     html = open(os.path.join(HERE, f"tieout_firmenseite_rechnung_{v}.html"), encoding="utf-8").read()
-    render(html, 1128, 191, 4, f"tieout_linkedin_titelbild_{v}_4512x764")
+    render(html, 1128, 191, 4, "tieout_linkedin_titelbild" if v == "weiss" else "tieout_linkedin_titelbild_blau")

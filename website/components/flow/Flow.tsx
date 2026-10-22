@@ -98,6 +98,13 @@ function Box({ x, y, w, h, top, bottom, hi, flash }: { x: number; y: number; w: 
   );
 }
 
+// Rand einer schrägen Ebene auf Höhe y (links bzw. rechts)
+const edgeL = (p: { y: number; h: number }, y: number) => 10 + SKEW * (1 - (y - p.y) / p.h);
+const edgeR = (p: { y: number; h: number }, y: number) => 430 - SKEW * ((y - p.y) / p.h);
+const MID = 226; // Höhe, auf der die Verbindungen links und rechts ankommen
+const p1Mid = P1.y + P1.h / 2;
+const p2Mid = P2.y + P2.h / 2;
+
 function Twin({ t }: { t: T }) {
   const projectWord = t.projectWord.toUpperCase();
   // Ebene 1: Firmenwissen und Projekte
@@ -121,9 +128,24 @@ function Twin({ t }: { t: T }) {
 
   return (
     <svg viewBox="0 0 440 452" role="img" aria-label={`${t.twin}: ${t.level1}, ${t.level2}`}>
-      {/* Verbindung: Projekt aus Ebene 1 öffnet Ebene 2 */}
-      <path d={`M${wien.x},${wien.y + 30} L${left(headY)},${headY - 12}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
-      <path d={`M${wien.x + w1},${wien.y + 30} L${left(headY) + tw},${headY - 12}`} stroke={ULTRA} strokeOpacity=".55" strokeDasharray="3 4" />
+      {/* Projekt Wien 21 klappt aus Ebene 1 auf: Lichtkegel von der Kachel auf die Projektebene darunter */}
+      <polygon
+        points={`${wien.x},${wien.y + 30} ${wien.x + w1},${wien.y + 30} ${430},${P2.y} ${10 + SKEW},${P2.y}`}
+        fill={ULTRA}
+        fillOpacity=".07"
+      />
+      <path d={`M${wien.x},${wien.y + 30} L${10 + SKEW},${P2.y} M${wien.x + w1},${wien.y + 30} L${430},${P2.y}`} stroke={ULTRA} strokeOpacity=".5" />
+
+      {/* Weitere Projektebenen dahinter: der Betrieb besteht aus vielen Projekten */}
+      {[10, 5].map((o) => (
+        <polygon
+          key={o}
+          points={`${10 + SKEW + o},${P2.y + o} ${430 + o},${P2.y + o} ${430 - SKEW + o},${P2.y + P2.h + o} ${10 + o},${P2.y + P2.h + o}`}
+          fill="#ffffff"
+          stroke={ULTRA}
+          strokeOpacity={o === 10 ? 0.25 : 0.4}
+        />
+      ))}
 
       {/* Ebene 2: Projekt */}
       <Plane y={P2.y} h={P2.h} label={t.level2} active />
@@ -181,10 +203,18 @@ function Twin({ t }: { t: T }) {
         return <Box key={name} x={x} y={y} w={w1} h={30} top={projectWord} bottom={name} hi={i === 0} />;
       })}
 
-      {/* Punkt, der von Ebene 1 in Ebene 2 wandert */}
-      <circle r="3.5" fill={ULTRA}>
-        <animateMotion dur="2.2s" repeatCount="indefinite" path={`M${wien.x + w1 / 2},${wien.y + 30} L${left(headY) + tw / 2},${headY - 12}`} />
-      </circle>
+      {/* Anschlüsse: Daten docken links an beiden Ebenen an, das Ergebnis verlässt rechts die Projektebene */}
+      <g className="twin__ports">
+      <path d={`M0,${MID} C20,${MID} 18,${p1Mid} ${edgeL(P1, p1Mid)},${p1Mid} M0,${MID} C20,${MID} 18,${p2Mid} ${edgeL(P2, p2Mid)},${p2Mid}`} fill="none" stroke={ULTRA} strokeOpacity=".45" />
+      <path d={`M${edgeR(P2, p2Mid)},${p2Mid} C${edgeR(P2, p2Mid) + 24},${p2Mid} 420,${MID} 440,${MID}`} fill="none" stroke={ULTRA} strokeOpacity=".45" />
+      {[
+        [edgeL(P1, p1Mid), p1Mid],
+        [edgeL(P2, p2Mid), p2Mid],
+        [edgeR(P2, p2Mid), p2Mid],
+      ].map(([x, y]) => (
+        <circle key={`${x}-${y}`} cx={x} cy={y} r="3.2" fill="#ffffff" stroke={ULTRA} strokeWidth="1.5" />
+      ))}
+      </g>
     </svg>
   );
 }

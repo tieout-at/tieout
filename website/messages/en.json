@@ -22,7 +22,7 @@
   "hero": {
     "eyebrow": "For electrical and MEP contractors",
     "title1": "Final invoices",
-    "title2": "that leave nothing behind.",
+    "title2": "that leave nothing behind",
     "sub": "tieout checks your final invoice against everything that happened on the project. Every line backed by evidence, no earned euro forgotten.",
     "cta": "Book a demo",
     "secondary": "How it works",
@@ -43,8 +43,8 @@
   },
   "solution": {
     "problemEyebrow": "02 · Problem",
-    "title": "At the end of a project, money that was earned long ago is missing.",
-    "problem": "Hourly work without a signature, extra quantities, changes agreed on site: what was arranged on the job often never makes it into the final invoice. The evidence is scattered across emails, plans, photos and people's heads. And clients increasingly check invoices with software.",
+    "title": "At the end of a project, money that was earned long ago is missing",
+    "problem": "Hourly work without a signature, extra quantities, changes agreed on site: what was arranged on the job often never makes it into the final invoice. The evidence is scattered across emails, plans, photos and people's heads. At the same time, clients increasingly check invoices with software and cut whatever lacks evidence.",
     "solutionEyebrow": "03 · Solution",
     "solution": "tieout connects all the data of your business into a digital twin and uses it to check every final invoice: what was built ends up on the invoice.",
     "flow": {
@@ -272,7 +272,7 @@
   },
   "video": {
     "eyebrow": "04 · Product video",
-    "title": "tieout in three minutes.",
+    "title": "tieout in three minutes",
     "placeholder": "[[PLACEHOLDER: product video]]",
     "soon": "Video coming soon.",
     "play": "Play video"
@@ -289,7 +289,7 @@
         "linkedin": "https://www.linkedin.com/in/maximilian-dieringer/",
         "logos": [
           "wu",
-          "usc",
+          "simonkucher",
           "tacto"
         ],
         "title": "CEO"
@@ -300,7 +300,8 @@
         "linkedin": "https://www.linkedin.com/in/maximilian-seipl/",
         "logos": [
           "wu",
-          "enpal"
+          "enpal",
+          "icons"
         ],
         "title": "COO"
       },
@@ -310,7 +311,8 @@
         "linkedin": "https://www.linkedin.com/in/santino-schrader/",
         "logos": [
           "tuwien",
-          "hanswomen"
+          "hanswomen",
+          "start"
         ],
         "title": "CTO"
       },
@@ -320,7 +322,8 @@
         "linkedin": "https://www.linkedin.com/in/simonfuhrbach/",
         "logos": [
           "wu",
-          "tacto"
+          "tacto",
+          "feldwerke"
         ],
         "title": "CFO"
       }
@@ -328,7 +331,7 @@
   },
   "contact": {
     "eyebrow": "06 · Demo",
-    "title": "Book a demo.",
+    "title": "Book a demo",
     "sub": "We show you tieout on a sample project. Afterwards you decide whether it fits your business.",
     "points": [
       "30 minutes, online",
@@ -336,7 +339,7 @@
       "No data needed from you"
     ],
     "mailLabel": "Or by email",
-    "mail": "kontakt@[[PLACEHOLDER: domain]]",
+    "mail": "kontakt@tieout.at",
     "fields": {
       "name": "Name",
       "company": "Company",
@@ -421,7 +424,7 @@
         ],
         [
           "Contact",
-          "kontakt@[[PLACEHOLDER: domain]]"
+          "kontakt@tieout.at"
         ],
         [
           "Supervisory authority, chamber",
