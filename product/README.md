@@ -10,8 +10,8 @@ Prinzipien: Die KI liefert Fakten mit Quelle, der Mensch bestätigt, die Rechnun
 
 | Teil | Stand |
 |---|---|
-| Plan und Umfang | `docs/Plan_MVP.md`, `docs/Umfang_v1.md`, an Dossier v3 angepasst. Go von Maxi S. und drei Entscheidungen offen (siehe `Umfang_v1.md`, „Entscheidungen“) |
-| Lösungsliste | `docs/Demo_Faelle.md` v1: Projekt W21, 13 Befunde, alle Beträge cent-genau nachgerechnet. **Maßgeblich für alle Beträge.** v2 (Firma mit 8 Projekten, Zurufe) folgt |
+| Plan und Umfang | `docs/Plan_MVP.md`, `docs/Umfang_v1.md`, an Dossier v3 angepasst, freigegeben von Maxi S. (22.10.) |
+| Lösungsliste | `docs/Demo_Faelle.md` v2: Firma mit 8 Projekten, W21 voll ausgearbeitet (Liste 1 27.410,00 €, Liste 2 11.282,30 €), 6 Zurufe, GU-Historie; per Skript nachgerechnet. **Maßgeblich für alle Beträge.** Der Rechenkern trifft bisher v1 (W21 ohne Zurufe) |
 | Rechenkern | `app/`: Datenmodell, synthetischer Datensatz W21 (380 LV-Positionen, 165 Dokumente), Rechenkern. 58 Tests grün, trifft die Lösungsliste cent-genau, keine Fehlalarme. Noch ohne Firmenebene und Zurufe |
 | UI-Fundament | `ui-fundament/`: Design-System v2 (18 Bauteile, Tokens hell und dunkel) aus gemessenen Referenzen (reebuild, Kuro, Stratos, Linear, Attio, Harvey, Ramp, Rossum), Schlüsselbildschirme. Gate 2 (annehmen) offen |
 | App (Bildschirme) | noch nicht begonnen. Nächster Schritt nach Gate 2 |
