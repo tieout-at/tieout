@@ -54,14 +54,9 @@
 .tab-liste .sum td {
   font-weight: 500;
 }
-/* Punkt plus Wort in der Zeile: inline statt inline-flex, damit das Wort auf der Grundlinie der Nachbarzellen steht */
+/* Marke in der Zeile: inline statt inline-flex, damit das Wort auf der Grundlinie der Nachbarzellen steht */
 .tab-liste .sw-dotlabel {
   display: inline;
-}
-.tab-liste .sw-dotlabel::before {
-  display: inline-block;
-  vertical-align: middle;
-  margin: -2px var(--space-2) 0 0;
 }
 /* Gedämpfte Nebenspalte (Auftraggeber, Art, Einheit) */
 .tab-liste .neben {
@@ -95,13 +90,12 @@
   margin-left: 0;
 }
 
-/* Projektliste: Ampel als Punkt plus Wort, das Wort ruhig wie die übrigen Zellen */
+/* Projektliste: Ampel als Wort (Farbe aus marken.css), in normaler Stärke wie die übrigen Zellen */
 .tab-firma {
   min-width: 960px;
 }
 .tab-firma td .sw-dotlabel {
   font-weight: 400;
-  color: var(--text-secondary);
 }
 .tab-firma .sw-pos-nr {
   min-width: 36px;
