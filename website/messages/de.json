@@ -156,7 +156,6 @@
       "detailTitle": "Projekt Wien 21 · Position 03.12.004",
       "caption": "Ein Zwilling für den ganzen Betrieb, mit Einblick in jedes Projekt",
       "outputTitle": "Schlussrechnung",
-      "outputProject": "Projekt Wien 21",
       "checks": [
         "Vergessene Stunden gefunden",
         "Mehrmengen erkannt",
@@ -165,10 +164,8 @@
         "Zu jeder Position ein Beleg"
       ],
       "openLabel": "zusätzlich verrechenbar",
-      "openValue": 5546,
       "sample": "Beispieldaten",
       "level1": "Ebene 1 · Ihr Betrieb",
-      "level2": "Ebene 2 · Projekt Wien 21",
       "projectWord": "Projekt",
       "level2Caption": "Leistungen: beauftragt, gebaut, verrechnet",
       "tableHead": [
@@ -178,38 +175,221 @@
         "Verrechnet",
         "Offen"
       ],
-      "tableRows": [
-        [
-          "Steckdose UP",
-          "120",
-          "126",
-          "120",
-          "+ 2.736 €"
-        ],
-        [
-          "Steckdose versetzt",
-          "–",
-          "1",
-          "0",
-          "+ 780 €"
-        ],
-        [
-          "Technikraum",
-          "–",
-          "6 h",
-          "0 h",
-          "+ 390 €"
-        ],
-        [
-          "Leuchten Stiege",
-          "24",
-          "28",
-          "24",
-          "+ 1.640 €"
-        ]
-      ],
       "tableTotalLabel": "Offen verrechenbar",
-      "tableTotal": "+ 5.546 €"
+      "projectData": [
+        {
+          "name": "Wien 21",
+          "rows": [
+            [
+              "Steckdose UP",
+              "120",
+              "126",
+              "120",
+              "+ 2.736 €"
+            ],
+            [
+              "Steckdose versetzt",
+              "–",
+              "1",
+              "0",
+              "+ 780 €"
+            ],
+            [
+              "Technikraum",
+              "–",
+              "6 h",
+              "0 h",
+              "+ 390 €"
+            ],
+            [
+              "Leuchten Stiege",
+              "24",
+              "28",
+              "24",
+              "+ 1.640 €"
+            ]
+          ],
+          "total": "+ 5.546 €",
+          "value": 5546
+        },
+        {
+          "name": "Linz Süd",
+          "rows": [
+            [
+              "Kabeltrasse",
+              "280 m",
+              "312 m",
+              "280 m",
+              "+ 1.216 €"
+            ],
+            [
+              "Unterverteiler",
+              "–",
+              "1",
+              "0",
+              "+ 2.480 €"
+            ],
+            [
+              "Stunden Keller",
+              "–",
+              "12 h",
+              "4 h",
+              "+ 520 €"
+            ],
+            [
+              "Leuchten Halle",
+              "40",
+              "40",
+              "40",
+              "✓"
+            ]
+          ],
+          "total": "+ 4.216 €",
+          "value": 4216
+        },
+        {
+          "name": "Graz Ost",
+          "rows": [
+            [
+              "Brandschutzklappe",
+              "18",
+              "21",
+              "18",
+              "+ 1.950 €"
+            ],
+            [
+              "Inbetriebnahme",
+              "–",
+              "9 h",
+              "0 h",
+              "+ 585 €"
+            ],
+            [
+              "Steckdose UP",
+              "96",
+              "96",
+              "96",
+              "✓"
+            ],
+            [
+              "Notleuchten",
+              "30",
+              "34",
+              "30",
+              "+ 760 €"
+            ]
+          ],
+          "total": "+ 3.295 €",
+          "value": 3295
+        },
+        {
+          "name": "Mödling",
+          "rows": [
+            [
+              "Heizkörper",
+              "22",
+              "24",
+              "22",
+              "+ 1.180 €"
+            ],
+            [
+              "Umbau Bad",
+              "–",
+              "5 h",
+              "0 h",
+              "+ 325 €"
+            ],
+            [
+              "Ventile",
+              "44",
+              "44",
+              "44",
+              "✓"
+            ],
+            [
+              "Fußbodenheizung",
+              "180 m²",
+              "196 m²",
+              "180 m²",
+              "+ 880 €"
+            ]
+          ],
+          "total": "+ 2.385 €",
+          "value": 2385
+        },
+        {
+          "name": "Baden",
+          "rows": [
+            [
+              "Datendosen",
+              "64",
+              "70",
+              "64",
+              "+ 690 €"
+            ],
+            [
+              "Serverraum",
+              "–",
+              "4 h",
+              "0 h",
+              "+ 260 €"
+            ],
+            [
+              "Kabeltrasse",
+              "120 m",
+              "120 m",
+              "120 m",
+              "✓"
+            ],
+            [
+              "Leuchten Gang",
+              "18",
+              "20",
+              "18",
+              "+ 820 €"
+            ]
+          ],
+          "total": "+ 1.770 €",
+          "value": 1770
+        },
+        {
+          "name": "St. Pölten",
+          "rows": [
+            [
+              "Lüftungskanal",
+              "96 m",
+              "104 m",
+              "96 m",
+              "+ 1.040 €"
+            ],
+            [
+              "Dachzentrale",
+              "–",
+              "7 h",
+              "0 h",
+              "+ 455 €"
+            ],
+            [
+              "Brandschutz",
+              "40",
+              "46",
+              "40",
+              "+ 414 €"
+            ],
+            [
+              "WC-Anlagen",
+              "12",
+              "12",
+              "12",
+              "✓"
+            ]
+          ],
+          "total": "+ 1.909 €",
+          "value": 1909
+        }
+      ],
+      "level2Prefix": "Ebene 2 · Projekt",
+      "outputProjectPrefix": "Projekt"
     },
     "timeline": {
       "timelineTitle": "Projekt Wien 21 · Beispiel",
@@ -234,7 +414,7 @@
         },
         {
           "week": "KW 15",
-          "type": "Stundenarbeit",
+          "type": "Stunden",
           "text": "Kabeltrasse verlängert, 18 Stunden, Stundenzettel unterschrieben",
           "amount": 1170,
           "billed": true
@@ -248,7 +428,7 @@
         },
         {
           "week": "KW 23",
-          "type": "Stundenarbeit",
+          "type": "Stunden",
           "text": "Technikraum umgebaut, 6 Stunden, Stundenzettel ohne Unterschrift",
           "amount": 390,
           "billed": false
@@ -268,7 +448,8 @@
           "billed": false
         }
       ]
-    }
+    },
+    "zoomHint": "Antippen zum Vergrößern, dann seitlich wischen"
   },
   "video": {
     "eyebrow": "04 · Produktvideo",

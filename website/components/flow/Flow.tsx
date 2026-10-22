@@ -9,6 +9,7 @@ const INK = "#0a1020";
 const ULTRA = "#1d3bff";
 const LOOP = 9; // Sekunden pro Durchlauf
 const STEP = 0.9; // Abstand zwischen zwei Eingängen
+const ROTATE = 8; // Sekunden pro Beispielprojekt im Zwilling
 
 /* Maße der Eingangsspalte, damit die Verbindungslinien exakt an den Kacheln ansetzen. */
 const H = 452;
@@ -105,7 +106,8 @@ const MID = 226; // Höhe, auf der die Verbindungen links und rechts ankommen
 const p1Mid = P1.y + P1.h / 2;
 const p2Mid = P2.y + P2.h / 2;
 
-function Twin({ t }: { t: T }) {
+function Twin({ t, active, run, onPick }: { t: T; active: number; run: number; onPick: (i: number) => void }) {
+  const data = t.projectData[active];
   const projectWord = t.projectWord.toUpperCase();
   // Ebene 1: Firmenwissen und Projekte
   const colBase = [98, 202, 306];
@@ -116,7 +118,7 @@ function Twin({ t }: { t: T }) {
     const y = rowsY[Math.floor(i / 3)];
     return { x: colBase[i % 3] + shift(P1, y), y };
   };
-  const wien = tile(0);
+  const wien = tile(active);
 
   // Ebene 2: das Projekt als einfache Aufstellung seiner Leistungen
   const left = (y: number) => 86 + shift(P2, y);
@@ -127,7 +129,7 @@ function Twin({ t }: { t: T }) {
   const totalY = 414;
 
   return (
-    <svg viewBox="0 0 440 452" role="img" aria-label={`${t.twin}: ${t.level1}, ${t.level2}`}>
+    <svg viewBox="0 0 440 452" role="img" aria-label={`${t.twin}: ${t.level1}, ${t.level2Prefix} ${data.name}`}>
       {/* Projekt Wien 21 klappt aus Ebene 1 auf: Lichtkegel von der Kachel auf die Projektebene darunter */}
       <polygon
         points={`${wien.x},${wien.y + 30} ${wien.x + w1},${wien.y + 30} ${430},${P2.y} ${10 + SKEW},${P2.y}`}
@@ -148,7 +150,7 @@ function Twin({ t }: { t: T }) {
       ))}
 
       {/* Ebene 2: Projekt */}
-      <Plane y={P2.y} h={P2.h} label={t.level2} active />
+      <Plane y={P2.y} h={P2.h} label={`${t.level2Prefix} ${data.name}`} active />
       <text x={left(282)} y="282" fontFamily="var(--font-mono)" fontSize="9" fill={INK} fillOpacity=".45" letterSpacing=".8">
         {t.level2Caption.toUpperCase()}
       </text>
@@ -158,7 +160,8 @@ function Twin({ t }: { t: T }) {
         </text>
       ))}
       <line x1={left(headY + 6)} y1={headY + 6} x2={left(headY + 6) + tw} y2={headY + 6} stroke={INK} strokeOpacity=".6" />
-      {t.tableRows.map((r, ri) => {
+      <g key={active} className="twin__swap">
+      {data.rows.map((r, ri) => {
         const y = rowY[ri];
         const x0 = left(y);
         const open = r[4] !== "✓";
@@ -181,8 +184,9 @@ function Twin({ t }: { t: T }) {
         {t.tableTotalLabel.toUpperCase()}
       </text>
       <text x={left(totalY) + tw} y={totalY} textAnchor="end" fontFamily="var(--font-sans)" fontSize="13" fontWeight="600" fill={ULTRA}>
-        {t.tableTotal}
+        {data.total}
       </text>
+      </g>
 
       {/* Ebene 1: Betrieb */}
       <Plane y={P1.y} h={P1.h} label={t.level1} />
@@ -200,7 +204,21 @@ function Twin({ t }: { t: T }) {
       {t.projects.map((p, i) => {
         const [name] = p as [string, number, number];
         const { x, y } = tile(i);
-        return <Box key={name} x={x} y={y} w={w1} h={30} top={projectWord} bottom={name} hi={i === 0} />;
+        return (
+          <g
+            key={name}
+            className="twin__tile"
+            onClick={(e) => {
+              e.stopPropagation();
+              onPick(i);
+            }}
+          >
+            <Box x={x} y={y} w={w1} h={30} top={projectWord} bottom={name} hi={i === active} />
+            {i === active && (
+              <rect key={run} className="twin__timer" x={x} y={y + 28} width={w1} height="2" fill="#ffffff" fillOpacity=".85" style={{ animationDuration: `${ROTATE}s` }} />
+            )}
+          </g>
+        );
       })}
 
       {/* Anschlüsse: Daten docken links an beiden Ebenen an, das Ergebnis verlässt rechts die Projektebene */}
@@ -219,9 +237,12 @@ function Twin({ t }: { t: T }) {
   );
 }
 
+/** Zählt beim ersten Sichtkontakt hoch, danach bei jedem neuen Zielwert vom alten Wert aus. */
 function useCountUp(target: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState(0);
+  const seen = useRef(false);
+  const from = useRef(0);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -230,16 +251,27 @@ function useCountUp(target: number) {
       return;
     }
     let raf = 0;
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      io.disconnect();
+    const run = () => {
       const start = performance.now();
+      const a = from.current;
       const tick = (now: number) => {
-        const p = Math.min(1, (now - start) / 1600);
-        setValue(Math.round(target * (1 - Math.pow(1 - p, 3))));
+        const p = Math.min(1, (now - start) / 1200);
+        const v = Math.round(a + (target - a) * (1 - Math.pow(1 - p, 3)));
+        from.current = v;
+        setValue(v);
         if (p < 1) raf = requestAnimationFrame(tick);
       };
       raf = requestAnimationFrame(tick);
+    };
+    if (seen.current) {
+      run();
+      return () => cancelAnimationFrame(raf);
+    }
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      seen.current = true;
+      run();
     }, { threshold: 0.4 });
     io.observe(el);
     return () => {
@@ -273,12 +305,45 @@ export function Flow({ t, locale }: { t: T; locale: "de" | "en" }) {
     const id = window.setInterval(fire, STEP * 1000);
     return () => window.clearInterval(id);
   }, [count]);
-  const { ref: totalRef, value } = useCountUp(t.openValue);
+  // Beispielprojekte wechseln alle ROTATE Sekunden; Pause, solange die Maus auf dem Ablauf liegt.
+  const [active, setActive] = useState(0);
+  const [run, setRun] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const flowRef = useRef<HTMLDivElement>(null);
+  const elapsed = useRef(0); // verstrichene Zeit im aktuellen Projekt, bleibt über Pausen erhalten
+  const projects = t.projectData.length;
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let visible = false;
+    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.25 });
+    if (flowRef.current) io.observe(flowRef.current);
+    const id = window.setInterval(() => {
+      if (paused || !visible) return;
+      elapsed.current += 100;
+      if (elapsed.current >= ROTATE * 1000) {
+        elapsed.current = 0;
+        setActive((a) => (a + 1) % projects);
+        setRun((r) => r + 1);
+      }
+    }, 100);
+    return () => {
+      window.clearInterval(id);
+      io.disconnect();
+    };
+  }, [paused, projects]);
+  const pick = (i: number) => {
+    elapsed.current = 0;
+    setActive(i);
+    setRun((r) => r + 1);
+  };
+  const data = t.projectData[active];
+  const { ref: totalRef, value } = useCountUp(data.value);
+  const shownBars = bars.map((_, i) => bars[(i + active) % bars.length]);
   const money = locale === "de" ? `${new Intl.NumberFormat("de-DE").format(value)} €` : new Intl.NumberFormat("en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
   let n = -1;
 
   return (
-    <div className="flow">
+    <div className={`flow ${paused ? "flow--paused" : ""}`} ref={flowRef} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="flow__cols" aria-hidden="true">
         <div className="flow__head">01 · {t.inputs}</div>
         <div />
@@ -346,7 +411,7 @@ export function Flow({ t, locale }: { t: T; locale: "de" | "en" }) {
         {/* Zwilling */}
         <div className="twin">
           <p className="flow__mhead">02 · {t.twin}</p>
-          <Twin t={t} />
+          <Twin t={t} active={active} run={run} onPick={pick} />
         </div>
 
         {/* Verbindungen Zwilling → Ergebnis */}
@@ -376,12 +441,12 @@ export function Flow({ t, locale }: { t: T; locale: "de" | "en" }) {
           <div className="out">
             <div className="out__head">
               <span>{t.outputTitle}</span>
-              <b>{t.outputProject}</b>
+              <b key={active} className="out__swap">{`${t.outputProjectPrefix} ${data.name}`}</b>
             </div>
-            <ul className="checks">
+            <ul className="checks" key={active}>
               {t.checks.map((c, i) => (
                 <li key={c}>
-                  <span className="tick" style={{ animationDelay: `${(2.2 + i * 0.6).toFixed(1)}s` }} aria-hidden="true">
+                  <span className="tick" style={{ animationDelay: `${((run === 0 ? 2.2 : 0.4) + i * (run === 0 ? 0.6 : 0.3)).toFixed(1)}s` }} aria-hidden="true">
                     ✓
                   </span>
                   <span>{c}</span>
@@ -391,10 +456,10 @@ export function Flow({ t, locale }: { t: T; locale: "de" | "en" }) {
             <div className="out__foot" ref={totalRef}>
               <div className="out__total">
                 <span>{t.openLabel}</span>
-                <b aria-label={String(t.openValue)}>+ {money}</b>
+                <b aria-label={String(data.value)}>+ {money}</b>
               </div>
               <div className="bars" aria-hidden="true">
-                {bars.map((h, i) => (
+                {shownBars.map((h, i) => (
                   <i key={i} className={i === 4 ? "hi" : undefined} style={{ height: `${h * 100}%`, animationDelay: `${(i * 0.12).toFixed(2)}s` }} />
                 ))}
               </div>

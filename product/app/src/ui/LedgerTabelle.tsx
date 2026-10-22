@@ -14,6 +14,7 @@ import { memo, useMemo, useState } from "react";
 import type { LedgerZeile } from "@/engine/typen";
 import { menge } from "@/engine/geld";
 import { betrag, zahl } from "./format";
+import { GruppenTitel } from "./Gruppe";
 import { Ico } from "./Ico";
 import { useStufenweise, Zeilennavigation } from "./Zeilennavigation";
 
@@ -108,20 +109,20 @@ function useTabelle(sichtbar: LedgerReihe[], zeigen: LedgerReihe[], gruppen: Rec
                 <th className="r">Nächste AR</th>
               </tr>
             </thead>
-            <tbody>
-              {sichtbar.length === 0 && (
+            {sichtbar.length === 0 && (
+              <tbody>
                 <tr>
                   <td colSpan={9} className="sw-muted">
                     Keine Treffer.
                   </td>
                 </tr>
-              )}
+              </tbody>
+            )}
               {lgs.map((lg) => {
                 const teil = zeigen.filter((z) => gruppeVon(z.positionNr) === lg);
                 const n = sichtbar.filter((z) => gruppeVon(z.positionNr) === lg).length;
-                return <LgZeilen key={lg} titel={`${lg} ${gruppen[lg] ?? "Übrige Leistungen"}`} anzahl={n} zeilen={teil} />;
+                return <LgZeilen key={lg} gruppe={lg} titel={`${lg} ${gruppen[lg] ?? "Übrige Leistungen"}`} anzahl={n} zeilen={teil} />;
               })}
-            </tbody>
           </table>
         </div>
       </Zeilennavigation>
@@ -129,19 +130,21 @@ function useTabelle(sichtbar: LedgerReihe[], zeigen: LedgerReihe[], gruppen: Rec
   }, [sichtbar, zeigen, gruppen]);
 }
 
-function LgZeilen({ titel, anzahl, zeilen }: { titel: string; anzahl: number; zeilen: LedgerReihe[] }) {
+function LgZeilen({ gruppe, titel, anzahl, zeilen }: { gruppe: string; titel: string; anzahl: number; zeilen: LedgerReihe[] }) {
   return (
-    <>
+    <tbody data-gruppe={gruppe}>
       <tr className="grp">
         <td colSpan={9}>
-          {titel}
-          <span className="sw-count">{anzahl}</span>
+          <GruppenTitel>
+            {titel}
+            <span className="sw-count">{anzahl}</span>
+          </GruppenTitel>
         </td>
       </tr>
       {zeilen.map((z) => (
         <Zeile key={z.positionNr} z={z} />
       ))}
-    </>
+    </tbody>
   );
 }
 
