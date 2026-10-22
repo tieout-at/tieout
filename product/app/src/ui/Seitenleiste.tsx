@@ -71,7 +71,7 @@ function projektNav(p: NavProjekt): Eintrag[] {
     { href: basis, icon: LayoutDashboard, text: "Übersicht" },
     { href: `${basis}/ordner`, icon: FolderOpen, text: "Ordner", zaehler: p.dokumente, folgt: "Ordner folgt in Phase 2" },
     { href: `${basis}/ledger`, icon: Table, text: "Ledger", zaehler: p.ledger, folgt: "Ledger folgt in Phase 2" },
-    { href: `${basis}/zeitachse`, icon: History, text: "Zeitachse", folgt: "Zeitachse folgt in Phase 2" },
+    { href: `${basis}/zeitachse`, icon: History, text: "Zeitachse" },
     { href: `${basis}/befunde`, icon: ListChecks, text: "Befunde", zaehler: p.befunde, praefix: true, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
     { href: `${basis}/vorpruefung`, icon: ShieldCheck, text: "Vorprüfung aus GU-Sicht", zaehler: p.risiken, folgt: "Vorprüfung folgt in v1.0" },
     { href: `${basis}/schlussbesprechung`, icon: ClipboardList, text: "Schlussbesprechung", folgt: "Schlussbesprechungs-Blatt folgt in v1.0" },
