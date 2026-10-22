@@ -1,0 +1,46 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Cover</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&display=swap">
+<style>
+  html, body { margin: 0; }
+  .cv { position: relative; width: 960px; height: 288px; background: var(--bg); overflow: hidden; font-family: var(--font-sans); }
+  .cv svg { position: absolute; inset: 0; }
+  .ink { fill: var(--action); }
+  .paper { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1; }
+  .sub { fill: var(--surface-selected); }
+  .acc { fill: var(--accent); }
+  .ok { fill: var(--pos); }
+  .row { fill: var(--line); }
+  .rowk { fill: var(--line-strong); }
+  .num { fill: var(--text-muted); }
+  .t { position: absolute; left: 48px; bottom: 40px; width: 440px; }
+  .t h1 { margin: 0; font-size: 60px; line-height: .95; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
+  .t p { margin: 14px 0 0; font-size: 14px; line-height: 20px; color: var(--text-muted); }
+</style></head>
+<body>
+<div class="cv">
+<svg viewBox="0 0 960 288" width="960" height="288" aria-hidden="true">
+  <!-- Blöcke: action (Tinte) 200×288 als Platte am rechten Rand; surface mit line-strong 296×208 als Tabellenblatt; surface-selected 96×80; accent 40×40 (Platzhalter); pos 40×40 -->
+  <!-- Anordnung: eine hohe Platte rechts mit Satelliten links davon, Blatt überlappt die Platte wie ein Panel auf dem App-Grund -->
+  <!-- Muster: Zeilen wie im Ledger (Reihe „geometric, modular, dense UI“), weil das System eine dichte Tabellen-Oberfläche ist; Zeilenhöhe 24 = space-6, Radius radius-sm -->
+  <!-- Schritte und Radien: space-4/6/8, radius-sm 4, radius-lg 8 -->
+  <rect class="ink" x="760" y="0" width="200" height="288"/>
+  <rect class="sub" x="520" y="32" width="96" height="80" rx="8"/>
+  <rect class="paper" x="560" y="64" width="296" height="208" rx="8"/>
+  <rect class="rowk" x="576" y="80" width="120" height="8" rx="4"/>
+  <rect class="row" x="576" y="104" width="264" height="1"/>
+  <rect class="rowk" x="576" y="116" width="168" height="8" rx="4"/><rect class="num" x="792" y="116" width="48" height="8" rx="4"/>
+  <rect class="row" x="576" y="140" width="264" height="1"/>
+  <rect class="rowk" x="576" y="152" width="140" height="8" rx="4"/><rect class="num" x="792" y="152" width="48" height="8" rx="4"/>
+  <rect class="row" x="576" y="176" width="264" height="1"/>
+  <rect class="rowk" x="576" y="188" width="184" height="8" rx="4"/><rect class="num" x="792" y="188" width="48" height="8" rx="4"/>
+  <rect class="row" x="576" y="212" width="264" height="1"/>
+  <rect class="rowk" x="576" y="224" width="96" height="8" rx="4"/><rect class="ok" x="824" y="222" width="16" height="12" rx="4"/>
+  <rect class="acc" x="520" y="208" width="24" height="24" rx="4"/>
+</svg>
+<div class="t"><h1>Schlusswerk<br>UI-Fundament</h1><p>Aus professioneller Software abgeleitet. Jeder Wert mit Vorlage.</p></div>
+</div>
+</body>
+</html>

@@ -33,9 +33,13 @@
 - Name, CI, Hosting: noch nicht begonnen
 - Frage ans Team: Ist „Zwilling“ für Inhaber zu abstrakt? Alternativ „Wissensdatenbank des Betriebs“ testen
 
+## Produkt
+
+- 22.10.: Produktstand von Maxi S. nach `product/` übernommen: Plan und Umfang (an v3 angepasst), Lösungsliste der Demo-Fälle, Rechenkern mit 58 Tests, UI-Fundament. Überblick in `product/README.md`.
+- Offen: Wer baut was (Produkt, Website), Entscheidung in der Sonntagsrunde 25.10.
+
 ## Noch nicht angelegt
 
-- `Umfang_v1.md` (Umfang für Stufe 0, abgeleitet aus Dossier v3 Abschnitt 15)
 - Dossier v1 (v2 verweist für Quellen zu Recht, Markt und Exits auf v1 Abschnitt 18; liegt nicht in diesem Ordner)
 
 ## Ordner

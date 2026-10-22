@@ -51,6 +51,8 @@ Die Website muss das Kernprodukt in einem Satz erklären können: der digitale Z
 
 Stufen 0 bis 4 und Demo-Skript (3 Minuten) stehen in Dossier v3 Abschnitt 15. Stufe 0 (Einspielen) reicht für die Gates R2, R3 und R5. Der WhatsApp Prototyp ist optional. Das Git Repository gehört nicht in OneDrive.
 
+Produktstand, Plan und Regeln für den Code: `product/README.md`, `product/app/CLAUDE.md`. Beträge der Demo nur aus `product/docs/Demo_Faelle.md` und dem Rechenkern.
+
 ## Gates (Termine unverändert)
 
 R1 Insider (Term Sheet Fr 20.11.2026, hart Fr 4.12.), R4 Recht (Fr 4.12.), R2 Ordner (Fr 11.12.), R3 Geld (Fr 22.1.2027), R5 Zahlung (Fr 29.1.2027), Endentscheid So 31.1.2027. Details in Dossier v3 Abschnitt 13.
