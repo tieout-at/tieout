@@ -1,0 +1,71 @@
+{
+  "id": "dialekt-steirisch-urinale",
+  "titel": "Steirischer Monteur, Urinale in der Schule versetzt, Bauherr als Anweiser",
+  "kategorie": "dialekt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Breites Steirisch, Sprachnachrichten, gemütlich, stellt sich mit Vornamen vor",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Versteht der Agent etwas falsch, sagt er es im Dialekt nochmal langsamer."
+  },
+  "start": "2026-10-19T13:25:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Griaß di, do is da Hansi. Badn, Schui, Schüler-WC im Obergschoss. Hiaz hob i de drei Urinale wieda obgmocht und weita aussi gsetzt, weil da Vertreta vo da Gmoa, des is jo da Bauherr, des a so wöllt. I woa allanig, sechs Stundn."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ort": "Schüler-WC OG",
+        "leistung": "3 Urinale demontiert und weiter vorne wieder montiert",
+        "menge": {
+          "wert": 3,
+          "einheit": "Stk"
+        },
+        "personen": 1,
+        "dauerStunden": 6,
+        "angewiesenVon": "Vertreter der Gemeinde (Bauherr)"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ortStichwoerter": [
+          "Schüler-WC",
+          "WC OG",
+          "Obergeschoss",
+          "OG"
+        ],
+        "leistungStichwoerter": [
+          "Urinal",
+          "Pissoir"
+        ],
+        "mengeWert": 3,
+        "personen": 1,
+        "dauerStunden": 6,
+        "angewiesenVonStichwoerter": [
+          "Gemeinde",
+          "Bauherr"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [
+      "hiaz",
+      "allanig",
+      "Griaß di"
+    ],
+    "sollVerhalten": "Versteht 'Badn, Schui' als Volksschule Baden und 'allanig' als eine Person, ohne Rückfrage. Nimmt den Vertreter der Gemeinde (Bauherr) als Anweiser auf und antwortet in normalem Deutsch."
+  }
+}

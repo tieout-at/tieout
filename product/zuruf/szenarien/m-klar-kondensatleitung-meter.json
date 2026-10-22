@@ -1,0 +1,47 @@
+{
+  "id": "m-klar-kondensatleitung-meter",
+  "titel": "Zusatzarbeit mit Metern Rohr, ohne Leute und Stunden, Anweiserin genannt",
+  "kategorie": "klar",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Sachlich, wenig Dialekt, schreibt ganze Sätze",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Fragt der Agent nach Leuten oder Stunden, schreibt er 'weiß ich nicht genau, haben das nebenbei gemacht'."
+  },
+  "start": "2026-10-29T14:00:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "Mödling 2. OG, Gang bei Zimmer 207 bis 209: zusätzliche Kondensatleitung für die Splitgeräte verlegt, 14 Meter Rohr. Die Bauleiterin vom GU hat das angeordnet."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "2. OG, Gang bei Zimmer 207 bis 209",
+        "leistung": "Zusätzliche Kondensatleitung für Splitgeräte verlegt",
+        "menge": { "wert": 14, "einheit": "m" },
+        "angewiesenVon": "Bauleiterin des GU"
+      }
+    ],
+    "weissNicht": ["Personen", "Stunden"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": ["2. OG", "2 OG", "zweiten", "207", "209"],
+        "leistungStichwoerter": ["Kondensat"],
+        "mengeWert": 14,
+        "angewiesenVonStichwoerter": ["Bauleiterin", "Bauleiter"],
+        "mussLeerSein": ["personen", "dauerStunden", "datum"]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Nimmt die Menge (14 Meter) als Aufwandsangabe, fragt nicht nach Leuten oder Stunden und erfindet keine. Sofort Zusammenfassung mit Passt/Ändern, nach 'Passt' kurze Bestätigung."
+  }
+}

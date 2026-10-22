@@ -1,0 +1,92 @@
+{
+  "id": "m-erstkontakt-zweite-meldung-statt-ja",
+  "titel": "Erster Kontakt: nach der Begrüßung kommt eine zweite Meldung statt Ja oder Nein, dann Ja",
+  "kategorie": "erstkontakt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Niederösterreichische Umgangssprache, tippt klein, liest Begrüßungen nur halb",
+    "verhalten": "Auf die Vorstellung und die Frage, ob er mitmachen will, antwortet er nicht mit Ja oder Nein, sondern schickt sofort: 'und zimmer 105 hab i no an spülkasten nachgstellt, de toilette hat dauernd grennt, a von da bauleiterin, a halbe stund'. Fragt der Agent danach wieder, ob er mitmachen will, schreibt er 'ja passt'. Kommen Zusammenfassungen, drückt er jedes Mal 'Passt'. Fehlt eine der zwei Meldungen, schreibt er 'und des mit zimmer 105?' bzw. 'und de pumpe?'. Soll er etwas nochmal schicken, schreibt er 'hab i eh scho'."
+  },
+  "start": "2026-10-02T07:15:00+02:00",
+  "einwilligung": false,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "servus, da chef hat gsagt i soll des do reinschreibn. mödling technikzentrale zirkulationspumpe tauscht, war hin, bauleiterin vom gu wollt des, i alloa 2 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "Technikzentrale",
+        "leistung": "Defekte Zirkulationspumpe getauscht",
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVon": "Bauleiterin des GU"
+      },
+      {
+        "projektId": "mod",
+        "ort": "Zimmer 105",
+        "leistung": "Spülkasten nachgestellt (WC lief dauernd)",
+        "personen": 1,
+        "dauerStunden": 0.5,
+        "angewiesenVon": "Bauleiterin des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 2,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "Technikzentrale",
+          "Technik"
+        ],
+        "leistungStichwoerter": [
+          "Zirkulation",
+          "Pumpe"
+        ],
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": [
+          "Bauleiterin",
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      },
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "Zimmer 105",
+          "105",
+          "hundertfünf"
+        ],
+        "leistungStichwoerter": [
+          "Spülkasten",
+          "Spuelkasten",
+          "WC",
+          "Toilette"
+        ],
+        "dauerStunden": 0.5,
+        "angewiesenVonStichwoerter": [
+          "Bauleiterin",
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Stellt sich in höchstens drei Sätzen vor und holt die Zustimmung ein. Legt vor dem Ja nichts ab. Die zweite Meldung vor dem Ja ist kein Ja und kein Nein: der Agent nimmt sie zur Kenntnis und fragt die Zustimmung noch einmal kurz ab, ohne die Vorstellung zu wiederholen. Nach dem Ja verarbeitet er beide schon geschickten Meldungen, ohne dass der Monteur sie wiederholen muss. Mindestens die erste Meldung muss ankommen; fehlt die zweite, fordert die Persona sie ein, gezählt werden am Ende zwei Einträge. Die zweite Meldung ohne Baustellennennung gehört zu Mödling (selbe Anweiserin)."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "erstkontakt-zustimmung-mit-zuruf",
+  "titel": "Erster Kontakt, schickt gleich einen Zuruf, stimmt zu",
+  "kategorie": "erstkontakt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Neu in der Firma, etwas unsicher, tippt klein, Wiener Umgangssprache",
+    "verhalten": "Liest die Vorstellung. Fragt der Agent, ob er mitmachen will, drückt er 'Ja' oder schreibt 'passt'. Kommt dann die Zusammenfassung, drückt er 'Passt'. Soll er den Zuruf nochmal schicken, schreibt er 'hab i eh scho'."
+  },
+  "start": "2026-10-05T07:30:00+02:00",
+  "einwilligung": false,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "hallo bin da neue, chef sagt i soll des do reinschreiben. wien 21 stiege 2 top 15 zusätzlicher heizkörper im abstellraum montiert, bauleiter gu wollt das, 1 mann 1,5 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 2, Top 15, Abstellraum",
+        "leistung": "Zusätzlichen Heizkörper im Abstellraum montiert",
+        "personen": 1,
+        "dauerStunden": 1.5,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Top 15",
+          "Abstellraum"
+        ],
+        "leistungStichwoerter": [
+          "Heizkörper"
+        ],
+        "personen": 1,
+        "dauerStunden": 1.5,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Stellt sich vor dem Ablegen in höchstens drei Sätzen vor (Programm der Firma, legt Meldungen fürs Büro ab, freiwillig, 'Stopp' beendet es) und holt die Zustimmung ein. Nach dem Ja verarbeitet er die schon geschickte Nachricht, ohne dass der Monteur sie wiederholen muss."
+  }
+}

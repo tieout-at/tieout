@@ -1,0 +1,66 @@
+{
+  "id": "m-nachtrag-zweiter-punkt-favoriten",
+  "titel": "Zusammenfassung offen, zweiter Punkt derselben Baustelle kommt hinterher, ohne Baustelle",
+  "kategorie": "nachtrag",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Favoritner Umgangssprache, tippt schnell und klein, kaum Satzzeichen",
+    "verhalten": "Auf die erste Zusammenfassung drückt er nicht 'Passt', sondern schreibt sofort: 'ah und im top 26 hab i no a eckventil beim waschtisch tauscht, des hat tropft, a da bauleiter, i alloa a halbe stund'. Die Baustelle nennt er dabei nicht, für ihn ist klar, dass es Favoriten ist. Stehen dann beide Punkte richtig da, drückt er 'Passt' (auch zweimal, wenn der Agent beide einzeln zeigt). Fragt der Agent nach der Baustelle, schreibt er genervt 'eh favoriten, hab i doch gsagt'."
+  },
+  "start": "2026-10-06T15:40:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "favoriten haus b top 23 waschmaschinenanschluss in die küche verlegt, bauleiter vom gu wollt des so, 1 mann 2 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus B, Top 23, Küche",
+        "leistung": "Waschmaschinenanschluss in die Küche verlegt",
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVon": "Bauleiter des GU"
+      },
+      {
+        "projektId": "w10",
+        "ort": "Top 26, Waschtisch",
+        "leistung": "Tropfendes Eckventil beim Waschtisch getauscht",
+        "personen": 1,
+        "dauerStunden": 0.5,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 2,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": ["Top 23", "Top dreiundzwanzig"],
+        "leistungStichwoerter": ["Waschmaschine", "Anschluss"],
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": ["Bauleiter"],
+        "mussLeerSein": ["menge", "datum"]
+      },
+      {
+        "projektId": "w10",
+        "ortStichwoerter": ["Top 26", "Top sechsundzwanzig"],
+        "leistungStichwoerter": ["Eckventil", "Ventil", "Waschtisch"],
+        "personen": 1,
+        "dauerStunden": 0.5,
+        "angewiesenVonStichwoerter": ["Bauleiter"],
+        "mussLeerSein": ["menge", "datum"]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt den zweiten Punkt als weiteren Zuruf zur selben Baustelle (Wien 10, Favoriten), fragt die Baustelle nicht noch einmal und verliert den ersten Punkt nicht. Zeigt beide Punkte zur Bestätigung und legt nach 'Passt' zwei Einträge ab. Beim zweiten Punkt kein 'Haus B' dazuerfinden."
+  }
+}

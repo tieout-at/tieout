@@ -1,0 +1,31 @@
+{
+  "id": "z-gestern-turnsaal-ohne-anweiser",
+  "titel": "Lüftungsleitung im Turnsaal gestern umgebaut, Anweiser nicht genannt, Projekt nur über den Bereich",
+  "kategorie": "anweiser_fehlt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Niederösterreichischer Dialekt, ruhige Sprachnachricht am Morgen vor Arbeitsbeginn, nennt die Schule nur 'Turnsaal'",
+    "verhalten": "Fragt der Agent, wer das angeschafft hat, sagt er 'da Bauleiter vom Generalbau, hot er am Montag in da Fruah gsogt'. Fragt der Agent nach der Baustelle, sagt er 'Baden, de Schul'. Drückt 'Passt', wenn alles stimmt, und korrigiert das Datum, falls dort 'heute' steht."
+  },
+  "start": "2026-10-20T07:10:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Guten Morgen. Gestern im Turnsaal, de Lüftungsleitung hot mit da Prallschutzwand kollidiert, de hamma umbaut und zwölf Meter Wickelfalzrohr DN 250 nei verlegt. Woan zu dritt, siebn Stund." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "bad", "ort": "Turnsaal", "leistung": "Lüftungsleitung wegen Kollision mit Prallschutzwand umgebaut", "menge": { "wert": 12, "einheit": "m" }, "material": "Wickelfalzrohr DN 250", "personen": 3, "dauerStunden": 7, "angewiesenVon": "Bauleiter des Generalunternehmers", "datum": "2026-10-19" }
+    ],
+    "weissNicht": ["warum die Prallschutzwand anders geplant war"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "bad", "ortStichwoerter": ["Turnsaal", "Turnhalle"], "leistungStichwoerter": ["Lüftung", "Lueftung", "Lüftungsleitung", "Wickelfalz", "umgebaut", "Umbau", "Kollision"], "mengeWert": 12, "personen": 3, "dauerStunden": 7, "angewiesenVonStichwoerter": ["Bauleiter", "Bauleitung", "Generalbau", "GU"], "datum": "2026-10-19" }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt Baden (Volksschule) über den Turnsaal ohne Rückfrage zur Baustelle. Setzt 'gestern' als 19.10.2026 ein, nicht als Tag der Nachricht. Fragt genau einmal, wer den Umbau angeschafft hat, am besten mit Auswahl, und übernimmt die Antwort. Übernimmt 12 Meter Wickelfalzrohr, 3 Mann, 7 Stunden."
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "id": "klar-wc-vorwand-w10",
+  "titel": "WC-Vorwand und Waschtisch höher gesetzt, alles genannt",
+  "kategorie": "klar",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt kurz, alles klein, ohne Satzzeichen, gelegentliche Tippfehler",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Ist etwas falsch, schreibt er nur das richtige Wort. Auf eine unnötige Rückfrage antwortet er knapp 'steht eh oben' und wiederholt die Angabe."
+  },
+  "start": "2026-10-06T11:15:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "wien 10 haus b top 12 wc vorwand und waschtisch anschlüsse höher gsetzt weil architekt andere höhe will. 2 mann 4 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus B, Top 12",
+        "leistung": "WC-Vorwandelement und Waschtischanschlüsse höher gesetzt",
+        "personen": 2,
+        "dauerStunden": 4,
+        "angewiesenVon": "Architekt"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Top 12"
+        ],
+        "leistungStichwoerter": [
+          "WC",
+          "Vorwand",
+          "Waschtisch"
+        ],
+        "personen": 2,
+        "dauerStunden": 4,
+        "angewiesenVonStichwoerter": [
+          "Architekt"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Keine Rückfrage, sofort Zusammenfassung mit Passt/Ändern. Architekt als Anweiser übernehmen, nach Passt kurze Bestätigung."
+  }
+}

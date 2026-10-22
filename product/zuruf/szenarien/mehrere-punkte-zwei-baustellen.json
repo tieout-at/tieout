@@ -1,0 +1,86 @@
+{
+  "id": "mehrere-punkte-zwei-baustellen",
+  "titel": "Polier meldet je einen Punkt aus Mödling und Baden",
+  "kategorie": "mehrere_punkte",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Niederösterreichischer Dialekt, Sprachnachricht am Ende des Tages, nennt Kollegen beim Vornamen",
+    "verhalten": "Drückt 'Passt', wenn beide Punkte mit der richtigen Baustelle stimmen. Hängt der Agent beide an dieselbe Baustelle, schreibt er 'na, des zweite war in baden'."
+  },
+  "start": "2026-10-28T16:45:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Servus, zwa Sachn. In Mödling in da Technikzentrale de Umwälzpumpe vom Heizkreis zwa tauscht, weil s Lager hin woa, hod da Bauleita vom GU gsogt, i und da Ferdl, zwa Stund. Und in Baden im Lehrer-WC an Spülkasten neich eingstöt und de Drückerplattn tauscht, des woa da Schuiwart, a Stund, i allan."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "Technikzentrale",
+        "leistung": "Umwälzpumpe Heizkreis 2 getauscht (Lager defekt)",
+        "personen": 2,
+        "dauerStunden": 2,
+        "angewiesenVon": "Bauleiter des GU"
+      },
+      {
+        "projektId": "bad",
+        "ort": "Lehrer-WC",
+        "leistung": "Spülkasten neu eingestellt, Drückerplatte getauscht",
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVon": "Schulwart"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 2,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "Technikzentrale"
+        ],
+        "leistungStichwoerter": [
+          "Umwälzpumpe",
+          "Pumpe"
+        ],
+        "personen": 2,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      },
+      {
+        "projektId": "bad",
+        "ortStichwoerter": [
+          "Lehrer-WC",
+          "Lehrer"
+        ],
+        "leistungStichwoerter": [
+          "Spülkasten",
+          "Drückerplatte",
+          "Drücker"
+        ],
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVonStichwoerter": [
+          "Schulwart"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Trennt nach zwei Baustellen und legt zwei Einträge mit dem jeweils richtigen Projekt an. Nimmt den Schulwart als Anweiser auf, ohne zu bewerten, ob er das anschaffen durfte."
+  }
+}

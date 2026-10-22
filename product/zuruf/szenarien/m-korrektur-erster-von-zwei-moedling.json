@@ -1,0 +1,66 @@
+{
+  "id": "m-korrektur-erster-von-zwei-moedling",
+  "titel": "Zwei Punkte bestätigt, danach Stunden am ersten Punkt korrigiert",
+  "kategorie": "korrektur",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Niederösterreichische Umgangssprache, Sprachnachrichten, ruhig",
+    "verhalten": "Drückt auf die Zusammenfassung 'Passt' (bei zwei getrennten Zusammenfassungen beide Male). Nachdem der Agent bestätigt hat, dass abgelegt ist, schickt er eine Sprachnachricht: 'Na wart, beim Zimmer hundertzwölf warn's drei Stunden, ned zwa. Des andere passt.' Zeigt der Agent die Änderung, drückt er 'Passt'. Fragt der Agent nach Baustelle, Leuten oder Anweiser, sagt er 'steht eh oben'."
+  },
+  "start": "2026-10-14T16:05:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Servas, Mödling, Pflegeheim. Zwa Sachen: Im Zimmer hundertzwölf hab i des Duschthermostat tauscht, weil des neiche falsch rum eingebaut war, i alloa, zwa Stunden. Und im Zimmer hundertachtzehn den Handtuchheizkörper a Stückl höher ghängt, a i alloa, a Stund. Beides hat die Bauleiterin vom GU angschafft."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "Zimmer 112",
+        "leistung": "Duschthermostat getauscht (war verkehrt eingebaut)",
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVon": "Bauleiterin des GU"
+      },
+      {
+        "projektId": "mod",
+        "ort": "Zimmer 118",
+        "leistung": "Handtuchheizkörper höher gehängt",
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVon": "Bauleiterin des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 2,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": ["Zimmer 112", "112", "hundertzwölf"],
+        "leistungStichwoerter": ["Thermostat", "Dusch"],
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": ["Bauleiterin", "Bauleiter"],
+        "mussLeerSein": ["menge", "datum"]
+      },
+      {
+        "projektId": "mod",
+        "ortStichwoerter": ["Zimmer 118", "118", "hundertachtzehn"],
+        "leistungStichwoerter": ["Handtuch", "Heizkörper"],
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVonStichwoerter": ["Bauleiterin", "Bauleiter"],
+        "mussLeerSein": ["menge", "datum"]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Ordnet die nachträgliche Korrektur dem ersten Punkt (Zimmer 112) zu, ändert dort nur die Stunden von 2 auf 3 und lässt den zweiten Punkt (Zimmer 118, 1 Stunde) unverändert. Keine Rückfrage zu Dingen, die schon bekannt sind, kein neuer dritter Eintrag. Die alte Angabe bleibt in der Historie."
+  }
+}

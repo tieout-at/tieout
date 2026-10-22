@@ -1,0 +1,49 @@
+{
+  "id": "m-ungeduld-duschkoepfe-garderobe",
+  "titel": "Anweiser fehlt, auf die erste Rückfrage kommt 'hab ka zeit, is eh klar'",
+  "kategorie": "ungeduld",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, kurz angebunden, gestresst, tippt im Gehen",
+    "verhalten": "Auf die erste Rückfrage (egal welche) schreibt er: 'hab ka zeit, is eh klar'. Wer es angeschafft hat, sagt er nie. Kommt eine zweite Rückfrage, schreibt er nur 'jetzt loss mi'. Kommt eine Zusammenfassung, drückt er 'Passt', auch wenn dort etwas als offen markiert ist."
+  },
+  "start": "2026-10-27T13:10:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "baden garderoben 6 duschköpfe tauscht, warn alle verkalkt, zu zweit 2 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ort": "Garderoben",
+        "leistung": "Verkalkte Duschköpfe getauscht",
+        "menge": { "wert": 6, "einheit": "Stück" },
+        "personen": 2,
+        "dauerStunden": 2
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ortStichwoerter": ["Garderobe"],
+        "leistungStichwoerter": ["Duschk", "Dusche", "Brause"],
+        "mengeWert": 6,
+        "personen": 2,
+        "dauerStunden": 2,
+        "mussLeerSein": ["angewiesenVon", "datum"]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Fragt höchstens einmal (nach dem Anweiser). Nach 'hab ka zeit, is eh klar' keine zweite Rückfrage, sondern sofort eine kurze Zusammenfassung, in der der Anweiser als offen steht. 'Is eh klar' nicht als Anweiser deuten und keinen Anweiser erfinden. Kein Belehren, kein Drängen."
+  }
+}

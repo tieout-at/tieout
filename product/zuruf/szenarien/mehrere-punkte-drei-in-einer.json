@@ -1,0 +1,113 @@
+{
+  "id": "mehrere-punkte-drei-in-einer",
+  "titel": "Polier meldet drei Dinge auf Wien 21 in einer Sprachnachricht",
+  "kategorie": "mehrere_punkte",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Zügig, strukturiert mit 'erstens, zweitens, drittens', Sprachnachricht, wenig Zeit",
+    "verhalten": "Will alles auf einmal bestätigen. Lässt der Agent jeden Punkt einzeln bestätigen, schreibt er nach dem ersten 'passt eh alles'. Drückt 'Passt', wenn alle drei Punkte stimmen. Ist ein Punkt falsch, nennt er nur die Nummer und den richtigen Wert."
+  },
+  "start": "2026-10-14T17:10:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Servus, Wien 21, drei Sachen von heut. Erstens Tiefgarage, Lüftungskanal um sechs Meter verlängert, weil die Abluft woanders hin muss, Bauleiter vom GU, zwei Mann, vier Stunden. Zweitens Top 3, Badheizkörper getauscht, den hat der Maler beschädigt, auch Bauleiter GU, ein Mann, eine Stunde. Drittens Technikraum, die Konsole für die Wasserzähler umgesetzt, des wollt der Haustechnikplaner, ein Mann, zwei Stunden."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Tiefgarage",
+        "leistung": "Lüftungskanal (Abluft) verlängert",
+        "menge": {
+          "wert": 6,
+          "einheit": "m"
+        },
+        "personen": 2,
+        "dauerStunden": 4,
+        "angewiesenVon": "Bauleiter des GU"
+      },
+      {
+        "projektId": "w21",
+        "ort": "Top 3",
+        "leistung": "Vom Maler beschädigten Badheizkörper getauscht",
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVon": "Bauleiter des GU"
+      },
+      {
+        "projektId": "w21",
+        "ort": "Technikraum",
+        "leistung": "Konsole für Wasserzähler umgesetzt",
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVon": "Haustechnikplaner"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 3,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Tiefgarage"
+        ],
+        "leistungStichwoerter": [
+          "Lüftungskanal",
+          "Kanal",
+          "Abluft"
+        ],
+        "mengeWert": 6,
+        "personen": 2,
+        "dauerStunden": 4,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ]
+      },
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Top 3"
+        ],
+        "leistungStichwoerter": [
+          "Heizkörper",
+          "Badheizkörper"
+        ],
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ]
+      },
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Technikraum"
+        ],
+        "leistungStichwoerter": [
+          "Konsole",
+          "Wasserzähler",
+          "Zähler"
+        ],
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": [
+          "Planer",
+          "Haustechnikplaner",
+          "TGA"
+        ],
+        "mussLeerSein": [
+          "menge"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt drei getrennte Einträge auf Wien 21 und zeigt sie kompakt mit einem einzigen Passt/Ändern. Vermischt keine Stunden, Personen oder Anweiser zwischen den Punkten."
+  }
+}

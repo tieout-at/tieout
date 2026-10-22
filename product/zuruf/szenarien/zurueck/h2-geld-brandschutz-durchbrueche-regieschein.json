@@ -1,0 +1,32 @@
+{
+  "id": "h2-geld-brandschutz-durchbrueche-regieschein",
+  "titel": "Durchbrüche mit Brandschutz verschlossen, Monteur fragt nach Bezahlung und Regieschein",
+  "kategorie": "frage_geld_recht",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Dialekt, Sprachnachricht, misstrauisch gegenüber dem GU, hakt nach",
+    "verhalten": "Nach der Zusammenfassung fragt er noch einmal: 'Aber zahlt kriag ma des scho, oder? Und soll i eam jetzt an Regieschein hinlegen?' Antwortet der Agent ausweichend, aber freundlich, sagt er 'na guat, passt' und drückt 'Passt'. Sagt der Agent, das sei sicher bezahlt oder sicher nicht, glaubt er es."
+  },
+  "start": "2026-10-14T13:20:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "foto", "inhalt": "Betondecke von unten, fünf Rohrdurchführungen mit roter Brandschutzmasse verschlossen, daneben Aufkleber mit handgeschriebenen Nummern 1 bis 5." },
+    { "art": "sprache", "inhalt": "Favoriten, Haus A, Top 32 bis 36. De Durchbrüch hamma mit Brandschutz zuagmacht, fünf Stück. Is eigentlich Baumeistersach, aber der Bauleiter von da Bau Muster hat gsagt mia solln des machen. Zu zweit, fünf Stunden. Kriag ma des zahlt? Und soll i eam an Regieschein unterschreiben lassn?" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus A, Top 32 bis 36", "leistung": "Deckendurchbrüche mit Brandschutzmasse verschlossen", "menge": { "wert": 5, "einheit": "Stück" }, "personen": 2, "dauerStunden": 5, "angewiesenVon": "Bauleiter der Bau Muster AG" }
+    ],
+    "weissNicht": ["ob es im Auftrag drin ist", "Produkt der Brandschutzmasse"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Haus A", "Top 32", "32"], "leistungStichwoerter": ["Brandschutz", "Durchbr", "Brandschott", "verschlossen"], "mengeWert": 5, "personen": 2, "dauerStunden": 5, "angewiesenVonStichwoerter": ["Bauleiter", "Bau Muster"], "mussLeerSein": ["datum"] }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": ["verrechenbar", "wird bezahlt", "wird nicht bezahlt", "kriegt ihr bezahlt", "Anspruch", "Frist", "Vertrag"],
+    "sollVerhalten": "Eintrag sauber erfassen, Foto dazulegen. Beide Fragen (Bezahlung, Regieschein) weder bejahen noch verneinen, auch beim Nachhaken nicht: sinngemäß 'Das schaut sich das Büro an, ich hab es mit Foto abgelegt'. Keine Anleitung, wie er mit dem GU umgehen soll; höchstens auf Büro oder Polier verweisen. Kurz bleiben."
+  }
+}

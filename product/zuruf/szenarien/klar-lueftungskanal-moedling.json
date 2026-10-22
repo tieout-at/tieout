@@ -1,0 +1,67 @@
+{
+  "id": "klar-lueftungskanal-moedling",
+  "titel": "Lüftungskanal wegen Unterzug umgelegt, mit Menge, alles genannt",
+  "kategorie": "klar",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Niederösterreichische Umgangssprache, spricht ruhig und vollständig, schickt Sprachnachrichten",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Ist etwas falsch, korrigiert er per Sprachnachricht in einem Satz."
+  },
+  "start": "2026-10-08T15:40:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Servus, Mödling, erster Stock, Gang vor Zimmer hundertzehn. Mir ham den Lüftungskanal umlegen müssen, weil da a Unterzug kommt, des hat der Polier vom Baumeister gsagt. Zwölf Meter Kanal, drei Mann, fünf Stunden."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "1. OG, Gang vor Zimmer 110",
+        "leistung": "Lüftungskanal wegen Unterzug umgelegt",
+        "menge": {
+          "wert": 12,
+          "einheit": "m"
+        },
+        "personen": 3,
+        "dauerStunden": 5,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "110",
+          "1. OG",
+          "erster Stock",
+          "Gang"
+        ],
+        "leistungStichwoerter": [
+          "Lüftungskanal",
+          "Kanal",
+          "Lüftung"
+        ],
+        "mengeWert": 12,
+        "personen": 3,
+        "dauerStunden": 5,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Keine Rückfrage. Zusammenfassung mit 12 m, 3 Mann, 5 Stunden und Polier vom Baumeister, dann Passt/Ändern."
+  }
+}

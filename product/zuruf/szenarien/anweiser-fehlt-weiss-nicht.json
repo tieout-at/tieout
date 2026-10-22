@@ -1,0 +1,56 @@
+{
+  "id": "anweiser-fehlt-weiss-nicht",
+  "titel": "Heizkörper versetzt, Monteur weiß nicht, wer angeschafft hat",
+  "kategorie": "anweiser_fehlt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, Sprachnachrichten, freundlich",
+    "verhalten": "Wenn der Agent fragt, wer das angeschafft hat, sagt er: 'Ka Ahnung, i bin nur higschickt worn.' Fragt der Agent noch einmal, schreibt er 'waß i wirklich ned'. Drückt 'Passt', wenn die Zusammenfassung sonst stimmt, auch wenn der Anweiser offen ist."
+  },
+  "start": "2026-10-20T16:20:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Servus, Wien 21, Stiege 2, Top 11, Heizkörper im Kinderzimmer auf die andere Wand versetzt, i allan, drei Stund."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 2, Top 11, Kinderzimmer",
+        "leistung": "Heizkörper auf andere Wand versetzt",
+        "personen": 1,
+        "dauerStunden": 3
+      }
+    ],
+    "weissNicht": [
+      "wer das angeschafft hat"
+    ]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Top 11"
+        ],
+        "leistungStichwoerter": [
+          "Heizkörper"
+        ],
+        "personen": 1,
+        "dauerStunden": 3,
+        "mussLeerSein": [
+          "angewiesenVon",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Fragt höchstens einmal nach dem Anweiser. Auf 'weiß ich nicht' bohrt er nicht nach, legt den Anweiser als offen ab und macht dem Monteur keinen Vorwurf."
+  }
+}

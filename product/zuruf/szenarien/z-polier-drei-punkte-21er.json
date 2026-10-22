@@ -1,0 +1,37 @@
+{
+  "id": "z-polier-drei-punkte-21er",
+  "titel": "Polier meldet drei Punkte vom 21er in drei Nachrichten, mit Metern und Stück",
+  "kategorie": "mehrere_punkte",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Wiener Dialekt, wechselt zwischen Sprachnachricht und schnell getipptem Text, nummeriert seine Punkte selbst, Abkürzungen wie 'Stg' und '28er'",
+    "verhalten": "Will eine Zusammenfassung für alle drei Punkte und einmal 'Passt' drücken. Wird kurz angebunden, wenn er jeden Punkt einzeln bestätigen soll ('Geh, des passt eh alles'). Fragt der Agent, wer den Tausch in Top 17 angeschafft hat, sagt er 'woaß i ned, hab's beim Abdrücken gsehn'. Korrigiert nur, wenn eine Zahl falsch ist."
+  },
+  "start": "2026-10-15T15:40:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "So, drei Sachen vom 21er. Erstens, Stiege 3 im Technikraum, do hamma den Heizungsverteiler umbaut, weil da Haustechnikplaner a andere Anordnung woin hot. Mit'm Kollegen zu zweit, fünf Stund." },
+    { "art": "text", "inhalt": "2. Keller Stg 1, 18 m mapress edelstahl 28er zusätzlich verlegt, umleitung um den neuen schacht. hat der polier vom GU angschafft" },
+    { "art": "sprache", "inhalt": "Und drittens, Top 17, vier Stück Kugelhähne beim Wohnungsverteiler tauscht, de woan undicht beim Abdrücken. Des woar i allan, a Stund." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w21", "ort": "Stiege 3, Technikraum", "leistung": "Heizungsverteiler umgebaut (andere Anordnung)", "personen": 2, "dauerStunden": 5, "angewiesenVon": "Haustechnikplaner" },
+      { "projektId": "w21", "ort": "Keller Stiege 1", "leistung": "Rohrleitung zusätzlich verlegt, Umleitung um neuen Schacht", "menge": { "wert": 18, "einheit": "m" }, "material": "Edelstahl-Pressrohr 28 mm (Mapress)", "angewiesenVon": "Polier des GU" },
+      { "projektId": "w21", "ort": "Top 17", "leistung": "Kugelhähne am Wohnungsverteiler getauscht (undicht bei Druckprobe)", "menge": { "wert": 4, "einheit": "Stück" }, "personen": 1, "dauerStunden": 1 }
+    ],
+    "weissNicht": ["wer den Tausch der Kugelhähne in Top 17 angeordnet hat"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 3,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w21", "ortStichwoerter": ["Stiege 3", "Stg 3", "Technikraum"], "leistungStichwoerter": ["Verteiler", "Heizungsverteiler", "umgebaut", "Umbau"], "personen": 2, "dauerStunden": 5, "angewiesenVonStichwoerter": ["Planer", "Haustechnikplaner", "HT-Planer"], "mussLeerSein": ["menge", "datum"] },
+      { "projektId": "w21", "ortStichwoerter": ["Keller", "Stiege 1", "Stg 1"], "leistungStichwoerter": ["Rohr", "verlegt", "Leitung", "Umleitung", "Mapress", "Edelstahl"], "mengeWert": 18, "angewiesenVonStichwoerter": ["Polier", "GU"], "mussLeerSein": ["personen", "dauerStunden", "datum"] },
+      { "projektId": "w21", "ortStichwoerter": ["Top 17"], "leistungStichwoerter": ["Kugelhahn", "Kugelhähne", "Kugelhaehne", "getauscht", "Tausch"], "mengeWert": 4, "personen": 1, "dauerStunden": 1, "mussLeerSein": ["angewiesenVon", "datum"] }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt drei getrennte Punkte über drei Nachrichten, wartet nicht mit jedem einzeln, fasst alle drei knapp in einer Zusammenfassung mit einem Passt/Ändern zusammen. Überträgt Meter und Stück richtig, verwechselt die Anweiser nicht zwischen den Punkten und erfindet keinen Anweiser für Top 17 (höchstens eine Frage dazu, danach offen lassen)."
+  }
+}

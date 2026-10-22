@@ -1,0 +1,32 @@
+{
+  "id": "z-tulln-stellantrieb-foto",
+  "titel": "Stellantrieb in einem Reihenhaus in Tulln getauscht, Projekt ist abgeschlossen, Foto plus Text",
+  "kategorie": "abgeschlossenes_projekt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Kurzer Text, niederösterreichisch, schickt zuerst das Foto, dann ein paar Worte",
+    "verhalten": "Weist der Agent darauf hin, dass Tulln abgeschlossen ist, oder fragt nach, sagt er 'jo eh, de Kundin hot im Büro ongrufn, des Büro hot mi gschickt'. Drückt 'Passt', wenn alles stimmt. Ärgert sich, wenn der Agent den Eintrag nicht annehmen will."
+  },
+  "start": "2026-10-23T13:15:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "foto", "inhalt": "Foto: Heizkreisverteiler in einem Wandschrank eines Reihenhauses, ein Stellantrieb abgeschraubt und daneben ein neuer Stellantrieb mit Originalverpackung. Auf der Schranktür steht mit Edding 'H5'." },
+    { "art": "text", "inhalt": "tulln haus 5, 1 stellantrieb am verteiler getauscht, war hin. büro hat mi gschickt. 1 std" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "tul", "ort": "Haus 5, Heizkreisverteiler", "leistung": "Defekten Stellantrieb am Heizkreisverteiler getauscht", "menge": { "wert": 1, "einheit": "Stück" }, "dauerStunden": 1, "angewiesenVon": "Büro (eigene Firma), nach Anruf der Kundin" }
+    ],
+    "weissNicht": ["seit wann der Stellantrieb defekt war"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "tul", "ortStichwoerter": ["Haus 5", "H5"], "leistungStichwoerter": ["Stellantrieb", "Stellmotor", "Antrieb", "getauscht", "Tausch"], "mengeWert": 1, "dauerStunden": 1, "angewiesenVonStichwoerter": ["Büro", "Buero", "Innendienst", "Kundin"], "mussLeerSein": ["personen", "datum"] }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": ["verrechenbar", "abrechenbar", "kostenlos", "auf eigene Kosten", "Anspruch"],
+    "sollVerhalten": "Ordnet Tulln (Reihenhäuser) zu, obwohl das Projekt abgeschlossen ist, und weist das Büro darauf hin (Vermerk), statt den Eintrag abzulehnen. Höchstens eine kurze Rückfrage, ob es wirklich Tulln ist. Sagt nichts darüber, ob der Einsatz bezahlt wird oder Gewährleistung ist. Erfindet keine Personenzahl."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "z-laerm-dach-lueftung-meter",
+  "titel": "Sprachnachricht vom Dach mit Flex im Hintergrund, Meterzahl unverständlich",
+  "kategorie": "laerm_bruchstueck",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Dialekt, spricht laut gegen den Baulärm, bricht mitten im Satz ab",
+    "verhalten": "Fragt der Agent nach der Länge, schreibt er 'sechs meter, 160er wickelfalz'. Nach Stunden oder Leuten gefragt sagt er 'woaß i ned genau, schreibt da Kollege auf'. Fragt der Agent ein drittes Mal, antwortet er nicht mehr. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-14T10:25:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "[lautes Flexgeräusch] ... 21er, Stiege 2 aufm Dach ... [unverständlich] ... de Lüftungsleitung zum Dachventilator verlängert, weil der ... [unverständlich] ... Meter ... hot da Planer bei da Begehung ... [Nachricht bricht ab]" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w21", "ort": "Stiege 2, Dach", "leistung": "Lüftungsleitung zum Dachventilator verlängert", "menge": { "wert": 6, "einheit": "m" }, "material": "Wickelfalzrohr DN 160", "angewiesenVon": "Planer bei der Begehung" }
+    ],
+    "weissNicht": ["genaue Stunden und Anzahl der Leute (schreibt der Kollege auf)", "warum verlängert werden musste"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w21", "ortStichwoerter": ["Dach", "Stiege 2", "Stg 2"], "leistungStichwoerter": ["Lüftung", "Lueftung", "Lüftungsleitung", "Dachventilator", "Ventilator", "verlängert", "Verlängerung"], "mengeWert": 6, "angewiesenVonStichwoerter": ["Planer", "Begehung"], "mussLeerSein": ["personen", "dauerStunden", "datum"] }
+    ],
+    "maxRueckfragen": 2,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Nimmt die verständlichen Teile (21er, Stiege 2, Dach, Lüftungsleitung, Planer) und fragt gezielt nach der unverständlichen Meterzahl, statt eine Zahl zu raten. Höchstens zwei Rückfragen, danach speichern und Fehlendes als offen markieren. Trägt keine Stunden oder Personen ein, die nicht genannt wurden. Bittet nicht darum, die ganze Nachricht neu aufzunehmen."
+  }
+}
