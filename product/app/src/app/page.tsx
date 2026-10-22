@@ -36,7 +36,7 @@ const AMPEL: Record<Ampel, { ton: Ton; titel: string }> = {
 };
 
 function Betrag({ cent }: { cent: number | null }) {
-  return cent === null ? <span className="sw-muted">–</span> : <>{betrag(cent)}</>;
+  return cent === null ? null : <>{betrag(cent)}</>;
 }
 
 function Zeile({ p }: { p: ProjektZeile }) {
@@ -52,9 +52,7 @@ function Zeile({ p }: { p: ProjektZeile }) {
               {p.name}
             </Link>
           </b>
-          <span>
-            {p.los} · {p.auftraggeber.name}
-          </span>
+          <span>{p.auftraggeber.name}</span>
         </div>
       </td>
       <td>
@@ -97,22 +95,14 @@ export default function Firmenuebersicht() {
     <>
       <Seitenkopf pfad={[{ text: daten.firma.name }]} titel="Projekte" />
       <main className="scr-body">
-        <p className="lead body">
-          {e.summen.projekte} Projekte, davon {e.summen.offeneProjekte} offen. <b>{betrag(e.summen.jetzt)}</b> jetzt verrechenbar,{" "}
-          <b>{betrag(e.summen.offen)}</b> angemeldet und offen.
-        </p>
         <Kennzahlen>
-          <Kennzahl label="Jetzt verrechenbar" wert={betrag(e.summen.jetzt)} kontext={`${posten("jetzt")} Posten in ${mitJetzt} von ${offen.length} offenen Projekten`} />
-          <Kennzahl label="Angemeldet und offen" wert={betrag(e.summen.offen)} kontext={`${posten("offen")} Posten in ${mitOffen} Projekten · getrennt gezählt`} />
+          <Kennzahl label="Jetzt verrechenbar" wert={betrag(e.summen.jetzt)} kontext={`${posten("jetzt")} Posten in ${mitJetzt} Projekten`} />
+          <Kennzahl label="Angemeldet und offen" wert={betrag(e.summen.offen)} kontext={`${posten("offen")} Posten in ${mitOffen} Projekten`} />
           {naechste?.datum && (
             <Kennzahl
               label="Nächste Schlussrechnung"
               wert={datum(naechste.datum.wert)}
-              kontext={
-                <>
-                  {naechste.kurz} {naechste.name} · legen bis
-                </>
-              }
+              kontext={`${naechste.kurz} ${naechste.name}`}
             />
           )}
         </Kennzahlen>

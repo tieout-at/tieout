@@ -41,6 +41,20 @@ describe("UI-Fundament", () => {
     expect(verstoesse).toEqual([]);
   });
 
+  it("keine Trennpunkte „·“ und keine Gedankenstriche im sichtbaren Text (Kommentare ausgenommen)", () => {
+    const verstoesse: string[] = [];
+    for (const p of OBERFLAECHE.filter((x) => x.endsWith(".tsx"))) {
+      readFileSync(p, "utf8")
+        .split(/\r?\n/)
+        .forEach((zeile, i) => {
+          const code = zeile.trim();
+          if (code.startsWith("//") || code.startsWith("*") || code.startsWith("/*")) return;
+          if (/[·–—]/.test(code)) verstoesse.push(`${relative(WURZEL, p)}:${i + 1}`);
+        });
+    }
+    expect(verstoesse).toEqual([]);
+  });
+
   it("nie das Wort „Claim“ und keine Countdowns in der Oberfläche", () => {
     const verstoesse = OBERFLAECHE.filter((p) => /\bClaim|Forcierung|noch \d+ Tage/i.test(readFileSync(p, "utf8"))).map((p) => relative(WURZEL, p));
     expect(verstoesse).toEqual([]);

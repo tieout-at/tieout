@@ -40,6 +40,8 @@ export interface Befund {
   art: BefundArt;
   liste: Liste;
   titel: string;
+  /** Kurze Unterzeile für Listen, z. B. „+14 Stk über LV“ oder „nicht unterschrieben“. */
+  untertitel: string;
   positionNr: string | null;
   /** null bei Hinweisen ohne Betrag („braucht Anwalt“). */
   betrag: Cent | null;

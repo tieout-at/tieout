@@ -81,6 +81,7 @@ export function mehrmengen(k: Kontext): Befund[] {
       art: !ueberLv ? "nicht_verrechnet" : ausPlanaenderung ? "mehrmenge_plan" : "mehrmenge",
       liste: "jetzt",
       titel: `${nr} ${p.kurztext.wert}`,
+      untertitel: ueberLv ? `+${menge(aufmass - p.menge.wert, einheit)} über LV` : `${menge(differenz, einheit)} erbracht, nicht verrechnet`,
       positionNr: nr,
       betrag,
       rechenweg: {
@@ -118,6 +119,7 @@ export function regie(k: Kontext): Befund[] {
         art: "regie" as const,
         liste: (unterschrieben ? "jetzt" : "offen") as Liste,
         titel: `${rb.nr.wert} ${rb.taetigkeit.wert}`,
+        untertitel: !unterschrieben ? "nicht unterschrieben" : k.d.entwurf ? "unterschrieben, nicht verrechnet" : "unterschrieben, in keiner Abschlagsrechnung",
         positionNr: null,
         betrag,
         rechenweg: {
@@ -178,6 +180,7 @@ export function zurufRegie(k: Kontext): Befund[] {
         art: "regie_zuruf" as const,
         liste: "offen" as Liste,
         titel: `${z.nr} ${z.taetigkeit.wert}`,
+        untertitel: "kein Regiebericht, keine Unterschrift",
         positionNr: null,
         betrag,
         rechenweg: {
@@ -231,6 +234,7 @@ export function preisumrechnung(k: Kontext): Befund[] {
       art: "preisumrechnung",
       liste: "jetzt",
       titel: `Preisumrechnung Lohn ab ${datumText(stichtag)} (ÖNORM B 2111)`,
+      untertitel: `${ix.name.wert} +${prozentText(aenderung)}`,
       positionNr: null,
       betrag,
       rechenweg: {
@@ -277,6 +281,7 @@ export function anmeldungen(k: Kontext): Befund[] {
           art: "pauschale" as const,
           liste: "verloren" as Liste,
           titel: a.gegenstand.wert,
+          untertitel: `laut Vertrag Pkt. ${pauschale.punkt} pauschal`,
           positionNr: null,
           betrag,
           rechenweg: { ...rechenweg, text: `${rechenweg.text}; laut Vertrag Pkt. ${pauschale.punkt} pauschal enthalten` },
@@ -288,7 +293,8 @@ export function anmeldungen(k: Kontext): Befund[] {
         schluessel: `anmeldung:${m.dokumentId}`,
         art: "aenderung" as const,
         liste: "offen" as Liste,
-        titel: `${a.gegenstand.wert}, angemeldet ${tagMonat(m.datum.wert)}, nie bepreist`,
+        titel: a.gegenstand.wert,
+        untertitel: `angemeldet ${tagMonat(m.datum.wert)}, nie bepreist`,
         positionNr: null,
         betrag,
         rechenweg: { ...rechenweg, text: `Untergrenze aus eigener Kalkulation: ${rechenweg.text}` },
@@ -307,6 +313,7 @@ export function anwaltsHinweise(k: Kontext): Befund[] {
       art: m.kategorie.wert === "terminaenderung" ? ("terminaenderung" as const) : ("behinderung" as const),
       liste: "anwalt" as Liste,
       titel: `${m.kategorie.wert === "terminaenderung" ? "Terminänderung" : "Behinderung"} (Mail GU ${tagMonat(m.datum.wert)})`,
+      untertitel: "Hinweis ohne Betrag",
       positionNr: null,
       betrag: null,
       rechenweg: null,

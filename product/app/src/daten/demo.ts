@@ -62,7 +62,7 @@ export function navDaten(): { firma: string; untertitel: string; projekte: NavPr
   const { f, e } = laden();
   return {
     firma: f.firma.name,
-    untertitel: `${f.firma.gewerk} · ${f.firma.sitz}`,
+    untertitel: `${f.firma.gewerk}, ${f.firma.sitz}`,
     auftraggeber: f.auftraggeber.length,
     projekte: f.projekte.map((d) => {
       const x = e.ergebnisse[d.projekt.id];
