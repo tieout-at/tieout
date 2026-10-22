@@ -1,4 +1,4 @@
-// Kennzahl (Vorlage: reebuild-Projektübersicht R-C): Label, großer Wert, eine Kontextzeile. Rand statt Schatten.
+// Kennzahl (Vorlage: reebuild-Projektübersicht R-C): Label, großer Wert, eine Kontextzeile. Ohne Rand und Trenner, nur Abstand.
 
 export function Kennzahlen({ children }: { children: React.ReactNode }) {
   return <div className="sw-kpis">{children}</div>;

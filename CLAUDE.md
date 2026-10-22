@@ -1,4 +1,4 @@
-# Schlusswerk (Arbeitstitel): Projektkontext für Claude Code
+# tieout (Arbeitstitel, vorher Schlusswerk): Projektkontext für Claude Code
 
 Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub unter github.com/schlusswerk/schlusswerk, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/dossier-v3.md`.
 
@@ -25,6 +25,7 @@ Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maxim
 | `business/` | 1-Pager, Problem-Solution Statement, Business Plan, Pitch (Markdown) |
 | `product/` | Produkt: Datenmodell, Backend, Frontend, synthetische Demo-Daten |
 | `website/` | Öffentliche Website |
+| `brand/` | Marke: LinkedIn-Banner, erzeugt per Skript (`brand/linkedin/`) |
 | `video/` | Skript und Storyboard für das Produktvideo. Videodateien nicht ins Repository |
 
 Neue Recherche nach `docs/research_notes/`, Überholtes nach `docs/archiv/`. Keine Secrets committen (`.env`). Das Repository liegt nicht in OneDrive.
@@ -46,7 +47,7 @@ Wo v2 und v3 abweichen, gilt v3.
 
 ## Wenn es um die Website geht
 
-Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „Tieout.“ (vorher „EndPoint.“), CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Online offen erreichbar unter endpoint-preview.pages.dev (noindex, Entscheidung Maxi D. 22.10.), Details in `website/README.md`. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA neutral („Kontakt aufnehmen“) mit Einwilligungs-Häkchen. Hintergrund in Dossier v3 Abschnitt 9.
+Verbindlich ist `website/STRUKTUR.md`: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), Domain tieout.at, CI Planraster (Papier #F4F6F9, Tinte #0A1020, Ultramarin #1D3BFF), Deutsch mit Umschalter auf Englisch, interaktive Zwilling-Visualisierung, Team-Sektion, Platzhalter für Video, Impressum und Rechtsform. Online offen erreichbar unter tieout-at.pages.dev, später tieout.at (noindex, Entscheidung Maxi D. 22.10.; die alte Adresse endpoint-preview.pages.dev leitet weiter), Details in `website/README.md`. Die Website erklärt das Kernprodukt (der digitale Zwilling des Betriebs), die Schlussrechnung ist die erste Anwendung. CTA „Demo buchen“ mit Terminwahl und Einwilligungs-Häkchen (Entscheidung Maxi D., 22.10.); keine Preise, keine Pakete. Hintergrund in Dossier v3 Abschnitt 9.
 
 ## Wenn es um den Bau geht
 

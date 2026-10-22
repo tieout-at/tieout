@@ -3,6 +3,7 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
 import { zitate } from "@/daten/zeitachse";
@@ -33,6 +34,20 @@ const ART: Record<DokumentArt, string> = {
   gu_abzug: "Abzugsschreiben",
   gu_korrektur: "Korrekturblatt",
 };
+
+/** Dateiname als Titel: Umbruchstellen nach „_“, damit lange Namen an Wortgrenzen umbrechen. */
+function umbrechbar(name: string) {
+  return name.split("_").map((teil, i, alle) => (
+    <Fragment key={i}>
+      {teil}
+      {i < alle.length - 1 && (
+        <>
+          _<wbr />
+        </>
+      )}
+    </Fragment>
+  ));
+}
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -96,7 +111,7 @@ export default async function BelegSeite({ params }: Props) {
         <div className="split-left">
           <div className="split-scroll">
             <div className="fhead">
-              <h2 className="section-title">{zuruf ? zuruf.taetigkeit.wert : datei}</h2>
+              <h2 className="page-title">{zuruf ? zuruf.taetigkeit.wert : umbrechbar(datei)}</h2>
             </div>
             <div className="kv">
               {fakten.map(([k, v]) => (

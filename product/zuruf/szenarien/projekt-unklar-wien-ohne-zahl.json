@@ -1,0 +1,60 @@
+{
+  "id": "projekt-unklar-wien-ohne-zahl",
+  "titel": "'Wien' ohne Bezirk, passt zu Wien 21 und Wien 10",
+  "kategorie": "projekt_unklar",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt kurz, klein, ohne Satzzeichen",
+    "verhalten": "Wenn der Agent fragt, welches Wien, drückt er 'Wien 10' oder schreibt '10er'. Fragt der Agent nach dem Haus, schreibt er 'haus a'. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-09T14:10:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "wien top 7 waschtisch abfluss umgebaut weil fliesenleger höher gfliest hat, polier vom baumeister wollt das, 1 mann 3 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus A, Top 7",
+        "leistung": "Waschtischablauf umgebaut, weil höher verfliest wurde",
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Top 7"
+        ],
+        "leistungStichwoerter": [
+          "Waschtisch",
+          "Abfluss",
+          "Ablauf"
+        ],
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt, dass 'Wien' zu Wien 21 und Wien 10 passt, und fragt mit genau diesen beiden als Auswahl nach. Wählt nicht selbst."
+  }
+}

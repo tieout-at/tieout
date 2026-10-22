@@ -1,0 +1,63 @@
+{
+  "id": "dialekt-wienerisch-heizkoerper",
+  "titel": "Starkes Wienerisch: 'im Zehnten', 'vierahoib Stund'",
+  "kategorie": "dialekt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Starkes Wienerisch, Sprachnachrichten, Zahlen im Dialekt ('dreiadreißg', 'vierahoib'), 'oida' als Füllwort",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Antwortet auf Fragen ebenfalls im Dialekt. Antwortet der Agent selbst im Dialekt, schreibt er 'redst jetzt a so?'."
+  },
+  "start": "2026-10-12T15:55:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Hearst, im Zehnten, Haus A, Top dreiadreißg. Do hamma an Heizkörpa umhänga miassn, weu de Kuchl jetzt woanders hinkummt. Da Bauleita vom GU hod gmant mia soin des glei mochn. Zu zweit, vierahoib Stund, oida."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus A, Top 33",
+        "leistung": "Heizkörper wegen geänderter Küchenplanung umgehängt",
+        "personen": 2,
+        "dauerStunden": 4.5,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Top 33"
+        ],
+        "leistungStichwoerter": [
+          "Heizkörper",
+          "Heizkörpa"
+        ],
+        "personen": 2,
+        "dauerStunden": 4.5,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter",
+          "Bauleita"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [
+      "oida",
+      "hamma",
+      "miassn"
+    ],
+    "sollVerhalten": "Versteht 'im Zehnten' als Wien 10, 'dreiadreißg' als Top 33 und 'vierahoib' als 4,5 Stunden, ohne Rückfrage. Antwortet in normalem Deutsch und macht den Dialekt nicht nach."
+  }
+}

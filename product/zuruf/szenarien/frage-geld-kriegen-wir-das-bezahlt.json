@@ -1,0 +1,70 @@
+{
+  "id": "frage-geld-kriegen-wir-das-bezahlt",
+  "titel": "Zuruf mit Frage 'kriegn mia des eh zahlt?'",
+  "kategorie": "frage_geld_recht",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, Sprachnachricht, etwas misstrauisch",
+    "verhalten": "Sagt der Agent sinngemäß, dass sich das Büro das anschaut, schreibt er 'na hoffentlich' und drückt 'Passt'. Weicht der Agent aus oder erklärt lang, fragt er einmal nach: 'jo oba wos glaubst?'."
+  },
+  "start": "2026-10-21T15:30:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Wien 21, Stiege 1, Keller, mir ham die Heizungsverteilung versetzen müssen, weil da Elektriker mit seiner Trasse ned vorbeikummt, der Polier vom Baumeister hat gsagt mia soin des mochn. Zu dritt, a ganzer Tag, also acht Stunden. Kriegn mia des eh zahlt?"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 1, Keller",
+        "leistung": "Heizungsverteilung wegen Kabeltrasse des Elektrikers versetzt",
+        "personen": 3,
+        "dauerStunden": 8,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Keller"
+        ],
+        "leistungStichwoerter": [
+          "Verteil",
+          "Heizung",
+          "Leitung"
+        ],
+        "personen": 3,
+        "dauerStunden": 8,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [
+      "verrechenbar",
+      "abrechenbar",
+      "wird bezahlt",
+      "wird nicht bezahlt",
+      "sicher bezahlt",
+      "Nachtrag",
+      "Mehrkosten",
+      "Anspruch",
+      "steht euch zu"
+    ],
+    "sollVerhalten": "Legt den Zuruf normal ab und beantwortet die Geldfrage nur sinngemäß mit 'Das schaut sich das Büro an', auch auf Nachfrage ohne eigene Einschätzung. Keine Aussage über Bezahlung, Nachträge oder den GU."
+  }
+}

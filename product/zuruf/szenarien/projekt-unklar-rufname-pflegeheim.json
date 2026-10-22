@@ -1,0 +1,61 @@
+{
+  "id": "projekt-unklar-rufname-pflegeheim",
+  "titel": "Rufname 'Pflegeheim' statt Mödling",
+  "kategorie": "projekt_unklar",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Spricht in vollständigen Sätzen, leicht niederösterreichisch, Sprachnachrichten",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Fragt der Agent, ob Pflegeheim Mödling gemeint ist, sagt er 'ja eh'."
+  },
+  "start": "2026-10-14T10:30:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Pflegeheim, Küche, den Anschluss für die Spülmaschine und den Fettabscheider umgebaut, weil die Küchenfirma jetzt andere Pläne hat. Der Bauleiter vom GU hat's angschafft. Zwei Mann, sechs Stunden."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "Küche",
+        "leistung": "Anschluss Spülmaschine und Fettabscheider nach neuen Küchenplänen umgebaut",
+        "personen": 2,
+        "dauerStunden": 6,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "Küche"
+        ],
+        "leistungStichwoerter": [
+          "Spülmaschine",
+          "Geschirrspül",
+          "Fettabscheider",
+          "Anschluss"
+        ],
+        "personen": 2,
+        "dauerStunden": 6,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Ordnet 'Pflegeheim' ohne Rückfrage Mödling zu und zeigt in der Zusammenfassung den Namen Mödling, damit der Obermonteur die Zuordnung sieht."
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "h2-polier-zwei-punkte-foto-widerspruch-21er",
+  "titel": "Polier meldet zwei Punkte mit Foto, Top-Nummer und Personenzahl werden vor dem Passt korrigiert",
+  "kategorie": "mehrere_punkte",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Wiener Umgangssprache, längere Sprachnachricht mit 'erstens, zweitens', redet schnell, verspricht sich bei Nummern",
+    "verhalten": "Liest die Zusammenfassung und korrigiert vor dem Passt per Sprachnachricht: 'Halt, des erste war Top 11, ned 9, und mia warn zu dritt, ned zu zweit. Stunden passen.' Fragt der Agent wegen des Fotos nach der Top-Nummer, antwortet er 'Top 11, des Foto stimmt' und korrigiert dann bei der Zusammenfassung nur noch die Personen. Danach 'Passt'. Will der Agent jeden Punkt einzeln bestätigt haben, sagt er 'passt eh beides'."
+  },
+  "start": "2026-10-27T09:45:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "foto", "inhalt": "Badezimmer im Rohbau, WC-Vorwandelement aus Metallständern, daneben ein Zollstock. Auf der Wand steht mit Bleistift 'Top 11'." },
+    { "art": "sprache", "inhalt": "Zwa Sachen vom 21er. Erstens: Stiege 2, Top 9, im Bad de Vorwand fürs Klo um zwanzig Zentimeter umgsetzt, des hat der Bauleiter vom GU angschafft, mia warn zu zweit, drei Stunden. Zweitens: unten im Technikraum beim Pufferspeicher a Entleerung nachgrüstet, des hat der Planer bei der Begehung wollen, a Mann, a Stund." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w21", "ort": "Stiege 2, Top 11, Bad", "leistung": "WC-Vorwand um 20 cm versetzt", "personen": 3, "dauerStunden": 3, "angewiesenVon": "Bauleiter des GU" },
+      { "projektId": "w21", "ort": "Technikraum", "leistung": "Entleerung am Pufferspeicher nachgerüstet", "personen": 1, "dauerStunden": 1, "angewiesenVon": "Planer bei der Begehung" }
+    ],
+    "weissNicht": ["Datum der Begehung"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 2,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w21", "ortStichwoerter": ["Top 11", "Top11"], "leistungStichwoerter": ["Vorwand", "WC", "Klo"], "personen": 3, "dauerStunden": 3, "angewiesenVonStichwoerter": ["Bauleiter"], "mussLeerSein": ["datum"] },
+      { "projektId": "w21", "ortStichwoerter": ["Technikraum", "Keller"], "leistungStichwoerter": ["Entleerung", "Puffer"], "personen": 1, "dauerStunden": 1, "angewiesenVonStichwoerter": ["Planer"], "mussLeerSein": ["datum", "menge"] }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Zwei getrennte Einträge erkennen und in einer gemeinsamen Zusammenfassung zeigen. Widerspruch zwischen Foto (Top 11) und Sprache (Top 9) nicht stillschweigend auflösen, sondern mit Fragezeichen zeigen oder einmal nachfragen. Korrektur vor dem Passt einarbeiten (Top 11, 3 Personen), sonst nichts ändern, dann beide Einträge mit einem Passt speichern."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "anweiser-fehlt-architektin-pflegebad",
+  "titel": "Haltegriffe im Pflegebad versetzt, Anweiserin (Architektin) erst auf Nachfrage",
+  "kategorie": "anweiser_fehlt",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Tippt in ganzen Wörtern, klein, wenig Satzzeichen",
+    "verhalten": "Wenn der Agent fragt, wer das angeschafft hat, schreibt er 'die architektin bei der baubesprechung'. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-21T11:35:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "mödling pflegebad 1. og haltegriffe und klappsitz bei der dusche andere position, vorwandverstärkung neu gesetzt. 2 mann 4,5 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "1. OG, Pflegebad",
+        "leistung": "Haltegriffe und Klappsitz an der Dusche versetzt, Vorwandverstärkung neu gesetzt",
+        "personen": 2,
+        "dauerStunden": 4.5,
+        "angewiesenVon": "Architektin (Baubesprechung)"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "Pflegebad"
+        ],
+        "leistungStichwoerter": [
+          "Haltegriff",
+          "Klappsitz",
+          "Vorwand",
+          "Verstärkung"
+        ],
+        "personen": 2,
+        "dauerStunden": 4.5,
+        "angewiesenVonStichwoerter": [
+          "Architektin",
+          "Architekt"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Fragt einmal nach dem Anweiser, übernimmt 'Architektin' und fasst dann in höchstens fünf Zeilen zusammen."
+  }
+}

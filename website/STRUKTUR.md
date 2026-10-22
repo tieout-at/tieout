@@ -1,7 +1,7 @@
 # Website: Struktur v1
 
 **Stand:** 22.10.2026. Gebaut (v1 Vorschau), siehe `README.md`. Abweichungen vom Plan stehen in Abschnitt 10.
-**Arbeitstitel:** Tieout. (mit Punkt). Name nicht final, Markenprüfung offen.
+**Arbeitstitel:** tieout (klein, ohne Punkt). Name nicht final, Markenprüfung offen.
 **Zuständig:** Maxi (allein). Gearbeitet wird auf dem Branch `website/build`, nur im Ordner `website/`. `product/` und alles andere fasst die Website-Arbeit nicht an.
 
 > **Update v2 (22.10.2026, Feedback Maxi D.):** Aufbau jetzt: 01 Hero (Text links, drei Fotos mit Produktausschnitten rechts), 02 Problem und Lösung mit animiertem Ablauf (Eingänge ERP, E-Mail, PDF, Pläne, Excel, Foto, Sprachnachricht, WhatsApp → Zwilling des Betriebs aus Projekten → Schlussrechnung mit Prüfungen), 03 Produktvideo, 04 Über uns (LinkedIn-Fotos, alle Co-Founder, Logos in Ultramarin), 05 Demo buchen. Hauptprodukt nach außen ist die Schlussrechnung, der Zwilling ist die Grundlage. Keine Navigation oben, Messpunkt-Navigation links, Schiebeschalter DE/EN. Entfallen: Legende/Prinzipien, Bau-Insider-Karte, klickbarer Zwilling. Bildquellen: `public/hero/QUELLEN.md`.
@@ -9,6 +9,8 @@
 > **Update v3 (22.10.2026):** Hero ohne Zielgruppen-Kacheln, drei Fotos mit je einem Nutzen (vergessene Leistung, Mehrmenge aus Planänderung, alle Belege an einem Ort). Problem und Lösung untereinander, ohne Zahlen (keine belastbare Quelle für AT/DE gefunden). Eingänge MECE nach Datenart: Systeme, Dokumente, Kommunikation. Zwilling als Betrieb mit Firmenwissen, Projektübersicht und Einblick bis zur Position mit Belegen. Messpunkt-Navigation rechts mit allen Namen. Demo mit Terminwahl (Dummy, Kalender-Anbindung offen), Verlauf Papier zu Ultramarin.
 
 > **Update v4 (22.10.2026):** Logo „Ecke“ (zwei Plan-Ecken, Punkt in Ultramarin). Hero-Karte 2 zeigt eine per Mail angeordnete Änderung statt Mehrmenge. Problem als animierte Projekt-Zeitleiste mit Schalter „Heute | Mit Tieout.“. Zwilling in zwei Ebenen (Betrieb, Projekt). Blauer Übergang wie bei Dryft beim Video. Demo mit Monatskalender und freien Zeiten (Dummy).
+
+> **Update v8 (22.10.2026):** Seitennavigation auf Laptops (1240 bis 1559 px) kompakt, darunter aus. Video passt auf Laptop-Bildschirme. Zeitleiste startet bei jedem Hinscrollen neu, rund 3 Sekunden, ohne Wiederholen-Knopf. Favicon: Logo auf Weiß. LinkedIn-Banner unter `brand/linkedin/`. Wo die Abschnitte weiter unten von den Updates abweichen, gelten die Updates.
 
 > **Update v7 (22.10.2026):** Name klein und ohne Punkt: **tieout**. „Regie“ ersetzt durch Stundenarbeit bzw. Stundenzettel. Beispielzahlen Projekt Wien 21 durchgehend gleich: 5.546 € offen (Zeitleiste, Projekt-Tabelle, Ergebnis), Stundensatz 65 €/h. Beträge im Format „1.290 €“. Team mit Rollen (CEO, COO, CTO, CFO), Stationen laut LinkedIn. Am Handy steht in der Zeitleiste jeder Betrag direkt unter seinem Ereignis. Domain tieout.at in Cloudflare angebunden, Nameserver-Umstellung bei easyname offen.
 
@@ -18,10 +20,10 @@
 
 ## 1. Ziel
 
-Die Seite erklärt in wenigen Sekunden: **Tieout. ist der digitale Zwilling eines Elektro- oder HKLS-Betriebs.** Die Schlussrechnung ist die erste Anwendung, nicht das Produkt.
+Die Seite erklärt in wenigen Sekunden: **tieout ist der digitale Zwilling eines Elektro- oder HKLS-Betriebs.** Die Schlussrechnung ist die erste Anwendung, nicht das Produkt.
 
 - GTM, Angebote und Preise sind offen: keine Preise, keine Pakete, kein „Check anfragen“.
-- CTA neutral: **„Kontakt aufnehmen“** `[[PLATZHALTER: finaler CTA]]`.
+- CTA: **„Demo buchen“** mit Terminwahl (Entscheidung Maxi D., 22.10.). Keine Preise, keine Pakete.
 - Leser: Inhaber, Abrechner und Projektleiter, Bau-Insider (Gate R1), Partner, Investoren, Wettbewerbe.
 - Die Seite ist selbst ein Beweis: präzise, interaktiv, technisch sauber.
 
@@ -66,7 +68,7 @@ Die Seite erklärt in wenigen Sekunden: **Tieout. ist der digitale Zwilling eine
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ Tieout.     Zwilling  Anwendungen  Team   DE|EN  [CTA] │  Navigation
+│ tieout      Zwilling  Anwendungen  Team   DE|EN  [CTA] │  Navigation
 ├──────────────────────────────────────────────────────┬───┤
 │ 01 HERO        Ihr Betrieb. Auf einem Plan.          │ ⌖ │  Messpunkt-
 │                Raster zeichnet sich → Zwilling       │ │ │  Navigation
@@ -85,7 +87,7 @@ Die Seite erklärt in wenigen Sekunden: **Tieout. ist der digitale Zwilling eine
 
 | # | Abschnitt | Inhalt | Interaktion | Platzhalter |
 |---|---|---|---|---|
-| 00 | **Navigation** | Wortmarke „Tieout.“, Anker, `DE \| EN`, CTA | bleibt oben, wird beim Scrollen schmaler | CTA-Text |
+| 00 | **Navigation** | Wortmarke „tieout“, Anker, `DE \| EN`, CTA | bleibt oben, wird beim Scrollen schmaler | CTA-Text |
 | 01 | **Hero** | „Ihr Betrieb. Auf einem Plan.“ / „Your business. On one plan.“ Unterzeile: der digitale Zwilling für Elektro- und HKLS-Betriebe | Rasterlinien zeichnen sich, eine Maßkette misst „8 Projekte“, Übergang in den Zwilling | Unterzeile |
 | 02 | **Problem** | Wissen verstreut (ERP, Mails, Papier, Köpfe); vieles informell (Telefon, Zuruf, WhatsApp); geht ein PL, geht sein Wissen; Auftraggeber prüfen mit KI | Karten zeichnen sich beim Scrollen ein | Zahlen nur mit Quelle (Dossier Abschnitt 2) |
 | 03 | **Zwilling** | Herzstück, siehe Abschnitt 6 | interaktiv | Daten synthetisch, gekennzeichnet |
@@ -171,7 +173,7 @@ Rollen und Texte schreibt jeder selbst. Nichts wird automatisch von LinkedIn üb
 | Team-Rollen, Fotos, Texte | Team | jeder selbst |
 | Anrede Sie oder ihr | alle Texte | Team |
 
-**Online (Entscheidung Maxi D., 22.10.2026):** Die Seite ist per Link offen erreichbar (`endpoint-preview.pages.dev`), mit `noindex` und Vorschau-Hinweis. Risiko bewusst getragen: Impressum und Datenschutz sind noch Platzhalter, obwohl die Impressumspflicht (§ 5 ECG, § 25 MedienG) für jede abrufbare Website gilt. Vor einer aktiven Verbreitung (Verlinkung, LinkedIn, Bewerbungen) Impressum mit echten Angaben füllen. Vollständig live erst, wenn `npm run check:platzhalter` nichts mehr findet.
+**Online (Entscheidung Maxi D., 22.10.2026):** Die Seite ist per Link offen erreichbar (`tieout-at.pages.dev`, später `tieout.at`), mit `noindex` und Vorschau-Hinweis. Risiko bewusst getragen: Impressum und Datenschutz sind noch Platzhalter, obwohl die Impressumspflicht (§ 5 ECG, § 25 MedienG) für jede abrufbare Website gilt. Vor einer aktiven Verbreitung (Verlinkung, LinkedIn, Bewerbungen) Impressum mit echten Angaben füllen. Vollständig live erst, wenn `npm run check:platzhalter` nichts mehr findet.
 
 ---
 
@@ -228,7 +230,7 @@ Nach jedem Schritt: Commit und Push auf `website/build`. Merge in `main`, wenn e
 
 | # | Frage | Vorschlag |
 |---|---|---|
-| 1 | Finaler CTA | „Kontakt aufnehmen“, bis GTM steht |
+| 1 | Finaler CTA | „Demo buchen“ (22.10.), Kalender-Anbindung offen |
 | 2 | Anrede | „Sie“ |
 | 3 | Technik Zwilling | nach Prototyp in Schritt 4 |
 | 4 | Hosting | EU-Anbieter, passend zu den Prinzipien |

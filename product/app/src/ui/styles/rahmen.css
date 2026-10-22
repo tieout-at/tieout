@@ -233,6 +233,11 @@ body {
   .scr {
     flex-direction: column;
   }
+  /* Waagrechte Leiste: rechter Rand blendet aus, solange noch Einträge folgen (wie breite Tabellen, tabellen.css) */
+  .sw-sidebar {
+    animation: rand-blende linear both;
+    animation-timeline: scroll(self inline);
+  }
   .sw-sidebar {
     width: auto;
     min-height: 0;
@@ -298,7 +303,7 @@ body {
 }
 
 @media (max-width: 640px) {
-  .sw-pagehead__path .sw-crumb {
+  .sw-pagehead__path .sw-crumb:not(.sw-crumb--projekt) {
     display: none;
   }
 }

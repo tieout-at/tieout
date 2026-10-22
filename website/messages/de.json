@@ -22,7 +22,7 @@
   "hero": {
     "eyebrow": "Für Elektro- und HKLS-Betriebe",
     "title1": "Schlussrechnungen,",
-    "title2": "die nichts liegen lassen.",
+    "title2": "die nichts liegen lassen",
     "sub": "tieout prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
     "cta": "Demo buchen",
     "secondary": "So funktioniert es",
@@ -43,8 +43,8 @@
   },
   "solution": {
     "problemEyebrow": "02 · Problem",
-    "title": "Am Projektende fehlt Geld, das längst verdient ist.",
-    "problem": "Stundenarbeit ohne Unterschrift, Mehrmengen, Änderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Und Auftraggeber prüfen Rechnungen zunehmend mit Software.",
+    "title": "Am Projektende fehlt Geld, das längst verdient ist",
+    "problem": "Stundenarbeit ohne Unterschrift, Mehrmengen, Änderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Gleichzeitig prüfen Auftraggeber Rechnungen immer öfter mit Software und kürzen, was nicht belegt ist.",
     "solutionEyebrow": "03 · Lösung",
     "solution": "tieout verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
     "flow": {
@@ -60,13 +60,13 @@
         {
           "k": "erp",
           "label": "ERP",
-          "detail": "Projekte, Rechnungen",
+          "detail": "Rechnungen",
           "g": 0
         },
         {
           "k": "ava",
           "label": "AVA",
-          "detail": "Kalkulation, Preise",
+          "detail": "Preise",
           "g": 0
         },
         {
@@ -107,8 +107,8 @@
         },
         {
           "k": "foto",
-          "label": "Fotos, Sprachnachrichten",
-          "detail": "",
+          "label": "Fotos",
+          "detail": "Sprachnachrichten",
           "g": 2
         }
       ],
@@ -272,14 +272,14 @@
   },
   "video": {
     "eyebrow": "04 · Produktvideo",
-    "title": "tieout in drei Minuten.",
+    "title": "tieout in drei Minuten",
     "placeholder": "[[PLATZHALTER: Produktvideo]]",
     "soon": "Das Video folgt.",
     "play": "Video abspielen"
   },
   "team": {
     "eyebrow": "05 · Über uns",
-    "title": "Wer tieout baut.",
+    "title": "Wer tieout baut",
     "role": "Co-Founder",
     "linkedin": "LinkedIn",
     "members": [
@@ -289,7 +289,7 @@
         "linkedin": "https://www.linkedin.com/in/maximilian-dieringer/",
         "logos": [
           "wu",
-          "usc",
+          "simonkucher",
           "tacto"
         ],
         "title": "CEO"
@@ -300,7 +300,8 @@
         "linkedin": "https://www.linkedin.com/in/maximilian-seipl/",
         "logos": [
           "wu",
-          "enpal"
+          "enpal",
+          "icons"
         ],
         "title": "COO"
       },
@@ -310,7 +311,8 @@
         "linkedin": "https://www.linkedin.com/in/santino-schrader/",
         "logos": [
           "tuwien",
-          "hanswomen"
+          "hanswomen",
+          "start"
         ],
         "title": "CTO"
       },
@@ -320,7 +322,8 @@
         "linkedin": "https://www.linkedin.com/in/simonfuhrbach/",
         "logos": [
           "wu",
-          "tacto"
+          "tacto",
+          "feldwerke"
         ],
         "title": "CFO"
       }
@@ -328,7 +331,7 @@
   },
   "contact": {
     "eyebrow": "06 · Demo",
-    "title": "Demo buchen.",
+    "title": "Demo buchen",
     "sub": "Wir zeigen Ihnen tieout an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
     "points": [
       "30 Minuten, online",
@@ -336,7 +339,7 @@
       "Keine Daten von Ihnen nötig"
     ],
     "mailLabel": "Oder per Mail",
-    "mail": "kontakt@[[PLATZHALTER: Domain]]",
+    "mail": "kontakt@tieout.at",
     "fields": {
       "name": "Name",
       "company": "Firma",
@@ -378,8 +381,8 @@
     "impressum": "Impressum",
     "datenschutz": "Datenschutz",
     "linkedin": "LinkedIn",
-    "linkedinPlaceholder": "[[PLATZHALTER: LinkedIn-Seite]]",
-    "preview": "Vorschau"
+    "preview": "Vorschau",
+    "linkedinUrl": "https://www.linkedin.com/company/tieout-at/"
   },
   "legal": {
     "back": "Zurück zur Startseite",
@@ -421,7 +424,7 @@
         ],
         [
           "Kontakt",
-          "kontakt@[[PLATZHALTER: Domain]]"
+          "kontakt@tieout.at"
         ],
         [
           "Aufsichtsbehörde, Kammer",

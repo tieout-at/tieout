@@ -1,0 +1,66 @@
+{
+  "id": "projekt-unklar-bereich-turnsaal",
+  "titel": "Nur Bereich genannt (Turnsaal-Garderobe), passt nur zu Baden",
+  "kategorie": "projekt_unklar",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt kurz, klein, Abkürzungen wie 'std' und 'gu'",
+    "verhalten": "Steht Baden in der Zusammenfassung oder fragt der Agent 'Volksschule Baden?', bestätigt er mit 'Passt' bzw. 'ja'. Schlägt der Agent ein anderes Projekt vor, schreibt er 'na schule baden'."
+  },
+  "start": "2026-10-15T12:45:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "turnsaal garderobe buben 3 brausen auf thermostat armaturen umbaut weil die schule das jetzt will. bauleiter gu sagt machen. 1 mann 2,5 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ort": "Garderobe Buben beim Turnsaal",
+        "leistung": "3 Brausearmaturen auf Thermostatarmaturen umgebaut",
+        "menge": {
+          "wert": 3,
+          "einheit": "Stk"
+        },
+        "personen": 1,
+        "dauerStunden": 2.5,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ortStichwoerter": [
+          "Garderobe",
+          "Turnsaal"
+        ],
+        "leistungStichwoerter": [
+          "Brause",
+          "Armatur",
+          "Dusche",
+          "Thermostat"
+        ],
+        "mengeWert": 3,
+        "personen": 1,
+        "dauerStunden": 2.5,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt am Turnsaal, dass nur die Volksschule Baden passt, ordnet zu (höchstens eine kurze Bestätigungsfrage) und zeigt Baden in der Zusammenfassung."
+  }
+}

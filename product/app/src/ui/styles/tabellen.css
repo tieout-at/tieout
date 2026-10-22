@@ -14,6 +14,24 @@
   container-type: inline-size;
 }
 
+/* Rechter Rand blendet aus, solange rechts noch Spalten folgen (am Handy ohne Bildlaufleiste der einzige Hinweis).
+ * Gesteuert vom eigenen Bildlauf: ohne Überlauf, am rechten Ende und ohne Browser-Unterstützung gar keine Maske,
+ * damit Tabellen ohne Überlauf genau gleich bleiben. */
+@keyframes rand-blende {
+  from,
+  95% {
+    mask-image: linear-gradient(to right, var(--text) calc(100% - var(--space-8)), transparent);
+  }
+  to {
+    mask-image: none;
+  }
+}
+.tw,
+.ledger-rahmen {
+  animation: rand-blende linear both;
+  animation-timeline: scroll(self inline);
+}
+
 .tab-liste {
   table-layout: fixed;
 }
@@ -129,6 +147,46 @@
   .sw-table.liste-mobil td {
     border-bottom: 0;
     align-content: center;
+  }
+  /* Projektliste: Kopf mit der Betragsspalte; je Projekt oben Name und Betrag, darunter Ampel und Datum */
+  .sw-table.tab-firma.liste-mobil thead {
+    display: table-header-group;
+  }
+  .sw-table.tab-firma.liste-mobil tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+  .sw-table.tab-firma.liste-mobil tr::after {
+    content: "";
+    flex-basis: 100%;
+    order: 3;
+  }
+  .tab-firma td {
+    height: auto;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+  .tab-firma tr > :first-child {
+    flex: 1 1 0;
+    min-width: 0;
+    order: 1;
+  }
+  .tab-firma tr > .r {
+    order: 2;
+  }
+  .tab-firma .mobil-ampel,
+  .tab-firma .mobil-datum {
+    order: 4;
+    padding-top: 0;
+  }
+  .tab-firma .mobil-datum {
+    padding-left: 0;
+    color: var(--text-muted);
+  }
+  .tab-firma .mobil-ampel:empty,
+  .tab-firma .mobil-datum:empty {
+    display: none;
   }
 }
 

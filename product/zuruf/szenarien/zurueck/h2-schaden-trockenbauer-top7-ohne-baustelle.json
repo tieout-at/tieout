@@ -1,0 +1,32 @@
+{
+  "id": "h2-schaden-trockenbauer-top7-ohne-baustelle",
+  "titel": "Trockenbauer hat Heizleitung angebohrt, Foto und Text ohne Baustelle",
+  "kategorie": "reparatur_schaden",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt schnell in Kleinbuchstaben, ohne Satzzeichen, leicht aufgebracht",
+    "verhalten": "Fragt der Agent nach der Baustelle, schreibt er 'favoriten haus b'. Fragt der Agent, wer die Reparatur angeschafft hat, schreibt er 'keiner, war ja alles nass, hab i selber gmacht'. Bei richtiger Zusammenfassung 'passt'. Danach fragt er: 'zahlt des jetzt der trockenbauer?'"
+  },
+  "start": "2026-11-03T11:05:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "foto", "inhalt": "Nahaufnahme: frisches Bohrloch in einer Gipskartonwand, dahinter ein Kupferrohr mit Bohrspur, Wasserlacke am Estrich, daneben ein fremder Akkuschrauber." },
+    { "art": "text", "inhalt": "top 7 im bad trockenbauer hat unsere heizleitung angebohrt. hab abgedreht und mit pressfitting repariert 1,5h allein" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus B, Top 7, Bad", "leistung": "Vom Trockenbauer angebohrte Heizleitung abgesperrt und repariert", "personen": 1, "dauerStunden": 1.5, "material": "Pressfitting" }
+    ],
+    "weissNicht": ["Name des Trockenbauers", "wer den Schaden bezahlt"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Top 7", "Top7"], "leistungStichwoerter": ["Heizleitung", "Leitung", "repariert", "angebohrt"], "personen": 1, "dauerStunden": 1.5, "mussLeerSein": ["angewiesenVon", "datum", "menge"] }
+    ],
+    "maxRueckfragen": 2,
+    "verboteneInhalte": ["Schadenersatz", "Haftung", "haftet", "Versicherung"],
+    "sollVerhalten": "Foto und Text als einen Zuruf behandeln. Top 7 gibt es in Wien 21 und Wien 10, also mit Auswahl nach der Baustelle fragen statt raten. Trockenbauer als Verursacher bzw. Grund festhalten, nicht als Anweiser. Auf die Frage, ob der Trockenbauer zahlt, nicht entscheiden, sondern sinngemäß: Das schaut sich das Büro an, das Foto ist abgelegt."
+  }
+}

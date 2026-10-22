@@ -1,0 +1,61 @@
+{
+  "id": "dialekt-einfaches-deutsch",
+  "titel": "Monteur mit anderer Erstsprache, einfaches Deutsch",
+  "kategorie": "dialekt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Einfaches Deutsch, kurze Satzteile, Verben im Infinitiv, Rechtschreibfehler, schreibt Text",
+    "verhalten": "Versteht kurze Fragen und Knöpfe. Bei langen oder verschachtelten Sätzen schreibt er 'nicht verstehe'. Fragt der Agent, welcher Polier, schreibt er 'polier von baumeister, nicht unser'. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-23T10:05:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "hallo. wien 21 stiege 3 top 22 bad. wanne abfluss kaput, ich mache neu und silikon neu. polier sagt. ich alleine 2 stunde"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 3, Top 22, Bad",
+        "leistung": "Wannenablauf erneuert, Silikonfuge neu",
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Top 22"
+        ],
+        "leistungStichwoerter": [
+          "Wanne",
+          "Abfluss",
+          "Ablauf",
+          "Silikon"
+        ],
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Antwortet in kurzen, einfachen Sätzen mit Knöpfen, ohne Büro-Fachwörter und ohne herablassend zu wirken. Darf einmal klären, welcher Polier gemeint ist, muss aber nicht."
+  }
+}

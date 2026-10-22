@@ -1,0 +1,57 @@
+{
+  "id": "projekt-unklar-kein-projekt",
+  "titel": "Heizkörper im Stiegenhaus getauscht, keine Baustelle genannt",
+  "kategorie": "projekt_unklar",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, kurze Sprachnachrichten, geht davon aus, dass man weiß, wo er ist",
+    "verhalten": "Wenn der Agent nach der Baustelle fragt, drückt er den Knopf 'Wien 21' oder schreibt '21er'. Fragt der Agent nach der Stiege, sagt er 'Stiege 1'. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-07T09:20:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Hallo, im Stiegenhaus den Heizkörper tauscht, der alte war undicht, hat der Polier vom Baumeister gsagt. I allan, zwa Stund."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 1, Stiegenhaus",
+        "leistung": "Undichten Heizkörper im Stiegenhaus getauscht",
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Stiegenhaus"
+        ],
+        "leistungStichwoerter": [
+          "Heizkörper"
+        ],
+        "personen": 1,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Fragt genau einmal nach der Baustelle, am besten mit den laufenden Projekten als Auswahl, und rät kein Projekt. Tulln ist abgeschlossen und gehört nicht in die Auswahl."
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "id": "nur-foto-ohne-text",
+  "titel": "Nur ein Foto vom umgelegten Lüftungskanal, kein Text",
+  "kategorie": "nur_foto",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Schickt zuerst nur das Foto, antwortet dann per Sprachnachricht, Wiener Umgangssprache",
+    "verhalten": "Fragt der Agent offen, was das war und wo, sagt er in einer Sprachnachricht: 'Wien 10, Haus B, Top 9, Kanal um den Unterzug umglegt, hat der Bauleiter vom GU so wolln, zu zweit, drei Stunden.' Fragt der Agent nur nach der Baustelle, drückt er 'Wien 10' und sagt den Rest erst bei der nächsten Frage. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-22T10:40:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "foto",
+      "inhalt": "Foto: offene Gipskartondecke in einem Wohnungsflur, darin ein frisch montierter verzinkter Rechteck-Lüftungskanal mit zwei neuen Bögen um einen Betonunterzug herum. An der Wand ein Klebezettel mit 'Top 9'. Keine Personen im Bild."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus B, Top 9, Flur",
+        "leistung": "Lüftungskanal um Unterzug umgelegt",
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Top 9"
+        ],
+        "leistungStichwoerter": [
+          "Lüftungskanal",
+          "Kanal",
+          "Lüftung"
+        ],
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 2,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt Kanal und 'Top 9' aus dem Bild, rät aber kein Projekt (Top 9 gibt es in Wien 21 und Wien 10). Stellt eine kurze Frage, was das war und auf welcher Baustelle, und fasst danach zusammen."
+  }
+}

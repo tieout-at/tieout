@@ -1,0 +1,94 @@
+{
+  "id": "mehrere-punkte-zwei-nachrichten",
+  "titel": "Zweiter Punkt kommt als eigene Sprachnachricht hinterher ('ah und no was')",
+  "kategorie": "mehrere_punkte",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Erst kurzer Text, dann schnelle Sprachnachricht hinterher, Wiener Umgangssprache",
+    "verhalten": "Fragt der Agent, wie viele Leute beim zweiten Punkt waren, sagt er 'i allan'. Drückt 'Passt', wenn beide Punkte stimmen. Bekommt er den Müllraum doppelt, schreibt er 'des is zwamal drin'."
+  },
+  "start": "2026-10-27T09:40:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "w10 müllraum bodenablauf versetzt weil die container woanders stehn. polier baumeister. 1 mann 3 std"
+    },
+    {
+      "art": "sprache",
+      "inhalt": "Ah, und no was, im Fahrradraum hamma die Wasserleitung für den Auslaufhahn verlängert, so a vier Meter, hat auch der Polier wolln, a Stund."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Müllraum",
+        "leistung": "Bodenablauf versetzt, weil Container anders stehen",
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVon": "Polier des Baumeisters"
+      },
+      {
+        "projektId": "w10",
+        "ort": "Fahrradraum",
+        "leistung": "Wasserleitung zum Auslaufventil verlängert",
+        "menge": {
+          "wert": 4,
+          "einheit": "m"
+        },
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 2,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Müllraum"
+        ],
+        "leistungStichwoerter": [
+          "Bodenablauf",
+          "Ablauf"
+        ],
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      },
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Fahrradraum"
+        ],
+        "leistungStichwoerter": [
+          "Wasserleitung",
+          "Leitung",
+          "Auslauf"
+        ],
+        "mengeWert": 4,
+        "dauerStunden": 1,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Macht aus den zwei Nachrichten zwei Einträge auf Wien 10 (das Projekt für den zweiten Punkt aus der ersten Nachricht zu übernehmen ist in Ordnung). Kein doppelter Müllraum-Eintrag; die Personenzahl beim zweiten Punkt nicht raten, sondern fragen oder offen lassen."
+  }
+}

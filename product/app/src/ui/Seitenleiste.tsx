@@ -16,9 +16,8 @@ import {
   LayoutList,
   ListChecks,
   PanelLeft,
-  RotateCcw,
+  Settings,
   ShieldCheck,
-  SunMoon,
   Table,
   type LucideIcon,
 } from "lucide-react";
@@ -28,9 +27,8 @@ import type { NavProjekt } from "@/daten/demo";
 import { zahl } from "./format";
 import { Ico } from "./Ico";
 import { LogoMark, Wortmarke } from "./Logo";
-import { navWechseln, themaWechseln, useNavZu } from "./thema";
-import { zeigeToast } from "./Toast";
-import { allesZuruecksetzen, wiederherstellen } from "@/zustand/speicher";
+import { navWechseln, useNavZu } from "./thema";
+import { anzeigename, initialen, useNutzer } from "@/anmeldung/client";
 import { useEffect } from "react";
 
 interface Eintrag {
@@ -96,6 +94,7 @@ export function Seitenleiste({
   const pfad = usePathname();
 
   const zu = useNavZu();
+  const nutzer = useNutzer();
 
   // Kurztaste „[“ klappt die Seitenleiste ein und aus (Linear); nicht mit Cmd oder in Eingabefeldern.
   useEffect(() => {
@@ -126,7 +125,7 @@ export function Seitenleiste({
   return (
     <aside className="sw-sidebar">
       <div className="brand-row">
-        <Link href="/" className="sw-brand" aria-label="Tieout" title="Tieout">
+        <Link href="/" className="sw-brand" aria-label="tieout" title="tieout">
           <LogoMark />
           <Wortmarke />
         </Link>
@@ -168,22 +167,11 @@ export function Seitenleiste({
         </nav>
       </div>
       <div className="nav-fill" />
-      <nav className="sw-nav" aria-label="Demo und Darstellung">
-        <button
-          type="button"
-          title="Alle Freigaben dieser Demo im Browser löschen"
-          onClick={() => {
-            const vorher = allesZuruecksetzen();
-            zeigeToast("Demo zurückgesetzt", () => wiederherstellen(vorher));
-          }}
-        >
-          <Ico icon={RotateCcw} />
-          <span className="nav-text">Demo zurücksetzen</span>
-        </button>
-        <button type="button" onClick={themaWechseln} title="Hell / Dunkel">
-          <Ico icon={SunMoon} />
-          <span className="nav-text">Hell / Dunkel</span>
-        </button>
+      <nav className="sw-nav" aria-label="Konto">
+        <Link href="/einstellungen/" aria-current={pfad.startsWith("/einstellungen") ? "page" : undefined} title="Einstellungen" className={nutzer ? "nav-profil" : undefined}>
+          {nutzer ? <span className="avatar">{initialen(anzeigename(nutzer))}</span> : <Ico icon={Settings} />}
+          <span className="nav-text">{nutzer ? anzeigename(nutzer) : "Einstellungen"}</span>
+        </Link>
       </nav>
     </aside>
   );

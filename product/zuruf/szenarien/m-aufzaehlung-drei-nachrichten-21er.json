@@ -1,0 +1,83 @@
+{
+  "id": "m-aufzaehlung-drei-nachrichten-21er",
+  "titel": "Polier kündigt 'drei Sachen' an und schickt sie in drei Nachrichten",
+  "kategorie": "aufzaehlung",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Wiener Umgangssprache, nummeriert seine Punkte, eine Nachricht pro Punkt, tippt schnell",
+    "verhalten": "Nach seiner ersten Nachricht schickt er, egal was der Agent antwortet, als nächste Nachricht genau diesen Text: '2) stiege 2 dach beim lüftungsgerät die filter tauscht, i alloa 1 std, öba hat des wolln'. Danach, wieder egal was der Agent antwortet, genau diesen Text: '3) keller stiege 1 strangabsperrung nachgrüstet, 2 mann 3 std, a die öba'. Vorher bestätigt er nichts und drückt keinen Knopf. Erst wenn alle drei Punkte gezeigt werden, drückt er 'Passt' (bei getrennten Zusammenfassungen jedes Mal). Fehlt ein Punkt, schreibt er 'und de andern?'."
+  },
+  "start": "2026-10-16T15:55:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "21er, drei sachen:\n1) technikraum ausdehnungsgefäß tauscht weil des alte undicht war, 2 mann 2 std, bauleiter gu"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Technikraum",
+        "leistung": "Undichtes Ausdehnungsgefäß getauscht",
+        "personen": 2,
+        "dauerStunden": 2,
+        "angewiesenVon": "Bauleiter des GU"
+      },
+      {
+        "projektId": "w21",
+        "ort": "Stiege 2, Dach, Lüftungsgerät",
+        "leistung": "Filter im Lüftungsgerät getauscht",
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVon": "ÖBA"
+      },
+      {
+        "projektId": "w21",
+        "ort": "Keller, Stiege 1",
+        "leistung": "Strangabsperrung nachgerüstet",
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVon": "ÖBA"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 3,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": ["Technikraum"],
+        "leistungStichwoerter": ["Ausdehnung", "Gefäß", "Gefaess"],
+        "personen": 2,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": ["Bauleiter"],
+        "mussLeerSein": ["menge", "datum"]
+      },
+      {
+        "projektId": "w21",
+        "ortStichwoerter": ["Dach", "Lüftungsgerät", "Stiege 2", "Stiege zwei"],
+        "leistungStichwoerter": ["Filter"],
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVonStichwoerter": ["ÖBA", "Bauaufsicht"],
+        "mussLeerSein": ["menge", "datum"]
+      },
+      {
+        "projektId": "w21",
+        "ortStichwoerter": ["Keller", "Stiege 1", "Stiege eins"],
+        "leistungStichwoerter": ["Strang", "Absperr"],
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": ["ÖBA", "Bauaufsicht"],
+        "mussLeerSein": ["menge", "datum"]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Merkt sich die Ankündigung 'drei Sachen' und wartet auf die restlichen Punkte, statt nach dem ersten Punkt schon eine Rückfrage zu stellen oder abzuschließen. Ordnet alle drei Punkte ohne neue Baustellenfrage dem 21er zu und legt nach Bestätigung drei Einträge ab. 'öba' als ÖBA (örtliche Bauaufsicht) verstehen, nicht nachfragen."
+  }
+}

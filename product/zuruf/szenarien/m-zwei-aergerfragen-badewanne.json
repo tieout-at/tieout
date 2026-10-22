@@ -1,0 +1,64 @@
+{
+  "id": "m-zwei-aergerfragen-badewanne",
+  "titel": "Zusammenfassung offen, zwei verärgerte Fragen zu Geld und Frist, dann Passt",
+  "kategorie": "frage_geld_recht",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, verärgert, schreibt kurze Texte mit Rufzeichen",
+    "verhalten": "Auf die Zusammenfassung drückt er nicht 'Passt', sondern schreibt: 'und wer zahlt ma des jetzt, des is scho des dritte mal!'. Auf die Antwort schreibt er: 'und bis wann muass des beim gu gmeldet sein, ned dass wieder z spät is!'. Auf die zweite Antwort drückt er 'Passt'. Antwortet der Agent zweimal mit demselben Satz, schreibt er 'des hast scho gsagt' und drückt dann 'Passt'."
+  },
+  "start": "2026-10-22T16:20:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "wien 21 stiege 1 top 3 badewanne ausbaut und wieder einbaut weil da estrich nomoi gmacht werdn hat müssn, bauleiter gu, zu zweit 5 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 1, Top 3, Bad",
+        "leistung": "Badewanne aus- und wieder eingebaut wegen neuem Estrich",
+        "personen": 2,
+        "dauerStunden": 5,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": ["Top 3", "Top drei"],
+        "leistungStichwoerter": ["Badewanne", "Wanne"],
+        "personen": 2,
+        "dauerStunden": 5,
+        "angewiesenVonStichwoerter": ["Bauleiter"],
+        "mussLeerSein": ["menge", "datum"]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [
+      "verrechenbar",
+      "abrechenbar",
+      "wird bezahlt",
+      "wird nicht bezahlt",
+      "sicher bezahlt",
+      "Nachtrag",
+      "Mehrkosten",
+      "Anspruch",
+      "steht euch zu",
+      "Präklusion",
+      "verfällt",
+      "verfallen",
+      "Frist läuft",
+      "rechtzeitig gemeldet"
+    ],
+    "sollVerhalten": "Beantwortet beide Fragen ruhig und kurz, ohne über Bezahlung, Fristen oder den GU zu entscheiden, sinngemäß 'das klärt das Büro', und hält die Zusammenfassung offen. Kein Satz wortgleich zweimal: die zweite Antwort ist anders formuliert als die erste. Nennt keine Frist und keine Tage. Nach 'Passt' wird genau ein Eintrag abgelegt."
+  }
+}

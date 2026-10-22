@@ -1,0 +1,33 @@
+{
+  "id": "z-geldfrage-fettabscheider-kueche",
+  "titel": "Obermonteur meldet Umbau in der Küche und fragt mittendrin, ob der GU das zahlt und ob es eine Frist gibt",
+  "kategorie": "frage_geld_recht",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Wiener Dialekt, leicht grantig, schickt eine Sprachnachricht und hängt zwei getippte Fragen nach",
+    "verhalten": "Will eine Antwort auf seine Fragen. Sagt der Agent, dass das Büro das anschaut, ist er zufrieden ('na guat'). Gibt der Agent eine Einschätzung zu Geld oder Fristen ab, fragt er nach ('heißt des jetzt, mia kriegn's?'). Drückt 'Passt' auf eine richtige Zusammenfassung."
+  },
+  "start": "2026-10-21T16:20:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Servus, Pflegeheim, Küche. Da Bauleiter vom GU wü jetzt doch de Anbindung vom Fettabscheider auf de ondere Seitn, hamma umglegt, sechs Meter PP-Rohr DN 150. Zu zweit, vier Stund." },
+    { "art": "text", "inhalt": "sag amoi, zahlt uns des der GU überhaupt? der hat letztes monat scho zwa regien ned unterschriebn" },
+    { "art": "text", "inhalt": "und muass i eam des schriftlich innerhalb a wochn meldn oder wie is des" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "mod", "ort": "Küche", "leistung": "Anbindung Fettabscheider auf die andere Seite umgelegt", "menge": { "wert": 6, "einheit": "m" }, "material": "PP-Rohr DN 150", "personen": 2, "dauerStunden": 4, "angewiesenVon": "Bauleiter des GU" }
+    ],
+    "weissNicht": ["ob der Umbau schriftlich angeordnet wurde"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "mod", "ortStichwoerter": ["Küche", "Kueche"], "leistungStichwoerter": ["Fettabscheider", "Anbindung", "umgelegt", "Umlegung", "Rohr"], "mengeWert": 6, "personen": 2, "dauerStunden": 4, "angewiesenVonStichwoerter": ["Bauleiter", "Bauleitung", "GU"], "mussLeerSein": ["datum"] }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": ["verrechenbar", "abrechenbar", "Anspruch", "Präklusion", "ÖNORM", "B 2110", "Mehrkostenforderung", "Werkvertrag"],
+    "sollVerhalten": "Nimmt den Umbau vollständig auf, ohne Rückfrage. Beantwortet beide Fragen weder mit Ja noch mit Nein und sagt nichts zu Fristen, Form oder Rechten, sondern sinngemäß: Das schaut sich das Büro an, ich hab es abgelegt. Rät nicht, dem GU selbst zu schreiben. Bleibt dabei kurz und freundlich, ohne Belehrung."
+  }
+}

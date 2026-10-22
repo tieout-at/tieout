@@ -1,0 +1,274 @@
+/* Konto: Anmeldeseite (Stil der Website, eckige Knöpfe, Planraster) und Einstellungen (Stil der App).
+ * Alle Werte aus tokens.css. */
+
+/* Anmelden (Vorlage: Website Tieout Kopf und Knöpfe; Linear-Anmeldung: eine schmale Spalte) */
+.login {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: var(--space-8) var(--space-4);
+  box-sizing: border-box;
+  color: var(--web-ink);
+  background-color: var(--web-paper);
+  background-image:
+    linear-gradient(var(--web-grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--web-grid-major) 1px, transparent 1px),
+    linear-gradient(var(--web-grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--web-grid-minor) 1px, transparent 1px);
+  background-size: 48px 48px, 48px 48px, 12px 12px, 12px 12px;
+  color-scheme: light;
+}
+.login__spalte {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  background: var(--web-white);
+  border: 1px solid var(--web-ink-15);
+  box-sizing: border-box;
+}
+.login__marke {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: var(--space-4);
+}
+.login__marke .logo-wort {
+  font-size: 22px;
+}
+.login .logo-mark__ecken {
+  stroke: var(--web-ink);
+}
+.login__titel {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.login__text {
+  margin: calc(var(--space-2) * -1) 0 var(--space-2);
+  color: var(--web-ink-60);
+  font-size: var(--fs-lg);
+}
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.login__label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--web-ink-60);
+}
+.login__feld {
+  height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--web-ink-60);
+  border-radius: 0;
+  background: var(--web-white);
+  color: var(--web-ink);
+  font: inherit;
+  font-size: 15px;
+}
+.login__feld:focus-visible {
+  outline: 2px solid var(--web-ultra);
+  outline-offset: 0;
+  border-color: var(--web-ultra);
+}
+.login__knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  margin-top: var(--space-2);
+  padding: 0 var(--space-5);
+  border: 1.5px solid var(--web-ultra);
+  border-radius: 0;
+  background: var(--web-ultra);
+  color: var(--web-white);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.login__knopf:hover {
+  background: var(--web-ink);
+  border-color: var(--web-ink);
+}
+.login__knopf:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.login__knopf--linie {
+  margin-top: 0;
+  background: transparent;
+  color: var(--web-ink);
+  border-color: var(--web-ink);
+}
+.login__knopf--linie:hover {
+  color: var(--web-white);
+}
+.login__oder {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--web-ink-60);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.login__oder::before,
+.login__oder::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--web-ink-15);
+}
+.login__zurueck {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--web-ink-60);
+  font: inherit;
+  cursor: pointer;
+}
+.login__zurueck:hover {
+  color: var(--web-ultra);
+}
+.login__fehler {
+  min-height: 20px;
+  margin: 0;
+  color: var(--web-neg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .login__knopf {
+    transition: none;
+  }
+}
+
+/* Einstellungen (Vorlage: Linear „Settings“: Abschnitte mit Titel, Zeilen mit Bezeichnung links und Wert rechts, Linien statt Kästen) */
+.einst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: 760px;
+}
+.einst__abschnitt {
+  display: flex;
+  flex-direction: column;
+}
+.einst__abschnitt > .section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+}
+.einst__zeile {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--row-h-2);
+  border-bottom: 1px solid var(--line);
+}
+.einst__label {
+  color: var(--text-secondary);
+}
+.einst__wert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.einst__feld {
+  height: var(--control-h);
+  width: 280px;
+  max-width: 100%;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.einst__feld:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+.einst__einladen {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.einst__hinweis {
+  margin: 0;
+  color: var(--text-muted);
+}
+.einst__person {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.tab-mitglieder {
+  table-layout: fixed;
+}
+
+/* Profilbild: Bild vom Anbieter oder Initialen (Linear, Attio) */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: var(--surface-selected);
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: normal;
+  object-fit: cover;
+}
+.avatar--gross {
+  width: 40px;
+  height: 40px;
+  font-size: var(--fs-md);
+}
+
+/* Profil unten in der Seitenleiste (Linear: Person unten, öffnet die Einstellungen) */
+.nav-profil .avatar {
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
+}
+@media (max-width: 640px) {
+  .einst__zeile {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    padding: var(--space-2) 0;
+  }
+}
+.einst__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  min-width: 0;
+}
+.einst__link code {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
