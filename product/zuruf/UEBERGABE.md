@@ -2,9 +2,20 @@
 
 Diese Datei ist das Gedächtnis zwischen Sitzungen und Claude-Accounts. Am Ende jeder Sitzung überschreiben, nicht anhängen.
 
-**Stand:** 22.10.2026, abends
-**Branch:** `zuruf/plan`
-**Phase:** 1 Kern und Simulator (läuft)
+**Stand:** 22.10.2026, spät
+**Branch:** `claude/zuruf-einbau-9345a1` (Einbau in die App), `zuruf/plan` ist gemergt (PR #25)
+**Phase:** 1 Kern und Simulator, Einbau in die App hinter dem Schalter `ZURUF_ECHT` (aus)
+
+## Einbau in die App (Go Maxi S. 22.10.)
+
+- Route `POST /api/zuruf/nachricht` und `GET /api/zuruf/status` in `worker/route.ts`: Schalter zur Laufzeit, 40 KI-Aufrufe pro Tag und 20 US-Dollar pro Monat (echte Kosten je Antwort, `antwortKostenUsd` in ki.ts), Zeit in Wiener Ortszeit, Gesprächsstand kommt vom Browser und geht neu zurück. Tests in `worker/route.test.ts`.
+- Lokal: `npm run app-server` (Port 3103, KI nach `ZURUF_KI`, Firma aus `../app/data/generated/zuruf-firma.json`, vorher in `product/app` `npm run generate`). Die App dazu mit `product/app/.env.local`: `NEXT_PUBLIC_ZURUF_API=http://localhost:3103/api/zuruf` (der lokale Server meldet sich immer als verfügbar).
+- Online: eingehängt in `product/app/worker/index.ts` (ohne Login vor den Assets, mit Login nach der Sitzung; `zurufAnfrage`), `nodejs_compat` in `wrangler.jsonc`, Zähler in Supabase (`worker/supabase.sql`: Tabelle `zuruf_tageszaehler`, Funktionen `zuruf_stand`, `zuruf_buche`). Fehlt Tabelle, Secret `ANTHROPIC_API_KEY` oder `ZURUF_ECHT=an` (Secret, zur Laufzeit gelesen), meldet der Status „nicht verfügbar“ und die App spielt die Szene vor. Online aus bis Go Maxi S.
+- Die App installiert dieses Paket mit (`postinstall` in `product/app/package.json`), damit Worker-Bündel und Typprüfung `zod` und das SDK finden.
+- Nur Node, nie in Worker oder Browser: `src/llm.ts` (Abo, .env), `src/speicher-datei.ts` (JSONL). Läuft überall: `src/ki.ts`, `src/agent.ts`, `src/speicher.ts`, `worker/route.ts` (gebündelt geprüft: keine `node:`-Importe; mit dem SDK im Worker 289 KiB gzip).
+- Echter Durchlauf 23.10. (Abo, lokal): „21er Stiege 3 Top 18, Waschtisch im Bad versetzt, Fliesen kommen anders, Bauleiter vom GU hat angschafft, zu zweit vier Stunden“ wurde vollständig erkannt (Ort, Leistung, Grund, 2 Leute, 4 Stunden, Anweiser), nach „Passt“ Z7 in Zeitachse, Liste „offen“ und Belegseite. Auf Windows nimmt `llm.ts` jetzt zuerst die native Installation (`%USERPROFILE%.localinclaude.exe`); eine ältere Version im PATH war abgelaufen angemeldet.
+- Browser-Code der App bindet aus diesem Paket nur Typen ein (`src/typen.ts`, `src/firma.ts`); nur der Worker der App nutzt `worker/route.ts`. Eigene CI: `.github/workflows/produkt-zuruf.yml`.
+- Nächster Schritt: Ablage B in Supabase (`worker/supabase.sql`, Tabelle `zuruf_ereignis`, nur anhängen, RLS je Firma über `app_metadata.firma`) statt Browser-Speicher, mit derselben Schnittstelle `ZurufAblage`.
 
 ## Erledigt
 
@@ -31,6 +42,7 @@ npm run szenarien:pruefen
 npm run lauf -- --ohne-bewerter
 npm run lauf
 npm run sim
+npm run app-server
 ```
 
 ## Stand der Lernschleife

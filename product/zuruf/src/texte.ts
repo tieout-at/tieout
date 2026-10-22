@@ -2,7 +2,7 @@
 // Regeln aus GESTALTUNG.md: du, kurz, keine Abrechnungsbegriffe, nie über Geld, Recht oder GU entscheiden.
 
 import { normalisiere } from "./belege.ts";
-import { projektNachId } from "./firma.ts";
+import { projektNachId, type Firma } from "./firma.ts";
 import type { Antwort, Eintrag, Feldname, Knopf } from "./typen.ts";
 
 export const KNOPF = {
@@ -21,7 +21,7 @@ export const KNOPF = {
   abgeschlossenAndere: { id: "abgeschlossen:andere", titel: "Andere Baustelle" },
 } satisfies Record<string, Knopf>;
 
-export const projektKnopf = (id: string): Knopf => ({ id: `projekt:${id}`, titel: projektNachId(id)?.kurz ?? id });
+export const projektKnopf = (id: string, firma?: Firma): Knopf => ({ id: `projekt:${id}`, titel: projektNachId(id, firma)?.kurz ?? id });
 
 export function begruessung(firma: string): Antwort {
   return {
@@ -109,14 +109,14 @@ export const aendernFrage = (): Antwort => ({
   text: "Was soll ich ändern? Schreib oder sprich es einfach.",
 });
 
-export function frageProjekt(kandidaten: string[], alle: string[]): Antwort {
+export function frageProjekt(kandidaten: string[], alle: string[], firma?: Firma): Antwort {
   if (kandidaten.length >= 2 && kandidaten.length <= 3) {
-    return { zweck: "rueckfrage", text: "Welche Baustelle?", knoepfe: kandidaten.map(projektKnopf) };
+    return { zweck: "rueckfrage", text: "Welche Baustelle?", knoepfe: kandidaten.map((id) => projektKnopf(id, firma)) };
   }
   return {
     zweck: "rueckfrage",
     text: "Welche Baustelle?",
-    liste: { titel: "Baustelle wählen", eintraege: alle.map(projektKnopf) },
+    liste: { titel: "Baustelle wählen", eintraege: alle.map((id) => projektKnopf(id, firma)) },
   };
 }
 
@@ -179,9 +179,9 @@ function zahl(n: number): string {
 }
 
 /** Wenige kurze Zeilen pro Punkt. Fehlendes erscheint als „Offen“, nicht geraten. */
-export function punktZeilen(e: Eintrag, heute: string, offen: Feldname[] = []): string[] {
+export function punktZeilen(e: Eintrag, heute: string, offen: Feldname[] = [], firma?: Firma): string[] {
   const zeilen: string[] = [];
-  const projekt = e.projektId ? (projektNachId(e.projektId.wert)?.kurz ?? e.projektId.wert) : "Baustelle offen";
+  const projekt = e.projektId ? (projektNachId(e.projektId.wert, firma)?.kurz ?? e.projektId.wert) : "Baustelle offen";
   const wo = [projekt, e.ort?.wert].filter(Boolean).join(", ");
   const wann = e.datum && e.datum.wert !== heute ? ` (am ${tag(e.datum.wert)})` : "";
   zeilen.push(wo + wann);
@@ -199,12 +199,12 @@ export function punktZeilen(e: Eintrag, heute: string, offen: Feldname[] = []): 
   return zeilen;
 }
 
-export function zusammenfassung(eintraege: Eintrag[], heute: string, korrektur: boolean, offen: Feldname[][] = []): Antwort {
+export function zusammenfassung(eintraege: Eintrag[], heute: string, korrektur: boolean, offen: Feldname[][] = [], firma?: Firma): Antwort {
   const kopf = korrektur ? "Geändert, hab ich jetzt so:" : "Danke, hab ich so:";
   const koerper =
     eintraege.length === 1
-      ? punktZeilen(eintraege[0]!, heute, offen[0]).join("\n")
-      : eintraege.map((e, i) => `${i + 1}) ${punktZeilen(e, heute, offen[i]).join("\n    ")}`).join("\n");
+      ? punktZeilen(eintraege[0]!, heute, offen[0], firma).join("\n")
+      : eintraege.map((e, i) => `${i + 1}) ${punktZeilen(e, heute, offen[i], firma).join("\n    ")}`).join("\n");
   return { zweck: "zusammenfassung", text: `${kopf}\n${koerper}`, knoepfe: [KNOPF.passt, KNOPF.aendern] };
 }
 

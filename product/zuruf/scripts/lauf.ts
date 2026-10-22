@@ -8,7 +8,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { spiele, type Ergebnis } from "../src/lernschleife.ts";
-import { kiWeg, kostenUsd, verbrauch } from "../src/llm.ts";
+import { frageStrukturiert, kiWeg, kostenUsd, verbrauch } from "../src/llm.ts";
 import { SzenarioSchema, type Szenario } from "../src/szenario.ts";
 import { kiVersteher } from "../src/verstehen.ts";
 
@@ -34,7 +34,7 @@ if (!szenarien.length) {
 }
 console.log(`${szenarien.length} Szenarien, ${bewerten ? "mit" : "ohne"} Bewerter, ${parallel} parallel, KI über ${kiWeg() === "abo" ? "Claude-Abo" : "API"}`);
 
-const versteher = kiVersteher();
+const versteher = kiVersteher({ frage: frageStrukturiert });
 const ergebnisse: Ergebnis[] = [];
 let naechstes = 0;
 async function arbeiter() {
