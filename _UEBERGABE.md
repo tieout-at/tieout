@@ -5,7 +5,7 @@
 
 ## 1. Wo wir stehen
 
-App **tieout** (klein, ohne Punkt) auf `main`, online unter **https://app.tieout.workers.dev** (endgültige Adresse). Noch per Cloudflare Access geschützt (E-Mail-Code), offen schalten ist ein Klick (Abschnitt 3). Am 22./23.10. gebaut und gemergt:
+App **tieout** (klein, ohne Punkt) auf `main`, online und **offen** unter **https://app.tieout.workers.dev** (endgültige Adresse, steht in der Abgabe-Mail an die Juroren, 23.10.). Cloudflare Access schützt nur noch die Vorschau-Adressen der Branches („Previews only“). Jeder Merge auf main ist nach 2 bis 3 Minuten für die Juroren sichtbar, deshalb nach jedem Merge im Browser prüfen. Worker und Subdomain nicht umbenennen und nicht in ein anderes Cloudflare-Konto umziehen, sonst ändert sich die Adresse. Am 22./23.10. gebaut und gemergt:
 
 | Was | PR |
 |---|---|
@@ -26,8 +26,7 @@ App **tieout** (klein, ohne Punkt) auf `main`, online unter **https://app.tieout
    - Supabase SQL-Editor: `product/zuruf/worker/supabase.sql` einspielen (Teil 1 Zähler ist Pflicht). Claude darf SQL selbst ausführen (Erlaubnis Maxi S.), danach per Lese-Abfrage prüfen.
    - Cloudflare, Worker `app`, Settings, Variables and Secrets, alles als Secret: `SUPABASE_SECRET_KEY` (geheimer Schlüssel von `tieout-app`), `ANTHROPIC_API_KEY`, zuletzt `ZURUF_ECHT` = `an` (mit Go).
    - Prüfen: `https://app.tieout.workers.dev/api/zuruf/status` zeigt `{"verfuegbar":true}`, in der Zeitachse von W21 heißt der Knopf „Zuruf schicken“. Grenzen im Code: 40 KI-Aufrufe pro Tag, 20 US-Dollar pro Monat, danach still zurück auf die vorgespielte Szene.
-3. **App offen schalten** (nach dem UI-Durchgang und einem Blick von Maxi S.): Cloudflare, Worker `app`, Reiter Access, Worker-Regel entfernen. Danach prüfen: `curl -I https://app.tieout.workers.dev` liefert 200 statt 302. `noindex` bleibt. Vorher `grep -r "PLATZHALTER" product/app/src` muss leer sein.
-4. **Launch-Video planen** (Details von Maxi S.). Das Video darf mehr zeigen als gebaut ist; was in der App fehlt, im Video als Ausblick kenntlich machen, weil Juroren danach selbst klicken.
+3. **Launch-Video planen** (Details von Maxi S.). Das Video darf mehr zeigen als gebaut ist; was in der App fehlt, im Video als Ausblick kenntlich machen, weil Juroren danach selbst klicken.
 
 ## 3. Wichtig zu wissen
 
@@ -55,4 +54,4 @@ Lehre: Messsitzungen (Tempo) brauchen eine Zeitgrenze im Auftrag, sonst messen s
 
 ## 6. Startprompt für den neuen Chat
 
-> Ich bin Maxi S. Lies `_UEBERGABE.md` und die dort genannten Dateien, hol den neuesten Stand von main. Zuerst gehen wir haarscharf über die UI, die Punkte gebe ich dir gleich. Danach API-Schlüssel und Zuruf-Agent online (Abschnitt 2, Punkt 2), dann App offen schalten und Launch-Video planen. Profi-Niveau wie Linear, Attio, reebuild. Wenig Text, keine „·“ und keine Gedankenstriche. Beträge nur aus dem Rechenkern, die Lösungsliste ändert sich nur mit meinem Go. Kosten nur mit meinem Go. PRs bei grüner CI selbst mergen. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Lies `_UEBERGABE.md` und die dort genannten Dateien, hol den neuesten Stand von main. Zuerst gehen wir haarscharf über die UI, die Punkte gebe ich dir gleich. Danach API-Schlüssel und Zuruf-Agent online (Abschnitt 2, Punkt 2), dann Launch-Video planen. Die App ist schon offen für die Juroren: nach jedem Merge im Browser prüfen. Profi-Niveau wie Linear, Attio, reebuild. Wenig Text, keine „·“ und keine Gedankenstriche. Beträge nur aus dem Rechenkern, die Lösungsliste ändert sich nur mit meinem Go. Kosten nur mit meinem Go. PRs bei grüner CI selbst mergen. Deutsch, einfach, Ergebnis zuerst.
