@@ -113,7 +113,7 @@ export default async function BelegSeite({ params }: Props) {
                   {befunde.map((b) => {
                     const t = teileTitel(b.titel);
                     return (
-                      <Link key={b.schluessel} href={`/projekte/${id}/befunde/${befundSlug(b.schluessel)}`}>
+                      <Link key={b.schluessel} href={`/projekte/${id}/befunde/${befundSlug(b.schluessel)}/`}>
                         <span>
                           {t.kennung && <span className="sw-pos-nr">{t.kennung}</span>}
                           {t.kennung ? t.text : ART_TEXT[b.art]}
