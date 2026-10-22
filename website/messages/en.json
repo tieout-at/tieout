@@ -291,7 +291,8 @@
         "logos": [
           "wu",
           "tacto"
-        ]
+        ],
+        "title": "CEO"
       },
       {
         "name": "Maximilian Seipl",
@@ -300,7 +301,8 @@
         "logos": [
           "wu",
           "enpal"
-        ]
+        ],
+        "title": "COO"
       },
       {
         "name": "Santino Schrader",
@@ -309,7 +311,8 @@
         "logos": [
           "tuwien",
           "hanswomen"
-        ]
+        ],
+        "title": "CTO"
       },
       {
         "name": "Simon Fuhrbach",
@@ -318,7 +321,8 @@
         "logos": [
           "wu",
           "tacto"
-        ]
+        ],
+        "title": "CFO"
       }
     ]
   },

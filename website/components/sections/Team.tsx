@@ -24,7 +24,7 @@ export function Team({ t }: { t: Messages["team"] }) {
               </div>
               <div className="member__body">
                 <div className="member__name">{m.name}</div>
-                <div className="member__role">{t.role}</div>
+                <div className="member__role">{t.role} · {m.title}</div>
               </div>
               <div className="member__logos">
                 {m.logos.map((l) => (
