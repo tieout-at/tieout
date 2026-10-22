@@ -306,6 +306,7 @@ export class ZurufAgent {
       this.heute(e),
       !!e.ersetzt,
       e.punkte.map((p) => this.offen(p, e)),
+      this.firma,
     );
   }
 
@@ -317,7 +318,7 @@ export class ZurufAgent {
     const ohneProjekt = e.punkte.filter((p) => !p.eintrag.projektId);
     if (ohneProjekt.length && darf("projekt")) {
       const kandidaten = [...new Set(ohneProjekt.flatMap((p) => p.projektKandidaten))].filter((id) => laufend.includes(id));
-      return { frage: "projekt", antwort: T.frageProjekt(kandidaten, laufend) };
+      return { frage: "projekt", antwort: T.frageProjekt(kandidaten, laufend, this.firma) };
     }
     const abgeschlossen = e.punkte.find((p) => p.eintrag.projektId && projektNachId(p.eintrag.projektId.wert, this.firma)?.status === "abgeschlossen");
     if (abgeschlossen && !e.abgeschlossenBestaetigt && darf("abgeschlossen")) {
@@ -387,7 +388,7 @@ export class ZurufAgent {
       // Der Absender hat selbst korrigiert: Die Projektfrage darf noch einmal kommen und zählt nicht als neue Rückfrage.
       const laufend = laufendeProjekte(this.firma).map((p) => p.id);
       e.phase = "warte_antwort";
-      return [T.frageProjekt([], laufend)];
+      return [T.frageProjekt([], laufend, this.firma)];
     }
     return this.weiter(z);
   }

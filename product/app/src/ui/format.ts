@@ -19,7 +19,15 @@ export function zeitpunkt(iso: string): string {
   return `${datum(iso.slice(0, 10))}, ${iso.slice(11, 16)}`;
 }
 
+// Ein Formatierer für alle Zähler: toLocaleString legt bei jedem Aufruf einen neuen an (messbar teuer in Listen).
+const ZAHL = new Intl.NumberFormat("de-AT");
+
+/** 1234 → „1.234“ (Zähler, Anzahl). */
+export function zahl(n: number): string {
+  return ZAHL.format(n);
+}
+
 /** Zählwort: 1 Posten, 2 Posten; 1 Beleg, 2 Belege. */
 export function anzahl(n: number, eins: string, mehr: string): string {
-  return `${n.toLocaleString("de-AT")} ${n === 1 ? eins : mehr}`;
+  return `${zahl(n)} ${n === 1 ? eins : mehr}`;
 }

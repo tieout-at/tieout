@@ -1,6 +1,6 @@
 # tieout (Arbeitstitel, vorher Schlusswerk): Projektkontext für Claude Code
 
-Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub unter github.com/schlusswerk/schlusswerk, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/dossier-v3.md`.
+Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub unter github.com/tieout-at/tieout, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/dossier-v3.md`.
 
 ## Worum es geht
 
@@ -12,7 +12,7 @@ Drei Angebote: Check (ein Projekt rückwirkend), Desk bzw. Jahresdesk (alle schl
 
 ## Wer arbeitet hier
 
-Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maximilian Seipl, Santino Schrader, Simon Fuhrbach. Maxi baut Website und Produkt mit KI Coding Agenten. Niemand im Team hat Bauhintergrund. Auf GitHub (Organisation `schlusswerk`): @MaximilianDieringer, @maxi589 (Maximilian Seipl), @Snoft (Santino Schrader), @simonfuhrbach-source (Simon Fuhrbach), alle Owner und gleichberechtigt. Ein Bau-Insider ist Pflicht (Gate R1).
+Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maximilian Seipl, Santino Schrader, Simon Fuhrbach. Maxi baut Website und Produkt mit KI Coding Agenten. Niemand im Team hat Bauhintergrund. Auf GitHub (Organisation `tieout-at`, vorher `schlusswerk`): @MaximilianDieringer, @maxi589 (Maximilian Seipl), @Snoft (Santino Schrader), @simonfuhrbach-source (Simon Fuhrbach), alle Owner und gleichberechtigt. Ein Bau-Insider ist Pflicht (Gate R1).
 
 ## Aufbau des Repositorys
 
@@ -22,11 +22,10 @@ Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maxim
 | `docs/dossier-v3.md` | **Gültiger Stand.** Kernprodukt, Recht, Preise, Markt, Konkurrenz, Gates, Plan, Bau, Startprompt |
 | `docs/research_notes/` | Recherche, z. B. `Kuro_reebuild_Fakten.md` (Steckbriefe, GU-Seite-Abwägung, Investorenstory, Quellen aus v2) |
 | `docs/archiv/` | Überholte Stände, z. B. Dossier v2. Nur noch als Quelle für Links zu Recht und Markt |
-| `business/` | 1-Pager, Problem-Solution Statement, Business Plan, Pitch (Markdown) |
+| `docs/README.md` | Inhaltsverzeichnis der Dokumente; dort auch geplante Inhalte (Pitch, Business Plan, Produktvideo) |
 | `product/` | Produkt: Datenmodell, Backend, Frontend, synthetische Demo-Daten |
 | `website/` | Öffentliche Website |
-| `brand/` | Marke: LinkedIn-Banner, erzeugt per Skript (`brand/linkedin/`) |
-| `video/` | Skript und Storyboard für das Produktvideo. Videodateien nicht ins Repository |
+| `brand/` | Marke: Logo, LinkedIn-Grafiken per Skript, fertige Dateien in `brand/linkedin/upload/` |
 
 Neue Recherche nach `docs/research_notes/`, Überholtes nach `docs/archiv/`. Keine Secrets committen (`.env`). Das Repository liegt nicht in OneDrive.
 

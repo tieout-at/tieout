@@ -4,7 +4,8 @@ Links bleibt ein Drittel frei, dort liegt das Logo der Seite. Zwei Fassungen: bl
 """
 import os, subprocess
 
-OUT = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "entwuerfe")
+os.makedirs(OUT, exist_ok=True)
 W, H = 1128, 191
 PAPER, INK, ULTRA = "#F4F6F9", "#0A1020", "#1D3BFF"
 FONTS = '<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=block" rel="stylesheet">'

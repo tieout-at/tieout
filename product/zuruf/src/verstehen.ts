@@ -3,7 +3,7 @@
 
 import { z } from "zod";
 import { FIRMA, firmaAlsText, projektNachId, type Firma } from "./firma.ts";
-import { frageStrukturiert, type Aufwand } from "./llm.ts";
+import type { Aufwand, KiFrage } from "./ki.ts";
 import type { Eintrag, Nachricht } from "./typen.ts";
 
 export const ABSICHTEN = [
@@ -167,9 +167,9 @@ function eingabeText(e: VerstehenEingabe): string {
   return teile.join("\n\n");
 }
 
-function alsEintrag(k: z.infer<typeof KiEintrag>): Eintrag {
+function alsEintrag(k: z.infer<typeof KiEintrag>, firma: Firma): Eintrag {
   const e: Eintrag = {};
-  if (k.projektId && projektNachId(k.projektId.wert)) e.projektId = k.projektId;
+  if (k.projektId && projektNachId(k.projektId.wert, firma)) e.projektId = k.projektId;
   if (k.ort) e.ort = k.ort;
   if (k.leistung) e.leistung = k.leistung;
   if (k.menge) e.menge = k.menge;
@@ -182,10 +182,12 @@ function alsEintrag(k: z.infer<typeof KiEintrag>): Eintrag {
   return e;
 }
 
-export function kiVersteher(opts: { firma?: Firma; aufwand?: Aufwand } = {}): Versteher {
-  const system = systemPrompt(opts.firma ?? FIRMA);
+/** Versteher mit KI. `frage` ist der KI-Weg: `frageStrukturiert` aus llm.ts (Node) oder `apiFrage` aus ki.ts (Worker). */
+export function kiVersteher(opts: { frage: KiFrage; firma?: Firma; aufwand?: Aufwand }): Versteher {
+  const firma = opts.firma ?? FIRMA;
+  const system = systemPrompt(firma);
   return async (eingabe) => {
-    const antwort = await frageStrukturiert({
+    const antwort = await opts.frage({
       schema: KiAntwort,
       system,
       nachrichten: [{ role: "user", content: eingabeText(eingabe) }],
@@ -197,10 +199,10 @@ export function kiVersteher(opts: { firma?: Firma; aufwand?: Aufwand } = {}): Ve
       ungeduldig: antwort.ungeduldig,
       angekuendigtePunkte: antwort.angekuendigtePunkte ?? undefined,
       eintraege: antwort.eintraege.map((k) => ({
-        eintrag: alsEintrag(k),
-        projektKandidaten: k.projektKandidaten.filter((id) => projektNachId(id)),
+        eintrag: alsEintrag(k, firma),
+        projektKandidaten: k.projektKandidaten.filter((id) => projektNachId(id, firma)),
         art: k.art,
-        unklar: k.unklar.filter((f) => !alsEintrag(k)[f]),
+        unklar: k.unklar.filter((f) => !alsEintrag(k, firma)[f]),
         bezugId: k.bezugId ?? undefined,
       })),
     };

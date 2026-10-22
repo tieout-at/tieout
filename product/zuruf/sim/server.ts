@@ -7,16 +7,17 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ZurufAgent } from "../src/agent.ts";
 import { FIRMA } from "../src/firma.ts";
-import { kiWeg, kostenUsd } from "../src/llm.ts";
-import { aktuellerStand, Arbeitsspeicher } from "../src/speicher.ts";
+import { frageStrukturiert, kiWeg, kostenUsd } from "../src/llm.ts";
+import { aktuellerStand } from "../src/speicher.ts";
+import { Dateispeicher } from "../src/speicher-datei.ts";
 import type { Nachricht, NachrichtArt, Rolle } from "../src/typen.ts";
 import { kiVersteher } from "../src/verstehen.ts";
 
 const hier = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT ?? 4321);
 
-let speicher = new Arbeitsspeicher(path.join(hier, "..", "laeufe", "sim"));
-let agent = new ZurufAgent(speicher, kiVersteher(), { kanal: "simulator" });
+let speicher = new Dateispeicher(path.join(hier, "..", "laeufe", "sim"));
+let agent = new ZurufAgent(speicher, kiVersteher({ frage: frageStrukturiert }), { kanal: "simulator" });
 let nr = 0;
 
 function json(res: import("node:http").ServerResponse, status: number, daten: unknown) {
@@ -61,8 +62,8 @@ createServer(async (req, res) => {
       return json(res, 200, { antworten });
     }
     if (req.method === "POST" && req.url === "/zuruecksetzen") {
-      speicher = new Arbeitsspeicher(path.join(hier, "..", "laeufe", "sim"));
-      agent = new ZurufAgent(speicher, kiVersteher(), { kanal: "simulator" });
+      speicher = new Dateispeicher(path.join(hier, "..", "laeufe", "sim"));
+      agent = new ZurufAgent(speicher, kiVersteher({ frage: frageStrukturiert }), { kanal: "simulator" });
       return json(res, 200, { ok: true });
     }
     json(res, 404, { fehler: "nicht gefunden" });

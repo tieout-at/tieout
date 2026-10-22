@@ -7,6 +7,7 @@
 
 import { useSyncExternalStore } from "react";
 import type { Eintrag } from "./freigabe";
+import { zurufeWiederherstellen, zurufeZuruecksetzen } from "./zurufe";
 
 const PRAEFIX = "sw-freigabe-v1:";
 const LEER: readonly Eintrag[] = [];
@@ -84,8 +85,14 @@ export function rueckgaengig(projektId: string, e: Eintrag) {
   schreiben(projektId, [...verlauf.slice(0, i), ...verlauf.slice(i + 1)]);
 }
 
-/** „Demo zurücksetzen“: alle Freigaben aller Projekte löschen; liefert den alten Stand für Rückgängig. */
-export function allesZuruecksetzen(): Map<string, readonly Eintrag[]> {
+/** Stand vor „Demo zurücksetzen“: Freigaben je Projekt und neue Zurufe samt Chat (zurufe.ts). */
+export interface Zuruecksetzstand {
+  freigaben: Map<string, readonly Eintrag[]>;
+  zurufe: Map<string, string>;
+}
+
+/** „Demo zurücksetzen“: alle Freigaben aller Projekte und alle neuen Zurufe löschen; liefert den alten Stand für Rückgängig. */
+export function allesZuruecksetzen(): Zuruecksetzstand {
   const ids = new Set(ohneSpeicher.keys());
   try {
     for (let i = 0; i < localStorage.length; i++) {
@@ -97,9 +104,10 @@ export function allesZuruecksetzen(): Map<string, readonly Eintrag[]> {
   }
   const vorher = new Map([...ids].map((id) => [id, lesen(id)] as const));
   ids.forEach((id) => schreiben(id, LEER));
-  return vorher;
+  return { freigaben: vorher, zurufe: zurufeZuruecksetzen() };
 }
 
-export function wiederherstellen(stand: Map<string, readonly Eintrag[]>) {
-  stand.forEach((verlauf, id) => schreiben(id, verlauf));
+export function wiederherstellen(stand: Zuruecksetzstand) {
+  stand.freigaben.forEach((verlauf, id) => schreiben(id, verlauf));
+  zurufeWiederherstellen(stand.zurufe);
 }

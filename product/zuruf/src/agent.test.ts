@@ -1,7 +1,8 @@
 // Gesprächsregeln ohne KI: Der Versteher wird durch feste Antworten ersetzt.
 import { describe, expect, it } from "vitest";
 import { ZurufAgent } from "./agent.ts";
-import { aktuellerStand, Arbeitsspeicher } from "./speicher.ts";
+import type { Firma } from "./firma.ts";
+import { aktuellerStand, Arbeitsspeicher, type SpeicherDaten } from "./speicher.ts";
 import type { Nachricht } from "./typen.ts";
 import type { Verstaendnis, Versteher, VerstehenEingabe } from "./verstehen.ts";
 
@@ -257,5 +258,48 @@ describe("Lernpunkte aus Lauf 2", () => {
     expect(a[0]!.text).toContain("Wie viele wart ihr");
     const b = await agent.verarbeite(knopf("personen:2", "Zu zweit"));
     expect(b[0]!.text).toContain("Wo genau");
+  });
+});
+
+describe("Einbau in die App", () => {
+  // Firma der App statt der vorläufigen Liste in firma.ts: Knöpfe und Zusammenfassung müssen deren Namen zeigen.
+  const firma: Firma = {
+    name: "Testfirma (fiktiv)",
+    gewerk: "HKLS",
+    projekte: [
+      { id: "a1-proj", name: "Anlage Eins", kurz: "Anlage 1", rufnamen: [], ort: "Wien", auftraggeber: "GU (fiktiv)", status: "laufend", bereiche: [] },
+      { id: "a2-proj", name: "Anlage Zwei", kurz: "Anlage 2", rufnamen: [], ort: "Wien", auftraggeber: "GU (fiktiv)", status: "laufend", bereiche: [] },
+    ],
+  };
+
+  it("nutzt die übergebene Firma für Knöpfe und Zusammenfassung", async () => {
+    const speicher = new Arbeitsspeicher();
+    speicher.setzeEinwilligung("a1", "monteur");
+    const agent = new ZurufAgent(speicher, stub(zuruf({ leistung: ["Kernbohrung", "Kernbohrung"] }, { kandidaten: ["a1-proj", "a2-proj"] })), { firma });
+    const a1 = await agent.verarbeite(msg("Kernbohrung gmacht"));
+    expect(a1[0]!.knoepfe?.map((k) => k.titel)).toEqual(["Anlage 1", "Anlage 2"]);
+    const a2 = await agent.verarbeite(knopf("projekt:a2-proj", "Anlage 2"));
+    expect(a2[0]!.text).toContain("Anlage 2");
+  });
+
+  it("führt das Gespräch ohne Server-Zustand weiter: Stand als JSON hin und zurück", async () => {
+    const versteher = stub(zuruf({ leistung: ["Kernbohrung", "Kernbohrung"] }, { kandidaten: ["w21", "w10"] }));
+    const start = new Arbeitsspeicher();
+    start.setzeEinwilligung("a1", "monteur");
+    let stand = JSON.parse(JSON.stringify(start.alsDaten())) as SpeicherDaten;
+    const schritt = async (n: Nachricht) => {
+      const speicher = Arbeitsspeicher.aus(stand);
+      const antworten = await new ZurufAgent(speicher, versteher).verarbeite(n);
+      stand = JSON.parse(JSON.stringify(speicher.alsDaten())) as SpeicherDaten;
+      return antworten;
+    };
+    expect((await schritt(msg("in Wien a Kernbohrung gmacht")))[0]!.zweck).toBe("rueckfrage");
+    expect((await schritt(knopf("projekt:w10", "Wien 10")))[0]!.zweck).toBe("zusammenfassung");
+    expect((await schritt(knopf("passt", "Passt")))[0]!.zweck).toBe("gespeichert");
+    expect(stand.ereignisse.map((e) => e.eintrag.projektId?.wert)).toEqual(["w10"]);
+    // Dieselbe Nachricht ein zweites Mal (Doppelklick, Netz) wird nicht noch einmal verarbeitet.
+    const doppelt = msg("noch was");
+    await schritt(doppelt);
+    expect(await schritt(doppelt)).toEqual([]);
   });
 });

@@ -1,8 +1,7 @@
 // Ablage: Eingang (jede Nachricht roh), Leistungsereignisse (nur anhängen) und Gesprächszustand pro Absender.
-// Phase 1: im Speicher, wahlweise zusätzlich als JSONL-Dateien. Datenbank kommt mit der Integration.
+// Läuft überall (Node, Cloudflare Worker). Als JSONL-Dateien schreibt `Dateispeicher` in speicher-datei.ts (nur Node).
+// Ohne Server-Zustand (Worker): `alsDaten()` gibt den ganzen Stand als JSON, `Arbeitsspeicher.aus()` stellt ihn wieder her.
 
-import { appendFileSync, mkdirSync } from "node:fs";
-import path from "node:path";
 import type { Eintrag, Leistungsereignis, Nachricht, Rolle } from "./typen.ts";
 import type { Art, UnklarFeld } from "./verstehen.ts";
 
@@ -58,19 +57,32 @@ export interface Speicher {
   nachricht(id: string): Nachricht | undefined;
 }
 
+/** Ganzer Stand eines Arbeitsspeichers als reines JSON (Eingang, Gesprächszustände, Ereignisse). */
+export interface SpeicherDaten {
+  nachrichten: Nachricht[];
+  zustaende: Zustand[];
+  ereignisse: Leistungsereignis[];
+}
+
 export class Arbeitsspeicher implements Speicher {
   private gesehen = new Map<string, Nachricht>();
   private zustaende = new Map<string, Zustand>();
   private liste: Leistungsereignis[] = [];
 
-  /** ordner: wenn gesetzt, wird zusätzlich in JSONL-Dateien geschrieben (eingang.jsonl, ereignisse.jsonl). */
-  constructor(private ordner?: string) {
-    if (ordner) mkdirSync(ordner, { recursive: true });
+  static aus(daten: SpeicherDaten): Arbeitsspeicher {
+    const s = new Arbeitsspeicher();
+    for (const n of daten.nachrichten) s.gesehen.set(n.id, n);
+    for (const z of daten.zustaende) s.zustaende.set(z.absenderId, z);
+    s.liste.push(...daten.ereignisse);
+    return s;
   }
 
-  private schreibe(datei: string, objekt: unknown) {
-    if (this.ordner) appendFileSync(path.join(this.ordner, datei), JSON.stringify(objekt) + "\n");
+  alsDaten(): SpeicherDaten {
+    return { nachrichten: [...this.gesehen.values()], zustaende: [...this.zustaende.values()], ereignisse: [...this.liste] };
   }
+
+  /** Hier nichts; `Dateispeicher` schreibt zusätzlich in JSONL-Dateien. */
+  protected schreibe(_datei: string, _objekt: unknown): void {}
 
   /** false, wenn die Nachricht schon da war (WhatsApp liefert manchmal doppelt). */
   eingang(n: Nachricht): boolean {

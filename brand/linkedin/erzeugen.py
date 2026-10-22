@@ -1,7 +1,8 @@
 """Drei LinkedIn-Banner (1584 x 396) in der tieout-CI als HTML, danach per Chrome headless als PNG."""
 import os, subprocess
 
-OUT = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "entwuerfe")
+os.makedirs(OUT, exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
 
 W, H = 1584, 396

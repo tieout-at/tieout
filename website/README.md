@@ -1,53 +1,45 @@
 # Website
 
-Arbeitstitel **tieout** (klein, ohne Punkt) Struktur, CI und Platzhalter-Regeln: [`STRUKTUR.md`](STRUKTUR.md).
+Public website of **tieout** (lowercase, no trailing dot): Next.js 16 with static export, German and English, with no dependency on the product code. Structure, visual identity and placeholder rules: [`STRUKTUR.md`](STRUKTUR.md) (German).
 
-## Starten
+## Run
 
 ```bash
 npm install
 npm run dev
 ```
 
-Dann http://localhost:3210 öffnen (Deutsch) bzw. http://localhost:3210/en/ (Englisch).
+Then open http://localhost:3210 (German) or http://localhost:3210/en/ (English).
 
-| Befehl | Zweck |
+| Command | Purpose |
 |---|---|
-| `npm run dev` | Entwicklung mit Live-Reload |
-| `npm run build` | statischer Export nach `out/` (läuft auf jedem Webspace) |
-| `npm run typecheck` | TypeScript prüfen |
-| `npm run deploy:vorschau` | baut und lädt auf die geschützte Vorschau (Cloudflare Pages) |
-| `npm run check:platzhalter` | listet alle `[[PLATZHALTER]]`. Vor dem Livegang muss die Liste leer sein |
+| `npm run dev` | development with live reload |
+| `npm run build` | static export to `out/` (runs on any web host) |
+| `npm run typecheck` | check TypeScript |
+| `npm run deploy` | build and upload to Cloudflare Pages (project `tieout-at`) |
+| `npm run check:platzhalter` | list all `[[PLATZHALTER]]`; must be empty before going fully live |
 
-## Aufbau
+## Layout
 
 ```
-app/(de)/            Deutsch: /, /impressum, /datenschutz
-app/(en)/en/         Englisch: /en, /en/impressum, /en/datenschutz
-app/globals.css      Design-Tokens (Papier, Tinte, Ultramarin), Raster, alle Styles
-components/nav/      Header mit DE/EN, Messpunkt-Navigation
-components/sections/ Abschnitte: Hero, Lösung, Video, Team, Demo
-components/flow/     animierter Ablauf Eingänge → Zwilling → Schlussrechnung (SVG, läuft von selbst)
-components/ui/       Maßkette, Platzhalter, Einblenden
-messages/            alle Texte: de.json, en.json
-public/hero/         Hero-Fotos (Unsplash, Quellen in QUELLEN.md)
-public/team/         Teamfotos (LinkedIn, mit Zustimmung des Teams)
-public/logos/        Logos von Hochschulen und Arbeitgebern, in Ultramarin eingefärbt
+app/(de)/            German: /, /impressum, /datenschutz
+app/(en)/en/         English: /en, /en/impressum, /en/datenschutz
+app/globals.css      design tokens (paper, ink, ultramarine), grid, all styles
+components/nav/      header with DE/EN switch, section navigation
+components/sections/ sections: hero, problem and solution, video, team, demo
+components/flow/     animated flow inputs → twin → final invoice (SVG, sample projects rotate every 5 s)
+components/problem/  project timeline with "today | with tieout" switch
+components/ui/       logo, dimension line, placeholder, reveal, Fit (laptop layout scaled down on phones)
+messages/            all copy: de.json, en.json
+public/hero/         hero photos (Unsplash, sources in QUELLEN.md)
+public/team/         team photos (LinkedIn, with the team's consent)
+public/logos/        logos of universities and employers, recoloured in ultramarine
 ```
 
-Texte nur in `messages/` ändern, nie im Code. Neue Platzhalter immer als `[[PLATZHALTER: …]]` (Deutsch) bzw. `[[PLACEHOLDER: …]]` (Englisch).
+Change copy only in `messages/`, never in the code. New placeholders are always written as `[[PLATZHALTER: …]]` (German) or `[[PLACEHOLDER: …]]` (English).
 
-## Online
+## Hosting
 
-**https://tieout-at.pages.dev** (Deutsch) und `/en/` (Englisch). Offen erreichbar, ohne Passwort (Entscheidung Maxi D., 22.10.2026).
-
-- Gehostet im privaten Cloudflare-Konto von Maxi D., Pages-Projekt `tieout-at` (`tieout.pages.dev` war bei Cloudflare schon vergeben). Das alte Projekt `endpoint-preview` leitet alle Adressen per 301 auf `tieout-at.pages.dev` weiter.
-- Eigene Domain **tieout.at** (registriert bei easyname, 22.10.2026). In Cloudflare als Zone angelegt (Free), `tieout.at` und `www.tieout.at` als CNAME auf `tieout-at.pages.dev` und als Custom Domains am Pages-Projekt `tieout-at`. Offen: bei easyname die Nameserver auf `cheryl.ns.cloudflare.com` und `hugh.ns.cloudflare.com` umstellen. Erst dann ist die Seite unter tieout.at erreichbar.
-- `npm run deploy` aktualisiert die öffentliche Seite.
-- Geschützte Vorschau: entfällt vorerst. Der Cloudflare-Access-Schutz hing am alten Projekt. Wer sie wieder braucht, legt im Cloudflare-Dashboard unter Zero Trust eine Access-Anwendung für `vorschau.tieout-at.pages.dev` an und ergänzt ein Skript mit `--branch vorschau`.
-- `noindex` bleibt gesetzt: Suchmaschinen nehmen die Seite nicht auf. Wer den Link hat, kann sie aber öffnen.
-- Umzug auf ein Firmenkonto: dort ein Pages-Projekt anlegen und die Skripte mit dem neuen Projektnamen ausführen.
-
-## Stand
-
-Vorschau, per Link öffentlich erreichbar, `noindex`. Hinweis „Vorschau“ unten links. Formular versendet noch nichts. Impressum, Datenschutz, Rechtsform, Domain, Team-Rollen und Video sind Platzhalter.
+- Cloudflare Pages, project `tieout-at`; `npm run deploy` updates the live site.
+- Domain **tieout.at** via Cloudflare DNS (`tieout.at` and `www.tieout.at` as custom domains of the project). The old address `endpoint-preview.pages.dev` redirects with 301.
+- The site sets `noindex` until imprint and privacy policy are final.

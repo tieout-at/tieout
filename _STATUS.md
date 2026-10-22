@@ -32,7 +32,7 @@
 - Produktverständnis für die Website: erledigt (siehe Dossier v3 Abschnitt 0 und 3)
 - 22.10.: Arbeitstitel „tieout“, klein und ohne Punkt (vorher „Tieout.“, „EndPoint.“), CI Planraster (Papier, Tinte, Ultramarin), Website online unter tieout-at.pages.dev (alte Adresse endpoint-preview.pages.dev leitet weiter). Domain tieout.at gekauft (easyname, Inhaber Maxi D.), Zone in Cloudflare angelegt und mit der Website verbunden. Offen: Nameserver bei easyname auf cheryl/hugh.ns.cloudflare.com umstellen, sobald der CloudPit-Zugang da ist
 - 22.10.: GTM und Monetarisierung offen, daher keine Preise und kein „Check anfragen“ auf der Website
-- Offen: Markenprüfung und Domain, Hosting, „Ghost“ klären, Team-Rollen und Fotos
+- Offen: Markenprüfung, Nameserver für tieout.at bei easyname, Postfach kontakt@tieout.at, Impressum und Datenschutz
 - Frage ans Team: Ist „Zwilling“ für Inhaber zu abstrakt? Alternativ „Wissensdatenbank des Betriebs“ testen
 
 ## Produkt
@@ -41,7 +41,7 @@
 - 22.10. abends (Maxi S.): Datenmodell Firma → Auftraggeber → Projekt mit Zurufen und 7 kleinen Projekten (Tests treffen die Lösungsliste v2 cent-genau). Demo-App mit Firmenübersicht, Projekt-Übersicht, Befunden und Befund-Seite mit Original und zweistufiger Freigabe. CI prüft jeden PR. Stand und nächste Schritte in `product/README.md`.
 - 22.10. nachts (Maxi S. mit Claude): Seitenleiste neu, Zeitachse, WhatsApp-Szene, Ledger mit 380 Positionen, Ordner mit Belegmatrix. Online auf main, unabhängig geprüft. Zielgruppe geschärft (`docs/research_notes/Zielgruppe_Challenge.md`), Namensvorschläge in PR #19 (Team entscheidet). Nächster Chat: `_UEBERGABE.md`.
 - Offen fürs Team: Hosting der Demo (Vercel Hobby deployt keine privaten Org-Repos), GitHub-Plan für den Schutz von main, Name, Logo, Akzentfarbe (in der App Platzhalter).
-- 22.10. spät (Maxi S. mit Claude, vier parallele Sitzungen): Stile je Bereich geteilt (#24), Ablauf 1 bis 4 auf der Projektübersicht mit echten Zahlen und Links (#27), Politur ohne Ampelpunkte und Farbflächen (#28), alle Tabellen einheitlich 36 px ohne Verschieben (#29), zentrale Tokens (#33), Prüfbefunde (#35). Unabhängig geprüft: alle Beträge centgenau, keine kaputten Links. Website-Check mit Widersprüchen auf der Website: `docs/research_notes/Website_Check_2026-10-22.md`.
+- 22.10. spät (Maxi S. mit Claude, vier parallele Sitzungen): Stile je Bereich geteilt (#24), Ablauf 1 bis 4 auf der Projektübersicht mit echten Zahlen und Links (#27), Politur ohne Ampelpunkte und Farbflächen (#28), alle Tabellen einheitlich 36 px ohne Verschieben (#29), zentrale Tokens (#33), Prüfbefunde (#35). Unabhängig geprüft: alle Beträge centgenau, keine kaputten Links. Website-Check mit Widersprüchen auf der Website: `docs/archiv/Website_Check_2026-10-22.md`.
 - 22.10.: Name und Logo stehen: **tieout**, Domain tieout.at (noch nicht live). LinkedIn-Firmenseite linkedin.com/company/tieout-at (im Footer verlinkt), Banner in `brand/linkedin/`. Nächste Schritte Produkt (Rebranding, Link, UI an die Website, Tempo, Zuruf-Agent von Santino aus PR #25): `_UEBERGABE.md`.
 - Offen: Wer baut was (Produkt, Website), Entscheidung in der Sonntagsrunde 25.10.
 - 22.10.: Planung Zuruf-Agent (WhatsApp, Stufe 2 vorgezogen, nur synthetisch) in `product/zuruf/` auf Branch `zuruf/plan`. Go des Teams zu `GESTALTUNG.md` und `PLAN.md` offen.
@@ -52,5 +52,7 @@
 
 ## Ordner
 
+- 23.10.: aufgeräumt. `business/` und `video/` (nur Absichtserklärungen) in `docs/README.md` unter „Geplant“ zusammengeführt, Website-Check vom 22.10. ins Archiv, Banner-Entwürfe nach `brand/linkedin/entwuerfe/`. Neues README mit Architektur-Diagramm. GitHub-Organisation zeigt Logo und Anzeigenamen tieout.
+
 - 22.10.: aufgeräumt. v2 nach `docs/archiv/`, Kuro/reebuild-Fakten aus v2 nach `docs/research_notes/Kuro_reebuild_Fakten.md`.
-- 22.10.: privates GitHub Repository angelegt, liegt in der Organisation `schlusswerk` (github.com/schlusswerk/schlusswerk) (Monorepo: `docs/`, `business/`, `product/`, `website/`, `video/`). Repo außerhalb OneDrive: erledigt.
+- 22.10.: privates GitHub Repository angelegt, liegt in der Organisation `tieout-at` (vorher `schlusswerk`) (github.com/tieout-at/tieout) (Monorepo: `docs/`, `product/`, `website/`, `brand/`). Repo außerhalb OneDrive: erledigt.
