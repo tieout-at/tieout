@@ -10,6 +10,8 @@
 
 > **Update v4 (22.10.2026):** Logo „Ecke“ (zwei Plan-Ecken, Punkt in Ultramarin). Hero-Karte 2 zeigt eine per Mail angeordnete Änderung statt Mehrmenge. Problem als animierte Projekt-Zeitleiste mit Schalter „Heute | Mit Tieout.“. Zwilling in zwei Ebenen (Betrieb, Projekt). Blauer Übergang wie bei Dryft beim Video. Demo mit Monatskalender und freien Zeiten (Dummy).
 
+> **Update v7 (22.10.2026):** Name klein und ohne Punkt: **tieout**. „Regie“ ersetzt durch Stundenarbeit bzw. Stundenzettel. Beispielzahlen Projekt Wien 21 durchgehend gleich: 5.546 € offen (Zeitleiste, Projekt-Tabelle, Ergebnis), Stundensatz 65 €/h. Beträge im Format „1.290 €“. Team mit Rollen (CEO, COO, CTO, CFO), Stationen laut LinkedIn. Am Handy steht in der Zeitleiste jeder Betrag direkt unter seinem Ereignis. Domain tieout.at in Cloudflare angebunden, Nameserver-Umstellung bei easyname offen.
+
 > **Update v6 (22.10.2026):** Arbeitstitel jetzt **Tieout.** (vorher EndPoint.). Domains: nur tieout.at frei (DNS), tieout.com und tieout.ai vergeben. Projekt-Ebene im Zwilling als Aufstellung (Position, LV, gebaut, verrechnet, offen). Abschnitte mit gleichen Abständen, Blau beim Video mit harter Kante wie bei Dryft. Demo: Kopfzeile über volle Breite, darunter Kalender und Formular gleich hoch. Logo-Auswahl für Tieout offen.
 
 ---

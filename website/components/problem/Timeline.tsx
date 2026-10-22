@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type React from "react";
 import type { Locale, Messages } from "@/lib/i18n";
 
 type T = Messages["solution"]["timeline"];
 
 /**
  * Problem als Projektverlauf: oben die Änderungen auf der Baustelle über die Wochen,
- * unten, was davon in der Schlussrechnung landet. Umschalter vergleicht heute mit Tieout
+ * unten, was davon in der Schlussrechnung landet. Umschalter vergleicht heute mit Tieout.
  */
 export function Timeline({ t, locale }: { t: T; locale: Locale }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -16,7 +17,11 @@ export function Timeline({ t, locale }: { t: T; locale: Locale }) {
   const [run, setRun] = useState(0);
   const [started, setStarted] = useState(false);
   const events = t.events;
-  const fmt = (n: number) => new Intl.NumberFormat(locale === "de" ? "de-AT" : "en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+  const fmt = (n: number) =>
+    locale === "de" ? `${new Intl.NumberFormat("de-DE").format(n)} €` : new Intl.NumberFormat("en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+  // Reihenfolge für schmale Raster (3 bzw. 2 Spalten): Betrag steht direkt unter seinem Ereignis.
+  const ord = (i: number, slot: boolean) =>
+    ({ "--o3": Math.floor(i / 3) * 6 + (slot ? 3 : 0) + (i % 3), "--o2": Math.floor(i / 2) * 4 + (slot ? 2 : 0) + (i % 2) }) as React.CSSProperties;
 
   // Startet, sobald die Zeitleiste im Bild ist.
   useEffect(() => {
@@ -60,7 +65,7 @@ export function Timeline({ t, locale }: { t: T; locale: Locale }) {
       <div className="tl__grid">
         <span className="tl__track">{t.trackSite}</span>
         {events.map((e, i) => (
-          <div key={i} className={`tl__event ${i < step ? "is-in" : ""}`}>
+          <div key={i} className={`tl__event ${i < step ? "is-in" : ""}`} style={ord(i, false)}>
             <span className="tl__week">{e.week}</span>
             <span className="tl__type">{e.type}</span>
             <p>{e.text}</p>
@@ -82,7 +87,7 @@ export function Timeline({ t, locale }: { t: T; locale: Locale }) {
           const found = !e.billed && withEp;
           const ok = e.billed || withEp;
           return (
-            <div key={i} className={`tl__slot ${i < step ? "is-in" : ""} ${ok ? "is-ok" : "is-miss"} ${found ? "is-found" : ""}`}>
+            <div key={i} className={`tl__slot ${i < step ? "is-in" : ""} ${ok ? "is-ok" : "is-miss"} ${found ? "is-found" : ""}`} style={ord(i, true)}>
               <b>{fmt(e.amount)}</b>
               <span>{found ? t.found : ok ? t.billed : t.missing}</span>
             </div>
