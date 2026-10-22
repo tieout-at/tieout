@@ -5,7 +5,7 @@ Internal review tool for Austrian HVAC/plumbing (HKLS) and electrical subcontrac
 The client is Maxi S. (not a developer): German, result first, plain language, translate technical terms the first time they are used. The rules in `../../CLAUDE.md` (repo root) apply in addition.
 
 ## Where things are
-- Strategy: `../../docs/dossier-v3.md`, section 3 (product), 12 (rejected), 15 (build). Team status: `../../_STATUS.md`.
+- Strategy: `docs/dossier-v3.md` in the private repository tieout-at/intern, section 3 (product), 12 (rejected), 15 (build). Team status: `_STATUS.md` there.
 - Product documents in `../docs/`:
   - `Plan_MVP.md`, `Umfang_v1.md` (incl. not-list and decisions), `Inspiration_Muster.md`, `Pruefberichte_UI.md`.
   - `Demo_Faelle.md`: solution list of the built-in cases. **Authoritative for amounts.** Do not change it in code, report deviations; changes to the list only with a go-ahead from Maxi S.
