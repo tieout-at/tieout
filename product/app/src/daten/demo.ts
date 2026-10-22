@@ -4,6 +4,7 @@
 import "server-only";
 import { notFound } from "next/navigation";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
+import { LG_NAME } from "@/demo/w21/katalog";
 import type { Datensatz, Firmendaten } from "@/domain/typen";
 import { pruefeFirma, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis } from "@/engine";
 
@@ -82,4 +83,9 @@ export function navDaten(): { firma: string; untertitel: string; projekte: NavPr
       };
     }),
   };
+}
+
+/** Namen der Leistungsgruppen (heute aus dem synthetischen Katalog, später aus dem LV). */
+export function leistungsgruppen(): Record<string, string> {
+  return LG_NAME;
 }
