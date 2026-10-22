@@ -2,7 +2,8 @@
 
 // Ledger: jede LV-Position mit LV-Menge, Aufmaß, verrechnet, bezahlt und Differenz (Vorlage: reebuild R-B
 // „Ausgelesene Positionen“, Linear „Group by“ mit Gruppenkopf und Filter als Reiter, Attio-Suche über der Tabelle).
-// Werte kommen fertig aus dem Rechenkern; hier wird nur gefiltert und formatiert. Stand nur bei Ausnahmen.
+// Werte kommen fertig aus dem Rechenkern; hier wird nur gefiltert und formatiert. Keine Marken je Zeile:
+// „Nicht verrechnet“ zeigt die Spalte Differenz, die nächste AR ihre Menge in einer eigenen Spalte.
 
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -62,17 +63,17 @@ export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; grup
       </div>
       <Zeilennavigation>
         <div className="ledger-rahmen">
-          <table className="sw-table tab-ledger" style={{ tableLayout: "fixed" }}>
+          <table className="sw-table tab-liste tab-ledger">
             <colgroup>
               <col style={{ width: 96 }} />
               <col />
-              <col style={{ width: 56 }} />
-              <col style={{ width: 88 }} />
-              <col style={{ width: 88 }} />
+              <col style={{ width: 64 }} />
+              <col style={{ width: 96 }} />
+              <col style={{ width: 96 }} />
               <col style={{ width: 96 }} />
               <col style={{ width: 120 }} />
               <col style={{ width: 120 }} />
-              <col style={{ width: 148 }} />
+              <col style={{ width: 96 }} />
             </colgroup>
             <thead>
               <tr>
@@ -84,7 +85,7 @@ export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; grup
                 <th className="r">Verrechnet</th>
                 <th className="r">Bezahlt</th>
                 <th className="r">Differenz</th>
-                <th>Stand</th>
+                <th className="r">Nächste AR</th>
               </tr>
             </thead>
             <tbody>
@@ -130,19 +131,13 @@ function LgZeilen({ titel, zeilen }: { titel: string; zeilen: LedgerReihe[] }) {
               z.kurztext
             )}
           </td>
-          <td className="sw-muted">{z.einheit}</td>
+          <td className="neben">{z.einheit}</td>
           <td className="r">{menge(z.lvMenge)}</td>
           <td className={z.aufmassMenge > z.lvMenge ? "r ledger-ueber" : "r"}>{z.aufmassMenge > 0 ? menge(z.aufmassMenge) : ""}</td>
           <td className="r">{z.verrechnetMenge > 0 ? menge(z.verrechnetMenge) : ""}</td>
           <td className="r">{z.bezahltBetrag !== 0 ? betrag(z.bezahltBetrag) : ""}</td>
           <td className="r">{z.differenzBetrag > 0 ? betrag(z.differenzBetrag) : ""}</td>
-          <td>
-            {z.differenzBetrag > 0 ? (
-              <span className="sw-dotlabel sw-dotlabel--warn">Nicht verrechnet</span>
-            ) : z.naechsteArMenge > 0 ? (
-              <span className="sw-dotlabel">Nächste AR</span>
-            ) : null}
-          </td>
+          <td className="r">{z.naechsteArMenge > 0 ? menge(z.naechsteArMenge) : ""}</td>
         </tr>
       ))}
     </>

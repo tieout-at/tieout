@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
 import { BefundTabelle } from "@/ui/BefundTabelle";
-import { Panel } from "@/ui/Panel";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 
 type Props = { params: Promise<{ projekt: string }> };
@@ -29,9 +28,7 @@ export default async function Befunde({ params }: Props) {
     <>
       <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}` }]} titel="Befunde" />
       <main className="scr-body">
-        <Panel titel="Befunde" rechts={<span className="sw-count">{e.befunde.length}</span>}>
-          <BefundTabelle projektId={id} befunde={e.befunde} risiken={risiken} href={(b) => `/projekte/${id}/befunde/${befundSlug(b.schluessel)}`} />
-        </Panel>
+        <BefundTabelle projektId={id} befunde={e.befunde} risiken={risiken} href={(b) => `/projekte/${id}/befunde/${befundSlug(b.schluessel)}`} />
       </main>
     </>
   );

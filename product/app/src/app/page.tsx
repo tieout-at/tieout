@@ -7,7 +7,6 @@ import { firma } from "@/daten/demo";
 import type { Ampel, ProjektZeile } from "@/engine";
 import { anzahl, betrag, datum } from "@/ui/format";
 import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
-import { Panel } from "@/ui/Panel";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 import type { Ton } from "@/ui/Statusmarke";
 import { Zeilennavigation } from "@/ui/Zeilennavigation";
@@ -27,16 +26,14 @@ function Zeile({ p }: { p: ProjektZeile }) {
   const a = AMPEL[p.ampel];
   return (
     <tr data-href={href} tabIndex={0}>
-      <td className="sw-td-2">
-        <div className="sw-cell">
-          <b title={p.name}>
-            <span className="sw-pos-nr">{p.kurz}</span>
-            <Link href={href} className="row-link" tabIndex={-1}>
-              {p.name}
-            </Link>
-          </b>
-          <span>{p.auftraggeber.name}</span>
-        </div>
+      <td title={p.name}>
+        <span className="sw-pos-nr">{p.kurz}</span>
+        <Link href={href} className="row-link" tabIndex={-1}>
+          {p.name}
+        </Link>
+      </td>
+      <td className="neben nur-breit" title={p.auftraggeber.name}>
+        {p.auftraggeber.name}
       </td>
       <td className="nur-breit">{p.ampel !== "grau" && <span className={a.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${a.ton}`}>{a.wort}</span>}</td>
       <td className="sw-num nur-breit">{p.datum?.art === "legen_bis" && datum(p.datum.wert)}</td>
@@ -72,54 +69,56 @@ export default function Firmenuebersicht() {
             <Kennzahl label="Schlussrechnung legen bis" wert={datum(e.naechsteSchlussrechnung.datum)} kontext={`${naechste.kurz} ${naechste.name}`} />
           )}
         </Kennzahlen>
-        <Panel titel="Projekte" rechts={<span className="sw-count">{e.summen.projekte}</span>}>
-          <Zeilennavigation>
-            <table className="sw-table tab-firma liste-mobil" style={{ tableLayout: "fixed" }}>
-              <colgroup>
-                <col />
-                <col style={{ width: 132 }} />
-                <col style={{ width: 104 }} />
-                <col style={{ width: 132 }} />
-                <col style={{ width: 148 }} />
-                <col style={{ width: 164 }} />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>Projekt</th>
-                  <th>Ampel</th>
-                  <th>Legen bis</th>
-                  <th className="r">Auftrag</th>
-                  <th className="r">Jetzt verrechenbar</th>
-                  <th className="r">Angemeldet und offen</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="grp">
-                  <td colSpan={6}>
-                    Im Abgleich<span className="sw-count">{offen.length}</span>
-                  </td>
-                </tr>
-                {offen.map((p) => (
-                  <Zeile key={p.projektId} p={p} />
-                ))}
-                <tr className="grp">
-                  <td colSpan={6}>
-                    Schlussrechnung gelegt oder abgeschlossen<span className="sw-count">{zu.length}</span>
-                  </td>
-                </tr>
-                {zu.map((p) => (
-                  <Zeile key={p.projektId} p={p} />
-                ))}
-                <tr className="sum">
-                  <td colSpan={3}>Alle Projekte</td>
-                  <td className="r nur-breit">{betrag(e.summen.auftragssumme)}</td>
-                  <td className="r">{betrag(e.summen.jetzt)}</td>
-                  <td className="r nur-breit">{betrag(e.summen.offen)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </Zeilennavigation>
-        </Panel>
+        <Zeilennavigation>
+          <table className="sw-table tab-liste tab-firma liste-mobil">
+            <colgroup>
+              <col />
+              <col style={{ width: 176 }} />
+              <col style={{ width: 128 }} />
+              <col style={{ width: 104 }} />
+              <col style={{ width: 128 }} />
+              <col style={{ width: 136 }} />
+              <col style={{ width: 160 }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Projekt</th>
+                <th>Auftraggeber</th>
+                <th>Ampel</th>
+                <th>Legen bis</th>
+                <th className="r">Auftrag</th>
+                <th className="r">Jetzt verrechenbar</th>
+                <th className="r">Angemeldet und offen</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="grp">
+                <td colSpan={7}>
+                  Im Abgleich<span className="sw-count">{offen.length}</span>
+                </td>
+              </tr>
+              {offen.map((p) => (
+                <Zeile key={p.projektId} p={p} />
+              ))}
+              <tr className="grp">
+                <td colSpan={7}>
+                  Schlussrechnung gelegt oder abgeschlossen<span className="sw-count">{zu.length}</span>
+                </td>
+              </tr>
+              {zu.map((p) => (
+                <Zeile key={p.projektId} p={p} />
+              ))}
+              <tr className="sum">
+                <td colSpan={4}>
+                  Alle Projekte<span className="sw-count">{e.summen.projekte}</span>
+                </td>
+                <td className="r nur-breit">{betrag(e.summen.auftragssumme)}</td>
+                <td className="r">{betrag(e.summen.jetzt)}</td>
+                <td className="r nur-breit">{betrag(e.summen.offen)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </Zeilennavigation>
       </main>
     </>
   );
