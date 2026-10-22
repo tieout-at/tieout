@@ -1,6 +1,6 @@
 # Übergabe für den nächsten Chat (Produkt-App)
 
-**Stand:** Freitag, 23. Oktober 2026. Geschrieben von Claude für Maxi S.
+**Stand:** Freitag, 23. Oktober 2026. Repository heißt jetzt `tieout-at/tieout` auf GitHub (alte Adresse leitet weiter). Geschrieben von Claude für Maxi S.
 **Zuerst lesen:** `CLAUDE.md`, `_STATUS.md`, `product/README.md`, `product/app/CLAUDE.md`, `product/app/src/ui/README.md`. Danach diese Datei.
 
 ## 1. Wo wir stehen
@@ -16,7 +16,10 @@ App **tieout** (klein, ohne Punkt) auf `main`, online und **offen** unter **http
 | Handy: Projekt im Pfad, obere Leiste blendet rechts aus | #51 |
 | Worker heißt `app`, Konto-Subdomain `tieout` | #54 |
 | Gruppen einklappen in Firmenliste, Befunden, Ledger (Linear „Group by“), Spalten bleiben stehen | #56 |
-| [[PLATZHALTER: Zuruf-Einbau #50, Tempo, Next.js-Update, Schlussprüfung]] | |
+| Zuruf-Agent in der App hinter Schalter `ZURUF_ECHT` (Standard aus): echter Chat statt Szene, neue Zurufe ohne Betrag in Zeitachse und Liste „offen“, Ablage im Browser, Grenzen 40 Aufrufe pro Tag und 20 US-Dollar pro Monat. Z6 heißt wie in der Lösungsliste. Lokal mit Abo schon ein echter Zuruf erfolgreich | #50 |
+| Tempo: Filter und Suche in Ledger und Matrix 32 bis 72 ms statt 88 bis 176 ms (gemessen von der Sitzung), pixelgleich | #59 |
+| Next.js 16.4.2 (Sicherheitsupdate), übrig nur `uuid` mittel über exceljs | #63 |
+| [[PLATZHALTER: Ergebnis Schlussprüfung]] | |
 
 ## 2. Aufträge für den nächsten Chat
 
