@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>The digital twin for electrical and MEP contractors. First application: the final invoice.</b><br />
-  Hackathon project at WU Vienna, Open Track ([[PLACEHOLDER: exact hackathon name]])
+  Hackathon project at WU Vienna, Open Track
 </p>
 
 <p align="center">
@@ -38,72 +38,84 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 | Part | What you get | Where |
 |---|---|---|
 | Product app | the twin of a synthetic contractor with eight projects, findings with original documents, approval flow, calculation core tested to the cent | [app.tieout.workers.dev](https://app.tieout.workers.dev) |
-| Site-call agent | WhatsApp agent that turns a fitter's voice note into an entry with a source, with simulator and test scenarios | `product/zuruf/` |
+| WhatsApp agent | fitters report work from the site by text, voice note or photo; the agent asks back and files a structured entry with its source | `product/zuruf/` |
 | Website | product story in German and English, interactive twin animation, demo booking | [tieout.at](https://tieout.at) |
 
 ## How it works
 
-1. **Data comes in.** The contractor connects or uploads what already exists: bill of quantities, measurements, plans, timesheets, emails, photos. Fitters can also send a quick site call via WhatsApp (photo or voice note).
-2. **The twin is built.** Everything is sorted into one model: the business on top (clients, contracts, price base, projects), each project below it, down to the single line item with all its evidence.
-3. **The final-invoice run.** For every line item, a deterministic calculation core compares what was ordered, built and invoiced, and turns every gap into a finding with a euro amount and its sources.
-4. **A human decides.** Each finding is shown next to its original document. The project lead approves or rejects it; nothing is invoiced automatically.
-5. **The result.** Approved findings become additional invoice lines with an evidence package, ready for the final invoice.
+1. **Three kinds of input.** Everything a contractor already has comes in through three groups:
+   - **Systems:** ERP (invoices) and estimating software (prices, price base).
+   - **Documents:** plans with revision index, bill of quantities (PDF), measurements (Excel), timesheets (scans).
+   - **Communication:** instructions by email, and WhatsApp from the site. Fitters send a short text, a voice note or a photo ("socket in room 5 moved, client wanted it, two people, six hours"). An AI agent reads it, asks back once if something important is missing (who ordered it, how long), and files it as an entry with the original message attached.
+2. **The digital twin.** All inputs are aggregated into one model: the business on top (clients, contracts, price base, all projects), each project below it, down to the single line item. Every value carries its source and a review state, and nothing is ever overwritten.
+3. **The final-invoice run.** A deterministic calculation core reconciles what was ordered, built and invoiced for every line item and turns every gap into a finding with a euro amount and its evidence.
+4. **A human decides.** Each finding is shown next to its original document. One person accepts it, a second one releases it; nothing is invoiced automatically.
+5. **The result.** Released findings become additional invoice lines with an evidence package, plus a pre-check of what the client is likely to cut.
 
 ## Architecture
 
 ```mermaid
-flowchart TD
-    classDef input fill:#e8ecff,stroke:#1d3bff,stroke-width:2px,color:#0a1020;
-    classDef output fill:#1d3bff,stroke:#1d3bff,stroke-width:2px,color:#ffffff;
-    classDef human fill:#fff,stroke:#0a1020,stroke-width:2px,color:#0a1020;
+flowchart LR
+    classDef input fill:#ffffff,stroke:#0a1020,stroke-width:1px,color:#0a1020;
+    classDef twin fill:#e8ecff,stroke:#1d3bff,stroke-width:1px,color:#0a1020;
+    classDef out fill:#1d3bff,stroke:#1d3bff,stroke-width:2px,color:#ffffff;
 
-    A["Contractor data<br/>documents, plans, emails, photos"]:::input
-    W["Site call via WhatsApp<br/>photo, voice note"]:::input
-
-    subgraph ZUR [Site-call agent]
+    subgraph IN [1 · Inputs]
         direction TB
-        Z1[Transcribe and read<br/>Claude] --> Z2[Extract facts with quotes] --> Z3[Ask back or store<br/>decided by code]
+        subgraph SYS [Systems]
+            S1[ERP<br/>invoices]:::input
+            S2[Estimating<br/>prices]:::input
+        end
+        subgraph DOC [Documents]
+            D1[Plans<br/>with revision]:::input
+            D2[Bill of quantities<br/>PDF]:::input
+            D3[Measurements<br/>Excel]:::input
+            D4[Timesheets<br/>scan]:::input
+        end
+        subgraph COM [Communication]
+            C1[Email<br/>instructions]:::input
+            C2[WhatsApp<br/>text, voice note, photo]:::input
+        end
     end
 
-    subgraph TWIN [Digital twin]
+    AG["WhatsApp agent<br/>Claude reads and quotes,<br/>code decides: ask back or file"]
+
+    subgraph TW [2 · Digital twin]
         direction TB
-        T1[Business layer<br/>clients, contracts, price base, projects] --> T2[Project layer<br/>line items with evidence and history]
+        T1[Business layer<br/>clients, contracts,<br/>price base, projects]:::twin
+        T2[Project layer<br/>line items, measurements,<br/>daywork, messages]:::twin
+        T3[Every value with source<br/>document, page, position<br/>and review state]:::twin
+        T1 --> T2 --> T3
     end
 
-    subgraph CALC [Final-invoice run]
+    subgraph RUN [3 · Final-invoice run]
         direction TB
-        C1[Reconcile ordered, built, invoiced<br/>in cents] --> C2[Findings with sources] --> C3[Pre-check from the client's view]
+        R1[Reconcile ordered,<br/>built, invoiced<br/>in cents]
+        R2[Findings<br/>extra quantities, daywork,<br/>price changes, change orders]
+        R3[Pre-check<br/>what the client would cut]
+        R1 --> R2 --> R3
     end
 
-    A --> T1
-    W --> Z1
-    Z3 --> T2
-    T2 --> C1
-    C3 --> H[Human approval<br/>every number links to its original]:::human
-    H --> O["Final invoice draft<br/>plus evidence package"]:::output
+    H[4 · Two-step approval<br/>accept, then release]
+    O["5 · Final invoice lines<br/>plus evidence package"]:::out
 
-    style ZUR fill:#f4f6f9,stroke:#0a1020,stroke-width:1px
-    style TWIN fill:#f4f6f9,stroke:#0a1020,stroke-width:1px
-    style CALC fill:#f4f6f9,stroke:#0a1020,stroke-width:1px
+    SYS --> TW
+    DOC --> TW
+    C1 --> TW
+    C2 --> AG --> TW
+    TW --> RUN --> H --> O
 ```
 
-### Components
+### Tech stack
 
-| Component | What it does | Stack | Where |
-|---|---|---|---|
-| **Product app** (`product/app`) | twin data model, calculation core, screens for findings, ledger, timeline and evidence | Next.js 16, TypeScript, Vitest | Cloudflare Worker, [app.tieout.workers.dev](https://app.tieout.workers.dev) |
-| **Site-call agent** (`product/zuruf`) | turns WhatsApp messages into entries with a source | TypeScript, Anthropic SDK (Claude), Zod | simulator, WhatsApp Cloud API |
-| **Website** (`website`) | explains the product, demo booking | Next.js 16, static export, DE/EN | Cloudflare Pages, [tieout.at](https://tieout.at) |
-
-**Inside the product app.** The calculation core (`src/engine`) is pure, tested code that works in cents; its results match the reference solution in [`product/docs/Demo_Faelle.md`](product/docs/Demo_Faelle.md) to the cent. A generator provides a synthetic contractor with eight projects; every screen reads through one data-access layer (`src/daten`), so a per-business database plugs in at a single place. Approvals are stored as a history in the browser, including undo.
-
-### How deployment connects everything
-
-1. **GitHub** holds one monorepo with all parts. Every change goes through a pull request.
-2. **GitHub Actions** checks the product app on every pull request: types, lint, tests, build.
-3. **Cloudflare Workers Builds** rebuilds the product app on every merge to `main` and gives every branch its own preview URL.
-4. **A Cloudflare Worker** serves the app's static pages and checks the session first; sign-in runs on Supabase (Frankfurt), invitation only.
-5. **Cloudflare Pages** hosts the website; the domain tieout.at runs on Cloudflare DNS.
+| Stage | How it is built |
+|---|---|
+| **Inputs** | Three channels in the data model: upload of documents (folder), WhatsApp, and connectors to ERP and email. In the demo, a generator (`scripts/generate`) produces a complete synthetic contractor with eight projects as JSON. |
+| **WhatsApp agent** (`product/zuruf`) | TypeScript, Anthropic SDK (Claude) and Zod. The model only reads and quotes; whether to ask back or to file is deterministic code, and replies are fixed German sentences. Runs as an API route inside the app's Cloudflare Worker, with usage limits and append-only storage in Supabase (Postgres, Frankfurt). A browser simulator with test scenarios is used for development. |
+| **Digital twin** (`product/app/src/domain`, `src/daten`) | TypeScript data model "record with source": every field is a value plus its source (document, page, position, highlight box) and a review state (machine-read, confirmed, blocked). Amounts in whole cents, percentages in basis points. Hierarchy business → client → project → documents and line items. All screens read through one data-access layer, so a per-business database plugs in at a single place. |
+| **Final-invoice run** (`product/app/src/engine`) | Pure TypeScript functions: `pruefe()` builds the context of a project, derives all findings, a ledger across every bill-of-quantities item, the cascade and the pre-check; `pruefeFirma()` rolls this up for the whole business. Rounding and money in integer cents, tested with Vitest against a reference solution to the cent. |
+| **Approval and screens** (`product/app/src/app`, `src/ui`, `src/zustand`) | Next.js 16 and React 19, static export. Two-step approval stored as a history with undo; every number opens the original document with the source highlighted. |
+| **Hosting** | App and WhatsApp agent on a Cloudflare Worker (rebuilt by Workers Builds on every merge), sign-in via Supabase. Website on Cloudflare Pages. GitHub Actions checks every pull request: types, lint, tests, build. |
 
 ## Repository layout
 
@@ -115,7 +127,7 @@ flowchart TD
 ├── _UEBERGABE.md        product handover notes
 ├── product/             the product
 │   ├── app/             demo app: Next.js, calculation core, worker
-│   ├── zuruf/           site-call agent (WhatsApp), simulator and scenarios
+│   ├── zuruf/           WhatsApp agent, simulator and test scenarios
 │   ├── ui-fundament/    design system v2 as reference
 │   └── docs/            plan, scope, reference solution, review reports
 ├── website/             public website (Next.js, DE/EN)
@@ -131,7 +143,7 @@ Each area has its own README: [`product/`](product/README.md), [`website/`](webs
 |---|---|---|
 | Product app | `cd product/app && npm ci && npm run dev` | http://localhost:3000 |
 | Website | `cd website && npm install && npm run dev` | http://localhost:3210 |
-| Site-call simulator | `cd product/zuruf && npm ci && npm run sim` | see [`product/zuruf/PLAN.md`](product/zuruf/PLAN.md) |
+| WhatsApp agent simulator | `cd product/zuruf && npm ci && npm run sim` | see [`product/zuruf/PLAN.md`](product/zuruf/PLAN.md) |
 
 Node 22 or newer. Before every pull request in `product/app`: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
 
