@@ -23,7 +23,9 @@ const STUFEN: { arten: AbzugArt[]; summe: string }[] = [
   { arten: ["haftruecklass"], summe: "Schlussrechnungsbetrag vor Abzug der Zahlungen" },
 ];
 
+/** Nur mit eigenem Entwurf; ohne Entwurf null. */
 export function kaskade(k: Kontext, befunde: Befund[]) {
+  if (!k.d.entwurf) return null;
   const v = k.d.vertrag;
   const entwurf = k.d.entwurf.summe.wert;
   const liste1 = befunde.filter((b) => b.liste === "jetzt").reduce((s, b) => s + (b.betrag ?? 0), 0);
@@ -49,7 +51,7 @@ export function kaskade(k: Kontext, befunde: Befund[]) {
       const gu = k.d.guAbzug?.abzuege.find((a) => a.art === art);
       if (!vs && !gu) continue;
       const satz = gu ? gu.satz.wert : vs!.satz.wert;
-      const pruefung = !vs ? "kein_vertragspunkt" : vs.satz.wert === satz ? "laut_vertrag" : "abweichung";
+      const pruefung = !vs ? "abzug_ohne_vertragspunkt" : vs.satz.wert === satz ? "laut_vertrag" : "abweichung";
       const betrag = prozent(basis, satz);
       abzuege += betrag;
       zeilen.push({

@@ -2,6 +2,7 @@
 // laufen vorher auf dem eigenen Entwurf samt Liste 1. Ergebnis: Positionen mit Kürzungsrisiko.
 // Überschneidet sich mit den Befunden (nie addieren).
 
+import type { Rechnung } from "@/domain/typen";
 import { betragAusMenge, euro, menge, rundeHalbAuf, stundenBetrag } from "./geld";
 import { aufmassMenge, type Kontext } from "./kontext";
 import type { Befund, Beleg, Hinweis, Kuerzungsrisiko } from "./typen";
@@ -100,9 +101,9 @@ function stundenAbweichung(k: Kontext, befunde: Befund[]): Kuerzungsrisiko[] {
   return risiken;
 }
 
-function rechenfehler(k: Kontext): Kuerzungsrisiko[] {
+function rechenfehler(k: Kontext, entwurf: Rechnung): Kuerzungsrisiko[] {
   const risiken: Kuerzungsrisiko[] = [];
-  for (const z of k.d.entwurf.zeilen) {
+  for (const z of entwurf.zeilen) {
     if (z.typ !== "lv" && z.typ !== "zusatz") continue;
     if (z.typ === "lv" && z.teilleistung) continue;
     const richtig = betragAusMenge(z.menge.wert, z.ep.wert);
@@ -125,7 +126,7 @@ function rechenfehler(k: Kontext): Kuerzungsrisiko[] {
         ...(herkunft
           ? [{ titel: `${herkunft.rechnung.nr.wert} Pos. ${nr}`, text: `verrechnet ${euro(herkunft.zeile.betrag.wert)}`, quelle: herkunft.zeile.betrag.quelle, datum: herkunft.rechnung.datum.wert }]
           : []),
-        { titel: `Entwurf Pos. ${nr}`, text: `verrechnet ${euro(z.betrag.wert)}`, quelle: z.betrag.quelle, datum: k.d.entwurf.datum.wert },
+        { titel: `Entwurf Pos. ${nr}`, text: `verrechnet ${euro(z.betrag.wert)}`, quelle: z.betrag.quelle, datum: entwurf.datum.wert },
       ],
       pruefstand: "maschinell",
     });
@@ -133,9 +134,9 @@ function rechenfehler(k: Kontext): Kuerzungsrisiko[] {
   return risiken;
 }
 
-function ausserhalbLv(k: Kontext): Kuerzungsrisiko[] {
+function ausserhalbLv(k: Kontext, entwurf: Rechnung): Kuerzungsrisiko[] {
   const risiken: Kuerzungsrisiko[] = [];
-  for (const z of k.d.entwurf.zeilen) {
+  for (const z of entwurf.zeilen) {
     if (z.typ !== "lv" && z.typ !== "zusatz") continue;
     const nr = z.positionNr.wert;
     if (k.lv.has(nr)) continue;
@@ -156,7 +157,7 @@ function ausserhalbLv(k: Kontext): Kuerzungsrisiko[] {
       bereitsGekuerzt: k.kuerzungen.has(nr),
       belege: [
         ...(ar ? [{ titel: `${ar.rechnung.nr.wert} Pos. ${nr}`, text: `${text}, ${euro(ar.zeile.betrag.wert)}`, quelle: ar.zeile.betrag.quelle, datum: ar.rechnung.datum.wert }] : []),
-        { titel: `Entwurf Pos. ${nr}`, text: `${text}, ${euro(z.betrag.wert)}`, quelle: z.betrag.quelle, datum: k.d.entwurf.datum.wert },
+        { titel: `Entwurf Pos. ${nr}`, text: `${text}, ${euro(z.betrag.wert)}`, quelle: z.betrag.quelle, datum: entwurf.datum.wert },
       ],
       pruefstand: "maschinell",
     });
@@ -164,8 +165,11 @@ function ausserhalbLv(k: Kontext): Kuerzungsrisiko[] {
   return risiken;
 }
 
+/** Nur mit eigenem Entwurf: Ohne Schlussrechnung gibt es nichts aus GU-Sicht vorzuprüfen. */
 export function vorpruefung(k: Kontext, befunde: Befund[]) {
-  const risiken = [...aufmassOhneGegenzeichnung(k, befunde), ...stundenAbweichung(k, befunde), ...rechenfehler(k), ...ausserhalbLv(k)];
+  const entwurf = k.d.entwurf;
+  if (!entwurf) return null;
+  const risiken = [...aufmassOhneGegenzeichnung(k, befunde), ...stundenAbweichung(k, befunde), ...rechenfehler(k, entwurf), ...ausserhalbLv(k, entwurf)];
   const summe = risiken.reduce((s, r) => s + r.betrag, 0);
   const gekuerzt = risiken.filter((r) => r.bereitsGekuerzt);
   const bezuege = new Set(risiken.map((r) => r.bezug));

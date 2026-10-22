@@ -2,7 +2,7 @@
 
 import type { Datensatz } from "@/domain/typen";
 import { betragAusMenge } from "./geld";
-import { aufmassMenge, entwurfMenge, type Kontext } from "./kontext";
+import { aufmassMenge, verrechneteZeilen, verrechnetMenge, type Kontext } from "./kontext";
 import type { ImportStand, LedgerZeile } from "./typen";
 
 /** Zählt Felder mit korrigiert = true, egal wo im Datensatz. */
@@ -41,8 +41,8 @@ export function baueLedger(k: Kontext): LedgerZeile[] {
     const nr = p.nr.wert;
     const ep = p.ep.wert;
     const aufmass = aufmassMenge(k, nr);
-    const verrechnet = entwurfMenge(k, nr);
-    const verrechnetBetrag = (k.entwurf.get(nr) ?? []).reduce((s, f) => s + f.zeile.betrag.wert, 0);
+    const verrechnet = verrechnetMenge(k, nr);
+    const verrechnetBetrag = verrechneteZeilen(k, nr).reduce((s, f) => s + f.zeile.betrag.wert, 0);
     const arZeilen = k.abschlaege.get(nr) ?? [];
     const inAbschlaegen = arZeilen.reduce((s, f) => s + f.zeile.menge.wert, 0);
     const bezahlt =

@@ -8,7 +8,17 @@ export const f = <T,>(wert: T): Feld<T> => ({ wert, quelle: q });
 
 export function miniDatensatz(): Datensatz {
   return {
-    projekt: { id: "t", name: "Test", los: "HKLS", auftragnehmer: "AN", auftraggeber: "GU", schlussrechnungFaellig: "2026-10-31" },
+    projekt: {
+      id: "t",
+      kurz: "T",
+      name: "Test",
+      los: "HKLS",
+      auftraggeberId: "gu",
+      status: "sr_vorbereiten",
+      schlussrechnungLegenBis: "2026-10-31",
+      schlussrechnungGelegt: null,
+      schlusszahlung: null,
+    },
     vertrag: {
       datum: f("2025-11-14"),
       norm: f("ÖNORM B 2110"),
@@ -21,8 +31,8 @@ export function miniDatensatz(): Datensatz {
       pauschalen: [{ kategorie: f("baustelleneinrichtung"), punkt: "4.3", text: f("pauschal") }],
     },
     dokumente: [
-      { id: "test", art: "lv", dateiname: "lv.pdf", datum: "2026-01-01", seiten: 1, inhaltHash: "a" },
-      { id: "test-2", art: "mail", dateiname: "m.eml", datum: "2026-01-01", seiten: 1, inhaltHash: "a" },
+      { id: "test", art: "lv", kanal: "ordner", dateiname: "lv.pdf", datum: "2026-01-01", seiten: 1, inhaltHash: "a" },
+      { id: "test-2", art: "mail", kanal: "ordner", dateiname: "m.eml", datum: "2026-01-01", seiten: 1, inhaltHash: "a" },
     ],
     lv: [
       { nr: f("22.01.01A"), kurztext: f("Rohr"), einheit: f("m"), menge: f(10_000), ep: f(1_000), k7: null },
@@ -77,5 +87,6 @@ export function miniDatensatz(): Datensatz {
     guAbzug: null,
     korrekturblaetter: [],
     nachtraege: [],
+    zurufe: [],
   };
 }

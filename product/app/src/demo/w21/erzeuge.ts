@@ -20,6 +20,7 @@ import type {
   RechnungsZeile,
   Regiebericht,
   Zahlung,
+  Zuruf,
 } from "@/domain/typen";
 import { betragAusMenge, prozent, stundenBetrag } from "@/engine/geld";
 import { KATALOG, SOLL_ANZAHL } from "./katalog";
@@ -323,7 +324,7 @@ export function erzeugeW21(): Datensatz {
   // ---------- Dokumente ----------
   const dokumente: Dokument[] = [];
   const dok = (id: string, art: DokumentArt, dateiname: string, datum: string, seiten: number, inhaltHash = `h-${id}`) => {
-    dokumente.push({ id, art, dateiname, datum, seiten, inhaltHash });
+    dokumente.push({ id, art, kanal: "ordner", dateiname, datum, seiten, inhaltHash });
     return id;
   };
   let korrekturen = 0;
@@ -714,11 +715,14 @@ export function erzeugeW21(): Datensatz {
   return {
     projekt: {
       id: "w21-b-hkls",
+      kurz: "W21",
       name: "Wohnhausanlage Wien 21",
       los: "Bauplatz B, HKLS-Los",
-      auftragnehmer: "Haustechnik Beispiel GmbH (fiktiv)",
-      auftraggeber: "Hochbau Beispiel GmbH (fiktiv)",
-      schlussrechnungFaellig: "2026-10-31",
+      auftraggeberId: "hochbau-beispiel",
+      status: "sr_vorbereiten",
+      schlussrechnungLegenBis: "2026-10-31",
+      schlussrechnungGelegt: null,
+      schlusszahlung: null,
     },
     vertrag,
     dokumente,
@@ -736,7 +740,68 @@ export function erzeugeW21(): Datensatz {
     guAbzug,
     korrekturblaetter,
     nachtraege: [],
+    zurufe: erzeugeZurufe(),
   };
+}
+
+// ---------- Zurufe (WhatsApp, Demo_Faelle.md v2) ----------
+// Eigene Belege neben den 165 Ordner-Dokumenten. Z1 bis Z4 stützen vorhandene Posten und nennen bewusst keine
+// Stunden (G2 bleibt unverändert); Z5 und Z6 haben keinen Regiebericht und werden neue Posten in Liste 2.
+
+interface ZurufDef {
+  nr: string;
+  zeitpunkt: string;
+  absender: string;
+  transkript: string;
+  foto: boolean;
+  ort: string;
+  taetigkeit: string;
+  m: number;
+  h: number;
+  angewiesenVon: string | null;
+  positionen: string[];
+  regie: string | null;
+}
+
+const ZURUFE: ZurufDef[] = [
+  { nr: "Z1", zeitpunkt: "2026-05-12T15:20", absender: "Monteur, Trupp 1", transkript: "Stiege 2, Top 7 bis 13: die zusätzlichen Heizkörper nach Plan D sind montiert.", foto: true, ort: "Stiege 2, Top 7 bis 13", taetigkeit: "Zusätzliche Heizkörper nach Plan D montiert", m: 0, h: 0, angewiesenVon: null, positionen: [J1], regie: null },
+  { nr: "Z2", zeitpunkt: "2026-06-03T09:05", absender: "Monteur, Trupp 2", transkript: "Steigleitung Stiege 2 kollidiert mit der Lüftung, wir legen um, Bauleitung GU weiß Bescheid.", foto: true, ort: "Stiege 2", taetigkeit: "Steigleitung umgelegt (Kollision Lüftung)", m: 0, h: 0, angewiesenVon: null, positionen: [], regie: "RB-11" },
+  { nr: "Z3", zeitpunkt: "2026-06-24T13:40", absender: "Monteur, Trupp 2", transkript: "Heizung Stiege 1 nochmal entleert, der Polier vom GU hat es angeschafft.", foto: false, ort: "Stiege 1", taetigkeit: "Heizung Stiege 1 zusätzlich entleert", m: 0, h: 0, angewiesenVon: "Polier GU", positionen: [], regie: "RB-12" },
+  { nr: "Z4", zeitpunkt: "2026-07-21T07:55", absender: "Monteur, Trupp 1", transkript: "Wasserschaden im Keller vom Fremdgewerk, wir haben notabgesperrt.", foto: true, ort: "Keller", taetigkeit: "Notabsperrung nach Wasserschaden", m: 0, h: 0, angewiesenVon: null, positionen: [], regie: "RB-14" },
+  { nr: "Z5", zeitpunkt: "2026-08-19T16:10", absender: "Monteur, Trupp 3", transkript: "Top 4 und 5: Waschtischanschlüsse höher gesetzt, Bauleitung GU wollte das. Ein Mann, acht Stunden.", foto: true, ort: "Top 4 und 5", taetigkeit: "Waschtischanschlüsse Top 4 und 5 höher gesetzt", m: 800, h: 0, angewiesenVon: "Bauleitung GU", positionen: [], regie: null },
+  { nr: "Z6", zeitpunkt: "2026-09-08T14:30", absender: "Monteur, Trupp 1", transkript: "Stiege 2, Top 9: Heizkörper im Wohnzimmer versetzt, die Küche wurde anders geplant, der Polier vom GU hat es angeschafft. Zwei Mann, sechs Stunden.", foto: true, ort: "Stiege 2, Top 9", taetigkeit: "Heizkörper Stiege 2, Top 9 versetzt", m: 600, h: 600, angewiesenVon: "Polier GU", positionen: [], regie: null },
+];
+
+/** Eine Minute nach der Nachricht bestätigt der Absender die Zusammenfassung des Agenten mit „Ja“. */
+function eineMinuteSpaeter(zeitpunkt: string): string {
+  const t = new Date(`${zeitpunkt}:00Z`);
+  t.setUTCMinutes(t.getUTCMinutes() + 1);
+  return t.toISOString().slice(0, 16);
+}
+
+function erzeugeZurufe(): Zuruf[] {
+  return ZURUFE.map((z) => {
+    const id = `zuruf-${z.nr.toLowerCase()}`;
+    const qt = q(id, 1, "Sprachnachricht, Transkript");
+    const qa = q(id, 1, "Zusammenfassung des Agenten, bestätigt");
+    return {
+      id,
+      nr: z.nr,
+      kanal: "whatsapp",
+      zeitpunkt: z.zeitpunkt,
+      absender: z.absender,
+      transkript: f(z.transkript, qt),
+      foto: z.foto ? `WhatsApp_Bild_${z.zeitpunkt.slice(0, 10)}_${z.zeitpunkt.slice(11, 13)}-${z.zeitpunkt.slice(14, 16)}.jpg` : null,
+      ort: f(z.ort, qa),
+      taetigkeit: f(z.taetigkeit, qa),
+      stundenMonteur: f(z.m, qa),
+      stundenHelfer: f(z.h, qa),
+      angewiesenVon: z.angewiesenVon ? f(z.angewiesenVon, qa) : null,
+      bezugPositionen: f(z.positionen, qa),
+      bezugRegie: z.regie ? f(z.regie, qa) : null,
+      bestaetigt: { von: z.absender, zeitpunkt: eineMinuteSpaeter(z.zeitpunkt) },
+    };
+  });
 }
 
 function summeZeilen(zeilen: RechnungsZeile[]): number {

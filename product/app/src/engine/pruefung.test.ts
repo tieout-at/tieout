@@ -1,9 +1,11 @@
-// Ende-zu-Ende: Rechenkern auf dem synthetischen Datensatz W21 gegen die Lösungsliste (Demo_Faelle.md v1).
+// Ende-zu-Ende: Rechenkern auf dem synthetischen Datensatz W21 gegen die Lösungsliste (Demo_Faelle.md v2).
 
 import { describe, expect, it } from "vitest";
 import { erzeugeW21 } from "@/demo/w21/erzeuge";
 import {
+  SOLL_AUSSERHALB_ERP,
   SOLL_BEFUNDE,
+  SOLL_BELEGQUELLEN,
   SOLL_HINWEISE,
   SOLL_IMPORT,
   SOLL_KASKADE,
@@ -12,6 +14,7 @@ import {
   SOLL_SUMMEN,
   SOLL_VORPRUEFUNG,
   SOLL_ZAHLUNGEN,
+  SOLL_ZURUF_BELEGE,
 } from "@/demo/w21/loesung";
 import { pruefe } from "./index";
 
@@ -19,7 +22,7 @@ const d = erzeugeW21();
 const e = pruefe(d);
 
 describe("W21: Befunde gegen die Lösungsliste", () => {
-  it("findet genau die 13 eingebauten Befunde, keinen zusätzlichen", () => {
+  it("findet genau die 15 eingebauten Befunde, keinen zusätzlichen", () => {
     expect(e.befunde.map((b) => b.schluessel).sort()).toEqual(SOLL_BEFUNDE.map((s) => s.schluessel).sort());
   });
 
@@ -42,6 +45,7 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
       "Plan H-201, Index C",
       "Plan H-201, Index D",
       "Mail Bauleitung Hochbau Beispiel GmbH",
+      "Zuruf Z1",
       "Foto IMG_2291.jpg",
       "Aufmaßblatt AB-12",
     ]);
@@ -58,6 +62,25 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
     );
   });
 
+  it("O4 und O5: Regie aus Zuruf, Regiesätze des Vertrags, kein Material", () => {
+    expect(e.befunde.find((b) => b.schluessel === "zuruf:Z6")?.rechenweg?.text).toBe(
+      "6 h Monteur × 62,50 € = 375,00 € + 6 h Helfer × 52,00 € = 312,00 € = 687,00 €",
+    );
+    expect(e.befunde.find((b) => b.schluessel === "zuruf:Z5")?.rechenweg?.text).toBe("8 h Monteur × 62,50 € = 500,00 €");
+  });
+
+  it("Zurufe Z1 bis Z4 hängen als Beleg an J1, J3, O1, J4", () => {
+    for (const [schluessel, titel] of Object.entries(SOLL_ZURUF_BELEGE)) {
+      expect(e.befunde.find((b) => b.schluessel === schluessel)?.belege.map((b) => b.titel), schluessel).toContain(titel);
+    }
+    expect(e.befunde.flatMap((b) => b.belege).filter((b) => b.titel.startsWith("Zuruf")).length).toBe(6);
+  });
+
+  it("Quelle des Belegs je Posten und Anteil nur außerhalb ERP", () => {
+    expect(e.belegquellen).toMatchObject(SOLL_BELEGQUELLEN);
+    expect(e.ausserhalbErp).toEqual(SOLL_AUSSERHALB_ERP);
+  });
+
   it("A1: Hinweis ohne Betrag und ohne Wort „Forcierung“", () => {
     const a1 = e.befunde.find((b) => b.liste === "anwalt")!;
     expect(a1.betrag).toBeNull();
@@ -67,11 +90,11 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
 
 describe("W21: Vorprüfung aus GU-Sicht", () => {
   it("genau die 4 Positionen mit Kürzungsrisiko", () => {
-    expect(e.vorpruefung.risiken.map((r) => r.schluessel).sort()).toEqual(SOLL_RISIKEN.map((s) => s.schluessel).sort());
+    expect(e.vorpruefung!.risiken.map((r) => r.schluessel).sort()).toEqual(SOLL_RISIKEN.map((s) => s.schluessel).sort());
   });
 
   it.each(SOLL_RISIKEN)("$id: Grund, Betrag, schon gekürzt, Bezug zum Befund", (soll) => {
-    const r = e.vorpruefung.risiken.find((x) => x.schluessel === soll.schluessel)!;
+    const r = e.vorpruefung!.risiken.find((x) => x.schluessel === soll.schluessel)!;
     expect({ grund: r.grund, betrag: r.betrag, bereitsGekuerzt: r.bereitsGekuerzt, befundSchluessel: r.befundSchluessel }).toEqual({
       grund: soll.grund,
       betrag: soll.betrag,
@@ -81,12 +104,12 @@ describe("W21: Vorprüfung aus GU-Sicht", () => {
   });
 
   it("Summe, bereits gekürzt, Abgleich mit dem Korrekturblatt AR3", () => {
-    expect({ summe: e.vorpruefung.summe, bereitsGekuerzt: e.vorpruefung.bereitsGekuerzt, korrekturblatt: e.vorpruefung.korrekturblatt }).toEqual(SOLL_VORPRUEFUNG);
+    expect({ summe: e.vorpruefung!.summe, bereitsGekuerzt: e.vorpruefung!.bereitsGekuerzt, korrekturblatt: e.vorpruefung!.korrekturblatt }).toEqual(SOLL_VORPRUEFUNG);
   });
 
   it("Texte von G1 und G2 wie in der Lösungsliste", () => {
-    const g1 = e.vorpruefung.risiken.find((r) => r.grund === "aufmass_nicht_gegengezeichnet")!;
-    const g2 = e.vorpruefung.risiken.find((r) => r.grund === "stunden_weichen_ab")!;
+    const g1 = e.vorpruefung!.risiken.find((r) => r.grund === "aufmass_nicht_gegengezeichnet")!;
+    const g2 = e.vorpruefung!.risiken.find((r) => r.grund === "stunden_weichen_ab")!;
     expect(g1.abhilfe).toBe("Plan D und Mail 07.04. beilegen, gemeinsames Aufmaß nachholen");
     expect(g2.detail).toBe("Bericht 24 h, Stundenliste KW 23: 21 h");
   });
@@ -98,12 +121,12 @@ describe("W21: Vorprüfung aus GU-Sicht", () => {
 
 describe("W21: Prüfkaskade, Zahlungen, Import", () => {
   it("Kaskade Zeile für Zeile", () => {
-    expect(e.kaskade.zeilen.map((z) => [z.bezeichnung, z.betrag])).toEqual(SOLL_KASKADE.map((s) => [s.bezeichnung, s.betrag]));
+    expect(e.kaskade!.zeilen.map((z) => [z.bezeichnung, z.betrag])).toEqual(SOLL_KASKADE.map((s) => [s.bezeichnung, s.betrag]));
     for (const s of SOLL_KASKADE.filter((x) => x.quelle)) {
-      const z = e.kaskade.zeilen.find((x) => x.bezeichnung === s.bezeichnung)!;
+      const z = e.kaskade!.zeilen.find((x) => x.bezeichnung === s.bezeichnung)!;
       expect({ pruefung: z.pruefung ?? undefined, quelle: z.quelle }, s.bezeichnung).toEqual({ pruefung: s.pruefung, quelle: s.quelle });
     }
-    expect(e.kaskade.restforderung).toBe(17_006_089);
+    expect(e.kaskade!.restforderung).toBe(17_006_089);
   });
 
   it("Zahlungen je AR nach der Rechenregel", () => {
@@ -132,9 +155,9 @@ describe("W21: Invarianten", () => {
     expect(new Set(e.ledger.map((z) => z.positionNr)).size).toBe(380);
   });
 
-  it("jeder Befund und jedes Risiko hat mindestens einen Beleg mit Quelle in einem vorhandenen Dokument", () => {
-    const ids = new Set(d.dokumente.map((x) => x.id));
-    for (const b of [...e.befunde, ...e.vorpruefung.risiken]) {
+  it("jeder Befund und jedes Risiko hat mindestens einen Beleg mit Quelle in einem vorhandenen Dokument oder Zuruf", () => {
+    const ids = new Set([...d.dokumente.map((x) => x.id), ...d.zurufe.map((z) => z.id)]);
+    for (const b of [...e.befunde, ...e.vorpruefung!.risiken]) {
       expect(b.belege.length, b.schluessel).toBeGreaterThan(0);
       for (const beleg of b.belege) expect(ids.has(beleg.quelle.dokumentId), `${b.schluessel}: ${beleg.quelle.dokumentId}`).toBe(true);
     }

@@ -1,7 +1,7 @@
 // Regel für Regel: positiver Fall und Gegenprobe auf einem kleinen Datensatz.
 
 import { describe, expect, it } from "vitest";
-import type { Mail } from "@/domain/typen";
+import type { Mail, Zuruf } from "@/domain/typen";
 import { pruefe } from "./index";
 import { f, miniDatensatz } from "./testdaten";
 import { kalenderwoche } from "./vorpruefung";
@@ -24,14 +24,14 @@ describe("Gegenprobe: vollständig abgerechnet", () => {
   it("kein Befund, kein Risiko, kein Hinweis", () => {
     const e = pruefe(miniDatensatz());
     expect(e.befunde).toEqual([]);
-    expect(e.vorpruefung.risiken).toEqual([]);
+    expect(e.vorpruefung!.risiken).toEqual([]);
     expect(e.hinweise).toEqual([]);
   });
 
   it("Mindermenge (Aufmaß unter LV, so verrechnet) ist kein Befund", () => {
     const d = miniDatensatz();
     d.aufmass[0].zeilen[0].menge = f(8_000);
-    d.entwurf.zeilen[0] = { typ: "lv", positionNr: f("22.01.01A"), menge: f(8_000), ep: f(1_000), betrag: f(80_000) };
+    d.entwurf!.zeilen[0] = { typ: "lv", positionNr: f("22.01.01A"), menge: f(8_000), ep: f(1_000), betrag: f(80_000) };
     expect(pruefe(d).befunde).toEqual([]);
   });
 
@@ -56,7 +56,7 @@ describe("Mehrmenge", () => {
     d.aufmass[0].zeilen[1].menge = f(1_300);
     d.aufmass[0].unterschriftAG = f(false);
     const e = pruefe(d);
-    expect(e.vorpruefung.risiken.map((r) => [r.grund, r.betrag])).toEqual([["aufmass_nicht_gegengezeichnet", 15_000]]);
+    expect(e.vorpruefung!.risiken.map((r) => [r.grund, r.betrag])).toEqual([["aufmass_nicht_gegengezeichnet", 15_000]]);
     expect(e.hinweise.map((h) => h.aenderung)).toEqual([3_000]);
   });
 
@@ -71,7 +71,7 @@ describe("Mehrmenge", () => {
 describe("Regie", () => {
   it("unterschrieben, nicht verrechnet → jetzt; nicht unterschrieben → offen", () => {
     const d = miniDatensatz();
-    d.entwurf.zeilen = d.entwurf.zeilen.filter((z) => z.typ !== "regie");
+    d.entwurf!.zeilen = d.entwurf!.zeilen.filter((z) => z.typ !== "regie");
     expect(pruefe(d).befunde.map((b) => [b.schluessel, b.liste, b.betrag])).toEqual([["regie:RB-01", "jetzt", 51_000]]);
     d.regie[0].unterschriftAG = f(false);
     expect(pruefe(d).befunde.map((b) => b.liste)).toEqual(["offen"]);
@@ -80,9 +80,9 @@ describe("Regie", () => {
   it("Stunden über der Stundenliste → Kürzungsrisiko; gleiche Stunden → keins", () => {
     const d = miniDatensatz();
     d.stundenlisten.push({ dokumentId: "test", von: f("2026-06-01"), bis: f("2026-06-07"), eintraege: [{ regieNr: f("RB-01"), stundenMonteur: f(600), stundenHelfer: f(0) }] });
-    expect(pruefe(d).vorpruefung.risiken.map((r) => [r.grund, r.betrag])).toEqual([["stunden_weichen_ab", 12_500]]);
+    expect(pruefe(d).vorpruefung!.risiken.map((r) => [r.grund, r.betrag])).toEqual([["stunden_weichen_ab", 12_500]]);
     d.stundenlisten[0].eintraege[0].stundenMonteur = f(800);
-    expect(pruefe(d).vorpruefung.risiken).toEqual([]);
+    expect(pruefe(d).vorpruefung!.risiken).toEqual([]);
   });
 });
 
@@ -95,7 +95,7 @@ describe("Preisumrechnung", () => {
     const e = pruefe(d);
     // Leistung ab Stichtag 150.000 Cent × 40 % = 60.000 × 3,8 % = 2.280
     expect(e.befunde.map((b) => [b.schluessel, b.betrag])).toEqual([["preisumrechnung", 2_280]]);
-    d.entwurf.zeilen.push({ typ: "preisgleitung", betrag: f(2_280) });
+    d.entwurf!.zeilen.push({ typ: "preisgleitung", betrag: f(2_280) });
     expect(pruefe(d).befunde).toEqual([]);
   });
 
@@ -139,25 +139,112 @@ describe("Anmeldungen und Hinweise", () => {
 describe("Vorprüfung: Rechenfehler und Positionen außerhalb des LV", () => {
   it("zu viel verrechnet → Risiko; richtig gerechnet → keins", () => {
     const d = miniDatensatz();
-    d.entwurf.zeilen[1] = { typ: "lv", positionNr: f("22.01.02A"), menge: f(1_000), ep: f(5_000), betrag: f(50_360) };
-    expect(pruefe(d).vorpruefung.risiken.map((r) => [r.grund, r.betrag])).toEqual([["rechenfehler", 360]]);
+    d.entwurf!.zeilen[1] = { typ: "lv", positionNr: f("22.01.02A"), menge: f(1_000), ep: f(5_000), betrag: f(50_360) };
+    expect(pruefe(d).vorpruefung!.risiken.map((r) => [r.grund, r.betrag])).toEqual([["rechenfehler", 360]]);
   });
 
   it("Zusatzposition ohne Nachtrag → Risiko; mit beauftragtem Nachtrag → keins", () => {
     const d = miniDatensatz();
-    d.entwurf.zeilen.push({ typ: "zusatz", positionNr: f("Z-01"), text: f("Kernbohrung"), menge: f(100), ep: f(18_000), betrag: f(18_000) });
-    expect(pruefe(d).vorpruefung.risiken.map((r) => [r.grund, r.betrag])).toEqual([["ausserhalb_lv_kein_nachtrag", 18_000]]);
+    d.entwurf!.zeilen.push({ typ: "zusatz", positionNr: f("Z-01"), text: f("Kernbohrung"), menge: f(100), ep: f(18_000), betrag: f(18_000) });
+    expect(pruefe(d).vorpruefung!.risiken.map((r) => [r.grund, r.betrag])).toEqual([["ausserhalb_lv_kein_nachtrag", 18_000]]);
     d.nachtraege.push({ positionNr: f("Z-01"), beauftragt: f(true) });
-    expect(pruefe(d).vorpruefung.risiken).toEqual([]);
+    expect(pruefe(d).vorpruefung!.risiken).toEqual([]);
   });
 
   it("Kürzung im Korrekturblatt → als bereits gekürzt markiert", () => {
     const d = miniDatensatz();
-    d.entwurf.zeilen.push({ typ: "zusatz", positionNr: f("Z-01"), text: f("Kernbohrung"), menge: f(100), ep: f(18_000), betrag: f(18_000) });
+    d.entwurf!.zeilen.push({ typ: "zusatz", positionNr: f("Z-01"), text: f("Kernbohrung"), menge: f(100), ep: f(18_000), betrag: f(18_000) });
     d.korrekturblaetter.push({ dokumentId: "test", rechnungNr: f("AR1"), datum: f("2026-04-10"), zeilen: [{ positionNr: f("Z-01"), kuerzung: f(18_000), grund: f("nicht beauftragt") }] });
     const e = pruefe(d);
-    expect(e.vorpruefung.risiken[0].bereitsGekuerzt).toBe(true);
-    expect(e.vorpruefung.korrekturblatt).toEqual({ gekuerzt: 18_000, zeilen: 1, erkannt: 1 });
+    expect(e.vorpruefung!.risiken[0].bereitsGekuerzt).toBe(true);
+    expect(e.vorpruefung!.korrekturblatt).toEqual({ gekuerzt: 18_000, zeilen: 1, erkannt: 1 });
+  });
+});
+
+describe("Zurufe", () => {
+  const zuruf = (teil: Partial<Zuruf>): Zuruf => ({
+    id: "zuruf-z1",
+    nr: "Z1",
+    kanal: "whatsapp",
+    zeitpunkt: "2026-06-10T10:00",
+    absender: "Monteur, Trupp 1",
+    transkript: f("Heizkörper versetzt. Zwei Mann, sechs Stunden."),
+    foto: null,
+    ort: f("Top 9"),
+    taetigkeit: f("Heizkörper versetzt"),
+    stundenMonteur: f(600),
+    stundenHelfer: f(600),
+    angewiesenVon: f("Polier GU"),
+    bezugPositionen: f([]),
+    bezugRegie: null,
+    bestaetigt: { von: "Monteur, Trupp 1", zeitpunkt: "2026-06-10T10:01" },
+    ...teil,
+  });
+
+  it("Stunden ohne Regiebericht → angemeldet und offen, mit Regiesätzen, ohne Material", () => {
+    const d = miniDatensatz();
+    d.zurufe.push(zuruf({}));
+    expect(pruefe(d).befunde.map((b) => [b.schluessel, b.art, b.liste, b.betrag])).toEqual([["zuruf:Z1", "regie_zuruf", "offen", 68_700]]);
+  });
+
+  it("Zuruf zu einem Regiebericht oder ohne Stunden ist nur Beleg, kein eigener Posten", () => {
+    const d = miniDatensatz();
+    d.zurufe.push(zuruf({ bezugRegie: f("RB-01") }), zuruf({ id: "zuruf-z2", nr: "Z2", stundenMonteur: f(0), stundenHelfer: f(0) }));
+    expect(pruefe(d).befunde).toEqual([]);
+  });
+
+  it("Zuruf hängt als Beleg am Regiebericht", () => {
+    const d = miniDatensatz();
+    d.entwurf!.zeilen = d.entwurf!.zeilen.filter((z) => z.typ !== "regie");
+    d.zurufe.push(zuruf({ bezugRegie: f("RB-01") }));
+    expect(pruefe(d).befunde[0].belege.map((b) => b.titel)).toEqual(["Regiebericht RB-01", "Zuruf Z1"]);
+  });
+});
+
+describe("Projekt in Ausführung (ohne Entwurf)", () => {
+  const laufend = () => {
+    const d = miniDatensatz();
+    d.projekt.status = "in_ausfuehrung";
+    d.entwurf = null;
+    d.abschlaege.push({
+      nr: f("AR1"),
+      dokumentId: "test",
+      art: "abschlag",
+      datum: f("2026-06-30"),
+      zeilen: [
+        { typ: "lv", positionNr: f("22.01.01A"), menge: f(10_000), ep: f(1_000), betrag: f(100_000) },
+        { typ: "lv", positionNr: f("22.01.02A"), menge: f(1_000), ep: f(5_000), betrag: f(50_000) },
+        { typ: "regie", regieNr: f("RB-01"), betrag: f(51_000) },
+      ],
+      summe: f(201_000),
+    });
+    return d;
+  };
+
+  it("alles bis zur letzten AR verrechnet → kein Befund, keine Vorprüfung, keine Kaskade", () => {
+    const e = pruefe(laufend());
+    expect({ befunde: e.befunde, vorpruefung: e.vorpruefung, kaskade: e.kaskade, grenze: e.grenze }).toEqual({ befunde: [], vorpruefung: null, kaskade: null, grenze: "2026-06-30" });
+  });
+
+  it("vor der letzten AR erbracht, nicht verrechnet → Befund „erbracht, nicht verrechnet“", () => {
+    const d = laufend();
+    d.abschlaege[0].zeilen[0] = { typ: "lv", positionNr: f("22.01.01A"), menge: f(8_000), ep: f(1_000), betrag: f(80_000) };
+    expect(pruefe(d).befunde.map((b) => [b.schluessel, b.art, b.betrag])).toEqual([["nicht_verrechnet:22.01.01A", "nicht_verrechnet", 20_000]]);
+  });
+
+  it("Gegenprobe: Aufmaß und Regie nach der letzten AR sind kein Befund", () => {
+    const d = laufend();
+    d.aufmass.push({ ...d.aufmass[0], nr: "AB-02", datum: f("2026-07-15"), zeilen: [{ positionNr: f("22.01.02A"), menge: f(500), ort: f("St. 2") }] });
+    d.regie.push({ ...d.regie[0], nr: f("RB-02"), datum: f("2026-07-10") });
+    expect(pruefe(d).befunde).toEqual([]);
+  });
+
+  it("Schlussrechnung gelegt → kein Abgleich", () => {
+    const d = laufend();
+    d.abschlaege = [];
+    d.projekt.status = "sr_gelegt";
+    const e = pruefe(d);
+    expect({ abgleich: e.abgleich, befunde: e.befunde.length, ledger: e.ledger.length }).toEqual({ abgleich: false, befunde: 0, ledger: 0 });
   });
 });
 
