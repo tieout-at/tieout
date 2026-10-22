@@ -60,13 +60,13 @@
         {
           "k": "erp",
           "label": "ERP",
-          "detail": "projects, invoices",
+          "detail": "invoices",
           "g": 0
         },
         {
           "k": "ava",
           "label": "Estimating",
-          "detail": "costing, prices",
+          "detail": "prices",
           "g": 0
         },
         {
@@ -102,13 +102,13 @@
         {
           "k": "wa",
           "label": "WhatsApp",
-          "detail": "on-site requests",
+          "detail": "requests",
           "g": 2
         },
         {
           "k": "foto",
-          "label": "Photos, voice notes",
-          "detail": "",
+          "label": "Photos",
+          "detail": "voice notes",
           "g": 2
         }
       ],
@@ -378,8 +378,8 @@
     "impressum": "Legal notice",
     "datenschutz": "Privacy",
     "linkedin": "LinkedIn",
-    "linkedinPlaceholder": "[[PLACEHOLDER: LinkedIn page]]",
-    "preview": "Preview"
+    "preview": "Preview",
+    "linkedinUrl": "https://www.linkedin.com/company/tieout-at/"
   },
   "legal": {
     "back": "Back to home",

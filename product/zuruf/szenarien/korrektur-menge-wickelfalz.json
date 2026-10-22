@@ -1,0 +1,68 @@
+{
+  "id": "korrektur-menge-wickelfalz",
+  "titel": "Menge korrigiert: 10 statt 8 Meter Lüftungsrohr",
+  "kategorie": "korrektur",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Tippt klein, Fachkürzel wie 'dn 125', ohne Satzzeichen",
+    "verhalten": "Auf die erste Zusammenfassung schreibt er 'na 10 meter ned 8'. Zeigt die neue Zusammenfassung 10 m, drückt er 'Passt'."
+  },
+  "start": "2026-10-30T13:50:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "mödling 2. og zimmer 205 bis 208 zuluft wickelfalzrohr dn 125 neu verzogen 8 meter weil der trockenbauer die decke tiefer macht. polier baumeister. 2 mann 3 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "2. OG, Zimmer 205 bis 208",
+        "leistung": "Zuluft-Wickelfalzrohr DN 125 wegen tieferer Decke neu verzogen",
+        "menge": {
+          "wert": 10,
+          "einheit": "m"
+        },
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVon": "Polier des Baumeisters",
+        "material": "Wickelfalzrohr DN 125"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "205",
+          "208",
+          "2. OG"
+        ],
+        "leistungStichwoerter": [
+          "Wickelfalz",
+          "Zuluft",
+          "Rohr",
+          "Lüftung"
+        ],
+        "mengeWert": 10,
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erste Zusammenfassung ohne Rückfrage mit 8 m. Nach der Korrektur 10 m, sonst alles gleich, kurze neue Zusammenfassung, keine Frage nach dem Grund."
+  }
+}

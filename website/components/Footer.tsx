@@ -20,9 +20,9 @@ export function Footer({ t, locale }: { t: Messages["footer"]; locale: Locale })
         <nav className="footer__links" aria-label="Footer">
           <a href={legalPath(locale, "impressum")}>{t.impressum}</a>
           <a href={legalPath(locale, "datenschutz")}>{t.datenschutz}</a>
-          <span>
-            {t.linkedin}: <Ph text={t.linkedinPlaceholder} />
-          </span>
+          <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer">
+            {t.linkedin} <span aria-hidden="true">↗</span>
+          </a>
         </nav>
       </div>
     </footer>

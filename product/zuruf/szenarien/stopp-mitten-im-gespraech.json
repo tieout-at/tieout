@@ -1,0 +1,38 @@
+{
+  "id": "stopp-mitten-im-gespraech",
+  "titel": "Schreibt 'stopp' auf die Rückfrage",
+  "kategorie": "stopp",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt sehr kurz, klein, gereizt",
+    "verhalten": "Stellt der Agent eine Rückfrage (z. B. Stunden oder wer angeschafft hat), schreibt er 'stopp'. Schickt der Agent ohne Frage gleich eine Zusammenfassung, schreibt er statt 'Passt' ebenfalls 'stopp'. Fragt der Agent danach trotzdem weiter, schreibt er 'STOPP' und reagiert nicht mehr."
+  },
+  "start": "2026-10-23T14:05:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "wien 10 top 30 heizkörper versetzt"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Top 30",
+        "leistung": "Heizkörper versetzt"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 0,
+    "status": "egal",
+    "eintraege": [],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [
+      "warum"
+    ],
+    "sollVerhalten": "Nach 'stopp' hört er sofort auf: keine weitere Frage, kein Speichern des angefangenen Zurufs, eine Bestätigung in einem Satz (z. B. dass nichts abgelegt wurde und eine neue Nachricht wieder startet). Kein Überreden, keine Frage nach dem Grund."
+  }
+}

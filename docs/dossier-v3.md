@@ -495,9 +495,9 @@ Steckbriefe zu Stratos, Dryft und Tacto sind nur Kurzfassungen. Maxi ergänzt si
 - **Vertrauensleiste:** EU-Hosting, AVV, Datensilo pro Firma, "ihr gebt nur die Projekte frei, die ihr wollt", "wir reden nie mit eurem GU", keine Auswertung pro Mitarbeiter. ISO 27001 erst nach dem Pre-Seed.
 
 **[geändert 22.10., Website] Was für die Website jetzt gilt (Teamentscheidung, ersetzt die Punkte oben, soweit sie abweichen):**
-- **GTM und Monetarisierung sind offen.** Die Website nennt kein Angebot (Check, Desk, Live), keine Preise und keinen CTA "Check anfragen". CTA ist neutral ("Kontakt aufnehmen"), bis GTM entschieden ist.
+- **GTM und Monetarisierung sind offen.** Die Website nennt kein Angebot (Check, Desk, Live), keine Preise und keinen CTA "Check anfragen". CTA ist "Demo buchen" mit Terminwahl (Entscheidung Maxi D., 22.10.), ohne Angebot und Preis.
 - **Reihenfolge:** Zwilling zuerst (Firma → Projekt → Beleg, interaktiv), die Schlussrechnung als erste Anwendung, weitere als "in Planung".
-- **Arbeitstitel:** "Tieout." (vorher "EndPoint.", geändert 22.10.). CI: Planraster mit Papier, Tinte und Ultramarin. Details in `website/STRUKTUR.md`.
+- **Arbeitstitel:** "tieout", klein und ohne Punkt (vorher "Tieout.", davor "EndPoint.", geändert 22.10.). Domain tieout.at. CI: Planraster mit Papier, Tinte und Ultramarin. Details in `website/STRUKTUR.md`.
 - **Platzhalter:** Was wir noch nicht wissen (Rechtsform, Impressum, Rollen, Video, Domain), steht als `[[PLATZHALTER: …]]` im Text, nie als erfundene Tatsache. Die Vorschau ist per Link offen erreichbar (noindex), Entscheidung Maxi D. vom 22.10. Vor aktiver Verbreitung werden Impressum und Datenschutz mit echten Angaben gefüllt (Impressumspflicht).
 - **Team-Sektion:** Die vier Gründer werden gezeigt, dazu eine offene Karte für den Bau-Insider.
 

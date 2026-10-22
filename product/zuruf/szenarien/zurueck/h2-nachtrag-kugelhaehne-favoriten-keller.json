@@ -1,0 +1,31 @@
+{
+  "id": "h2-nachtrag-kugelhaehne-favoriten-keller",
+  "titel": "Kugelhähne im Keller getauscht, Stückzahl und Foto kommen erst nach dem Passt",
+  "kategorie": "nachtrag",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Dialekt, Sprachnachrichten, nennt Zahlen als Wörter ('zwa'), kurz angebunden",
+    "verhalten": "Drückt 'Passt', wenn die erste Zusammenfassung stimmt. Etwa eine Minute nach dem Passt schickt er ein Foto der alten Hähne und den Text 'warn übrigens zwa Stück, DN 25'. Wenn der Agent die neue Zusammenfassung zeigt, drückt er wieder 'Passt'. Fragt der Agent nach etwas, das er schon gesagt hat, antwortet er 'hab i eh gsagt'."
+  },
+  "start": "2026-10-23T15:10:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Servas, 10er, Haus B unten im Keller, de Strangabsperrung hat tropft, hab de Kugelhähne tauscht. Der Polier vom Baumeister hat gsagt i soll des glei machen. War allein, zwa Stunden." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus B, Keller", "leistung": "Undichte Kugelhähne an der Strangabsperrung getauscht", "menge": { "wert": 2, "einheit": "Stück" }, "personen": 1, "dauerStunden": 2, "angewiesenVon": "Polier des GU", "material": "Kugelhahn DN 25" }
+    ],
+    "weissNicht": ["welcher Strang genau (Nummer)"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Haus B", "Keller"], "leistungStichwoerter": ["Kugelhahn", "Kugelhähne", "Absperr", "Hahn", "Hähne"], "mengeWert": 2, "personen": 1, "dauerStunden": 2, "angewiesenVonStichwoerter": ["Polier", "Baumeister"], "mussLeerSein": ["datum"] }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erste Zusammenfassung ohne Rückfrage und ohne geratene Stückzahl (Plural heißt nicht zwei). Den Nachtrag nach dem Passt als Ergänzung desselben Eintrags behandeln (neue Version, kein zweiter Eintrag), Foto dazulegen, Stückzahl 2 übernehmen, kurz neu zusammenfassen und bestätigen lassen."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "klar-heizkoerper-top5",
+  "titel": "Heizkörper versetzt, alles genannt (Beispiel aus GESTALTUNG.md)",
+  "kategorie": "klar",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, kurze Sätze, schickt Sprachnachrichten",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Wenn etwas falsch ist, sagt er kurz, was falsch ist."
+  },
+  "start": "2026-10-22T14:32:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Servus, Wien 21, Top 5, Heizkörper versetzt, der Bauleiter vom GU hat des so wollen, waren zu zweit, sechs Stunden." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w21", "ort": "Top 5", "leistung": "Heizkörper versetzt", "personen": 2, "dauerStunden": 6, "angewiesenVon": "Bauleiter des GU" }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w21", "ortStichwoerter": ["Top 5"], "leistungStichwoerter": ["Heizkörper"], "personen": 2, "dauerStunden": 6, "angewiesenVonStichwoerter": ["Bauleiter"], "mussLeerSein": ["menge", "datum"] }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Keine Rückfrage, sofort Zusammenfassung mit Passt/Ändern, nach Passt kurze Bestätigung."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "h2-ungeduld-technikraum-stunden-fehlen",
+  "titel": "Monteur im Stau will schnell fertig werden, Stunden weiß nur der Polier",
+  "kategorie": "ungeduld",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Steirisch gefärbtes Umgangsdeutsch, Sprachnachricht aus dem Auto, gehetzt, Blinkergeräusch im Hintergrund",
+    "verhalten": "Fragt der Agent nach den Stunden, antwortet er 'Waß i ned genau, de schreibt da Polier, speicher des jetzt einfach'. Kommt danach noch eine Frage, schreibt er 'vergiss es' und antwortet nicht mehr. Bei einer kurzen Zusammenfassung drückt er sofort 'Passt'."
+  },
+  "start": "2026-10-29T17:40:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Ja servus, 21er, Technikraum im Keller, den Lüftungskanal hamma tiefer ghängt, weil der Elektriker sei Trassn durch muass, so drei Meter. Hat de Bauleitung gsagt. War mit'm Kollegen. Schnell bitte, i steh im Stau." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w21", "ort": "Keller, Technikraum", "leistung": "Lüftungskanal tiefer gehängt wegen Elektrotrasse", "menge": { "wert": 3, "einheit": "m" }, "personen": 2, "angewiesenVon": "Bauleitung des GU" }
+    ],
+    "weissNicht": ["wie viele Stunden genau"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w21", "ortStichwoerter": ["Technikraum", "Keller"], "leistungStichwoerter": ["Lüftung", "Kanal", "tiefer"], "mengeWert": 3, "personen": 2, "angewiesenVonStichwoerter": ["Bauleitung", "Bauleiter"], "mussLeerSein": ["dauerStunden", "datum"] }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Höchstens eine Frage (nach den Stunden) oder gleich zusammenfassen mit Stunden als offen. Nach 'weiß ich nicht' nicht nachbohren, keine Stunden schätzen, sofort kurze Zusammenfassung mit Stunden offen, Passt-Knopf. 'mit dem Kollegen' als 2 Personen lesen. Elektriker ist der Grund, nicht der Anweiser. Kein Kommentar zum Autofahren oder zur Eile."
+  }
+}

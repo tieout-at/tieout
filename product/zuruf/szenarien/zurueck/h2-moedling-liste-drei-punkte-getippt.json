@@ -1,0 +1,35 @@
+{
+  "id": "h2-moedling-liste-drei-punkte-getippt",
+  "titel": "Polier tippt am Abend eine Liste mit drei Punkten aus dem Pflegeheim",
+  "kategorie": "aufzaehlung",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Tippt kurz mit Abkürzungen (Zi, zusätzl, gg, 2h, lg), Tippfehler, keine Anrede",
+    "verhalten": "Wenn alle drei Punkte richtig zusammengefasst sind, schreibt er 'passt'. Will der Agent jeden Punkt einzeln bestätigt haben, schreibt er genervt 'passt eh alles'. Fragt der Agent, wer beim dritten Punkt angeschafft hat, schreibt er 'weiß i ned, hat sich so ergeben'."
+  },
+  "start": "2026-11-12T16:20:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "text", "inhalt": "Pflegeheim heut:\n1) Zi 208 u 209 Handtuchheizkörper getauscht gg größere, 2 stk, haustechniker vom heim wollt des, 2 mann 2h\n2) Pflegebad 1.OG zusätzl thermostatmischer bei der wanne, 1 mann 1,5h, bauleiter GU per mail\n3) Technikzentrale ausdehnungsgefäß umghängt weil elektriker trasse braucht, 2 mann 4h\nlg" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "mod", "ort": "Zimmer 208 und 209", "leistung": "Handtuchheizkörper gegen größere getauscht", "menge": { "wert": 2, "einheit": "Stück" }, "personen": 2, "dauerStunden": 2, "angewiesenVon": "Haustechniker des Pflegeheims" },
+      { "projektId": "mod", "ort": "Pflegebad 1. OG", "leistung": "Zusätzlichen Thermostatmischer bei der Wanne montiert", "personen": 1, "dauerStunden": 1.5, "angewiesenVon": "Bauleiter des GU per Mail" },
+      { "projektId": "mod", "ort": "Technikzentrale", "leistung": "Ausdehnungsgefäß umgehängt, weil der Elektriker Platz für die Trasse braucht", "personen": 2, "dauerStunden": 4 }
+    ],
+    "weissNicht": ["wer den dritten Punkt angeschafft hat"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 3,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "mod", "ortStichwoerter": ["208", "209"], "leistungStichwoerter": ["Handtuch", "Heizkörper"], "mengeWert": 2, "personen": 2, "dauerStunden": 2, "angewiesenVonStichwoerter": ["Haustechniker", "Heim"] },
+      { "projektId": "mod", "ortStichwoerter": ["Pflegebad"], "leistungStichwoerter": ["Thermostat", "Mischer"], "personen": 1, "dauerStunden": 1.5, "angewiesenVonStichwoerter": ["Bauleiter", "GU"] },
+      { "projektId": "mod", "ortStichwoerter": ["Technikzentrale", "Technik"], "leistungStichwoerter": ["Ausdehnung", "Gefäß", "umgehängt", "umghängt"], "personen": 2, "dauerStunden": 4, "mussLeerSein": ["angewiesenVon", "menge"] }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Drei Einträge erkennen, Abkürzungen richtig lesen (1,5h = 1,5 Stunden), eine gemeinsame kurze Zusammenfassung mit einem Passt für alles. Beim dritten Punkt den Elektriker nicht als Anweiser eintragen (er ist der Grund, nicht der Auftraggeber), Anweiser offen lassen. Nicht jeden Punkt einzeln bestätigen lassen."
+  }
+}

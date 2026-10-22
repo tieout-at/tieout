@@ -1,0 +1,31 @@
+{
+  "id": "h2-korrektur-nach-passt-falsche-baustelle",
+  "titel": "Waschtisch höher gesetzt, nach dem Passt merkt er, dass es die andere Baustelle war",
+  "kategorie": "korrektur",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, kurze Sprachnachrichten, etwas zerstreut, war an dem Tag auf zwei Baustellen",
+    "verhalten": "Drückt bei der ersten Zusammenfassung 'Passt'. Etwa zehn Minuten später schreibt er: 'sorry, des war ned der 21er, des war favoriten haus a top 3. rest stimmt'. Zeigt der Agent die korrigierte Zusammenfassung, drückt er 'Passt'. Fragt der Agent, warum, schreibt er 'hab mi vertan'."
+  },
+  "start": "2026-11-25T15:00:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Servus, 21er, Top 3, den Waschtisch hab i nochmal abbaut und höher montiert, weil der Bauherr bei der Begehung des so wollt. I allein, a Stund." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus A, Top 3", "leistung": "Waschtisch demontiert und höher wieder montiert", "personen": 1, "dauerStunden": 1, "angewiesenVon": "Bauherr bei der Begehung" }
+    ],
+    "weissNicht": ["um wie viele Zentimeter höher"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Top 3", "Top3", "Haus A"], "leistungStichwoerter": ["Waschtisch"], "personen": 1, "dauerStunden": 1, "angewiesenVonStichwoerter": ["Bauherr"], "mussLeerSein": ["datum", "menge"] }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": ["warum"],
+    "sollVerhalten": "Erste Meldung ohne Rückfrage zusammenfassen. Die Korrektur nach dem Speichern als neue Version desselben Eintrags anlegen (Projekt Wien 10, Haus A, Top 3), nicht als zweiten Eintrag und nicht im Wien-21-Projekt stehen lassen. Alle anderen Werte übernehmen, kurz neu bestätigen lassen, keine Nachfrage nach dem Grund für den Fehler."
+  }
+}

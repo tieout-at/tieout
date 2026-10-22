@@ -1,0 +1,61 @@
+{
+  "id": "laerm-bruchstueck-flex",
+  "titel": "Sprachnachricht mit Flex-Lärm, Top und Personenzahl unverständlich",
+  "kategorie": "laerm_bruchstueck",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Spricht laut gegen den Lärm, Sätze reißen ab, Wiener Umgangssprache",
+    "verhalten": "Fragt der Agent nach dem Top, sagt er 'Top zwanzig'. Fragt er nach der Zahl der Leute, sagt er 'zu zweit'. Fragt der Agent beides in einer Nachricht, beantwortet er beides. Ab der dritten Frage schreibt er 'passt scho, schreib's so'. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-30T10:15:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Ja servus, Wien 21 [unverständlich] Stiege drei, Top [unverständlich] zwanzig, die Steigleitung [Lärm, Flex] Kaltwasser neu angebunden [unverständlich] weil der Schacht [unverständlich]. Hat der vom GU angschafft. [unverständlich] Mann, drei Stunden."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 3, Top 20, Schacht",
+        "leistung": "Kaltwasser-Steigleitung im Schacht neu angebunden",
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Top 20",
+          "Stiege 3"
+        ],
+        "leistungStichwoerter": [
+          "Steigleitung",
+          "Kaltwasser"
+        ],
+        "personen": 2,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": [
+          "GU",
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 2,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Übernimmt die verständlichen Teile (Wien 21, Stiege 3, Steigleitung Kaltwasser, 3 Stunden, vom GU) und rät die Lücken nicht (Top, Anzahl Personen), sondern fragt gezielt nach, höchstens zweimal. Was offen bleibt, steht als offen in der Zusammenfassung."
+  }
+}

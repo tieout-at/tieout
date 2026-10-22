@@ -1,0 +1,57 @@
+{
+  "id": "m-korrektur-nur-top-stiege-bleibt",
+  "titel": "Teilkorrektur am Ort: nur die Top-Nummer war falsch, Stiege bleibt",
+  "kategorie": "korrektur",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, schreibt kurze Texte, entschuldigt sich knapp",
+    "verhalten": "Auf die erste Zusammenfassung schreibt er statt 'Passt': 'sorry ned top 17, war top 19'. Mehr sagt er zur Korrektur nicht, die Stiege nennt er nicht noch einmal. Steht danach 'Stiege 3' und 'Top 19' im Ort, drückt er 'Passt'. Fehlt die Stiege, schreibt er 'stiege 3 eh, wie vorher'."
+  },
+  "start": "2026-10-20T11:20:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "wien 21 stiege 3 top 17 bei da wohnungsstation an zusätzlichen kugelhahn eingebaut, polier vom baumeister hat gsagt, i alloa ane stund"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ort": "Stiege 3, Top 19, Wohnungsstation",
+        "leistung": "Zusätzlichen Kugelhahn bei der Wohnungsstation eingebaut",
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w21",
+        "ortStichwoerter": [
+          "Stiege 3 Top 19",
+          "Stiege 3, Top 19",
+          "Stiege drei, Top neunzehn",
+          "Stiege 3 Top neunzehn",
+          "Top 19, Stiege 3",
+          "Top 19 Stiege 3",
+          "St 3 Top 19"
+        ],
+        "leistungStichwoerter": ["Kugelhahn", "Hahn", "Wohnungsstation"],
+        "personen": 1,
+        "dauerStunden": 1,
+        "angewiesenVonStichwoerter": ["Polier"],
+        "mussLeerSein": ["menge", "datum"]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Ersetzt nur die Top-Nummer (17 durch 19) und behält Stiege 3 im Ort, ohne nachzufragen. Der Ort am Ende enthält Stiege 3 und Top 19 nebeneinander. Top 17 steht nur noch in der Historie. Kein zweiter Eintrag."
+  }
+}

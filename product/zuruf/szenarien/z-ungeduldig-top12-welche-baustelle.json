@@ -1,0 +1,31 @@
+{
+  "id": "z-ungeduldig-top12-welche-baustelle",
+  "titel": "Top 12 gibt es auf zwei Baustellen, Monteur reagiert ungeduldig auf die Rückfrage",
+  "kategorie": "projekt_unklar",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt schnell und knapp, Kleinbuchstaben, Abkürzungen wie 'std' und 'kw', Wiener Färbung",
+    "verhalten": "Auf die Frage nach der Baustelle antwortet er 'favoriten. eh klar, mah'. Kommt danach noch eine Frage, schreibt er 'speicher's einfach, i hob ka zeit' und beantwortet sie nicht. Drückt 'Passt', wenn die Zusammenfassung stimmt, auch wenn ein Feld offen ist."
+  },
+  "start": "2026-10-22T11:30:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "text", "inhalt": "top 12 steigleitung kw hat bei der druckprobe tropft, 1 pressfitting getauscht und nachgepresst. 1,5 std allein" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus A, Top 12, Steigleitung Kaltwasser", "leistung": "Undichten Pressfitting an der Kaltwasser-Steigleitung getauscht und nachgepresst", "menge": { "wert": 1, "einheit": "Stück" }, "personen": 1, "dauerStunden": 1.5 }
+    ],
+    "weissNicht": ["wer den Tausch angeordnet hat (hat es selbst bei der Druckprobe gesehen)"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Top 12"], "leistungStichwoerter": ["Pressfitting", "Fitting", "Steigleitung", "Kaltwasser", "getauscht", "nachgepresst", "undicht"], "mengeWert": 1, "personen": 1, "dauerStunden": 1.5, "mussLeerSein": ["angewiesenVon", "datum"] }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt, dass Top 12 auf Wien 21 und Wien 10 vorkommt, und stellt genau eine Frage zur Baustelle mit Auswahl. Nach der ungeduldigen Antwort keine weitere Frage, sofort kurze Zusammenfassung mit Passt/Ändern. Lässt den Anweiser offen statt ihn zu raten. Entschuldigt sich nicht lang und belehrt nicht."
+  }
+}

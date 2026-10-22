@@ -107,8 +107,14 @@ img { display: block; max-width: 100%; }
 .mnav__item[aria-current="true"] a { color: var(--ultra); }
 .mnav__item a:hover { color: var(--ink); }
 .mnav__cross { position: absolute; right: -1px; width: 22px; height: 22px; transition: top .5s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
-@media (max-width: 1500px) { .mnav { right: 8px; } .mnav__label { font-size: 10.5px; } }
-@media (max-width: 1100px) { .mnav { display: none; } }
+/* Laptop: nur Nummern und Striche, Beschriftung beim Darüberfahren. Darunter ganz aus, damit nichts über den Inhalt ragt. */
+@media (max-width: 1559px) {
+  .mnav { right: 8px; }
+  .mnav__item a { position: relative; }
+  .mnav__label { position: absolute; right: 100%; margin-right: 4px; opacity: 0; pointer-events: none; transition: opacity .2s; font-size: 10.5px; }
+  .mnav__item a:hover .mnav__label, .mnav__item a:focus-visible .mnav__label { opacity: 1; }
+}
+@media (max-width: 1239px) { .mnav { display: none; } }
 
 /* Hero */
 .hero { min-height: 100vh; display: flex; align-items: center; padding: calc(var(--header) + 32px) 0 64px; }
@@ -194,7 +200,7 @@ img { display: block; max-width: 100%; }
 .flow__mhead { display: none; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ultra); margin: 0 0 10px; }
 
 /* Video */
-.video { margin-top: 48px; aspect-ratio: 16 / 9; border: 1px solid var(--ink); background: var(--ink); position: relative; display: grid; place-items: center; overflow: hidden; color: var(--white); }
+.video { margin: 48px auto 0; width: min(100%, calc((100vh - 240px) * 16 / 9)); aspect-ratio: 16 / 9; border: 1px solid var(--ink); background: var(--ink); position: relative; display: grid; place-items: center; overflow: hidden; color: var(--white); }
 .video__grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 48px 48px; }
 .video__play { position: relative; width: 84px; height: 84px; border: 1.5px solid var(--white); background: transparent; color: var(--white); cursor: pointer; display: grid; place-items: center; transition: background .2s, border-color .2s; }
 .video__play:hover { background: var(--ultra); border-color: var(--ultra); }
@@ -435,3 +441,6 @@ img { display: block; max-width: 100%; }
   .contact__intro .mail-line { grid-column: 1; }
   .contact__cal { padding: 16px; }
 }
+
+/* Handy: Zwilling bis an den Bildschirmrand, damit die Beschriftung lesbar bleibt */
+@media (max-width: 560px) { .twin > svg { display: block; width: calc(100% + 28px + 2 * var(--gutter)); max-width: none; margin-left: calc(-14px - var(--gutter)); } }

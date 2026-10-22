@@ -1,0 +1,34 @@
+{
+  "id": "z-korrektur-top-und-stunden-nach-passt",
+  "titel": "Zwei Punkte in Favoriten bestätigt, danach Top und Stunden beim ersten Punkt korrigiert",
+  "kategorie": "korrektur",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, erst Sprachnachricht, dann kurzer Text ohne Großschreibung",
+    "verhalten": "Drückt 'Passt' auf die erste Zusammenfassung, ohne genau zu lesen. Etwa zwanzig Minuten später schickt er: 'Hoppala, Top 8 woar falsch, des woar Top 18. Und drei Stund, ned zwa.' Bestätigt die korrigierte Fassung mit 'Passt'. Wird unwirsch, wenn er erklären soll, warum er sich vertan hat."
+  },
+  "start": "2026-10-16T12:05:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Servus, Favoriten, Haus A, Top 8. Da Badheizkörper hot ned zu de Fliesen passt, hamma um zehn Zentimeter höher gsetzt. Da Polier vom GU hot gmant, mia soin des mochn. Zu zweit, zwa Stund." },
+    { "art": "text", "inhalt": "und im müllraum noch den bodenablauf freigmacht, war voll mit mörtel. halbe stunde allein" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus A, Top 18", "leistung": "Badheizkörper 10 cm höher gesetzt", "personen": 2, "dauerStunden": 3, "angewiesenVon": "Polier des GU" },
+      { "projektId": "w10", "ort": "Müllraum", "leistung": "Bodenablauf von Mörtel freigemacht", "personen": 1, "dauerStunden": 0.5 }
+    ],
+    "weissNicht": ["wer den Bodenablauf im Müllraum verstopft hat"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 2,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Top 18"], "leistungStichwoerter": ["Heizkörper", "Badheizkörper", "Handtuchheizkörper", "höher", "versetzt", "gesetzt"], "personen": 2, "dauerStunden": 3, "angewiesenVonStichwoerter": ["Polier", "GU"], "mussLeerSein": ["menge", "datum"] },
+      { "projektId": "w10", "ortStichwoerter": ["Müllraum", "Muellraum"], "leistungStichwoerter": ["Bodenablauf", "Ablauf", "freigemacht", "gereinigt", "Mörtel"], "personen": 1, "dauerStunden": 0.5, "mussLeerSein": ["angewiesenVon", "menge", "datum"] }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Fasst beide Punkte zusammen, keine Rückfrage. Nach der späteren Korrektur ändert er nur den ersten Punkt (Top 18, 3 Stunden), legt das als neue Version an, ohne die alte zu löschen, zeigt die korrigierte Fassung kurz mit Passt/Ändern und lässt den Müllraum-Punkt unverändert. Keine Frage nach dem Warum, kein Vorwurf."
+  }
+}

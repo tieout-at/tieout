@@ -1,0 +1,59 @@
+{
+  "id": "korrektur-stunden-sprache",
+  "titel": "Korrektur per Sprachnachricht: 'na, warn drei Stunden'",
+  "kategorie": "korrektur",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt kurz und klein, Korrekturen per Sprachnachricht, Wiener Umgangssprache",
+    "verhalten": "Auf die erste Zusammenfassung schickt er statt 'Passt' eine Sprachnachricht: 'Na, warn drei Stunden, i hob mi vertan.' Zeigt die neue Zusammenfassung 3 Stunden, drückt er 'Passt'. Fragt der Agent nach dem Grund, schreibt er 'wurscht, warn drei'."
+  },
+  "start": "2026-10-26T14:15:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "baden klasse 7 heizkörper ventil getauscht und thermostatkopf neu, bauleiter gu hat angrufen weils nimmer kalt wird. 1 mann 2 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ort": "Klasse 7",
+        "leistung": "Heizkörperventil getauscht, Thermostatkopf neu",
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ortStichwoerter": [
+          "Klasse 7"
+        ],
+        "leistungStichwoerter": [
+          "Ventil",
+          "Thermostat",
+          "Heizkörper"
+        ],
+        "personen": 1,
+        "dauerStunden": 3,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Übernimmt die Korrektur aus der Sprachnachricht (3 statt 2 Stunden), zeigt die geänderte Zusammenfassung kurz noch einmal und fragt nicht nach dem Grund. Am Ende genau ein Eintrag mit 3 Stunden, die alte Angabe nur in der Historie."
+  }
+}

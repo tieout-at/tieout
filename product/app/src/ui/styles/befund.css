@@ -44,6 +44,10 @@
 .fhead h1 {
   margin: 0;
 }
+/* Seitentitel wie auf der Projektübersicht; lange Dateinamen ohne Leerzeichen brechen statt überzulaufen */
+.fhead .page-title {
+  overflow-wrap: anywhere;
+}
 
 .toast-wrap {
   position: fixed;
@@ -90,8 +94,15 @@
 .flag--warn .sw-ico {
   color: var(--warn);
 }
-.rechenweg {
-  border-top: 1px solid var(--line-strong);
+/* Rechenweg wie die übrigen Listen (.tab-liste: Kopf 32 px, Zeile 36 px, Beträge rechts). Feste Liste ohne Filter,
+ * deshalb Spalten nach Inhalt: Ansatz und Betrag bleiben einzeilig, nur die Bezeichnung darf umbrechen */
+.tab-liste.rechenweg {
+  table-layout: auto;
+}
+.rechenweg td:first-child {
+  white-space: normal;
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
 }
 /* Beweiskette ruhiger: der gewählte Beleg ist an der Fläche erkennbar, Punkt und Quelle ohne Akzent und ohne Rahmen */
 .sw-ev[aria-current="true"] .sw-ev__rail::before {

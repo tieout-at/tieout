@@ -111,7 +111,7 @@ export default async function BefundSeite({ params }: Props) {
           <span className={liste.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${liste.ton}`}>{liste.text}</span>
           <span className="meta sw-muted">{ART_TEXT[b.art]}</span>
         </div>
-        <h2 className="section-title">
+        <h2 className="page-title">
           {t.kennung && <span className="sw-pos-nr">{t.kennung}</span>}
           {t.text}
         </h2>
@@ -139,7 +139,14 @@ export default async function BefundSeite({ params }: Props) {
         </div>
       )}
       {b.rechenweg && (
-        <table className="sw-table rechenweg">
+        <table className="sw-table tab-liste rechenweg">
+          <thead>
+            <tr>
+              <th>Rechenweg</th>
+              <th className="r">Ansatz</th>
+              <th className="r">Betrag</th>
+            </tr>
+          </thead>
           <tbody>
             {schritte.map((s) => (
               <tr key={s.bezeichnung}>
