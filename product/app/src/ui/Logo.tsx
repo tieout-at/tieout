@@ -1,4 +1,4 @@
-// Tieout-Marke: zwei Plan-Ecken mit einem Quadrat in der Mitte, daneben die Wortmarke wie im Kopf der Website.
+// tieout-Marke: zwei Plan-Ecken mit einem Quadrat in der Mitte, daneben die Wortmarke wie im Kopf der Website.
 // Gleiche Geometrie wie website/components/ui/Logo.tsx; Farben aus tokens.css (--brand-ink, --brand),
 // damit die Ecken im dunklen Thema hell werden.
 
@@ -12,5 +12,5 @@ export function LogoMark({ size = 20 }: { size?: number }) {
 }
 
 export function Wortmarke() {
-  return <span className="logo-wort">Tieout</span>;
+  return <span className="logo-wort">tieout</span>;
 }

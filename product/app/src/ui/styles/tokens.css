@@ -93,6 +93,18 @@
   --shadow-overlay: 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
   --shadow-page: 0 1px 3px rgba(0,0,0,0.6);
 }
+/* Anmeldeseite wie die Website (website/app/globals.css), in beiden Themen gleich: Papier, Planraster, Tinte, Ultramarin */
+:root {
+  --web-paper: #f4f6f9;
+  --web-ink: #0a1020;
+  --web-ink-60: #5b6377;
+  --web-ink-15: #d9dde4;
+  --web-ultra: #1d3bff;
+  --web-white: #ffffff;
+  --web-grid-major: #d5dce6;
+  --web-grid-minor: #e8ecf2;
+  --web-neg: #b42318;
+}
 :root {
   --space-1: 4px;
   --space-2: 8px;
