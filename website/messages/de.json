@@ -378,8 +378,8 @@
     "impressum": "Impressum",
     "datenschutz": "Datenschutz",
     "linkedin": "LinkedIn",
-    "linkedinPlaceholder": "[[PLATZHALTER: LinkedIn-Seite]]",
-    "preview": "Vorschau"
+    "preview": "Vorschau",
+    "linkedinUrl": "https://www.linkedin.com/company/tieout-at/"
   },
   "legal": {
     "back": "Zurück zur Startseite",
