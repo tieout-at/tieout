@@ -222,7 +222,6 @@
       "found": "found",
       "summaryWithout": "{n} of {total} changes not invoiced",
       "summaryWith": "All {total} changes backed by evidence and invoiced",
-      "replay": "Play again",
       "hint": "Switch and compare",
       "sample": "Synthetic sample data",
       "events": [
