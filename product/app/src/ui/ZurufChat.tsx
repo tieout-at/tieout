@@ -1,13 +1,13 @@
 "use client";
 
-// Echter Chat gegen den Zuruf-Agenten (Schalter ZURUF_ECHT an). Gleiche Hülle wie die vorgespielte Szene: Monteur
+// Echter Chat gegen den Zuruf-Agenten (Schalter ZURUF_ECHT im Worker an). Gleiche Hülle wie die vorgespielte Szene: Monteur
 // rechts, Agent links. Der Server merkt sich nichts; der Gesprächsstand liegt im Browser und geht bei jeder Nachricht mit.
 // Gespeicherte Einträge landen je Projekt in der Ablage (zustand/zurufe.ts), nie im Rechenkern.
 
 import { RotateCcw, Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { Knopf, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
-import { ZURUF_URL } from "@/zuruf/schalter";
+import { ZURUF_API } from "@/zuruf/schalter";
 import { alsZeile, browserAblage, chatLesen, chatSchreiben, useChat, type ChatZeile, type ZurufRoutenAntwort } from "@/zustand/zurufe";
 import { neueZurufId } from "@/zuruf/abbildung";
 import { Ico } from "./Ico";
@@ -29,6 +29,7 @@ export function ZurufChat({
   demoAnzahl,
   kurz,
   onNeu,
+  onAus,
   onZu,
 }: {
   projektId: string;
@@ -37,6 +38,8 @@ export function ZurufChat({
   kurz: Record<string, string>;
   /** Ein neuer Zuruf liegt in einem Projekt (Kennung des App-Zurufs, Nummer, Projekt). */
   onNeu: (zurufId: string, nr: string, projekt: string) => void;
+  /** Grenze erreicht oder Agent nicht erreichbar: Chat zu, die Zeitachse spielt die Szene vor. */
+  onAus: () => void;
   onZu: () => void;
 }) {
   const chat = useChat();
@@ -79,20 +82,22 @@ export function ZurufChat({
     setText("");
     setWartet(true);
     try {
-      const r = await fetch(ZURUF_URL, {
+      const r = await fetch(`${ZURUF_API}/nachricht`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ stand: vorher.stand, nachrichten: [n], rolle: "monteur" }),
       });
       if (!r.ok) throw new Error(String(r.status));
       const daten = (await r.json()) as ZurufRoutenAntwort;
+      if (daten.obergrenze) throw new Error("Grenze");
       const zeit = new Date().toISOString();
       const aktuell = chatLesen();
       chatSchreiben({ stand: daten.stand, zeilen: [...aktuell.zeilen, ...daten.antworten.map((a) => alsZeile(a, zeit))] });
       ablegen(daten.neu, daten.stand.nachrichten);
     } catch {
-      const aktuell = chatLesen();
-      chatSchreiben({ ...aktuell, zeilen: [...aktuell.zeilen, { von: "agent", text: "Keine Verbindung zum Agenten. Bitte gleich noch einmal.", zeit: jetzt }] });
+      // Ohne Fehlermeldung zurück auf die vorgespielte Fassung; die unbeantwortete Nachricht fällt weg.
+      chatSchreiben(vorher);
+      onAus();
     } finally {
       setWartet(false);
       feld.current?.focus();

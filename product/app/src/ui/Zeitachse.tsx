@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Ereignis, EreignisArt } from "@/daten/zeitachse";
 import { alsZuruf, type NeuerZuruf } from "@/zuruf/abbildung";
-import { ZURUF_ECHT } from "@/zuruf/schalter";
+import { useZurufVerfuegbar } from "@/zuruf/schalter";
 import { useNeueZurufe } from "@/zustand/zurufe";
 import { Ico } from "./Ico";
 import { zeigeToast } from "./Toast";
@@ -52,7 +52,7 @@ function alsEreignis(n: NeuerZuruf): Ereignis {
   return { id: z.id, zeit: z.zeitpunkt, art: "zuruf", titel: z.taetigkeit.wert, text: `Zuruf ${z.nr}, ${z.absender}`, marke: { text: "Offen", ton: "warn" }, befunde: 0 };
 }
 
-/** Für den echten Chat (Schalter ZURUF_ECHT): Projekt, Zahl der Demo-Zurufe und Kurznamen je Projekt. */
+/** Für den echten Chat (Schalter ZURUF_ECHT im Worker): Projekt, Zahl der Demo-Zurufe und Kurznamen je Projekt. */
 export interface ZurufEcht {
   projektId: string;
   demoAnzahl: Record<string, number>;
@@ -60,8 +60,10 @@ export interface ZurufEcht {
 }
 
 export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { ereignisse: Ereignis[]; basis: string; szene?: SzeneZuruf; echt?: ZurufEcht }) {
-  // Neue Zurufe liegen im Browser und kommen zu den vorberechneten Ereignissen dazu (nur mit Schalter an).
-  const neue = useNeueZurufe(echt?.projektId ?? "", ZURUF_ECHT && !!echt);
+  // Echter Agent nur, wenn der Worker ihn als verfügbar meldet; sonst (und bis zur Antwort) die vorgespielte Szene.
+  const [verfuegbar, abschalten] = useZurufVerfuegbar(!!echt);
+  // Neue Zurufe liegen im Browser und kommen zu den vorberechneten Ereignissen dazu.
+  const neue = useNeueZurufe(echt?.projektId ?? "", !!echt);
   const neuIds = new Map(neue.map((n) => [alsZuruf(n).id, n.ereignis.id]));
   const ereignisse = neue.length
     ? [...vorberechnet, ...neue.map(alsEreignis)].sort((a, b) => b.zeit.localeCompare(a.zeit) || a.id.localeCompare(b.id))
@@ -103,7 +105,7 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
           );
         })}
       </div>
-        {ZURUF_ECHT && echt ? (
+        {verfuegbar && echt ? (
           <button
             ref={ausloeser}
             type="button"
@@ -139,6 +141,12 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
           onZu={() => {
             setChat(false);
             ausloeser.current?.focus();
+          }}
+          onAus={() => {
+            // Grenze erreicht oder Agent nicht erreichbar: ohne Meldung die vorgespielte Fassung.
+            setChat(false);
+            abschalten();
+            if (szene) setSpielt(true);
           }}
           onNeu={(id, nr, projekt) => {
             if (projekt !== echt.projektId) return zeigeToast(`Zuruf ${nr} in ${echt.kurz[projekt] ?? projekt} abgelegt`);

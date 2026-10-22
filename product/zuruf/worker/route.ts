@@ -1,6 +1,8 @@
-// Route des Zuruf-Agenten für die App: POST /api/zuruf/nachricht. Läuft im Cloudflare Worker der App (nach der
-// Anmeldeprüfung) und lokal in lokal.ts. Ohne Server-Zustand: Der Browser schickt den Gesprächsstand mit und bekommt
-// ihn neu zurück. Beträge gibt es hier nie; die KI läuft nur über `frage` (API-Schlüssel bleibt im Worker).
+// Route des Zuruf-Agenten für die App. Läuft im Cloudflare Worker der App und lokal in lokal.ts.
+// GET  /api/zuruf/status:    ist der echte Agent gerade verfügbar? (Schalter an, eingerichtet, Grenzen nicht erreicht)
+// POST /api/zuruf/nachricht: eine Nachricht an den Agenten. Ohne Server-Zustand: Der Browser schickt den
+// Gesprächsstand mit und bekommt ihn neu zurück. Beträge gibt es hier nie; die KI läuft nur über `frage`
+// (API-Schlüssel bleibt im Worker). Ist eine Grenze erreicht, spielt die App die Szene wieder vor.
 
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
@@ -11,31 +13,50 @@ import { Arbeitsspeicher, type SpeicherDaten } from "../src/speicher.ts";
 import { kiVersteher } from "../src/verstehen.ts";
 import type { Antwort, Leistungsereignis } from "../src/typen.ts";
 
-/** Höchstens so viele KI-Aufrufe pro Tag für alle zusammen (Go Maxi S. 22.10.2026). Nie pro Person gezählt. */
-export const GRENZE_PRO_TAG = 100;
+/**
+ * Grenzen für alle zusammen, nie pro Person (Vorgabe Maxi S.: höchstens 25 € im Monat, harte Grenze ist das
+ * Monatslimit in der Anthropic-Konsole knapp darunter). Die Monatsgrenze rechnet mit den echten Kosten jeder Antwort.
+ */
+export const GRENZE_PRO_TAG = 40;
+export const GRENZE_MONAT_USD = 20;
 const MAX_BYTES = 256 * 1024;
 
-/** Zähler der KI-Aufrufe pro Tag. Im Worker in Supabase (worker/supabase.sql), lokal im Speicher. */
-export interface Tageszaehler {
-  stand(tag: string): Promise<number>;
-  erhoehe(tag: string): Promise<void>;
+export interface Zaehlerstand {
+  /** KI-Aufrufe heute. */
+  heute: number;
+  /** Kosten im laufenden Monat in US-Dollar (Listenpreis). */
+  monatUsd: number;
 }
 
-export function speicherZaehler(): Tageszaehler {
-  const m = new Map<string, number>();
+/** Zähler der KI-Aufrufe und Kosten. Im Worker in Supabase (worker/supabase.sql), lokal im Speicher. */
+export interface Zaehler {
+  stand(tag: string): Promise<Zaehlerstand>;
+  buche(tag: string, aufrufe: number, usd: number): Promise<void>;
+}
+
+export function speicherZaehler(): Zaehler {
+  const tage = new Map<string, Zaehlerstand>();
   return {
-    stand: async (tag) => m.get(tag) ?? 0,
-    erhoehe: async (tag) => void m.set(tag, (m.get(tag) ?? 0) + 1),
+    stand: async (tag) => ({
+      heute: tage.get(tag)?.heute ?? 0,
+      monatUsd: [...tage].filter(([t]) => t.slice(0, 7) === tag.slice(0, 7)).reduce((s, [, x]) => s + x.monatUsd, 0),
+    }),
+    buche: async (tag, aufrufe, usd) => {
+      const alt = tage.get(tag) ?? { heute: 0, monatUsd: 0 };
+      tage.set(tag, { heute: alt.heute + aufrufe, monatUsd: alt.monatUsd + usd });
+    },
   };
 }
 
 export interface RoutenOptionen {
-  /** Schalter ZURUF_ECHT: aus heißt, die Route gibt es nicht (404). */
+  /** Schalter ZURUF_ECHT: aus heißt, es gibt keine Nachrichten-Route (404) und der Status sagt „nicht verfügbar“. */
   echt: boolean;
   firma: Firma;
-  frage: KiFrage;
-  zaehler: Tageszaehler;
-  grenze?: number;
+  /** KI-Weg; `beiKosten` bekommt die Kosten jeder Antwort (für die Monatsgrenze). */
+  frage: (beiKosten: (usd: number) => void) => KiFrage;
+  zaehler: Zaehler;
+  grenzeTag?: number;
+  grenzeMonatUsd?: number;
   jetzt?: () => Date;
 }
 
@@ -66,7 +87,12 @@ export interface RoutenAntwort {
   stand: SpeicherDaten;
   /** In diesem Schritt abgelegte Ereignisse (neu oder neue Version). */
   neu: Leistungsereignis[];
+  /** Grenze erreicht: keine Antwort, die App spielt die Szene vor. */
   obergrenze?: true;
+}
+
+export interface StatusAntwort {
+  verfuegbar: boolean;
 }
 
 /** Ortszeit Wien als ISO-Text mit Versatz, z. B. „2026-10-22T14:32:00+02:00“ (wie die Nachrichten des Agenten). */
@@ -86,8 +112,20 @@ export function wienZeit(d: Date): string {
 const json = (status: number, daten: unknown) =>
   new Response(JSON.stringify(daten), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
+async function unterGrenzen(opts: RoutenOptionen, tag: string): Promise<boolean> {
+  const s = await opts.zaehler.stand(tag);
+  return s.heute < (opts.grenzeTag ?? GRENZE_PRO_TAG) && s.monatUsd < (opts.grenzeMonatUsd ?? GRENZE_MONAT_USD);
+}
+
 export async function zurufRoute(request: Request, opts: RoutenOptionen): Promise<Response> {
   const url = new URL(request.url);
+  const jetzt = (opts.jetzt ?? (() => new Date()))();
+  const tag = wienZeit(jetzt).slice(0, 10);
+
+  if (url.pathname === "/api/zuruf/status") {
+    const antwort: StatusAntwort = { verfuegbar: opts.echt && (await unterGrenzen(opts, tag)) };
+    return json(200, antwort);
+  }
   if (!opts.echt || url.pathname !== "/api/zuruf/nachricht") return json(404, { fehler: "nicht gefunden" });
   if (request.method !== "POST") return json(405, { fehler: "nur POST" });
   const roh = await request.text();
@@ -101,22 +139,19 @@ export async function zurufRoute(request: Request, opts: RoutenOptionen): Promis
   if (!geparst.success) return json(400, { fehler: "ungültig" });
   const { nachrichten, rolle, stand } = geparst.data;
 
-  const jetzt = (opts.jetzt ?? (() => new Date()))();
-  const tag = wienZeit(jetzt).slice(0, 10);
   const vorher = Arbeitsspeicher.aus(stand as unknown as SpeicherDaten);
-  if ((await opts.zaehler.stand(tag)) >= (opts.grenze ?? GRENZE_PRO_TAG)) {
-    const antwort: RoutenAntwort = {
-      antworten: [{ zweck: "hinweis_zweck", text: "Für heute ist die Grenze der Demo erreicht. Morgen geht es wieder." }],
-      stand: vorher.alsDaten(),
-      neu: [],
-      obergrenze: true,
-    };
+  if (!(await unterGrenzen(opts, tag))) {
+    const antwort: RoutenAntwort = { antworten: [], stand: vorher.alsDaten(), neu: [], obergrenze: true };
     return json(200, antwort);
   }
 
-  const gezaehlt: KiFrage = async (anfrage) => {
-    await opts.zaehler.erhoehe(tag);
-    return opts.frage(anfrage);
+  // Jeden KI-Aufruf zählen (auch fehlgeschlagene) und die Kosten sammeln; gebucht wird einmal am Ende.
+  let aufrufe = 0;
+  let usd = 0;
+  const ki = opts.frage((k) => (usd += k));
+  const gezaehlt: KiFrage = (anfrage) => {
+    aufrufe++;
+    return ki(anfrage);
   };
   const bekannt = new Set(stand.ereignisse.map((e) => `${e.id}@${e.version}`));
   const agent = new ZurufAgent(vorher, kiVersteher({ frage: gezaehlt, firma: opts.firma }), { firma: opts.firma, kanal: "simulator", firmenname: opts.firma.name });
@@ -125,25 +160,26 @@ export async function zurufRoute(request: Request, opts: RoutenOptionen): Promis
     nachrichten.map((n) => ({ ...n, zeit: wienZeit(jetzt) })),
     rolle,
   );
+  if (aufrufe) await opts.zaehler.buche(tag, aufrufe, usd);
   const daten = vorher.alsDaten();
   const antwort: RoutenAntwort = { antworten, stand: daten, neu: daten.ereignisse.filter((e) => !bekannt.has(`${e.id}@${e.version}`)) };
   return json(200, antwort);
 }
 
-/** Was der Worker der App für den Agenten braucht (Cloudflare-Variablen und Secret). */
+/** Was der Worker der App für den Agenten braucht (Cloudflare-Variable oder Secret, zur Laufzeit gelesen). */
 export interface ZurufUmgebung {
-  /** „an“ schaltet die Route ein; fehlt er, gibt es sie nicht (Standard, online bis Go Maxi S.). */
+  /** „an“ schaltet den echten Agenten ein; fehlt er, spielt die App die Szene vor (Standard, online bis Go Maxi S.). */
   ZURUF_ECHT?: string;
   ANTHROPIC_API_KEY?: string;
 }
 
 /**
- * Einstieg für den Worker der App (product/app/worker/index.ts), nach der Anmeldeprüfung: beantwortet /api/zuruf/…,
- * sonst null. Ohne Schlüssel oder Zähler antwortet er „nicht eingerichtet“ und ruft keine KI.
+ * Einstieg für den Worker der App (product/app/worker/index.ts): beantwortet /api/zuruf/…, sonst null.
+ * Ohne Schlüssel oder Zähler gilt der Agent als aus (Status „nicht verfügbar“, keine KI).
  */
-export async function zurufAnfrage(anfrage: Request, env: ZurufUmgebung, firma: Firma, zaehler: Tageszaehler | null): Promise<Response | null> {
+export async function zurufAnfrage(anfrage: Request, env: ZurufUmgebung, firma: Firma, zaehler: Zaehler | null): Promise<Response | null> {
   if (!new URL(anfrage.url).pathname.startsWith("/api/zuruf/")) return null;
-  const echt = env.ZURUF_ECHT === "an";
-  if (echt && (!env.ANTHROPIC_API_KEY || !zaehler)) return json(503, { fehler: "Zuruf-Agent ist nicht eingerichtet" });
-  return zurufRoute(anfrage, { echt, firma, frage: apiFrage(new Anthropic({ apiKey: env.ANTHROPIC_API_KEY })), zaehler: zaehler ?? speicherZaehler() });
+  const echt = env.ZURUF_ECHT === "an" && !!env.ANTHROPIC_API_KEY && !!zaehler;
+  // Der Client entsteht erst, wenn wirklich eine Nachricht kommt (nur mit Schalter an und Schlüssel).
+  return zurufRoute(anfrage, { echt, firma, frage: (beiKosten) => apiFrage(new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }), beiKosten), zaehler: zaehler ?? speicherZaehler() });
 }

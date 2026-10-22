@@ -8,7 +8,6 @@ import { Zeitachse, type ZurufEcht } from "@/ui/Zeitachse";
 import type { SzeneZuruf } from "@/ui/ZurufSzene";
 import { datum } from "@/ui/format";
 import { zurufVerstanden } from "@/ui/zuruf-text";
-import { ZURUF_ECHT } from "@/zuruf/schalter";
 
 type Props = { params: Promise<{ projekt: string }> };
 
@@ -39,14 +38,12 @@ export default async function ZeitachseSeite({ params }: Props) {
     transkript: z.transkript.wert,
     zusammenfassung: zurufVerstanden(z, d.projekt.name),
   };
-  // Echter Chat nur mit Schalter an; sonst bekommt die Seite nichts davon mit.
-  const echt: ZurufEcht | undefined = ZURUF_ECHT
-    ? {
-        projektId: id,
-        demoAnzahl: Object.fromEntries(daten.projekte.map((p) => [p.projekt.id, p.zurufe.length])),
-        kurz: Object.fromEntries(daten.projekte.map((p) => [p.projekt.id, p.projekt.kurz])),
-      }
-    : undefined;
+  // Für den echten Chat; ob er verfügbar ist, fragt die Seite im Browser beim Worker (Schalter ZURUF_ECHT).
+  const echt: ZurufEcht = {
+    projektId: id,
+    demoAnzahl: Object.fromEntries(daten.projekte.map((p) => [p.projekt.id, p.zurufe.length])),
+    kurz: Object.fromEntries(daten.projekte.map((p) => [p.projekt.id, p.projekt.kurz])),
+  };
   return (
     <>
       <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}` }]} titel="Zeitachse" />

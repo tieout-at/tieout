@@ -32,8 +32,10 @@ const kiAntwort = (id: string) => ({
 
 let aufrufe = 0;
 let zurufId = "";
-const frage: KiFrage = async () => {
+/** Feste KI mit festen Kosten je Antwort (0,03 US-Dollar). */
+const frage = (beiKosten: (usd: number) => void): KiFrage => async () => {
   aufrufe++;
+  beiKosten(0.03);
   return kiAntwort(zurufId) as never;
 };
 
@@ -78,12 +80,33 @@ describe("Route /api/zuruf/nachricht", () => {
     expect(d.daten.neu[0]?.erfasst).toBe("2026-10-22T14:30:00+02:00");
   });
 
-  it("stoppt bei der Tagesgrenze ohne KI-Aufruf", async () => {
-    const opts = optionen({ grenze: 0 });
+  it("stoppt bei der Tagesgrenze ohne KI-Aufruf und ohne Text (die App spielt dann die Szene vor)", async () => {
+    const opts = optionen({ grenzeTag: 0 });
     const vorher = aufrufe;
     const { daten } = await senden(opts, "Wien 21 Top 5 Heizkörper versetzt");
     expect(daten.obergrenze).toBe(true);
+    expect(daten.antworten).toEqual([]);
     expect(aufrufe).toBe(vorher);
+  });
+
+  it("bucht Aufrufe und echte Kosten und stoppt bei der Monatsgrenze", async () => {
+    const zaehler = speicherZaehler();
+    const opts = optionen({ zaehler, grenzeMonatUsd: 0.05 });
+    const a = await senden(opts, "Wien 21 Top 5 Heizkörper versetzt");
+    const b = await senden(opts, "Ja, passt", a.daten.stand, "einw_ja");
+    expect(b.daten.obergrenze).toBeUndefined();
+    const s = await zaehler.stand("2026-10-22");
+    expect(s.heute).toBe(1);
+    expect(s.monatUsd).toBeCloseTo(0.03);
+    await zaehler.buche("2026-10-05", 1, 0.03);
+    expect((await senden(opts, "Noch was", b.daten.stand)).daten.obergrenze).toBe(true);
+  });
+
+  it("Status: verfügbar nur mit Schalter an und unter den Grenzen", async () => {
+    const status = async (o: RoutenOptionen) => (await (await zurufRoute(new Request("https://demo.test/api/zuruf/status"), o)).json()).verfuegbar;
+    expect(await status(optionen())).toBe(true);
+    expect(await status(optionen({ echt: false }))).toBe(false);
+    expect(await status(optionen({ grenzeTag: 0 }))).toBe(false);
   });
 
   it("lehnt kaputte Anfragen ab", async () => {
@@ -100,9 +123,11 @@ describe("Einstieg für den Worker", () => {
   it("aus, solange ZURUF_ECHT nicht „an“ ist", async () => {
     expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ANTHROPIC_API_KEY: "x" }, FIRMA, speicherZaehler()))?.status).toBe(404);
   });
-  it("an, aber ohne Schlüssel oder Zähler: nicht eingerichtet, keine KI", async () => {
-    expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ZURUF_ECHT: "an" }, FIRMA, speicherZaehler()))?.status).toBe(503);
-    expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ZURUF_ECHT: "an", ANTHROPIC_API_KEY: "x" }, FIRMA, null))?.status).toBe(503);
+  it("an, aber ohne Schlüssel oder Zähler: gilt als aus, keine KI", async () => {
+    expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ZURUF_ECHT: "an" }, FIRMA, speicherZaehler()))?.status).toBe(404);
+    expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ZURUF_ECHT: "an", ANTHROPIC_API_KEY: "x" }, FIRMA, null))?.status).toBe(404);
+    const status = await zurufAnfrage(new Request("https://demo.test/api/zuruf/status"), { ZURUF_ECHT: "an" }, FIRMA, speicherZaehler());
+    expect(await status?.json()).toEqual({ verfuegbar: false });
   });
 });
 

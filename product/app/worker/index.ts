@@ -6,11 +6,11 @@
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Firma } from "../../zuruf/src/firma.ts";
-import { zurufAnfrage, type Tageszaehler, type ZurufUmgebung } from "../../zuruf/worker/route.ts";
+import { zurufAnfrage, type Zaehler, type ZurufUmgebung } from "../../zuruf/worker/route.ts";
 import zurufFirma from "../data/generated/zuruf-firma.json";
 import { ANMELDESEITE, ANMELDUNG_AN, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../src/anmeldung/konfig";
 
-/** Dazu ZURUF_ECHT (Variable, Standard aus) und ANTHROPIC_API_KEY (Secret) für den Zuruf-Agenten. */
+/** Dazu ZURUF_ECHT und ANTHROPIC_API_KEY für den Zuruf-Agenten (Secrets, zur Laufzeit gelesen; ohne sie: vorgespielt). */
 interface Env extends ZurufUmgebung {
   ASSETS: { fetch(anfrage: Request): Promise<Response> };
   /** Geheimer Schlüssel (Cloudflare-Secret), nur für Mitglieder und Einladungen. */
@@ -63,8 +63,9 @@ const worker = {
 export default worker;
 
 /**
- * Zuruf-Agent (product/zuruf) für /api/zuruf/…, sonst null. Nur mit ZURUF_ECHT=an, Schlüssel und Zähler in Supabase;
- * sonst 404 oder „nicht eingerichtet“, ohne KI-Aufruf. Schutz ohne Login: Schalter, 100 KI-Aufrufe pro Tag, Ausgabenlimit.
+ * Zuruf-Agent (product/zuruf) für /api/zuruf/…, sonst null. Echt nur mit ZURUF_ECHT=an, Schlüssel und Zähler in
+ * Supabase; sonst meldet der Status „nicht verfügbar“ und die App spielt die Szene vor, ohne KI-Aufruf.
+ * Schutz ohne Login: Schalter, 40 KI-Aufrufe pro Tag, 20 US-Dollar pro Monat, Monatslimit in der Anthropic-Konsole.
  */
 function zuruf(anfrage: Request, env: Env): Promise<Response | null> {
   const admin = env.SUPABASE_SECRET_KEY ? adminClient(env.SUPABASE_SECRET_KEY) : null;
@@ -111,15 +112,19 @@ async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Resp
   return json({ fehler: "Unbekannt" }, 404);
 }
 
-/** KI-Aufrufe pro Tag in Supabase (product/zuruf/worker/supabase.sql). Fehlt die Tabelle, gilt die Grenze als erreicht. */
-function supabaseZaehler(admin: SupabaseClient): Tageszaehler {
+/**
+ * KI-Aufrufe und Kosten in Supabase (product/zuruf/worker/supabase.sql: zuruf_stand, zuruf_buche).
+ * Fehlt die Tabelle oder geht etwas schief, gelten die Grenzen als erreicht: dann spielt die App die Szene vor.
+ */
+function supabaseZaehler(admin: SupabaseClient): Zaehler {
   return {
     stand: async (tag) => {
-      const { data, error } = await admin.from("zuruf_tageszaehler").select("ki_aufrufe").eq("tag", tag).maybeSingle();
-      return error ? Number.POSITIVE_INFINITY : ((data?.ki_aufrufe as number | undefined) ?? 0);
+      const { data, error } = await admin.rpc("zuruf_stand", { p_tag: tag }).single<{ heute: number; monat_usd: number | string }>();
+      if (error || !data) return { heute: Number.POSITIVE_INFINITY, monatUsd: Number.POSITIVE_INFINITY };
+      return { heute: Number(data.heute), monatUsd: Number(data.monat_usd) };
     },
-    erhoehe: async (tag) => {
-      const { error } = await admin.rpc("zuruf_zaehle", { p_tag: tag });
+    buche: async (tag, aufrufe, usd) => {
+      const { error } = await admin.rpc("zuruf_buche", { p_tag: tag, p_aufrufe: aufrufe, p_usd: usd });
       if (error) throw new Error(`Zähler: ${error.message}`);
     },
   };

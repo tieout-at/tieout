@@ -1,6 +1,6 @@
 "use client";
 
-// Neue Zurufe aus dem echten Chat (Schalter ZURUF_ECHT an), gelesen aus dem Browser:
+// Neue Zurufe aus dem echten Chat (Schalter ZURUF_ECHT im Worker an), gelesen aus dem Browser:
 // Zeilen auf der Liste „offen“ (ohne Betrag: Stunden und Regiebericht klärt das Büro) und die Belegseite eines neuen
 // Zurufs mit den Nachrichten im Original, jede Angabe mit ihrem Zitat.
 
@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Angabe, Eintrag, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
 import { alsZuruf, offenText, type NeuerZuruf } from "@/zuruf/abbildung";
-import { ZURUF_ECHT } from "@/zuruf/schalter";
 import { useNeueZurufe } from "@/zustand/zurufe";
 import { zeitpunkt } from "./format";
 
@@ -16,7 +15,7 @@ const href = (basis: string, n: NeuerZuruf) => `${basis}/zuruf/?id=${encodeURICo
 
 /** Gruppe „Neu per Zuruf“ hinter „Angemeldet und offen“ in der Befundtabelle. Ohne neue Zurufe: nichts. */
 export function NeueZurufZeilen({ projektId, basis }: { projektId: string; basis: string }) {
-  const neue = useNeueZurufe(projektId, ZURUF_ECHT);
+  const neue = useNeueZurufe(projektId, true);
   if (!neue.length) return null;
   return (
     <>
@@ -117,7 +116,7 @@ function Chat({ e, nachrichten, absender }: { e: Leistungsereignis; nachrichten:
 /** Belegseite eines neuen Zurufs: links die Angaben mit Zitat, rechts die Nachrichten im Original. */
 export function NeuerZurufBeleg({ projektId, kurz }: { projektId: string; kurz: Record<string, string> }) {
   const id = useSearchParams().get("id");
-  const n = useNeueZurufe(projektId, ZURUF_ECHT).find((x) => x.ereignis.id === id);
+  const n = useNeueZurufe(projektId, true).find((x) => x.ereignis.id === id);
   if (!n) {
     return (
       <main className="scr-body">

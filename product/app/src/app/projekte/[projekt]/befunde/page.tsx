@@ -6,7 +6,6 @@ import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
 import { BefundTabelle } from "@/ui/BefundTabelle";
 import { NeueZurufZeilen } from "@/ui/NeueZurufe";
 import { Seitenkopf } from "@/ui/Seitenkopf";
-import { ZURUF_ECHT } from "@/zuruf/schalter";
 
 type Props = { params: Promise<{ projekt: string }> };
 
@@ -31,7 +30,7 @@ export default async function Befunde({ params }: Props) {
       <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}` }]} titel="Befunde" />
       <main className="scr-body">
         <BefundTabelle projektId={id} befunde={e.befunde} summen={e.summen} risiken={risiken} href={(b) => `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/`}
-          nachOffen={ZURUF_ECHT ? <NeueZurufZeilen projektId={id} basis={`/projekte/${id}`} /> : undefined}
+          nachOffen={<NeueZurufZeilen projektId={id} basis={`/projekte/${id}`} />}
         />
       </main>
     </>
