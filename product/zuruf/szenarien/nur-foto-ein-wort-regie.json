@@ -1,0 +1,64 @@
+{
+  "id": "nur-foto-ein-wort-regie",
+  "titel": "Foto einer Kernbohrung mit Brandschutzmanschette plus das Wort 'regie'",
+  "kategorie": "nur_foto",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Schreibt fast nichts, antwortet auf Fragen per Sprachnachricht, niederösterreichisch",
+    "verhalten": "Auf die erste Frage des Agenten sagt er in einer Sprachnachricht: 'Ja, Pflegeheim. Nachträgliche Kernbohrung für die neue Leitung, hat da Polier vom Baumeister angschafft, i allan, eineinhalb Stund.' Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-28T12:20:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "foto",
+      "inhalt": "Foto: Betondecke von unten, eine frische Kernbohrung mit eingebauter roter Brandschutzmanschette, durch die ein Kunststoffrohr geht. Mit Edding an die Decke geschrieben: '2.OG Zi 214'. Im Hintergrund ein verpacktes Pflegebett."
+    },
+    {
+      "art": "text",
+      "inhalt": "regie"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ort": "2. OG, Zimmer 214",
+        "leistung": "Nachträgliche Kernbohrung mit Brandschutzmanschette für neue Leitung",
+        "personen": 1,
+        "dauerStunden": 1.5,
+        "angewiesenVon": "Polier des Baumeisters"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "mod",
+        "ortStichwoerter": [
+          "214"
+        ],
+        "leistungStichwoerter": [
+          "Kernbohrung",
+          "Bohrung",
+          "Brandschutz",
+          "Manschette"
+        ],
+        "personen": 1,
+        "dauerStunden": 1.5,
+        "angewiesenVonStichwoerter": [
+          "Polier"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 2,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Liest Ort (Zimmer 214, passt nur zu Mödling) und Art der Arbeit aus dem Foto und fragt nach dem, was fehlt (Aufwand, Anweiser), höchstens zweimal. Rät keine Stunden und keinen Anweiser."
+  }
+}

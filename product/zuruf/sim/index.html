@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zuruf-Simulator</title>
+<style>
+  :root {
+    --bg: #efeae2; --kopf: #075e54; --kopf-text: #fff; --ich: #d9fdd3; --er: #fff; --text: #111b21; --leise: #667781;
+    --knopf: #027eb5; --rand: #d1d7db; --panel: #f7f8fa; --warn: #a15c00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b141a; --kopf: #1f2c34; --ich: #005c4b; --er: #1f2c34; --text: #e9edef; --leise: #8696a0; --knopf: #53bdeb; --rand: #2a3942; --panel: #111b21; --warn: #f0b35a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text); background: var(--panel); }
+  .hinweis { background: var(--warn); color: #fff; text-align: center; font-size: 13px; padding: 4px 16px; }
+  main { display: grid; grid-template-columns: minmax(320px, 420px) 1fr; gap: 0; height: calc(100vh - 26px); }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; height: auto; } .chat { height: 80vh; } }
+  .chat { display: flex; flex-direction: column; background: var(--bg); border-right: 1px solid var(--rand); min-height: 0; }
+  .kopf { background: var(--kopf); color: var(--kopf-text); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .kopf small { opacity: .8; display: block; }
+  .kopf select, .kopf button { font: inherit; font-size: 13px; }
+  #verlauf { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .blase { max-width: 85%; padding: 6px 10px; border-radius: 8px; white-space: pre-wrap; box-shadow: 0 1px .5px rgba(0,0,0,.13); }
+  .ich { align-self: flex-end; background: var(--ich); }
+  .er { align-self: flex-start; background: var(--er); }
+  .art { font-size: 12px; color: var(--leise); }
+  .knoepfe { display: flex; flex-direction: column; gap: 4px; align-self: flex-start; max-width: 85%; width: 260px; }
+  .knoepfe button { background: var(--er); color: var(--knopf); border: 0; border-radius: 8px; padding: 8px; font: inherit; cursor: pointer; box-shadow: 0 1px .5px rgba(0,0,0,.13); }
+  .knoepfe button:disabled { opacity: .5; cursor: default; }
+  .tippt { color: var(--leise); font-size: 13px; padding: 0 16px 6px; min-height: 20px; }
+  form { display: flex; gap: 6px; padding: 8px; background: var(--panel); align-items: center; }
+  form select { font: inherit; }
+  form input { flex: 1; min-width: 0; padding: 9px 12px; border-radius: 20px; border: 1px solid var(--rand); font: inherit; background: var(--er); color: var(--text); }
+  form button { border: 0; border-radius: 20px; padding: 9px 14px; background: var(--kopf); color: #fff; font: inherit; cursor: pointer; }
+  .buero { padding: 16px; overflow-y: auto; min-height: 0; }
+  .buero h2 { font-size: 16px; margin: 0 0 4px; }
+  .buero p.leise { color: var(--leise); margin: 0 0 12px; font-size: 13px; }
+  .karte { border: 1px solid var(--rand); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; background: var(--er); }
+  .karte .zeile { display: grid; grid-template-columns: 110px 1fr; gap: 8px; font-size: 14px; }
+  .karte .zitat { color: var(--leise); font-size: 12px; }
+  .marke { display: inline-block; font-size: 12px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--rand); margin-right: 4px; }
+  .quelle { margin-top: 6px; font-size: 12px; color: var(--leise); border-top: 1px dashed var(--rand); padding-top: 6px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div class="hinweis">Simulator · synthetische Daten · fiktive Firma · keine echte WhatsApp-Nummer</div>
+<main>
+  <section class="chat" aria-label="Chat">
+    <div class="kopf">
+      <div><strong>Zuruf Haustechnik Beispiel</strong><small>Assistent der Firma (Programm)</small></div>
+      <div>
+        <select id="absender" aria-label="Absender">
+          <option value="sim-monteur|monteur">als Monteur</option>
+          <option value="sim-polier|polier">als Polier</option>
+          <option value="sim-neu|monteur">als neue Person</option>
+        </select>
+        <button id="reset" type="button" title="Alles zurücksetzen">Neu</button>
+      </div>
+    </div>
+    <div id="verlauf"></div>
+    <div class="tippt" id="tippt"></div>
+    <form id="form">
+      <select id="art" aria-label="Art der Nachricht">
+        <option value="sprache">Sprache</option>
+        <option value="text">Text</option>
+        <option value="foto">Foto</option>
+      </select>
+      <input id="eingabe" autocomplete="off" placeholder="Transkript der Sprachnachricht …">
+      <button>Senden</button>
+    </form>
+  </section>
+  <section class="buero" aria-label="Büro-Ansicht">
+    <h2>Was das Büro sieht</h2>
+    <p class="leise">Jede Angabe mit Zitat aus der Nachricht. Nichts wird überschrieben, Korrekturen sind neue Versionen. Keine Auswertung pro Person.</p>
+    <div id="liste"></div>
+    <p class="leise" id="kosten"></p>
+  </section>
+</main>
+<script>
+const verlauf = document.getElementById("verlauf");
+const tippt = document.getElementById("tippt");
+const eingabe = document.getElementById("eingabe");
+const art = document.getElementById("art");
+const absenderWahl = document.getElementById("absender");
+const platzhalter = { sprache: "Transkript der Sprachnachricht …", text: "Nachricht …", foto: "Was ist auf dem Foto zu sehen? …" };
+art.onchange = () => (eingabe.placeholder = platzhalter[art.value]);
+const absender = () => { const [id, rolle] = absenderWahl.value.split("|"); return { absenderId: id, rolle }; };
+let projekte = {};
+fetch("/firma").then((r) => r.json()).then((f) => f.projekte.forEach((p) => (projekte[p.id] = p.kurz)));
+
+function blase(text, wer, zusatz) {
+  const d = document.createElement("div");
+  d.className = "blase " + wer;
+  if (zusatz) { const s = document.createElement("div"); s.className = "art"; s.textContent = zusatz; d.append(s); }
+  d.append(document.createTextNode(text));
+  verlauf.append(d);
+  verlauf.scrollTop = verlauf.scrollHeight;
+}
+
+function knoepfe(liste) {
+  const box = document.createElement("div");
+  box.className = "knoepfe";
+  for (const k of liste) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = k.titel;
+    b.onclick = () => { box.querySelectorAll("button").forEach((x) => (x.disabled = true)); senden({ art: "knopf", inhalt: k.titel, knopfId: k.id }); };
+    box.append(b);
+  }
+  verlauf.append(box);
+  verlauf.scrollTop = verlauf.scrollHeight;
+}
+
+async function senden(n) {
+  const symbol = { sprache: "Sprachnachricht", foto: "Foto", knopf: "Knopf", text: "" }[n.art];
+  blase(n.inhalt, "ich", symbol);
+  tippt.textContent = "schreibt …";
+  try {
+    const r = await fetch("/nachricht", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...n, ...absender() }) });
+    const d = await r.json();
+    if (d.fehler) blase("Fehler: " + d.fehler, "er");
+    for (const a of d.antworten ?? []) {
+      blase(a.text, "er");
+      if (a.knoepfe) knoepfe(a.knoepfe);
+      if (a.liste) knoepfe(a.liste.eintraege);
+    }
+  } finally {
+    tippt.textContent = "";
+    ladeBuero();
+  }
+}
+
+document.getElementById("form").onsubmit = (e) => {
+  e.preventDefault();
+  const t = eingabe.value.trim();
+  if (!t) return;
+  eingabe.value = "";
+  senden({ art: art.value, inhalt: t });
+};
+document.getElementById("reset").onclick = async () => {
+  await fetch("/zuruecksetzen", { method: "POST" });
+  verlauf.innerHTML = "";
+  ladeBuero();
+};
+absenderWahl.onchange = () => { verlauf.innerHTML = ""; };
+
+const namen = { projektId: "Baustelle", ort: "Ort", leistung: "Arbeit", menge: "Menge", personen: "Leute", dauerStunden: "Stunden", angewiesenVon: "Angeschafft", datum: "Tag", material: "Material" };
+const offenNamen = { projektId: "Baustelle", leistung: "Arbeit", ort: "Ort", angewiesenVon: "wer angeschafft hat" };
+
+async function ladeBuero() {
+  const d = await (await fetch("/ereignisse")).json();
+  const liste = document.getElementById("liste");
+  liste.innerHTML = "";
+  if (!d.stand.length) liste.innerHTML = '<p class="leise">Noch nichts abgelegt.</p>';
+  for (const e of [...d.stand].reverse()) {
+    const k = document.createElement("div");
+    k.className = "karte";
+    const kopf = document.createElement("div");
+    kopf.innerHTML = `<span class="marke">${e.status}</span><span class="marke">Version ${e.version}</span><span class="marke">${e.rolle}</span>`;
+    if (e.offen.length) kopf.innerHTML += `<span class="marke">offen: ${e.offen.map((o) => offenNamen[o] ?? o).join(", ")}</span>`;
+    k.append(kopf);
+    for (const [feld, a] of Object.entries(e.eintrag)) {
+      const z = document.createElement("div");
+      z.className = "zeile";
+      const wert = feld === "projektId" ? (projekte[a.wert] ?? a.wert) : feld === "menge" ? `${a.wert.wert} ${a.wert.einheit}` : a.wert;
+      z.innerHTML = `<span>${namen[feld] ?? feld}</span><span></span>`;
+      z.lastChild.textContent = wert;
+      const zit = document.createElement("div");
+      zit.className = "zitat";
+      zit.textContent = `„${a.zitat}“`;
+      z.lastChild.append(zit);
+      k.append(z);
+    }
+    const q = document.createElement("div");
+    q.className = "quelle";
+    q.textContent = "Quelle: " + e.quellen.map((n) => `[${n.art}] ${n.inhalt}`).join("\n");
+    k.append(q);
+    liste.append(k);
+  }
+  document.getElementById("kosten").textContent = `API-Kosten dieser Sitzung: ca. ${d.kostenUsd.toFixed(2)} USD`;
+}
+ladeBuero();
+</script>
+</body>
+</html>

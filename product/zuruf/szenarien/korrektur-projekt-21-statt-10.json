@@ -1,0 +1,58 @@
+{
+  "id": "korrektur-projekt-21-statt-10",
+  "titel": "Falsche Baustelle im Kopf: korrigiert nach der Zusammenfassung auf Wien 10",
+  "kategorie": "korrektur",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, Sprachnachrichten, entschuldigt sich kurz",
+    "verhalten": "Auf die erste Zusammenfassung schreibt er: 'ah na sorry, des war im 10er ned im 21er, haus b'. Zeigt die neue Zusammenfassung Wien 10, drückt er 'Passt'."
+  },
+  "start": "2026-10-29T11:00:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Servus, Wien 21, Top 8, im Bad den Waschtisch und die Armatur montiert, des war vorher ned vorgesehen, der Bauleiter vom GU hat's angschafft. Zu zweit, zwei Stunden."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus B, Top 8, Bad",
+        "leistung": "Zusätzlichen Waschtisch samt Armatur montiert",
+        "personen": 2,
+        "dauerStunden": 2,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Top 8"
+        ],
+        "leistungStichwoerter": [
+          "Waschtisch",
+          "Armatur"
+        ],
+        "personen": 2,
+        "dauerStunden": 2,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Ändert das Projekt auf Wien 10 (Haus B), behält alle anderen Angaben und schickt die geänderte Zusammenfassung. Am Ende ein gültiger Eintrag auf Wien 10, keiner auf Wien 21."
+  }
+}

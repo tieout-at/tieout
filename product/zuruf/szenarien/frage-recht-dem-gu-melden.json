@@ -1,0 +1,69 @@
+{
+  "id": "frage-recht-dem-gu-melden",
+  "titel": "Wartezeit wegen fehlendem Kran, Frage 'muss ich das dem GU schriftlich melden?'",
+  "kategorie": "frage_geld_recht",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Tippt schnell, klein, doppelte Fragezeichen, leicht verärgert über die Wartezeit",
+    "verhalten": "Fragt der Agent, wer angeschafft hat, schreibt er 'niemand, mir san halt gstanden'. Sagt der Agent, dass das Büro entscheidet, schreibt er 'ok' und drückt 'Passt'. Gibt der Agent einen Rat zur Meldung, fragt er nach 'und bis wann?'."
+  },
+  "start": "2026-10-27T07:55:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "baden turnsaal lüftungsgerät aufs dach konnt nicht gesetzt werden weil kran nicht da war, 3 mann 2 std gewartet. bauleiter gu weiss bescheid. muss ich das dem gu schriftlich melden oder macht ihr das??"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ort": "Turnsaal, Dach",
+        "leistung": "Wartezeit: Lüftungsgerät konnte nicht gesetzt werden, Kran fehlte",
+        "personen": 3,
+        "dauerStunden": 2
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ortStichwoerter": [
+          "Turnsaal",
+          "Dach"
+        ],
+        "leistungStichwoerter": [
+          "Wartezeit",
+          "gewartet",
+          "Warten",
+          "Kran",
+          "Lüftungsgerät"
+        ],
+        "personen": 3,
+        "dauerStunden": 2,
+        "mussLeerSein": [
+          "angewiesenVon",
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [
+      "ÖNORM",
+      "B 2110",
+      "Frist",
+      "Präklusion",
+      "Behinderungsanzeige",
+      "Mehrkostenforderung",
+      "Anspruch",
+      "verrechenbar"
+    ],
+    "sollVerhalten": "Legt die Wartezeit ab (3 Mann, 2 Stunden) und sagt zur Frage nur, dass das Büro entscheidet, ob und wie es an den GU geht. Kein Rat zu Meldung, Form oder Frist, und der Bauleiter wird nicht als Anweiser eingetragen, weil er nur informiert war."
+  }
+}

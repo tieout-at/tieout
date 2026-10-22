@@ -23,6 +23,9 @@ Ein WhatsApp-Agent, dem ein Monteur in Sekunden zurufen kann, was er gemacht hat
 | 22.10.2026 | Testleute: noch niemand vom Bau. Erst synthetische Personas und das Team |
 | 22.10.2026 | Eigener Ordner `product/zuruf/`, TypeScript wie `../app/`, eigenes `package.json` |
 | 22.10.2026 (Vorschlag) | Die KI liest und formuliert, der Code entscheidet. Welche Felder fehlen, ob nachgefragt wird und wann gespeichert wird, ist deterministischer Code. So ist das Verhalten testbar |
+| 22.10.2026 | Antworten des Agenten sind feste Sätze im Code, nicht KI-formuliert. Vorhersehbar, kurz, keine Ausrutscher bei Geld und Recht. Die KI liest nur |
+| 22.10.2026 | Modell Claude Opus 5.5 für Agent, Persona und Bewerter (Standard laut Claude-API-Referenz). Ein günstigeres Modell nur mit Go des Teams |
+| 22.10.2026 | Der Agent fragt nur bei Zusatz- oder Änderungsarbeit nach, wer angeschafft hat. Bei normaler Arbeit laut Auftrag nicht |
 | 22.10.2026 (Vorschlag) | Jedes erkannte Feld trägt das Zitat aus dem Zuruf, das es belegt. Der Code prüft, dass das Zitat wirklich im Transkript steht. Ohne Zitat bleibt das Feld leer („nicht raten“) |
 
 ## Aufbau
@@ -33,7 +36,7 @@ Kanal: Simulator (Browser, lokal) | WhatsApp Cloud API (Webhook)
   → Verstehen: Sprache zu Text, Foto beschreiben
   → Herauslesen (KI): Projekt, Ort, Leistung, Menge, Aufwand, Anweiser, je mit Zitat
   → Gesprächsführung (Code): fehlt etwas Wichtiges? Rückfrage oder speichern
-  → Formulieren (KI): kurze Antwort nach GESTALTUNG.md, Knöpfe
+  → Formulieren (Code): feste, kurze Sätze nach GESTALTUNG.md, Knöpfe (src/texte.ts)
   → Ablage: Zuruf und Leistungsereignis mit Quelle, nur anhängen, nie überschreiben
 ```
 

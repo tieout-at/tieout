@@ -1,0 +1,32 @@
+{
+  "id": "z-wenig-deutsch-abwasserrohr-haus-b",
+  "titel": "Monteur mit wenig Deutsch, Foto vom beschädigten Abwasserrohr plus kurzer Text",
+  "kategorie": "dialekt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Deutsch ist nicht seine Erstsprache. Schreibt sehr kurz, ohne Artikel, Verben in der Grundform, kaum Großschreibung, ab und zu ein Tippfehler",
+    "verhalten": "Versteht kurze, einfache Fragen und antwortet mit ein, zwei Wörtern. Bei langen oder verschachtelten Sätzen schreibt er 'nix verstehen'. Drückt 'Passt', wenn die Zusammenfassung stimmt, sonst 'nein' und das richtige Wort."
+  },
+  "start": "2026-10-21T10:45:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "foto", "inhalt": "Foto: Kellerdecke mit grauem Kunststoff-Abwasserrohr, etwa DN 100, an einer Muffe ein frisches Bohrloch mit Riss, darunter nasser Estrich und ein Kübel. An der Wand ein Aufkleber 'Haus B / Keller'." },
+    { "art": "text", "inhalt": "favoriten keler haus b. rohr kaputt, elektro firma bohren in rohr. ich neu machen 4 meter, 2 stunde. polier von baufirma sagen machen" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus B, Keller", "leistung": "Beschädigtes Abwasserrohr erneuert (von Elektrofirma angebohrt)", "menge": { "wert": 4, "einheit": "m" }, "material": "Kunststoff-Abwasserrohr DN 100", "personen": 1, "dauerStunden": 2, "angewiesenVon": "Polier des GU" }
+    ],
+    "weissNicht": ["Name der Elektrofirma", "genaue Rohrdimension"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Haus B", "Keller"], "leistungStichwoerter": ["Rohr", "Abwasser", "Abfluss", "erneuert", "neu", "Reparatur", "repariert", "getauscht"], "mengeWert": 4, "dauerStunden": 2, "angewiesenVonStichwoerter": ["Polier", "Baufirma", "GU"], "mussLeerSein": ["datum"] }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Versteht den knappen Text zusammen mit dem Foto, fragt nicht nach. Antwortet in sehr einfachem, kurzem Deutsch, ohne Fachwörter aus dem Büro und ohne Nebensätze. Erfindet keine Rohrdimension als sicheren Wert und keinen Namen der Elektrofirma. Macht sich nicht über die Sprache lustig und korrigiert sie nicht."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "z-erstkontakt-zimmer-214-foto",
+  "titel": "Neuer Monteur schreibt zum ersten Mal, Foto mit Text, Projekt nur über die Zimmernummer erkennbar",
+  "kategorie": "erstkontakt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Junger Monteur, schreibt in Kleinbuchstaben, ganz normales Deutsch mit leichtem niederösterreichischem Einschlag, kurze Sätze",
+    "verhalten": "Hat die Nummer vom Kollegen. Liest die Vorstellung des Agenten und antwortet 'ja passt, mach'. Fragt der Agent nach der Baustelle, sagt er 'pflegeheim, eh'. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-19T09:20:00+02:00",
+  "einwilligung": false,
+  "ersteNachrichten": [
+    { "art": "foto", "inhalt": "Foto: Waschtisch in einem Pflegezimmer, Siphon abmontiert, darunter ein neues Eckventil mit neuem Flexschlauch, am Boden ein Handtuch mit Wasserflecken. Im Hintergrund an der offenen Tür ein Schild 'Zimmer 214'." },
+    { "art": "text", "inhalt": "hallo, hab die nummer vom kollegen. zimmer 214 eckventil und flexschlauch beim waschtisch neu, hat getropft. die bauleiterin hat gsagt gleich machen. dreiviertel stunde" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "mod", "ort": "2. OG, Zimmer 214, Waschtisch", "leistung": "Eckventil und Flexschlauch am Waschtisch erneuert (undicht)", "dauerStunden": 0.75, "angewiesenVon": "Bauleiterin des GU", "material": "Eckventil, Flexschlauch" }
+    ],
+    "weissNicht": ["ob die Bauleiterin vom GU oder von der eigenen Firma ist", "Typ des Eckventils"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "mod", "ortStichwoerter": ["214", "Zimmer 214"], "leistungStichwoerter": ["Eckventil", "Flexschlauch", "Waschtisch", "Anschluss"], "dauerStunden": 0.75, "angewiesenVonStichwoerter": ["Bauleiterin", "Bauleitung", "Bauleiter"], "mussLeerSein": ["personen", "datum"] }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Stellt sich beim ersten Kontakt in höchstens drei Sätzen vor (Programm der Firma, legt Meldungen fürs Büro ab, freiwillig, 'Stopp' beendet es) und speichert erst nach dem Einverständnis. Erkennt Mödling (Pflegeheim) über Zimmer 214, ohne nach der Baustelle zu fragen. Erfindet keine Personenzahl und ordnet die Bauleiterin keiner Firma zu, die nicht genannt wurde."
+  }
+}

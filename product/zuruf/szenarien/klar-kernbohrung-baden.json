@@ -1,0 +1,65 @@
+{
+  "id": "klar-kernbohrung-baden",
+  "titel": "Kernbohrungen mit Brandschutzabschottung am Dachboden, alles genannt",
+  "kategorie": "klar",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt knapp, klein, ohne Satzzeichen, Fachkürzel wie 'dn150'",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Wenn der Agent Bohrung und Abschottung in zwei Einträge teilt und das als Frage stellt, schreibt er 'is a arbeit'."
+  },
+  "start": "2026-10-13T13:05:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "volksschule baden dachboden 4 kernbohrungen dn150 für lüftung nachgebohrt und brandschutz abgeschottet. bauleiter vom gu hat angschafft. 2 mann 7 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ort": "Dachboden",
+        "leistung": "4 Kernbohrungen DN 150 für Lüftung nachgebohrt, Brandschutzabschottung hergestellt",
+        "menge": {
+          "wert": 4,
+          "einheit": "Stk"
+        },
+        "personen": 2,
+        "dauerStunden": 7,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ortStichwoerter": [
+          "Dachboden"
+        ],
+        "leistungStichwoerter": [
+          "Kernbohrung",
+          "Bohrung",
+          "Brandschutz",
+          "Abschottung"
+        ],
+        "mengeWert": 4,
+        "personen": 2,
+        "dauerStunden": 7,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Keine Rückfrage. Ein Eintrag, in dem Kernbohrung und Brandschutzabschottung beide vorkommen, mit 4 Stück, 2 Mann, 7 Stunden, Bauleiter GU."
+  }
+}

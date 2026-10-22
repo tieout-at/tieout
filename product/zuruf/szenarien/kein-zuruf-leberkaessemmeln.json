@@ -1,0 +1,30 @@
+{
+  "id": "kein-zuruf-leberkaessemmeln",
+  "titel": "Private Nachricht im falschen Chat: Leberkässemmeln",
+  "kategorie": "kein_zuruf",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt klein, ohne Satzzeichen, Wiener Umgangssprache",
+    "verhalten": "Merkt nach der Antwort des Agenten, dass er im falschen Chat ist, und schreibt 'hoppla falscher chat'. Fragt der Agent nach Baustelle oder Arbeit, schreibt er 'na nix, war a irrtum'."
+  },
+  "start": "2026-10-16T09:05:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "wer bringt heut die leberkässemmeln i hab ka göd mit"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 0,
+    "status": "egal",
+    "eintraege": [],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Erkennt, dass das kein Zuruf ist, legt nichts an und antwortet in einem kurzen, freundlichen Satz (z. B. dass er nur Meldungen fürs Büro aufnimmt). Kein Belehren, keine Frage nach der Baustelle."
+  }
+}

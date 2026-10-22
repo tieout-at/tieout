@@ -1,0 +1,32 @@
+{
+  "id": "z-spaet-tiefgarage-vom-freitag",
+  "titel": "Sprachnachricht vom Freitag aus der Tiefgarage kommt erst am Montag an, darin steht 'heit'",
+  "kategorie": "spaete_nachricht",
+  "persona": {
+    "rolle": "polier",
+    "sprechweise": "Wiener Dialekt, Sprachnachricht mit Hall aus der Tiefgarage, danach ein kurzer getippter Nachsatz",
+    "verhalten": "Hat im Untergeschoß kein Netz gehabt, die Nachricht ging erst am Montag in der Früh raus. Steht in der Zusammenfassung Montag oder 'heute', sagt er 'na, Freitag woar des'. Drückt 'Passt', wenn alles stimmt."
+  },
+  "start": "2026-10-26T06:52:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "So, 21er, Tiefgarage. Heit hamma de Entwässerungsrinne ogschlossn, de wos da Bauleiter vom GU nochträglich eineplant hot. Acht Meter KG-Rohr 110er, zwa Mann, drei Stund." },
+    { "art": "text", "inhalt": "die sprachnachricht is vom freitag, hab unten ka netz ghabt, is erst jetzt rausgangen" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w21", "ort": "Tiefgarage", "leistung": "Nachträglich eingeplante Entwässerungsrinne angeschlossen", "menge": { "wert": 8, "einheit": "m" }, "material": "KG-Rohr DN 110", "personen": 2, "dauerStunden": 3, "angewiesenVon": "Bauleiter des GU", "datum": "2026-10-23" }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w21", "ortStichwoerter": ["Tiefgarage", "TG", "Garage"], "leistungStichwoerter": ["Entwässerungsrinne", "Rinne", "Entwässerung", "angeschlossen", "Anschluss", "KG"], "mengeWert": 8, "personen": 2, "dauerStunden": 3, "angewiesenVonStichwoerter": ["Bauleiter", "Bauleitung", "GU"], "datum": "2026-10-23" }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Verbindet die Sprachnachricht mit dem Nachsatz und setzt als Datum Freitag, 23.10.2026, nicht den Tag des Eingangs. Keine Rückfrage, eine Zusammenfassung mit Passt/Ändern. Kein Kommentar zur Verspätung, kein Hinweis, Meldungen schneller zu schicken."
+  }
+}

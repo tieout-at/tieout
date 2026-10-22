@@ -1,0 +1,68 @@
+{
+  "id": "abgeschlossen-tulln-verteiler",
+  "titel": "Einsatz in Tulln (Projekt abgeschlossen): Dichtung am Heizungsverteiler",
+  "kategorie": "abgeschlossenes_projekt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Niederösterreichische Umgangssprache, Sprachnachricht, erzählt gern den Hergang",
+    "verhalten": "Fragt der Agent, ob das wirklich Tulln ist oder wozu es gehört, sagt er: 'Jo, Tulln, de Häuser san scho übergeben, des is jetzt a Service.' Drückt 'Passt', wenn die Zusammenfassung stimmt, auch wenn das Projekt als offen markiert ist."
+  },
+  "start": "2026-10-29T08:30:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Servus, i bin in Tulln bei de Reihenhäuser, Haus vier. Beim Heizungsverteiler tropft's, hob de Dichtung tauscht und nachgfüllt. De Frau vom Haus hat im Büro angrufen und da Chef hat mi gschickt. Anahoib Stund, i allan."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "tul",
+        "ort": "Haus 4",
+        "leistung": "Dichtung am Heizungsverteiler getauscht, Anlage nachgefüllt",
+        "personen": 1,
+        "dauerStunden": 1.5,
+        "angewiesenVon": "Chef (nach Anruf der Bewohnerin im Büro)"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "egal",
+    "eintraege": [
+      {
+        "ortStichwoerter": [
+          "Haus 4",
+          "Haus vier"
+        ],
+        "leistungStichwoerter": [
+          "Dichtung",
+          "Verteiler",
+          "nachgefüllt"
+        ],
+        "personen": 1,
+        "dauerStunden": 1.5,
+        "angewiesenVonStichwoerter": [
+          "Chef",
+          "Büro",
+          "Bewohnerin",
+          "Frau"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [
+      "Gewährleistung",
+      "Garantie",
+      "verrechenbar",
+      "kostenlos"
+    ],
+    "sollVerhalten": "Erkennt, dass Tulln abgeschlossen ist, und hängt den Einsatz an keine laufende Baustelle. Er fragt höchstens einmal nach oder legt den Eintrag mit einem Hinweis wie 'Tulln abgeschlossen, Büro klärt' offen ab. Keine Aussage zu Gewährleistung oder Bezahlung."
+  }
+}

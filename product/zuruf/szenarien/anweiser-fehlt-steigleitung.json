@@ -1,0 +1,60 @@
+{
+  "id": "anweiser-fehlt-steigleitung",
+  "titel": "Steigleitung umgelegt, Anweiser nicht genannt",
+  "kategorie": "anweiser_fehlt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Tippt kurz, klein, ohne Satzzeichen",
+    "verhalten": "Wenn der Agent fragt, wer das angeschafft hat, drückt er 'Bauleiter GU' oder schreibt 'bauleiter vom gu'. Drückt 'Passt', wenn die Zusammenfassung stimmt."
+  },
+  "start": "2026-10-16T08:50:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "text",
+      "inhalt": "wien 10 keller haus a steigleitung kaltwasser umgelegt wegen lüftungskanal. 2 mann 5 std"
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus A, Keller",
+        "leistung": "Kaltwasser-Steigleitung wegen Lüftungskanal umgelegt",
+        "personen": 2,
+        "dauerStunden": 5,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": [
+          "Keller"
+        ],
+        "leistungStichwoerter": [
+          "Steigleitung",
+          "Kaltwasser",
+          "Leitung"
+        ],
+        "personen": 2,
+        "dauerStunden": 5,
+        "angewiesenVonStichwoerter": [
+          "Bauleiter"
+        ],
+        "mussLeerSein": [
+          "menge",
+          "datum"
+        ]
+      }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Fragt genau einmal, wer das angeschafft hat, gern mit Auswahl (z. B. Bauleiter GU, Polier Baumeister, Architekt, Bauherr). Trägt die Antwort ein und schickt dann die Zusammenfassung."
+  }
+}
