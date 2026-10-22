@@ -6,7 +6,7 @@ Online (private in the claude.ai account of Maxi S.; visible to others only afte
 
 Without access: open `Schlusswerk-Bildschirme.html` in this folder in the browser; preview of every component under `project/components/<Name>/preview.html`.
 
-The reference screenshots (products by reebuild, Kuro, Linear etc., about 16 MB) are deliberately not in the repository: third-party material. The measurements taken from them are in `../docs/UI-Messblatt.md` and `../../docs/research_notes/UI_Referenzen.md`.
+The reference screenshots (products by reebuild, Kuro, Linear etc., about 16 MB) are deliberately not in the repository: third-party material. The measurements taken from them are in `../docs/UI-Messblatt.md` and `docs/research_notes/UI_Referenzen.md` in tieout-at/intern.
 
 | File | What |
 |---|---|

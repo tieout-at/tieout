@@ -19,7 +19,6 @@ Rules for the website: [`website/STRUKTUR.md`](../website/STRUKTUR.md).
 | Path | Contents |
 |---|---|
 | [`linkedin/upload/`](linkedin/upload/README.md) | **Final files** for LinkedIn: logo (pure white, 400 and 1200 px), company page cover (white, blue) |
-| `linkedin/entwuerfe/` | Drafts: three banners for personal profiles (blueprint, electrical plan, twin), company page with and without sketch |
 | `linkedin/erzeugen.py` | generates the three personal profile banners (1584 × 396) |
 | `linkedin/firmenseite.py` | generates the company page covers (1128 × 191, double resolution) |
 | `linkedin/export.py` | generates the upload files in `linkedin/upload/` |
@@ -33,4 +32,4 @@ python brand/linkedin/firmenseite.py
 python brand/linkedin/export.py
 ```
 
-The intermediate HTML files in `linkedin/entwuerfe/` are not tracked (`brand/.gitignore`).
+Drafts and intermediate files land in `linkedin/entwuerfe/`, which is not tracked (`brand/.gitignore`).

@@ -1,6 +1,6 @@
 # UI measurement sheet: values from professional software
 
-As of: 22.10.2026. **Measured ourselves** with `getComputedStyle` on the live pages (frequency across all visible text elements) or by pixel analysis of the product images. Raw data: `UI-Referenzen/messung_roh.md`. Patterns and sources: `Inspiration_Muster.md`, `../research_notes/UI_Referenzen.md`. Screenshots: `UI-Referenzen/Referenz-Board.html` (local only, copyright).
+As of: 22.10.2026. **Measured ourselves** with `getComputedStyle` on the live pages (frequency across all visible text elements) or by pixel analysis of the product images. Raw data: `UI-Referenzen/messung_roh.md`. Patterns and sources: `Inspiration_Muster.md`, `docs/research_notes/UI_Referenzen.md` in tieout-at/intern. Screenshots: `UI-Referenzen/Referenz-Board.html` (local only, copyright).
 
 Caution: what was measured is mostly the **websites**. Product interfaces are embedded there as an image or replica. Where the product interface itself was measurable, "Product" is noted.
 
