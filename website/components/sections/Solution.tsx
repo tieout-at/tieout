@@ -6,7 +6,7 @@ import { Timeline } from "@/components/problem/Timeline";
 export function Solution({ t, locale }: { t: Messages["solution"]; locale: Locale }) {
   return (
     <>
-      <section id="problem" className="section section--tight">
+      <section id="problem" className="section">
         <div className="wrap">
           <p className="eyebrow">{t.problemEyebrow}</p>
           <div className="problem__head">

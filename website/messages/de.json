@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "EndPoint. Schlussrechnungen für Elektro- und HKLS-Betriebe",
-    "description": "EndPoint. prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
+    "title": "Tieout. Schlussrechnungen für Elektro- und HKLS-Betriebe",
+    "description": "Tieout. prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
   },
   "nav": {
     "cta": "Demo buchen",
@@ -23,7 +23,7 @@
     "eyebrow": "Für Elektro- und HKLS-Betriebe",
     "title1": "Schlussrechnungen,",
     "title2": "die nichts liegen lassen.",
-    "sub": "EndPoint. prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
+    "sub": "Tieout. prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
     "cta": "Demo buchen",
     "secondary": "So funktioniert es",
     "cards": {
@@ -46,7 +46,7 @@
     "title": "Am Projektende fehlt Geld, das längst verdient ist.",
     "problem": "Stundenarbeit (Regie) ohne Unterschrift, Mehrmengen, Änderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Und Auftraggeber prüfen Rechnungen zunehmend mit Software.",
     "solutionEyebrow": "03 · Lösung",
-    "solution": "EndPoint. verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
+    "solution": "Tieout. verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
     "flow": {
       "inputs": "Ihre Daten",
       "twin": "Digitaler Zwilling",
@@ -154,14 +154,6 @@
       ],
       "evidenceWord": "Belege",
       "detailTitle": "Projekt Wien 21 · Position 03.12.004",
-      "position": "6 Auslässe 2. OG",
-      "positionValue": "+ 6 Stk · 2.736 €",
-      "evidence": [
-        "Mail Bauleitung",
-        "Plan Index D",
-        "Foto 14.03.",
-        "WhatsApp-Zuruf"
-      ],
       "caption": "Ein Zwilling für den ganzen Betrieb, mit Einblick in jedes Projekt",
       "outputTitle": "Schlussrechnung",
       "outputProject": "Projekt Wien 21",
@@ -177,29 +169,54 @@
       "sample": "Beispieldaten",
       "level1": "Ebene 1 · Ihr Betrieb",
       "level2": "Ebene 2 · Projekt Wien 21",
-      "positionsLabel": "Positionen mit Belegen",
-      "positions2": [
+      "projectWord": "Projekt",
+      "level2Caption": "Leistungen: beauftragt, gebaut, verrechnet",
+      "tableHead": [
+        "Position",
+        "LV",
+        "Gebaut",
+        "Verrechnet",
+        "Offen"
+      ],
+      "tableRows": [
         [
-          "Regie 11",
-          "1.290 €"
+          "Steckdose UP",
+          "120",
+          "126",
+          "120",
+          "+ 2.736 €"
         ],
         [
-          "Steckdose Raum 5",
-          "780 €"
+          "Kabeltrasse",
+          "340 m",
+          "340 m",
+          "340 m",
+          "✓"
+        ],
+        [
+          "Regie Technikraum",
+          "–",
+          "6 h",
+          "0 h",
+          "+ 390 €"
         ],
         [
           "Leuchten Stiege",
-          "1.640 €"
+          "24",
+          "28",
+          "24",
+          "+ 1.640 €"
         ]
       ],
-      "projectWord": "Projekt"
+      "tableTotalLabel": "Offen verrechenbar",
+      "tableTotal": "+ 4.766 €"
     },
     "timeline": {
       "timelineTitle": "Projekt Wien 21 · Beispiel",
       "trackSite": "Baustelle",
       "trackInvoice": "Schlussrechnung",
       "without": "Heute",
-      "with": "Mit EndPoint.",
+      "with": "Mit Tieout.",
       "missing": "fehlt",
       "billed": "verrechnet",
       "found": "gefunden",
@@ -257,14 +274,14 @@
   },
   "video": {
     "eyebrow": "04 · Produktvideo",
-    "title": "EndPoint. in drei Minuten.",
+    "title": "Tieout. in drei Minuten.",
     "placeholder": "[[PLATZHALTER: Produktvideo]]",
     "soon": "Das Video folgt.",
     "play": "Video abspielen"
   },
   "team": {
     "eyebrow": "05 · Über uns",
-    "title": "Wer EndPoint. baut.",
+    "title": "Wer Tieout. baut.",
     "role": "Co-Founder",
     "linkedin": "LinkedIn",
     "members": [
@@ -308,7 +325,7 @@
   "contact": {
     "eyebrow": "06 · Demo",
     "title": "Demo buchen.",
-    "sub": "Wir zeigen Ihnen EndPoint. an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
+    "sub": "Wir zeigen Ihnen Tieout. an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
     "points": [
       "30 Minuten, online",
       "Live an einem Beispielprojekt",
@@ -325,7 +342,7 @@
     },
     "optional": "optional",
     "messagePlaceholder": "Gewerk, Größe, worum es Ihnen geht …",
-    "consent": "Ich bin einverstanden, dass EndPoint. mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
+    "consent": "Ich bin einverstanden, dass Tieout. mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
     "submit": "Demo anfragen",
     "errorName": "Bitte Namen angeben.",
     "errorEmail": "Bitte eine gültige Mailadresse angeben.",

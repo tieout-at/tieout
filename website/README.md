@@ -1,6 +1,6 @@
 # Website
 
-Arbeitstitel **EndPoint.** Struktur, CI und Platzhalter-Regeln: [`STRUKTUR.md`](STRUKTUR.md).
+Arbeitstitel **Tieout.** Struktur, CI und Platzhalter-Regeln: [`STRUKTUR.md`](STRUKTUR.md).
 
 ## Starten
 
