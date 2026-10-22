@@ -461,18 +461,41 @@ img { display: block; max-width: 100%; }
 .photo img { transition: scale .9s cubic-bezier(.2,.7,.2,1), filter .4s; }
 .photo::after { transition: box-shadow .35s; }
 .photo .vcard { transition: translate .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s, border-color .3s; }
-@media (hover: hover) {
-  .photo:hover img { scale: 1.07; filter: saturate(1.05) contrast(1.05); }
-  .photo:hover::after { box-shadow: inset 0 0 0 2px var(--ultra); }
-  .photo:hover .vcard { translate: 0 -6px; border-color: var(--ultra); box-shadow: 0 20px 40px rgba(10,16,32,.25); }
-}
+.photo:hover img { scale: 1.07; filter: saturate(1.05) contrast(1.05); }
+.photo:hover::after { box-shadow: inset 0 0 0 2px var(--ultra); }
+.photo:hover .vcard { translate: 0 -6px; border-color: var(--ultra); box-shadow: 0 20px 40px rgba(10,16,32,.25); }
 
 /* Zwilling: Beispielprojekte wechseln (components/flow/Flow.tsx) */
-.twin__tile { cursor: pointer; }
-.twin__tile:hover rect:first-child { stroke: var(--ultra); stroke-opacity: 1; }
 .twin__timer { transform-box: fill-box; transform-origin: left center; animation: twinTimer linear forwards; }
-.flow--paused .twin__timer { animation-play-state: paused; }
 @keyframes twinTimer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .twin__swap { animation: twinSwap .5s ease both; }
 .out__swap { display: block; animation: twinSwap .5s ease both; }
 @keyframes twinSwap { from { opacity: 0; } to { opacity: 1; } }
+
+/* Ergebnis: feste Breiten, damit beim Projektwechsel nichts wackelt */
+.out__total b { font-variant-numeric: tabular-nums; min-width: 6.2em; text-align: right; }
+.out__head b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Buttons gleich breit in DE und EN, Inhalt zentriert */
+.header .btn { width: 176px; justify-content: center; }
+.hero__ctas .btn, .hero .btn { min-width: 200px; justify-content: center; }
+
+/* Blauer senkrechter Strich bei Textpassagen nach der Abschnittsüberschrift (nicht im Hero) */
+.ps__problem, .contact .lead { border-left: 3px solid var(--ultra); padding-left: 22px; }
+
+/* Zeitleiste: lange Wörter trennen statt über den Kartenrand zu ragen */
+.tl__event p { hyphens: auto; overflow-wrap: break-word; }
+
+/* Handy: in der verkleinerten Zeitleiste größere Schrift, damit sie lesbar bleibt */
+.fit--on .tl__title { font-size: 14px; }
+.fit--on .tl__switch button { font-size: 15px; padding: 10px 20px; }
+.fit--on .tl__track { font-size: 11px; letter-spacing: 0; }
+.fit--on .tl__week { font-size: 13px; }
+.fit--on .tl__type { font-size: 12.5px; }
+.fit--on .tl__event p { font-size: 17px; line-height: 1.3; }
+.fit--on .tl__slot b { font-size: 18px; }
+.fit--on .tl__slot span { font-size: 13px; }
+.fit--on .tl__summary { font-size: 22px; }
+.fit--on .tl__total { font-size: 34px; }
+.fit--on .tl__sample { font-size: 12px; }
+@media (max-width: 560px) { .vcard--big .vcard__text { display: none; } }
