@@ -1,12 +1,12 @@
-# LinkedIn-Firmenseite: Dateien zum Hochladen
+# LinkedIn company page: upload files
 
-Aktuell auf https://www.linkedin.com/company/tieout-at/
+Currently live on https://www.linkedin.com/company/tieout-at/
 
-| Datei | Wofür | Größe |
+| File | Use | Size |
 |---|---|---|
-| `tieout_linkedin_logo.png` | Logo der Firmenseite (reines Weiß) | 1200 x 1200 px |
-| `tieout_linkedin_logo_400px.png` | dasselbe in LinkedIns Empfehlungsgröße | 400 x 400 px |
-| `tieout_linkedin_titelbild.png` | Titelbild der Firmenseite (Papier, aktuell verwendet) | 4512 x 764 px, Verhältnis wie 1128 x 191 |
-| `tieout_linkedin_titelbild_blau.png` | Titelbild, blaue Fassung | 4512 x 764 px |
+| `tieout_linkedin_logo.png` | company page logo (pure white background) | 1200 × 1200 px |
+| `tieout_linkedin_logo_400px.png` | the same at LinkedIn's recommended size | 400 × 400 px |
+| `tieout_linkedin_titelbild.png` | company page cover (paper, currently in use) | 4512 × 764 px, same ratio as 1128 × 191 |
+| `tieout_linkedin_titelbild_blau.png` | company page cover, blue version | 4512 × 764 px |
 
-Neu erzeugen: `python brand/linkedin/firmenseite.py` und danach `python brand/linkedin/export.py` (braucht Chrome).
+Regenerate: `python brand/linkedin/firmenseite.py`, then `python brand/linkedin/export.py` (requires Chrome).
