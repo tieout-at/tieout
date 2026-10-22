@@ -1,0 +1,173 @@
+/* Tabellen: Projektliste, Befunde, Ledger, Belegmatrix, Dokumentliste.
+ * Teil der früheren anordnung.css (Inhalt unverändert). Nur Layout, alle Werte aus tokens.css. */
+
+
+/* Tabellen in einem eigenen Bildlauf, damit nichts abgeschnitten wird oder die Seite verbreitert */
+.tw {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* Zeilen, die als Ganzes ein Link sind (Projektliste, Befundliste) */
+.sw-table tbody tr[data-href] {
+  cursor: pointer;
+}
+.sw-table tbody tr[data-href]:hover td {
+  background: var(--surface-hover);
+}
+.row-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sw-table .grp td .sw-dotlabel + .sw-count {
+  margin-left: var(--space-2);
+}
+
+/* Warnsymbol in eigener schmaler Spalte, damit die Ziffernkante gerade bleibt (reebuild, Ramp) */
+.sw-table td.risk {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+}
+.sw-table td.risk .sw-risk {
+  margin-left: 0;
+}
+
+/* Tabellenbreiten als Klasse (nicht inline), damit das Handy-Layout sie aufheben kann */
+.tab-firma {
+  min-width: 900px;
+}
+.tab-befunde {
+  min-width: 560px;
+}
+
+/* Handy: Tabellen als zweizeilige Liste (Linear mobil), Kennzahlen als waagrechte Reihe */
+@media (max-width: 640px) {
+  .tab-firma,
+  .tab-befunde {
+    min-width: 0;
+    table-layout: auto;
+  }
+  .sw-table.liste-mobil thead,
+  .sw-table.liste-mobil colgroup,
+  .sw-table.liste-mobil .nur-breit {
+    display: none;
+  }
+  .sw-table.liste-mobil tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+  .sw-table.liste-mobil td {
+    border-bottom: 0;
+  }
+  .sw-table.liste-mobil .grp td {
+    height: auto;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+}
+
+/* Ledger: Tabelle über die volle Breite, am Handy waagrecht scrollbar; Aufmaß über LV-Menge betont */
+.ledger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ledger-rahmen {
+  overflow-x: auto;
+}
+.tab-ledger {
+  min-width: 1000px;
+}
+.tab-ledger td {
+  height: var(--row-h);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.tab-ledger td.sw-pos-nr {
+  margin: 0;
+  font-size: 12px;
+}
+.ledger-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ledger-ueber {
+  font-weight: 500;
+}
+.sw-suche {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--control-h);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  background: var(--surface);
+}
+.sw-suche:focus-within {
+  border-color: var(--field-border);
+}
+.sw-suche input {
+  width: 200px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+/* Belegmatrix (Hebbia, Harvey): Zellen sind Links aufs Original, Lücken als „kein Beleg“ */
+.tab-matrix {
+  min-width: 988px;
+}
+.tab-dokumente {
+  min-width: 720px;
+}
+.tab-matrix td.matrix-zelle {
+  vertical-align: top;
+  padding-top: var(--space-3);
+}
+.matrix-zelle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.matrix-zelle > * + * {
+  margin-left: var(--space-2);
+}
+.matrix-link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+.matrix-link:hover {
+  text-decoration-color: currentColor;
+}
+.matrix-leer {
+  color: var(--text-disabled);
+}
+.matrix-befund {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 12px;
+}
+.matrix-befund:hover {
+  text-decoration: underline;
+}
+.dok-datei {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.dok-duplikat td {
+  color: var(--text-muted);
+}
+.dok-duplikat .dok-datei {
+  color: var(--text-muted);
+}

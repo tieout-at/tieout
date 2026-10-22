@@ -1,0 +1,162 @@
+/* Befund: links Befund, rechts Original; Hinweise, Freigabe.
+ * Teil der früheren anordnung.css (Inhalt unverändert). Nur Layout, alle Werte aus tokens.css. */
+
+
+/* Befund: links Befund, rechts Original */
+.split {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(400px, 42%) minmax(0, 1fr);
+  min-height: 0;
+}
+.split-left {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+.split-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.split-scroll > * {
+  flex: none;
+}
+.split-right {
+  display: flex;
+  min-height: 0;
+}
+.split-right .sw-viewer {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+}
+.fhead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.fhead h1 {
+  margin: 0;
+}
+
+/* Hinweisbox Kürzungsrisiko und Hinweise ohne Betrag */
+.callout {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--warn-soft);
+  color: var(--text);
+}
+.callout .sw-ico {
+  color: var(--warn);
+  margin-top: 2px;
+}
+.callout b {
+  display: block;
+  font-weight: 600;
+  color: var(--warn);
+}
+.hint {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+.hint:last-child {
+  border-bottom: 0;
+}
+.hint .sw-ico {
+  color: var(--warn);
+  margin-top: 2px;
+}
+.hint span {
+  color: var(--text-secondary);
+}
+
+.toast-wrap {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+}
+.zoom {
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Befund: neutrale Hinweisbox, Beweiskette, Zoom im Betrachter */
+.callout--neutral {
+  background: var(--surface-subtle);
+}
+.callout--neutral .sw-ico {
+  color: var(--text-muted);
+}
+.callout--neutral b {
+  color: var(--text-secondary);
+}
+.plain {
+  margin: 0;
+}
+.sw-ev {
+  text-align: left;
+}
+
+/* Hinweise am Befund ohne Farbfläche (Ramp, reebuild: Status an der Zeile) */
+.flag {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+.flag .sw-ico {
+  margin-top: 2px;
+  color: var(--text-muted);
+}
+.flag > div {
+  display: flex;
+  flex-direction: column;
+}
+.flag b {
+  font-weight: 600;
+}
+.flag span {
+  color: var(--text-secondary);
+}
+.flag--warn .sw-ico,
+.flag--warn b {
+  color: var(--warn);
+}
+.rechenweg {
+  border-top: 1px solid var(--line-strong);
+}
+.sw-decide__step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (max-width: 900px) {
+  .split-left {
+    min-height: auto;
+  }
+  .split-scroll {
+    flex: none;
+    overflow: visible;
+  }
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    overflow: auto;
+  }
+  .split-right {
+    min-height: 560px;
+  }
+}
