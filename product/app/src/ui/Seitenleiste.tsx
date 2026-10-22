@@ -125,7 +125,7 @@ export function Seitenleiste({
   return (
     <aside className="sw-sidebar">
       <div className="brand-row">
-        <Link href="/" className="sw-brand" aria-label="Tieout" title="Tieout">
+        <Link href="/" className="sw-brand" aria-label="tieout" title="tieout">
           <LogoMark />
           <Wortmarke />
         </Link>
