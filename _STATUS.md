@@ -37,6 +37,7 @@
 
 - 22.10.: Produktstand von Maxi S. nach `product/` übernommen: Plan und Umfang (an v3 angepasst), Lösungsliste der Demo-Fälle, Rechenkern mit 58 Tests, UI-Fundament. Überblick in `product/README.md`.
 - Offen: Wer baut was (Produkt, Website), Entscheidung in der Sonntagsrunde 25.10.
+- 22.10.: Planung Zuruf-Agent (WhatsApp, Stufe 2 vorgezogen, nur synthetisch) in `product/zuruf/` auf Branch `zuruf/plan`. Go des Teams zu `GESTALTUNG.md` und `PLAN.md` offen.
 
 ## Noch nicht angelegt
 
