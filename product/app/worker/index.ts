@@ -22,6 +22,11 @@ const OFFEN = [/^\/anmelden(\/|$)/, /^\/_next\/static\//, /^\/favicon\.ico$/, /^
 const worker = {
   async fetch(anfrage: Request, env: Env): Promise<Response> {
     const url = new URL(anfrage.url);
+    // Zuruf-Agent ohne Login (App per Link): hier, vor den Assets. Mit Login erst nach der Sitzungsprüfung in `schnittstelle`.
+    if (!ANMELDUNG_AN) {
+      const z = await zuruf(anfrage, env);
+      if (z) return z;
+    }
     if (!ANMELDUNG_AN || OFFEN.some((m) => m.test(url.pathname))) return env.ASSETS.fetch(anfrage);
 
     const kekse: { name: string; value: string; options: Record<string, unknown> }[] = [];
@@ -57,13 +62,24 @@ const worker = {
 
 export default worker;
 
-async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Response> {
-  if (!env.SUPABASE_SECRET_KEY) return json({ fehler: "Mitglieder sind noch nicht eingerichtet" }, 503);
-  const admin = createClient(SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+/**
+ * Zuruf-Agent (product/zuruf) für /api/zuruf/…, sonst null. Nur mit ZURUF_ECHT=an, Schlüssel und Zähler in Supabase;
+ * sonst 404 oder „nicht eingerichtet“, ohne KI-Aufruf. Schutz ohne Login: Schalter, 100 KI-Aufrufe pro Tag, Ausgabenlimit.
+ */
+function zuruf(anfrage: Request, env: Env): Promise<Response | null> {
+  const admin = env.SUPABASE_SECRET_KEY ? adminClient(env.SUPABASE_SECRET_KEY) : null;
+  return zurufAnfrage(anfrage, env, zurufFirma as Firma, admin ? supabaseZaehler(admin) : null);
+}
 
-  // Zuruf-Agent (product/zuruf): nur mit ZURUF_ECHT=an, Schlüssel und Zähler; sonst 404 oder „nicht eingerichtet“.
-  const zuruf = await zurufAnfrage(anfrage, env, zurufFirma as Firma, supabaseZaehler(admin));
-  if (zuruf) return zuruf;
+function adminClient(schluessel: string): SupabaseClient {
+  return createClient(SUPABASE_URL, schluessel, { auth: { persistSession: false, autoRefreshToken: false } });
+}
+
+async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Response> {
+  const z = await zuruf(anfrage, env);
+  if (z) return z;
+  if (!env.SUPABASE_SECRET_KEY) return json({ fehler: "Mitglieder sind noch nicht eingerichtet" }, 503);
+  const admin = adminClient(env.SUPABASE_SECRET_KEY);
 
   if (url.pathname === "/api/mitglieder" && anfrage.method === "GET") {
     const { data, error } = await admin.auth.admin.listUsers({ perPage: 200 });
