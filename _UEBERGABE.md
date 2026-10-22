@@ -33,7 +33,7 @@ Built and merged on 22./23.10.:
 
 ## 2. Tasks for the next chat
 
-1. **Razor-sharp UI pass** (Maxi S. enters the points himself). First, in parallel where it makes sense. Rules from section 5 apply. The app is live for the jury: merge only with green CI and check in the browser after each merge.
+1. **Razor-sharp UI pass** (Maxi S. enters the points himself). **Since 23.10. evening: all points, order and status in `product/docs/UI_Runde_1.md`. Read that first.** First, in parallel where it makes sense. Rules from section 5 apply. The app is live for the jury: merge only with green CI and check in the browser after each merge.
 2. **API key and voice note agent online** (goal: anyone with the link can try the real agent, budget at most 25 €):
    - Maxi S. creates a key "tieout" in console.anthropic.com, tops up credit and sets the monthly limit just under 25 € (the console uses US dollars). Claude writes a click guide; paying and entering the key is done by Maxi S.
    - Supabase SQL editor: run `product/zuruf/worker/supabase.sql` (part 1, the counter, is required). Claude may run SQL itself (permission Maxi S.), then verify with a read query.
