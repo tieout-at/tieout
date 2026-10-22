@@ -12,7 +12,7 @@ Drei Angebote: Check (ein Projekt rückwirkend), Desk bzw. Jahresdesk (alle schl
 
 ## Wer arbeitet hier
 
-Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maximilian Seipl, Santino Schrader, Simon Fuhrbach. Maxi baut Website und Produkt mit KI Coding Agenten. Niemand im Team hat Bauhintergrund. Auf GitHub (Organisation `schlusswerk`): @MaximilianDieringer, @Snoft, @maxi589, alle gleichberechtigt; Simon folgt. Ein Bau-Insider ist Pflicht (Gate R1).
+Gründerteam: Maximilian Dieringer (Maxi, WU Wien, Wirtschaftsinformatik), Maximilian Seipl, Santino Schrader, Simon Fuhrbach. Maxi baut Website und Produkt mit KI Coding Agenten. Niemand im Team hat Bauhintergrund. Auf GitHub (Organisation `schlusswerk`): @MaximilianDieringer, @maxi589 (Maximilian Seipl), @Snoft (Santino Schrader), @simonfuhrbach-source (Simon Fuhrbach), alle Owner und gleichberechtigt. Ein Bau-Insider ist Pflicht (Gate R1).
 
 ## Aufbau des Repositorys
 

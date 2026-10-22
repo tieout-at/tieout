@@ -29,4 +29,4 @@ Name, CI und Hosting sind noch offen. Dieses Repository ist **privat**: Es enth√
 
 ## Team
 
-Maxi ([@MaximilianDieringer](https://github.com/MaximilianDieringer)), [@Snoft](https://github.com/Snoft), [@maxi589](https://github.com/maxi589). Alle gleichberechtigt als Owner der Organisation [schlusswerk](https://github.com/schlusswerk).
+Maximilian Dieringer ([@MaximilianDieringer](https://github.com/MaximilianDieringer)), Maximilian Seipl ([@maxi589](https://github.com/maxi589)), Santino Schrader ([@Snoft](https://github.com/Snoft)), Simon Fuhrbach ([@simonfuhrbach-source](https://github.com/simonfuhrbach-source)). Alle gleichberechtigt als Owner der Organisation [schlusswerk](https://github.com/schlusswerk).
