@@ -14,7 +14,7 @@ export function Solution({ t, locale }: { t: Messages["solution"]; locale: Local
             <h2 className="h-section">{t.title}</h2>
             <p className="ps__problem">{t.problem}</p>
           </div>
-          <Fit width={760}>
+          <Fit width={820}>
             <Timeline t={t.timeline} locale={locale} />
           </Fit>
         </div>
