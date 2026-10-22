@@ -1,6 +1,6 @@
 # Status
 
-**Stand:** Donnerstag, 22. Oktober 2026
+**Stand:** Freitag, 23. Oktober 2026
 **Pflege:** jeden Sonntag nach der Kennzahlen-Runde aktualisieren (30 Minuten, Dossier v3 Abschnitt 14).
 
 ## Entschieden
@@ -44,6 +44,7 @@
 - 22.10. spät (Maxi S. mit Claude, vier parallele Sitzungen): Stile je Bereich geteilt (#24), Ablauf 1 bis 4 auf der Projektübersicht mit echten Zahlen und Links (#27), Politur ohne Ampelpunkte und Farbflächen (#28), alle Tabellen einheitlich 36 px ohne Verschieben (#29), zentrale Tokens (#33), Prüfbefunde (#35). Unabhängig geprüft: alle Beträge centgenau, keine kaputten Links. Website-Check mit Widersprüchen auf der Website: `docs/archiv/Website_Check_2026-10-22.md`.
 - 22.10.: Name und Logo stehen: **tieout**, Domain tieout.at (noch nicht live). LinkedIn-Firmenseite linkedin.com/company/tieout-at (im Footer verlinkt), Banner in `brand/linkedin/`. Nächste Schritte Produkt (Rebranding, Link, UI an die Website, Tempo, Zuruf-Agent von Santino aus PR #25): `_UEBERGABE.md`.
 - Offen: Wer baut was (Produkt, Website), Entscheidung in der Sonntagsrunde 25.10.
+- 23.10. (Maxi S. mit Claude, Haupt-Chat und drei Sitzungen): App heißt tieout (Logo, Ultramarin), offen für Juroren unter **https://app.tieout.workers.dev** (endgültig, steht in der Abgabe-Mail; Vorschauen bleiben geschützt). Zuruf-Agent von Santino eingebaut, Schalter online aus bis API-Schlüssel (Budget höchstens 25 €). Gruppen einklappen, Filter schneller, Restliste Prüfbericht, Einstellungen, Next.js-Sicherheitsupdate. Supabase-Projekt `tieout-app` (Frankfurt) mit fertiger, aber ausgeschalteter Anmeldung. Nächster Chat: UI-Durchgang, API-Schlüssel, Launch-Video (`_UEBERGABE.md`).
 - 22.10.: Planung Zuruf-Agent (WhatsApp, Stufe 2 vorgezogen, nur synthetisch) in `product/zuruf/` auf Branch `zuruf/plan`. Go des Teams zu `GESTALTUNG.md` und `PLAN.md` offen.
 
 ## Noch nicht angelegt
