@@ -2,7 +2,8 @@
 
 // Zuruf-Szene (Mock, kein echter Agent, keine echte Nummer): Der Monteur schickt Foto und Sprachnachricht, der Agent
 // fasst zusammen, ein Tipp auf „Ja“ bestätigt, und der Eintrag erscheint in der Zeitachse. Inhalte aus dem Zuruf des
-// Datensatzes. Vorlage: Chat-Ansicht eines Messengers, neutral gehalten (keine fremde Marke).
+// Datensatzes. Vorlage: Chat-Ansicht eines Messengers, neutral gehalten (keine fremde Marke). Sicht des Monteurs:
+// seine Nachrichten rechts, der Agent links, gleich wie auf der Belegseite des Zurufs.
 
 import { Check, Mic, Play, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -74,7 +75,7 @@ export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void;
         </span>
         <span className="szene__wer">
           <b>Zuruf-Agent</b>
-          <span>{schritt === 4 ? "schreibt …" : "Vorgespielt, keine echte Nummer"}</span>
+          <span>{schritt === 4 ? "schreibt …" : "Vorgespielt"}</span>
         </span>
         <button ref={schliessen} type="button" className="sw-btn sw-btn--ghost sw-btn--sm" aria-label="Szene schließen" onClick={onZu}>
           <Ico icon={X} />

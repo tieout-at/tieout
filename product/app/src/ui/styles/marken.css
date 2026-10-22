@@ -1,33 +1,24 @@
-/* Marken: Punkt plus Wort (Ampel, Gruppenköpfe).
- * Teil der früheren anordnung.css (Inhalt unverändert). Nur Layout, alle Werte aus tokens.css. */
+/* Marken: Status als Wort (Ampel, Gruppenköpfe, Hinweise an der Zeile).
+ * Seit der Politur vom 22.10. ohne Punkt (Linear, Attio: Wort statt Farbpunkt). Farbe nur, wo sie etwas trägt:
+ * neutral und pos in Textfarbe, warn, neg und law als Schriftfarbe. Nur Layout, alle Werte aus tokens.css. */
 
 
-/* Punkt plus Wort ohne Rahmen (Linear-Gruppenköpfe und Statusspalte): Ampel, Gruppenköpfe der Listen */
 .sw-dotlabel {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
   font-weight: 500;
-  color: var(--text);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
-.sw-dotlabel::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  flex: none;
-  border-radius: var(--radius-full);
-  background: var(--text-muted);
+.sw-dotlabel--pos {
+  color: var(--text);
 }
-.sw-dotlabel--pos::before {
-  background: var(--pos);
+.sw-dotlabel--warn {
+  color: var(--warn);
 }
-.sw-dotlabel--warn::before {
-  background: var(--warn);
+.sw-dotlabel--neg {
+  color: var(--neg);
 }
-.sw-dotlabel--neg::before {
-  background: var(--neg);
-}
-.sw-dotlabel--law::before {
-  background: var(--law);
+.sw-dotlabel--law {
+  color: var(--law);
 }
