@@ -76,7 +76,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .sw-table th { text-align: left; padding: 0 var(--space-3); height: var(--table-head-h); border-bottom: 1px solid var(--line); background: transparent; color: var(--text-muted); font-size: var(--fs-sm); font-weight: 500; letter-spacing: normal; white-space: nowrap; } /* Design-Prüfung 22.10.: normale Schreibung wie reebuild R-B und Attio; Großbuchstaben nur für Kennzahl- und Bereichslabels */
 .sw-table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line); vertical-align: middle; }
 .sw-table td.sw-td-2 { padding-top: 5px; padding-bottom: 5px; }
-.sw-table tr:last-child td { border-bottom: 0; }
+.sw-table tbody:last-child > tr:last-child td { border-bottom: 0; } /* 23.10.: Gruppen stehen in eigenen tbody (Gruppe.tsx) */
 .sw-table .r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sw-table .calc { color: var(--text-secondary); }
 .sw-table tbody tr[data-open] { cursor: pointer; }

@@ -60,6 +60,43 @@
   height: var(--row-h);
   color: var(--text);
 }
+/* Gruppen klappen (Gruppe.tsx, Linear „Group by“): ganzer Kopf ist Klickfläche, Pfeil dreht sich, Zeilen verschwinden.
+ * Spalten sind fest (colgroup, table-layout: fixed), deshalb verschiebt sich beim Klappen nichts. */
+.tab-liste .grp {
+  cursor: pointer;
+}
+.tab-liste .grp:hover td {
+  background: var(--surface-hover);
+}
+.grp-knopf {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: calc(var(--space-1) * -1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.grp-knopf .sw-ico {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform 120ms ease;
+}
+tbody[data-zu] .grp-knopf .sw-ico {
+  transform: rotate(-90deg);
+}
+tbody[data-zu] > tr:not(.grp) {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .grp-knopf .sw-ico {
+    transition: none;
+  }
+}
 .tab-liste td > .sw-count {
   margin-left: var(--space-2);
 }

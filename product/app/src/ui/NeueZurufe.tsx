@@ -10,6 +10,7 @@ import type { Angabe, Eintrag, Leistungsereignis, Nachricht } from "../../../zur
 import { alsZuruf, offenText, type NeuerZuruf } from "@/zuruf/abbildung";
 import { useNeueZurufe } from "@/zustand/zurufe";
 import { zeitpunkt } from "./format";
+import { GruppenTitel } from "./Gruppe";
 
 const href = (basis: string, n: NeuerZuruf) => `${basis}/zuruf/?id=${encodeURIComponent(n.ereignis.id)}`;
 
@@ -18,11 +19,13 @@ export function NeueZurufZeilen({ projektId, basis }: { projektId: string; basis
   const neue = useNeueZurufe(projektId, true);
   if (!neue.length) return null;
   return (
-    <>
+    <tbody data-gruppe="zuruf-neu">
       <tr className="grp">
         <td>
-          <span className="sw-dotlabel sw-dotlabel--warn">Neu per Zuruf, ohne Betrag</span>
-          <span className="sw-count">{neue.length}</span>
+          <GruppenTitel>
+            <span className="sw-dotlabel sw-dotlabel--warn">Neu per Zuruf, ohne Betrag</span>
+            <span className="sw-count">{neue.length}</span>
+          </GruppenTitel>
         </td>
         <td className="befund-art nur-breit" />
         <td className="r" />
@@ -49,7 +52,7 @@ export function NeueZurufZeilen({ projektId, basis }: { projektId: string; basis
           </tr>
         );
       })}
-    </>
+    </tbody>
   );
 }
 

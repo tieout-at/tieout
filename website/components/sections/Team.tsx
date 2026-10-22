@@ -1,5 +1,6 @@
 import type { Messages } from "@/lib/i18n";
 import { Reveal } from "@/components/ui/Reveal";
+import { Fit } from "@/components/ui/Fit";
 
 const LOGO_ALT: Record<string, string> = {
   wu: "WU Wien",
@@ -7,7 +8,10 @@ const LOGO_ALT: Record<string, string> = {
   tacto: "Tacto",
   enpal: "Enpal",
   hanswomen: "Hans(wo)men Group",
-  usc: "University of Southern California",
+  simonkucher: "Simon-Kucher",
+  icons: "icons consulting by students",
+  start: "START Vienna",
+  feldwerke: "Feldwerke",
 };
 
 export function Team({ t }: { t: Messages["team"] }) {
@@ -16,6 +20,7 @@ export function Team({ t }: { t: Messages["team"] }) {
       <div className="wrap">
         <p className="eyebrow">{t.eyebrow}</p>
         <h2 className="h-section">{t.title}</h2>
+        <Fit width={760}>
         <div className="team">
           {t.members.map((m, i) => (
             <Reveal key={m.name} as="article" className="member" delay={i * 80}>
@@ -37,6 +42,7 @@ export function Team({ t }: { t: Messages["team"] }) {
             </Reveal>
           ))}
         </div>
+        </Fit>
       </div>
     </section>
   );

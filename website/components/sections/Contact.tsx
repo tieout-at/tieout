@@ -51,7 +51,7 @@ export function Contact({ t, locale }: { t: Messages["contact"]; locale: Locale 
           </ul>
           <p className="mail-line">
             <span>{t.mailLabel}: </span>
-            <Ph text={t.mail} />
+            <a href={`mailto:${t.mail}`}>{t.mail}</a>
           </p>
         </div>
 

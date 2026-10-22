@@ -10,6 +10,7 @@ import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 import type { Ton } from "@/ui/Statusmarke";
 import { Zeilennavigation } from "@/ui/Zeilennavigation";
+import { GruppenTitel } from "@/ui/Gruppe";
 
 export const metadata: Metadata = { title: "Projekte" };
 
@@ -91,23 +92,31 @@ export default function Firmenuebersicht() {
                 <th className="r nur-breit">Angemeldet und offen</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody data-gruppe="abgleich">
               <tr className="grp">
                 <td colSpan={7}>
-                  Im Abgleich<span className="sw-count">{offen.length}</span>
+                  <GruppenTitel>
+                    Im Abgleich<span className="sw-count">{offen.length}</span>
+                  </GruppenTitel>
                 </td>
               </tr>
               {offen.map((p) => (
                 <Zeile key={p.projektId} p={p} />
               ))}
+            </tbody>
+            <tbody data-gruppe="gelegt">
               <tr className="grp">
                 <td colSpan={7}>
-                  Schlussrechnung gelegt oder abgeschlossen<span className="sw-count">{zu.length}</span>
+                  <GruppenTitel>
+                    Schlussrechnung gelegt oder abgeschlossen<span className="sw-count">{zu.length}</span>
+                  </GruppenTitel>
                 </td>
               </tr>
               {zu.map((p) => (
                 <Zeile key={p.projektId} p={p} />
               ))}
+            </tbody>
+            <tbody>
               <tr className="sum">
                 <td colSpan={4}>
                   Alle Projekte<span className="sw-count">{e.summen.projekte}</span>

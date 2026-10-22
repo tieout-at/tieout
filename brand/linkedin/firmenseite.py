@@ -19,7 +19,7 @@ def banner(bg, line, ink, accent, mono):
   </defs>
   <rect width="{W}" height="{H}" fill="url(#g1)"/><rect width="{W}" height="{H}" fill="url(#g2)"/>
   <text x="{x1}" y="78" text-anchor="end" font-family="Inter Tight" font-weight="600" font-size="32" letter-spacing="-.8" fill="{ink}">Schlussrechnungen,</text>
-  <text x="{x1}" y="114" text-anchor="end" font-family="Inter Tight" font-weight="600" font-size="32" letter-spacing="-.8" fill="{accent}">die nichts liegen lassen.</text>
+  <text x="{x1}" y="114" text-anchor="end" font-family="Inter Tight" font-weight="600" font-size="32" letter-spacing="-.8" fill="{accent}">die nichts liegen lassen</text>
   <line x1="{x1-430}" y1="140" x2="{x1}" y2="140" stroke="{mono}" stroke-opacity=".5"/>
   <line x1="{x1-430}" y1="135" x2="{x1-430}" y2="145" stroke="{mono}" stroke-opacity=".8"/>
   <line x1="{x1}" y1="135" x2="{x1}" y2="145" stroke="{mono}" stroke-opacity=".8"/>
@@ -85,7 +85,7 @@ def rechnung(bg, line, ink, accent, mono, markdot, hl, hltext):
   {mark(x1, 36, 30, ink, markdot)}
   <text x="{x1+42}" y="62" font-family="Inter Tight" font-weight="600" font-size="34" letter-spacing="-1" fill="{ink}">tieout</text>
   <text x="{x1}" y="104" font-family="Inter Tight" font-weight="600" font-size="26" letter-spacing="-.6" fill="{ink}">Schlussrechnungen,</text>
-  <text x="{x1}" y="134" font-family="Inter Tight" font-weight="600" font-size="26" letter-spacing="-.6" fill="{accent}">die nichts liegen lassen.</text>
+  <text x="{x1}" y="134" font-family="Inter Tight" font-weight="600" font-size="26" letter-spacing="-.6" fill="{accent}">die nichts liegen lassen</text>
   <text x="{x1}" y="166" font-family="Inter Tight" font-weight="500" font-size="17" fill="{mono}" fill-opacity=".85">Für Elektro- und HKLS-Betriebe</text>'''
 
 

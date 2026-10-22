@@ -1,11 +1,12 @@
-// Cloudflare: die App als statische Dateien plus ein kleines Prüfskript davor (worker/index.ts).
+// Cloudflare: Worker „app“, online unter https://app.tieout.workers.dev (Konto-Subdomain tieout, seit 22.10.).
+// Die App als statische Dateien plus ein kleines Prüfskript davor (worker/index.ts).
 // Cloudflare baut bei jedem Push selbst (Workers Builds, Stammverzeichnis product/app):
 // main geht online, jeder andere Branch bekommt eine eigene Vorschau-Adresse.
 // Anmeldung über Supabase (src/anmeldung/konfig.ts); solange dort nichts steht, lässt das Skript alles durch
 // und der Schutz läuft wie bisher über Cloudflare Access (eingestellt im Dashboard, nicht hier).
 // Geheimer Schlüssel nur als Secret: `npx wrangler secret put SUPABASE_SECRET_KEY` oder im Dashboard.
 {
-  "name": "schlusswerk-demo",
+  "name": "app",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   // Für das Claude-SDK des Zuruf-Agenten (product/zuruf, Route /api/zuruf/…). Schalter: Variable ZURUF_ECHT=an

@@ -8,6 +8,7 @@ import { Fragment, type ReactNode } from "react";
 import type { Befund, Ergebnis } from "@/engine/typen";
 import { ART_TEXT, LISTEN, teileTitel } from "./befund-texte";
 import { betrag } from "./format";
+import { GruppenTitel } from "./Gruppe";
 import { Ico } from "./Ico";
 import { StandZelle } from "./Stand";
 import { Zeilennavigation } from "./Zeilennavigation";
@@ -51,22 +52,22 @@ export function BefundTabelle({
             <th>Stand</th>
           </tr>
         </thead>
-        <tbody>
-          {gruppen.length === 0 && (
+        {gruppen.length === 0 && (
+          <tbody>
             <tr>
               <td colSpan={5} className="sw-muted">
                 Nichts offen.
               </td>
             </tr>
-          )}
-          {gruppen.map((g) => (
-            <Fragment key={g.liste}>
-              <GruppenZeilen g={g} summe={g.liste === "anwalt" ? null : summen[g.liste]} projektId={projektId} risiken={risiken} href={href} />
-              {g.liste === "offen" && nachOffen}
-            </Fragment>
-          ))}
-          {!gruppen.some((g) => g.liste === "offen") && nachOffen}
-        </tbody>
+          </tbody>
+        )}
+        {gruppen.map((g) => (
+          <Fragment key={g.liste}>
+            <GruppenZeilen g={g} summe={g.liste === "anwalt" ? null : summen[g.liste]} projektId={projektId} risiken={risiken} href={href} />
+            {g.liste === "offen" && nachOffen}
+          </Fragment>
+        ))}
+        {!gruppen.some((g) => g.liste === "offen") && nachOffen}
       </table>
     </Zeilennavigation>
   );
@@ -86,11 +87,13 @@ function GruppenZeilen({
   href?: (b: Befund) => string;
 }) {
   return (
-    <>
+    <tbody data-gruppe={g.liste}>
       <tr className="grp">
         <td>
-          <span className={g.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${g.ton}`}>{g.text}</span>
-          <span className="sw-count">{g.posten.length}</span>
+          <GruppenTitel>
+            <span className={g.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${g.ton}`}>{g.text}</span>
+            <span className="sw-count">{g.posten.length}</span>
+          </GruppenTitel>
         </td>
         <td className="befund-art nur-breit" />
         <td className="r">{summe === null ? "" : betrag(summe)}</td>
@@ -127,6 +130,6 @@ function GruppenZeilen({
           </tr>
         );
       })}
-    </>
+    </tbody>
   );
 }

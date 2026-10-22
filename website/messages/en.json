@@ -22,7 +22,7 @@
   "hero": {
     "eyebrow": "For electrical and MEP contractors",
     "title1": "Final invoices",
-    "title2": "that leave nothing behind.",
+    "title2": "that leave nothing behind",
     "sub": "tieout checks your final invoice against everything that happened on the project. Every line backed by evidence, no earned euro forgotten.",
     "cta": "Book a demo",
     "secondary": "How it works",
@@ -43,8 +43,8 @@
   },
   "solution": {
     "problemEyebrow": "02 · Problem",
-    "title": "At the end of a project, money that was earned long ago is missing.",
-    "problem": "Hourly work without a signature, extra quantities, changes agreed on site: what was arranged on the job often never makes it into the final invoice. The evidence is scattered across emails, plans, photos and people's heads. And clients increasingly check invoices with software.",
+    "title": "At the end of a project, money that was earned long ago is missing",
+    "problem": "Hourly work without a signature, extra quantities, changes agreed on site: what was arranged on the job often never makes it into the final invoice. The evidence is scattered across emails, plans, photos and people's heads. At the same time, clients increasingly check invoices with software and cut whatever lacks evidence.",
     "solutionEyebrow": "03 · Solution",
     "solution": "tieout connects all the data of your business into a digital twin and uses it to check every final invoice: what was built ends up on the invoice.",
     "flow": {
@@ -156,7 +156,6 @@
       "detailTitle": "Project Vienna 21 · Item 03.12.004",
       "caption": "One twin for the whole business, with insight into every project",
       "outputTitle": "Final invoice",
-      "outputProject": "Project Vienna 21",
       "checks": [
         "Forgotten hours found",
         "Extra quantities detected",
@@ -165,10 +164,8 @@
         "Evidence for every line"
       ],
       "openLabel": "additionally billable",
-      "openValue": 5546,
       "sample": "Sample data",
       "level1": "Level 1 · Your business",
-      "level2": "Level 2 · Project Vienna 21",
       "projectWord": "Project",
       "level2Caption": "Work: ordered, built, invoiced",
       "tableHead": [
@@ -178,38 +175,221 @@
         "Invoiced",
         "Open"
       ],
-      "tableRows": [
-        [
-          "Flush socket",
-          "120",
-          "126",
-          "120",
-          "+ €2,736"
-        ],
-        [
-          "Socket moved",
-          "–",
-          "1",
-          "0",
-          "+ €780"
-        ],
-        [
-          "Plant room",
-          "–",
-          "6 h",
-          "0 h",
-          "+ €390"
-        ],
-        [
-          "Stairwell lights",
-          "24",
-          "28",
-          "24",
-          "+ €1,640"
-        ]
-      ],
       "tableTotalLabel": "Open to invoice",
-      "tableTotal": "+ €5,546"
+      "projectData": [
+        {
+          "name": "Vienna 21",
+          "rows": [
+            [
+              "Flush socket",
+              "120",
+              "126",
+              "120",
+              "+ €2,736"
+            ],
+            [
+              "Socket moved",
+              "–",
+              "1",
+              "0",
+              "+ €780"
+            ],
+            [
+              "Plant room",
+              "–",
+              "6 h",
+              "0 h",
+              "+ €390"
+            ],
+            [
+              "Stairwell lights",
+              "24",
+              "28",
+              "24",
+              "+ €1,640"
+            ]
+          ],
+          "total": "+ €5,546",
+          "value": 5546
+        },
+        {
+          "name": "Linz South",
+          "rows": [
+            [
+              "Cable tray",
+              "280 m",
+              "312 m",
+              "280 m",
+              "+ €1,216"
+            ],
+            [
+              "Sub-distribution",
+              "–",
+              "1",
+              "0",
+              "+ €2,480"
+            ],
+            [
+              "Basement hours",
+              "–",
+              "12 h",
+              "4 h",
+              "+ €520"
+            ],
+            [
+              "Hall lights",
+              "40",
+              "40",
+              "40",
+              "✓"
+            ]
+          ],
+          "total": "+ €4,216",
+          "value": 4216
+        },
+        {
+          "name": "Graz East",
+          "rows": [
+            [
+              "Fire damper",
+              "18",
+              "21",
+              "18",
+              "+ €1,950"
+            ],
+            [
+              "Commissioning",
+              "–",
+              "9 h",
+              "0 h",
+              "+ €585"
+            ],
+            [
+              "Flush socket",
+              "96",
+              "96",
+              "96",
+              "✓"
+            ],
+            [
+              "Emergency lights",
+              "30",
+              "34",
+              "30",
+              "+ €760"
+            ]
+          ],
+          "total": "+ €3,295",
+          "value": 3295
+        },
+        {
+          "name": "Mödling",
+          "rows": [
+            [
+              "Radiators",
+              "22",
+              "24",
+              "22",
+              "+ €1,180"
+            ],
+            [
+              "Bathroom rework",
+              "–",
+              "5 h",
+              "0 h",
+              "+ €325"
+            ],
+            [
+              "Valves",
+              "44",
+              "44",
+              "44",
+              "✓"
+            ],
+            [
+              "Floor heating",
+              "180 m²",
+              "196 m²",
+              "180 m²",
+              "+ €880"
+            ]
+          ],
+          "total": "+ €2,385",
+          "value": 2385
+        },
+        {
+          "name": "Baden",
+          "rows": [
+            [
+              "Data outlets",
+              "64",
+              "70",
+              "64",
+              "+ €690"
+            ],
+            [
+              "Server room",
+              "–",
+              "4 h",
+              "0 h",
+              "+ €260"
+            ],
+            [
+              "Cable tray",
+              "120 m",
+              "120 m",
+              "120 m",
+              "✓"
+            ],
+            [
+              "Corridor lights",
+              "18",
+              "20",
+              "18",
+              "+ €820"
+            ]
+          ],
+          "total": "+ €1,770",
+          "value": 1770
+        },
+        {
+          "name": "St. Pölten",
+          "rows": [
+            [
+              "Ventilation duct",
+              "96 m",
+              "104 m",
+              "96 m",
+              "+ €1,040"
+            ],
+            [
+              "Roof unit",
+              "–",
+              "7 h",
+              "0 h",
+              "+ €455"
+            ],
+            [
+              "Fire sealing",
+              "40",
+              "46",
+              "40",
+              "+ €414"
+            ],
+            [
+              "WC units",
+              "12",
+              "12",
+              "12",
+              "✓"
+            ]
+          ],
+          "total": "+ €1,909",
+          "value": 1909
+        }
+      ],
+      "level2Prefix": "Level 2 · Project",
+      "outputProjectPrefix": "Project"
     },
     "timeline": {
       "timelineTitle": "Project Vienna 21 · Example",
@@ -234,7 +414,7 @@
         },
         {
           "week": "Wk 15",
-          "type": "Hourly work",
+          "type": "Hours",
           "text": "Cable tray extended, 18 hours, sheet signed",
           "amount": 1170,
           "billed": true
@@ -248,7 +428,7 @@
         },
         {
           "week": "Wk 23",
-          "type": "Hourly work",
+          "type": "Hours",
           "text": "Plant room rebuilt, 6 hours, sheet unsigned",
           "amount": 390,
           "billed": false
@@ -268,11 +448,12 @@
           "billed": false
         }
       ]
-    }
+    },
+    "zoomHint": "Tap to enlarge"
   },
   "video": {
     "eyebrow": "04 · Product video",
-    "title": "tieout in three minutes.",
+    "title": "tieout in three minutes",
     "placeholder": "[[PLACEHOLDER: product video]]",
     "soon": "Video coming soon.",
     "play": "Play video"
@@ -289,7 +470,7 @@
         "linkedin": "https://www.linkedin.com/in/maximilian-dieringer/",
         "logos": [
           "wu",
-          "usc",
+          "simonkucher",
           "tacto"
         ],
         "title": "CEO"
@@ -300,7 +481,8 @@
         "linkedin": "https://www.linkedin.com/in/maximilian-seipl/",
         "logos": [
           "wu",
-          "enpal"
+          "enpal",
+          "icons"
         ],
         "title": "COO"
       },
@@ -310,7 +492,8 @@
         "linkedin": "https://www.linkedin.com/in/santino-schrader/",
         "logos": [
           "tuwien",
-          "hanswomen"
+          "hanswomen",
+          "start"
         ],
         "title": "CTO"
       },
@@ -320,7 +503,8 @@
         "linkedin": "https://www.linkedin.com/in/simonfuhrbach/",
         "logos": [
           "wu",
-          "tacto"
+          "tacto",
+          "feldwerke"
         ],
         "title": "CFO"
       }
@@ -328,7 +512,7 @@
   },
   "contact": {
     "eyebrow": "06 · Demo",
-    "title": "Book a demo.",
+    "title": "Book a demo",
     "sub": "We show you tieout on a sample project. Afterwards you decide whether it fits your business.",
     "points": [
       "30 minutes, online",
@@ -336,7 +520,7 @@
       "No data needed from you"
     ],
     "mailLabel": "Or by email",
-    "mail": "kontakt@[[PLACEHOLDER: domain]]",
+    "mail": "kontakt@tieout.at",
     "fields": {
       "name": "Name",
       "company": "Company",
@@ -421,7 +605,7 @@
         ],
         [
           "Contact",
-          "kontakt@[[PLACEHOLDER: domain]]"
+          "kontakt@tieout.at"
         ],
         [
           "Supervisory authority, chamber",
