@@ -2,7 +2,7 @@
 
 **Stand:** Donnerstag, 22. Oktober 2026 (überarbeitet 16:00 Uhr: Zwilling für das ganze Unternehmen, Projektzwillinge darin)
 **Für:** Maxi, die zwei Co-Founder und jeden neuen KI-Chat ohne Vorwissen.
-**Verhältnis zu v2:** `archiv/Schlusswerk Dossier v2.md` bleibt unverändert als Archiv. v3 übernimmt alle Entscheidungen aus v2, außer dort, wo sie in Abschnitt 0.1 ausdrücklich geändert sind. Neu ist das Kernprodukt: ein digitaler Zwilling für das ganze Unternehmen, in dem jedes Projekt seinen eigenen Projektzwilling hat. Die erste Anwendung darauf ist die Schlussrechnung. Markierungen: **[neu v3]** und **[geändert v3]**. Wo v2 und v3 abweichen, gilt v3. Die Steckbriefe zu Kuro und reebuild (v2, Abschnitt 8.1 bis 8.6) stehen jetzt in `research_notes/Kuro_reebuild_Fakten.md`. Die Quellen zu Recht und Markt bleiben in v2.
+**Verhältnis zu v2:** `archiv/dossier-v2.md` bleibt unverändert als Archiv. v3 übernimmt alle Entscheidungen aus v2, außer dort, wo sie in Abschnitt 0.1 ausdrücklich geändert sind. Neu ist das Kernprodukt: ein digitaler Zwilling für das ganze Unternehmen, in dem jedes Projekt seinen eigenen Projektzwilling hat. Die erste Anwendung darauf ist die Schlussrechnung. Markierungen: **[neu v3]** und **[geändert v3]**. Wo v2 und v3 abweichen, gilt v3. Die Steckbriefe zu Kuro und reebuild (v2, Abschnitt 8.1 bis 8.6) stehen jetzt in `research_notes/Kuro_reebuild_Fakten.md`. Die Quellen zu Recht und Markt bleiben in v2.
 
 **Kennzeichnung:** **(unbelegt)** = Erfahrung oder Allgemeinwissen ohne geprüfte Quelle. **(Annahme)** = Modellannahme, muss gemessen werden. **G / S / A** bei Quellen wie in v2. **(früherer Chat)** = Fakt aus der Recherche vom 22.10., Quellen in Abschnitt 17, nicht neu geprüft.
 
@@ -756,13 +756,13 @@ Kennzahlen für Story und Investoren, nach dem Muster von reebuilds "530 Mio. �
 
 ## 16. Startprompt für einen neuen Chat
 
-> Lies zuerst `_STATUS.md` und `Schlusswerk Dossier v3.md` im Projektordner, komplett, auch Abschnitt 0.1 (Änderungen gegenüber v2) und Abschnitt 12 "Verworfen". Für Steckbriefe zu Kuro und reebuild lies bei Bedarf `research_notes/Kuro_reebuild_Fakten.md`, für Quellen zu Recht, Markt und Exit `archiv/Schlusswerk Dossier v2.md`. Wir sind drei Studenten in Wien (Maxi, WU Wien, baut mit KI-Coding-Agenten, plus zwei Co-Founder, keiner mit Bauhintergrund). Wir bauen den digitalen Zwilling für österreichische Elektro- und HKLS-Subunternehmer: ein Zwilling für das ganze Unternehmen, in dem jedes Projekt seinen Projektzwilling hat, mit der Schlussrechnung als erster Anwendung. Das Dossier v3 ist der entschiedene Stand. Schlag nichts aus Abschnitt 12 wieder vor, außer du hast neue Evidenz und sagst das ausdrücklich. Alles mit "(unbelegt)", "(Annahme)", S oder A ist ungeprüft. Heute ist [Datum]. Seit dem Dossier ist passiert: [Gate-Stand, Insider, Ordner, Gespräche, Zahlen]. Hilf uns jetzt bei: [Aufgabe, z. B. Woche X aus Abschnitt 14]. Deutsch, direkt, ohne Floskeln. Vertrieb: keine Kaltmails, keine Kaltanrufe (§ 174 TKG).
+> Lies zuerst `_STATUS.md` und `dossier-v3.md` im Projektordner, komplett, auch Abschnitt 0.1 (Änderungen gegenüber v2) und Abschnitt 12 "Verworfen". Für Steckbriefe zu Kuro und reebuild lies bei Bedarf `research_notes/Kuro_reebuild_Fakten.md`, für Quellen zu Recht, Markt und Exit `archiv/dossier-v2.md`. Wir sind drei Studenten in Wien (Maxi, WU Wien, baut mit KI-Coding-Agenten, plus zwei Co-Founder, keiner mit Bauhintergrund). Wir bauen den digitalen Zwilling für österreichische Elektro- und HKLS-Subunternehmer: ein Zwilling für das ganze Unternehmen, in dem jedes Projekt seinen Projektzwilling hat, mit der Schlussrechnung als erster Anwendung. Das Dossier v3 ist der entschiedene Stand. Schlag nichts aus Abschnitt 12 wieder vor, außer du hast neue Evidenz und sagst das ausdrücklich. Alles mit "(unbelegt)", "(Annahme)", S oder A ist ungeprüft. Heute ist [Datum]. Seit dem Dossier ist passiert: [Gate-Stand, Insider, Ordner, Gespräche, Zahlen]. Hilf uns jetzt bei: [Aufgabe, z. B. Woche X aus Abschnitt 14]. Deutsch, direkt, ohne Floskeln. Vertrieb: keine Kaltmails, keine Kaltanrufe (§ 174 TKG).
 
 ---
 
 ## 17. Quellen
 
-**Recht, Markt, Wettbewerb, Exits:** in `archiv/Schlusswerk Dossier v2.md` (Abschnitte 4 bis 7 mit Links). v2 verweist für weitere Quellen auf Dossier v1, Abschnitt 18; v1 liegt nicht in diesem Ordner. **Kuro und reebuild:** Steckbriefe und Quellen in `research_notes/Kuro_reebuild_Fakten.md`.
+**Recht, Markt, Wettbewerb, Exits:** in `archiv/dossier-v2.md` (Abschnitte 4 bis 7 mit Links). v2 verweist für weitere Quellen auf Dossier v1, Abschnitt 18; v1 liegt nicht in diesem Ordner. **Kuro und reebuild:** Steckbriefe und Quellen in `research_notes/Kuro_reebuild_Fakten.md`.
 
 **Ergänzungen aus der Recherche vom 22.10.2026 (früherer Chat, nicht neu geprüft):**
 - [Startbase: reebuild 3 Mio. Seed](https://www.startbase.de/news/reebuild-holt-sich-3-millionen-euro-fuer-ki-automatisierung-in-der-baubranche)

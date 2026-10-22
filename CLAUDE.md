@@ -1,6 +1,6 @@
 # Schlusswerk (Arbeitstitel): Projektkontext für Claude Code
 
-Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub unter github.com/schlusswerk/schlusswerk, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/Schlusswerk Dossier v3.md`.
+Dieses Repository ist der Arbeitsordner für das WU Hackathon Projekt (privat auf GitHub unter github.com/schlusswerk/schlusswerk, alles Technische und alle Projektdokumente an einem Ort). Lies diese Datei zuerst, danach `_STATUS.md`, danach `docs/dossier-v3.md`.
 
 ## Worum es geht
 
@@ -19,7 +19,7 @@ Maxi (Maximilian Dieringer, WU Wien, Wirtschaftsinformatik) ist einer von drei G
 | Pfad | Zweck |
 |---|---|
 | `_STATUS.md` | Laufender Stand: Gates, Termine, nächste Schritte. Nach jeder Sonntags-Runde aktualisieren |
-| `docs/Schlusswerk Dossier v3.md` | **Gültiger Stand.** Kernprodukt, Recht, Preise, Markt, Konkurrenz, Gates, Plan, Bau, Startprompt |
+| `docs/dossier-v3.md` | **Gültiger Stand.** Kernprodukt, Recht, Preise, Markt, Konkurrenz, Gates, Plan, Bau, Startprompt |
 | `docs/research_notes/` | Recherche, z. B. `Kuro_reebuild_Fakten.md` (Steckbriefe, GU-Seite-Abwägung, Investorenstory, Quellen aus v2) |
 | `docs/archiv/` | Überholte Stände, z. B. Dossier v2. Nur noch als Quelle für Links zu Recht und Markt |
 | `business/` | 1-Pager, Problem-Solution Statement, Business Plan, Pitch (Markdown) |

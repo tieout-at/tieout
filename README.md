@@ -8,7 +8,7 @@ Name, CI und Hosting sind noch offen. Dieses Repository ist **privat**: Es enth�
 
 1. [`CLAUDE.md`](CLAUDE.md): Regeln f체r die Arbeit, auch f체r KI Coding Agenten
 2. [`_STATUS.md`](_STATUS.md): aktueller Stand, Gates, n채chste Schritte
-3. [`docs/Schlusswerk Dossier v3.md`](docs/Schlusswerk%20Dossier%20v3.md): g체ltiger Stand zu Produkt, Recht, Preisen, Markt, Plan und Bau
+3. [`docs/dossier-v3.md`](docs/dossier-v3.md): g체ltiger Stand zu Produkt, Recht, Preisen, Markt, Plan und Bau
 
 ## Aufbau
 
