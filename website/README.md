@@ -41,7 +41,7 @@ Texte nur in `messages/` ändern, nie im Code. Neue Platzhalter immer als `[[PLA
 
 - Geschützt mit Cloudflare Access: Wer die Seite öffnet, meldet sich mit einer freigegebenen Mailadresse an und bekommt einen Einmal-Code.
 - Gehostet im privaten Cloudflare-Konto von Maxi D., Pages-Projekt `endpoint-preview`. Hochgeladen wird nur als Vorschau-Branch `vorschau`, denn Cloudflare schützt per Schalter nur Vorschauen. Die Hauptadresse `endpoint-preview.pages.dev` bleibt bewusst leer.
-- Freigegeben sind die Mitglieder des Cloudflare-Kontos. Weitere Personen kommen in Zero Trust → Access → Applications → `endpoint-preview` → Policies dazu.
+- Freigegeben (Stand 22.10.): Maximilian Dieringer, Santino Schrader, Simon Fuhrbach. Maximilian Seipl fehlt noch. Weitere Personen kommen in Zero Trust → Access → Applications → `endpoint-preview` → Policies dazu.
 - Umzug auf ein Firmenkonto: dort ein Pages-Projekt anlegen und `deploy:vorschau` mit dem neuen Projektnamen ausführen.
 
 ## Stand
