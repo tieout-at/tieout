@@ -2,10 +2,11 @@
 // Anmeldeprüfung) und lokal in lokal.ts. Ohne Server-Zustand: Der Browser schickt den Gesprächsstand mit und bekommt
 // ihn neu zurück. Beträge gibt es hier nie; die KI läuft nur über `frage` (API-Schlüssel bleibt im Worker).
 
+import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { ZurufAgent } from "../src/agent.ts";
 import type { Firma } from "../src/firma.ts";
-import type { KiFrage } from "../src/ki.ts";
+import { apiFrage, type KiFrage } from "../src/ki.ts";
 import { Arbeitsspeicher, type SpeicherDaten } from "../src/speicher.ts";
 import { kiVersteher } from "../src/verstehen.ts";
 import type { Antwort, Leistungsereignis } from "../src/typen.ts";
@@ -14,7 +15,7 @@ import type { Antwort, Leistungsereignis } from "../src/typen.ts";
 export const GRENZE_PRO_TAG = 100;
 const MAX_BYTES = 256 * 1024;
 
-/** Zähler der KI-Aufrufe pro Tag. Im Worker z. B. KV oder Supabase, lokal im Speicher. */
+/** Zähler der KI-Aufrufe pro Tag. Im Worker in Supabase (worker/supabase.sql), lokal im Speicher. */
 export interface Tageszaehler {
   stand(tag: string): Promise<number>;
   erhoehe(tag: string): Promise<void>;
@@ -25,18 +26,6 @@ export function speicherZaehler(): Tageszaehler {
   return {
     stand: async (tag) => m.get(tag) ?? 0,
     erhoehe: async (tag) => void m.set(tag, (m.get(tag) ?? 0) + 1),
-  };
-}
-
-/** Zähler über ein Cloudflare-KV-Binding (eine Zahl pro Tag, läuft nach zwei Tagen ab). */
-export function kvZaehler(kv: {
-  get(key: string): Promise<string | null>;
-  put(key: string, value: string, opts?: { expirationTtl?: number }): Promise<void>;
-}): Tageszaehler {
-  const schluessel = (tag: string) => `zuruf-ki:${tag}`;
-  return {
-    stand: async (tag) => Number((await kv.get(schluessel(tag))) ?? 0),
-    erhoehe: async (tag) => kv.put(schluessel(tag), String(Number((await kv.get(schluessel(tag))) ?? 0) + 1), { expirationTtl: 172800 }),
   };
 }
 
@@ -139,4 +128,22 @@ export async function zurufRoute(request: Request, opts: RoutenOptionen): Promis
   const daten = vorher.alsDaten();
   const antwort: RoutenAntwort = { antworten, stand: daten, neu: daten.ereignisse.filter((e) => !bekannt.has(`${e.id}@${e.version}`)) };
   return json(200, antwort);
+}
+
+/** Was der Worker der App für den Agenten braucht (Cloudflare-Variablen und Secret). */
+export interface ZurufUmgebung {
+  /** „an“ schaltet die Route ein; fehlt er, gibt es sie nicht (Standard, online bis Go Maxi S.). */
+  ZURUF_ECHT?: string;
+  ANTHROPIC_API_KEY?: string;
+}
+
+/**
+ * Einstieg für den Worker der App (product/app/worker/index.ts), nach der Anmeldeprüfung: beantwortet /api/zuruf/…,
+ * sonst null. Ohne Schlüssel oder Zähler antwortet er „nicht eingerichtet“ und ruft keine KI.
+ */
+export async function zurufAnfrage(anfrage: Request, env: ZurufUmgebung, firma: Firma, zaehler: Tageszaehler | null): Promise<Response | null> {
+  if (!new URL(anfrage.url).pathname.startsWith("/api/zuruf/")) return null;
+  const echt = env.ZURUF_ECHT === "an";
+  if (echt && (!env.ANTHROPIC_API_KEY || !zaehler)) return json(503, { fehler: "Zuruf-Agent ist nicht eingerichtet" });
+  return zurufRoute(anfrage, { echt, firma, frage: apiFrage(new Anthropic({ apiKey: env.ANTHROPIC_API_KEY })), zaehler: zaehler ?? speicherZaehler() });
 }

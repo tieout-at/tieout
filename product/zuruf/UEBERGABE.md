@@ -10,9 +10,11 @@ Diese Datei ist das Gedächtnis zwischen Sitzungen und Claude-Accounts. Am Ende 
 
 - Route `POST /api/zuruf/nachricht` in `worker/route.ts`: Schalter, 100 KI-Aufrufe pro Tag, Zeit in Wiener Ortszeit, Gesprächsstand kommt vom Browser und geht neu zurück. Tests in `worker/route.test.ts`.
 - Lokal: `npm run app-server` (Port 3103, KI nach `ZURUF_KI`, Firma aus `../app/data/generated/zuruf-firma.json`, vorher in `product/app` `npm run generate`). Die App dazu mit `product/app/.env.local`: `NEXT_PUBLIC_ZURUF_ECHT=an` und `NEXT_PUBLIC_ZURUF_URL=http://localhost:3103/api/zuruf/nachricht`.
-- Online: Der Haupt-Chat hängt die Route in den Worker `schlusswerk-demo` (nach der Anmeldeprüfung), mit `nodejs_compat`, Secret `ANTHROPIC_API_KEY`, Zähler (`kvZaehler` oder Supabase). Schalter online aus bis Go Maxi S.
+- Online: eingehängt in `product/app/worker/index.ts` (nach der Anmeldeprüfung, `zurufAnfrage`), `nodejs_compat` in `wrangler.jsonc`, Tageszähler in Supabase (`worker/supabase.sql`, Tabelle `zuruf_tageszaehler`, Funktion `zuruf_zaehle`). Fehlt Tabelle, Secret `ANTHROPIC_API_KEY` oder Variable `ZURUF_ECHT=an`, ruft nichts die KI. Schalter online aus bis Go Maxi S.
+- Die App installiert dieses Paket mit (`postinstall` in `product/app/package.json`), damit Worker-Bündel und Typprüfung `zod` und das SDK finden.
 - Nur Node, nie in Worker oder Browser: `src/llm.ts` (Abo, .env), `src/speicher-datei.ts` (JSONL). Läuft überall: `src/ki.ts`, `src/agent.ts`, `src/speicher.ts`, `worker/route.ts` (gebündelt geprüft: keine `node:`-Importe; mit dem SDK im Worker 289 KiB gzip).
-- Die App bindet aus diesem Paket nur `src/typen.ts` und `src/firma.ts` ein (Typen), damit ihre CI ohne `product/zuruf/node_modules` läuft. Eigene CI: `.github/workflows/produkt-zuruf.yml`.
+- Browser-Code der App bindet aus diesem Paket nur Typen ein (`src/typen.ts`, `src/firma.ts`); nur der Worker der App nutzt `worker/route.ts`. Eigene CI: `.github/workflows/produkt-zuruf.yml`.
+- Nächster Schritt: Ablage B in Supabase (`worker/supabase.sql`, Tabelle `zuruf_ereignis`, nur anhängen, RLS je Firma über `app_metadata.firma`) statt Browser-Speicher, mit derselben Schnittstelle `ZurufAblage`.
 
 ## Erledigt
 

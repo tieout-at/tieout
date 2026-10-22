@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { FIRMA } from "../src/firma.ts";
 import type { KiFrage } from "../src/ki.ts";
-import { speicherZaehler, wienZeit, zurufRoute, type RoutenAntwort, type RoutenOptionen } from "./route.ts";
+import { speicherZaehler, wienZeit, zurufAnfrage, zurufRoute, type RoutenAntwort, type RoutenOptionen } from "./route.ts";
 
 // Feste KI-Antwort im Schema von verstehen.ts: ein vollständiger Zuruf auf Wien 21, Zitate aus der Nachricht „id“.
 const kiAntwort = (id: string) => ({
@@ -89,6 +89,20 @@ describe("Route /api/zuruf/nachricht", () => {
   it("lehnt kaputte Anfragen ab", async () => {
     const r = await zurufRoute(new Request("https://demo.test/api/zuruf/nachricht", { method: "POST", body: "{}" }), optionen());
     expect(r.status).toBe(400);
+  });
+});
+
+describe("Einstieg für den Worker", () => {
+  const anfrage = (pfad: string) => new Request(`https://demo.test${pfad}`, { method: "POST", body: "{}" });
+  it("antwortet nur auf /api/zuruf/", async () => {
+    expect(await zurufAnfrage(anfrage("/api/mitglieder"), {}, FIRMA, speicherZaehler())).toBeNull();
+  });
+  it("aus, solange ZURUF_ECHT nicht „an“ ist", async () => {
+    expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ANTHROPIC_API_KEY: "x" }, FIRMA, speicherZaehler()))?.status).toBe(404);
+  });
+  it("an, aber ohne Schlüssel oder Zähler: nicht eingerichtet, keine KI", async () => {
+    expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ZURUF_ECHT: "an" }, FIRMA, speicherZaehler()))?.status).toBe(503);
+    expect((await zurufAnfrage(anfrage("/api/zuruf/nachricht"), { ZURUF_ECHT: "an", ANTHROPIC_API_KEY: "x" }, FIRMA, null))?.status).toBe(503);
   });
 });
 

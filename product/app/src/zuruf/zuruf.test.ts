@@ -68,9 +68,8 @@ describe("Wortlaut der Szene", () => {
   it("Szene und Belegseite sagen dasselbe wie die Lösungsliste (Demo_Faelle.md, Szene Schritt 2)", () => {
     const w21 = daten.projekte[0]!;
     const z6 = w21.zurufe.find((z) => z.nr === "Z6")!;
-    // Lösungsliste: „Heizkörper im Wohnzimmer versetzt“; der Datensatz sagt „Heizkörper versetzt“ (offen, Go Maxi S.).
     expect(zurufAntwort(z6, w21.projekt.name)).toBe(
-      "Danke. So habe ich es verstanden: Wohnhausanlage Wien 21, Stiege 2, Top 9. Heizkörper versetzt, keine LV-Position. 6 h Monteur, 6 h Helfer. Angewiesen vom Polier GU. Regiebericht: keiner. Stimmt das?",
+      "Danke. So habe ich es verstanden: Wohnhausanlage Wien 21, Stiege 2, Top 9. Heizkörper im Wohnzimmer versetzt, keine LV-Position. 6 h Monteur, 6 h Helfer. Angewiesen vom Polier GU. Regiebericht: keiner. Stimmt das?",
     );
   });
 });

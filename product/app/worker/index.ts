@@ -4,10 +4,14 @@
 // Solange src/anmeldung/konfig.ts leer ist, lässt das Skript alles durch (Schutz dann wie bisher über Cloudflare Access).
 
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Firma } from "../../zuruf/src/firma.ts";
+import { zurufAnfrage, type Tageszaehler, type ZurufUmgebung } from "../../zuruf/worker/route.ts";
+import zurufFirma from "../data/generated/zuruf-firma.json";
 import { ANMELDESEITE, ANMELDUNG_AN, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../src/anmeldung/konfig";
 
-interface Env {
+/** Dazu ZURUF_ECHT (Variable, Standard aus) und ANTHROPIC_API_KEY (Secret) für den Zuruf-Agenten. */
+interface Env extends ZurufUmgebung {
   ASSETS: { fetch(anfrage: Request): Promise<Response> };
   /** Geheimer Schlüssel (Cloudflare-Secret), nur für Mitglieder und Einladungen. */
   SUPABASE_SECRET_KEY?: string;
@@ -57,6 +61,10 @@ async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Resp
   if (!env.SUPABASE_SECRET_KEY) return json({ fehler: "Mitglieder sind noch nicht eingerichtet" }, 503);
   const admin = createClient(SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
 
+  // Zuruf-Agent (product/zuruf): nur mit ZURUF_ECHT=an, Schlüssel und Zähler; sonst 404 oder „nicht eingerichtet“.
+  const zuruf = await zurufAnfrage(anfrage, env, zurufFirma as Firma, supabaseZaehler(admin));
+  if (zuruf) return zuruf;
+
   if (url.pathname === "/api/mitglieder" && anfrage.method === "GET") {
     const { data, error } = await admin.auth.admin.listUsers({ perPage: 200 });
     if (error) return json({ fehler: error.message }, 500);
@@ -85,6 +93,20 @@ async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Resp
   }
 
   return json({ fehler: "Unbekannt" }, 404);
+}
+
+/** KI-Aufrufe pro Tag in Supabase (product/zuruf/worker/supabase.sql). Fehlt die Tabelle, gilt die Grenze als erreicht. */
+function supabaseZaehler(admin: SupabaseClient): Tageszaehler {
+  return {
+    stand: async (tag) => {
+      const { data, error } = await admin.from("zuruf_tageszaehler").select("ki_aufrufe").eq("tag", tag).maybeSingle();
+      return error ? Number.POSITIVE_INFINITY : ((data?.ki_aufrufe as number | undefined) ?? 0);
+    },
+    erhoehe: async (tag) => {
+      const { error } = await admin.rpc("zuruf_zaehle", { p_tag: tag });
+      if (error) throw new Error(`Zähler: ${error.message}`);
+    },
+  };
 }
 
 function json(daten: unknown, status = 200): Response {
