@@ -161,7 +161,7 @@ Rollen und Texte schreibt jeder selbst. Nichts wird automatisch von LinkedIn üb
 | Team-Rollen, Fotos, Texte | Team | jeder selbst |
 | Anrede Sie oder ihr | alle Texte | Team |
 
-**Vor dem Livegang:** Passwortschutz und `noindex`, solange Impressum oder Datenschutz Platzhalter sind (Impressumspflicht nach § 5 ECG, § 25 MedienG). Live erst, wenn `npm run check:platzhalter` nichts mehr findet (prüft `PLATZHALTER` und `PLACEHOLDER`).
+**Online (Entscheidung Maxi D., 22.10.2026):** Die Seite ist per Link offen erreichbar (`endpoint-preview.pages.dev`), mit `noindex` und Vorschau-Hinweis. Risiko bewusst getragen: Impressum und Datenschutz sind noch Platzhalter, obwohl die Impressumspflicht (§ 5 ECG, § 25 MedienG) für jede abrufbare Website gilt. Vor einer aktiven Verbreitung (Verlinkung, LinkedIn, Bewerbungen) Impressum mit echten Angaben füllen. Vollständig live erst, wenn `npm run check:platzhalter` nichts mehr findet.
 
 ---
 

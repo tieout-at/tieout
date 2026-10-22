@@ -498,7 +498,7 @@ Steckbriefe zu Stratos, Dryft und Tacto sind nur Kurzfassungen. Maxi ergänzt si
 - **GTM und Monetarisierung sind offen.** Die Website nennt kein Angebot (Check, Desk, Live), keine Preise und keinen CTA "Check anfragen". CTA ist neutral ("Kontakt aufnehmen"), bis GTM entschieden ist.
 - **Reihenfolge:** Zwilling zuerst (Firma → Projekt → Beleg, interaktiv), die Schlussrechnung als erste Anwendung, weitere als "in Planung".
 - **Arbeitstitel:** "EndPoint." CI: Planraster mit Papier, Tinte und Ultramarin. Details in `website/STRUKTUR.md`.
-- **Platzhalter:** Was wir noch nicht wissen (Rechtsform, Impressum, Rollen, Video, Domain), steht als `[[PLATZHALTER: …]]` im Text, nie als erfundene Tatsache. Solange Impressum oder Datenschutz Platzhalter sind, bleibt die Seite nicht öffentlich (Passwortschutz, noindex).
+- **Platzhalter:** Was wir noch nicht wissen (Rechtsform, Impressum, Rollen, Video, Domain), steht als `[[PLATZHALTER: …]]` im Text, nie als erfundene Tatsache. Die Vorschau ist per Link offen erreichbar (noindex), Entscheidung Maxi D. vom 22.10. Vor aktiver Verbreitung werden Impressum und Datenschutz mit echten Angaben gefüllt (Impressumspflicht).
 - **Team-Sektion:** Die vier Gründer werden gezeigt, dazu eine offene Karte für den Bau-Insider.
 
 **Einwände:**
