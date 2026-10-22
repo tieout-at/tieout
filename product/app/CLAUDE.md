@@ -19,6 +19,9 @@ Auftraggeber ist Maxi S. (kein Entwickler): Deutsch, Ergebnis zuerst, einfache S
   - `geld.ts`: Cent-Rechnung, Rundung, Formatierung.
 - `src/demo/w21/`: synthetischer Datensatz „Wohnhausanlage Wien 21, HKLS-Los“ (`erzeuge.ts`, deterministisch, mit 6 Zurufen), Katalog der 380 LV-Positionen, Lösungsliste für Tests (`loesung.ts`).
 - `src/demo/firma/`: Firmenzwilling Haustechnik Beispiel GmbH: 4 Auftraggeber, W21 plus 7 kleine Projekte (`erzeuge.ts`, Bauhelfer `bauen.ts`), Lösungsliste für Tests (`loesung.ts`).
+- `src/app/`: Bildschirme (Next.js App Router, alles statisch vorberechnet). `/` Firmenübersicht, `/projekte/[projekt]/…` Projekt und Anwendung.
+- `src/ui/`: Bauteile als React-Komponenten (Seitenleiste, Seitenkopf, Kennzahl, Panel, Statusmarke, Zeilennavigation) und Stile in `styles/`: `tokens.css` (einzige Stelle für Farben, Abstände, Größen), `bauteile.css` (Bauteile mit Vorlage), `anordnung.css` (Layout). Die App ist seit 22.10. die Quelle des UI-Fundaments; das Artifact bleibt Referenz v2. Kein Tailwind in den Bildschirmen: Klassen aus `bauteile.css`/`anordnung.css`, Inline-Stile nur für Spaltenbreiten. `fundament.test.ts` sperrt freie Farben, Stile und verbotene Wörter.
+- `src/daten/`: einziger Datenzugriff der Bildschirme (`server-only`). Heute Generator + Rechenkern, später Datenbank pro Firma.
 - `scripts/generate/`: schreibt `data/generated/firma.json` und `w21.json` (läuft auch vor `build`).
 
 ## Regeln

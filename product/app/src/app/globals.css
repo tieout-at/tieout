@@ -1,0 +1,10 @@
+/* Einstieg der Stile: Tokens → Bauteile → Anordnung. Keine eigenen Farben oder Abstände außerhalb der Tokens. */
+@import "../ui/styles/tokens.css";
+@import "../ui/styles/bauteile.css";
+@import "../ui/styles/anordnung.css";
+
+/* Schriften selbst ausgeliefert (next/font), Namen aus den Tokens bleiben als Rückfall */
+:root {
+  --font-sans: var(--font-inter), Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
