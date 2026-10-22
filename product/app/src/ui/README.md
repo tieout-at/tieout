@@ -4,6 +4,7 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 
 | Bauteil | Datei | Vorlage |
 |---|---|---|
+| Marke Tieout (23.10.): Bildmarke und Wortmarke oben in der Seitenleiste, darunter die Firma als Arbeitsbereich; eingeklappt nur die Bildmarke | `Logo.tsx` | Kopf der Website (`website/components/ui/Logo.tsx`), Linear (Marke oben, Arbeitsbereich darunter) |
 | Seitenleiste: Firma oben, Projekte als Baum ohne Ampelpunkt (Ampel-Wort im Tooltip), aktives Projekt aufgeklappt | `Seitenleiste.tsx` | Linear (Arbeitsbereich oben, „Your teams“ als Baum, aktiver Eintrag als Fläche, Zähler rechts), Attio (Gruppen-Label) |
 | Seitenkopf | `Seitenkopf.tsx` | Linear-Kopfzeile, Attio |
 | Kennzahl | `Kennzahl.tsx` | reebuild-Projektübersicht R-C |

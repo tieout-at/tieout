@@ -26,6 +26,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavProjekt } from "@/daten/demo";
 import { Ico } from "./Ico";
+import { LogoMark, Wortmarke } from "./Logo";
 import { navWechseln, themaWechseln, useNavZu } from "./thema";
 import { zeigeToast } from "./Toast";
 import { allesZuruecksetzen, wiederherstellen } from "@/zustand/speicher";
@@ -124,15 +125,19 @@ export function Seitenleiste({
   return (
     <aside className="sw-sidebar">
       <div className="brand-row">
-        <div className="sw-brand" title={`${firma}, ${untertitel}`}>
-          <span className="brand-mark" aria-hidden="true">
-            {firma.charAt(0)}
-          </span>
-          <span className="brand-name">{firma}</span>
-        </div>
+        <Link href="/" className="sw-brand" aria-label="Tieout" title="Tieout">
+          <LogoMark />
+          <Wortmarke />
+        </Link>
         <button type="button" className="nav-toggle" onClick={navWechseln} title="Seitenleiste ein- oder ausklappen ( [ )" aria-label="Seitenleiste ein- oder ausklappen" aria-expanded={!zu}>
           <Ico icon={PanelLeft} />
         </button>
+      </div>
+      <div className="nav-firma" title={`${firma}, ${untertitel}`}>
+        <span className="brand-mark" aria-hidden="true">
+          {firma.charAt(0)}
+        </span>
+        <span className="brand-name">{firma}</span>
       </div>
       <nav className="sw-nav" aria-label="Firma">
         {firmaNav.filter((e) => !e.folgt).map((e) => (
