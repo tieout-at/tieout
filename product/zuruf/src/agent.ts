@@ -468,8 +468,13 @@ export class ZurufAgent {
     const e = z.entwurf;
     if (!e) return 0;
     const ids: string[] = [];
-    const nachrichtIds = e.nachrichten.map((m) => m.id);
+    const alle = e.nachrichten.map((m) => m.id);
+    const fotos = e.nachrichten.filter((m) => m.art === "foto").map((m) => m.id);
     e.punkte.forEach((p, i) => {
+      // Quelle pro Eintrag: nur die Nachrichten, aus denen seine Angaben stammen. Fotos gehören dazu, wenn es nur einen Punkt gibt.
+      const belegt = new Set(Object.values(p.eintrag).map((a) => a.nachrichtId));
+      if (e.punkte.length === 1) for (const f of fotos) belegt.add(f);
+      const nachrichtIds = belegt.size ? alle.filter((id) => belegt.has(id)) : alle;
       const altId = e.ersetzt?.[i];
       const alt = altId ? this.speicher.ereignis(altId) : undefined;
       const id = alt?.id ?? `ev-${z.absenderId}-${Date.now().toString(36)}-${++this.zaehler}`;

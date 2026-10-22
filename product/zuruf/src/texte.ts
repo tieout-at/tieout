@@ -204,7 +204,7 @@ export function zusammenfassung(eintraege: Eintrag[], heute: string, korrektur: 
   const koerper =
     eintraege.length === 1
       ? punktZeilen(eintraege[0]!, heute, offen[0]).join("\n")
-      : eintraege.map((e, i) => `${i + 1}) ${punktZeilen(e, heute, offen[i]).join(", ")}`).join("\n");
+      : eintraege.map((e, i) => `${i + 1}) ${punktZeilen(e, heute, offen[i]).join("\n    ")}`).join("\n");
   return { zweck: "zusammenfassung", text: `${kopf}\n${koerper}`, knoepfe: [KNOPF.passt, KNOPF.aendern] };
 }
 

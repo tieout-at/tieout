@@ -15,6 +15,20 @@ Jeder Fehler des Agenten oder unserer Arbeit kommt hierher, neuester oben. Vor j
 
 ## Einträge
 
+### 2026-10-22: Aus dem eigenen Test im Simulator
+
+### L19 Quelle zeigte alle Nachrichten des Gesprächs
+- Was: Bei zwei Punkten (Heizkörper, Steckdose) standen in beiden Karten alle Nachrichten als Quelle.
+- Regel: Quelle pro Eintrag sind nur die Nachrichten, aus denen seine Angaben stammen. Fotos zählen dazu, wenn es nur einen Punkt gibt.
+- Abgesichert durch: Test „Quelle pro Eintrag“ in `abnahme1.test.ts`.
+- Status: behoben, noch kein Lernschleifen-Lauf danach.
+
+### L20 Zusammenfassung mit mehreren Punkten schwer lesbar
+- Was: Jeder Punkt in einer langen Zeile, auf dem Handy mühsam.
+- Regel: Pro Punkt eine Kopfzeile „1) Baustelle, Ort“, darunter eingerückte Unterzeilen.
+- Abgesichert durch: gleicher Test.
+- Status: behoben, noch kein Lernschleifen-Lauf danach.
+
 ### 2026-10-22: Lauf 4 (50 sichtbar) und Abnahme 2, beide über das Claude-Abo
 - Lauf 4: 47/50, 0 erfunden, Felder 99 %, Rückfragen Max 2, Note Median 4,5 / Min 2. Antwortzeit über das Abo Median 9,5 s (über die API 2,5 s, nicht vergleichbar).
 - Abnahme 2 (frisches Holdout `h2-*`, nie gelesen): 9/10, 0 erfunden, Felder 98 %, Rückfragen Max 1, Note Median 4 / Min 2. Durchgefallen: laerm_bruchstueck. Note 2 trotz bestandener Prüfungen: mehrere_punkte. Abnahme 1 war 6/10.

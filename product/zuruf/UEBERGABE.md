@@ -49,11 +49,15 @@ API-Guthaben ist seit Lauf 4 aufgebraucht (ca. 9 USD verbraucht). Seitdem läuft
 
 Abnahme 1 fand den schwersten Fehler bisher: Datenverlust bei Nachtrag plus Korrektur (LERNEN.md A1, A2). Behoben, mit Tests. Altes Holdout ist verbraucht und liegt jetzt sichtbar als `szenarien/z-*.json`. Frisches Holdout: `szenarien/zurueck/h2-*.json` (nicht lesen).
 
-31 Lernpunkte in `LERNEN.md`. 41 Unit-Tests grün (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 Szenarien (50 sichtbar, 10 zurückgehalten).
+33 Lernpunkte in `LERNEN.md`. 42 Unit-Tests grün (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 Szenarien (50 sichtbar, 10 zurückgehalten).
 
 ## KI über Abo oder API
 
 In `product/zuruf/.env` steht `ZURUF_KI=abo`: Agent, Persona und Bewerter laufen über Claude Code mit dem Claude-Abo (`claude` muss angemeldet sein, `claude auth status`). Kostet kein API-Guthaben, zählt aber gegen das Abo-Limit und ist langsamer (ca. 5 bis 16 s pro Antwort statt 2,5 s). Ein Lauf über 4 Szenarien dauerte 1:13 min, über 50 Szenarien also grob 15 bis 20 min und ca. 200 Aufrufe. Mit `ZURUF_KI=api` läuft alles wieder über den API-Key (Guthaben war am 22.10. aufgebraucht). Auf einem anderen Account: dort `claude` anmelden, dann gilt dessen Abo.
+
+## Simulator
+
+Chat im WhatsApp-Stil (hell und dunkel), Absender per Knopfreihe, Büro-Ansicht mit Quelle pro Eintrag. Start: `npm run sim`, dann http://localhost:4321. Nach Code-Änderungen neu starten (die Seite selbst lädt ohne Neustart).
 
 ## Nächster Schritt
 

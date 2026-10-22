@@ -163,6 +163,24 @@ describe("Abnahme 1: Muster", () => {
     expect(antwort[0]!.text).toContain("2)");
   });
 
+  it("Quelle pro Eintrag: nur die Nachrichten, aus denen seine Angaben stammen; Zusammenfassung mit Unterzeilen", async () => {
+    const { agent, speicher } = neu(
+      stub(
+        (n) => v("zuruf", [punkt({ projektId: a("w21", "Wien 21", n.id), leistung: a("Heizkörper versetzt", "Heizkörper versetzt", n.id) })]),
+        (n) => v("neuer_zuruf", [punkt({ projektId: a("bad", "Baden", n.id), leistung: a("WC montiert", "WC montiert", n.id) })]),
+      ),
+    );
+    const m1 = msg("Wien 21 Heizkörper versetzt");
+    const m2 = msg("und in Baden WC montiert");
+    await agent.verarbeite(m1);
+    const zusammenfassung = await agent.verarbeite(m2);
+    expect(zusammenfassung[0]!.text).toContain("1) Wien 21\n    Heizkörper versetzt");
+    await agent.verarbeite(knopf("passt", "Passt"));
+    const [heizung, wc] = speicher.ereignisse();
+    expect(heizung!.nachrichtIds).toEqual([m1.id]);
+    expect(wc!.nachrichtIds).toEqual([m2.id]);
+  });
+
   it("A11 Zweite Geldfrage: anderer Satz, Zusammenfassung nicht wiederholt", async () => {
     const { agent } = neu(
       stub(
