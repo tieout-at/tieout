@@ -222,7 +222,6 @@
       "found": "gefunden",
       "summaryWithout": "{n} von {total} Änderungen nicht verrechnet",
       "summaryWith": "Alle {total} Änderungen belegt und verrechnet",
-      "replay": "Nochmal abspielen",
       "hint": "Umschalten und vergleichen",
       "sample": "Synthetische Beispieldaten",
       "events": [
