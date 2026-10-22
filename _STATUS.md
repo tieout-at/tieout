@@ -1,6 +1,6 @@
 # Status
 
-**As of:** Thursday, 22 October 2026
+**As of:** Friday, 23 October 2026
 **Maintenance:** update every Sunday after the metrics round (30 minutes, dossier v3 section 14).
 
 ## Decided
@@ -44,6 +44,7 @@
 - 22.10. late (Maxi S. with Claude, four parallel sessions): styles split per area (#24), steps 1 to 4 on the project overview with real numbers and links (#27), polish without traffic-light dots and colour areas (#28), all tables uniformly 36 px without shifting (#29), central tokens (#33), review findings (#35). Independently reviewed: all amounts accurate to the cent, no broken links. Website check with contradictions on the website: `docs/archiv/Website_Check_2026-10-22.md`.
 - 22.10.: name and logo are set: **tieout**, domain tieout.at (not yet live). LinkedIn company page linkedin.com/company/tieout-at (linked in the footer), banner in `brand/linkedin/`. Next product steps (rebranding, link, UI aligned to the website, speed, voice note agent (Zuruf-Agent) by Santino from PR #25): `_UEBERGABE.md`.
 - Open: who builds what (product, website), decision in the Sunday round 25.10.
+- 23.10. (Maxi S. with Claude, main chat and three sessions): app renamed tieout (logo, ultramarine accent), open for the jury at **https://app.tieout.workers.dev** (final address, in the submission email; branch previews stay protected). Voice note agent by Santino built in, switch off online until the API key exists (budget at most 25 €). Collapsible groups, faster filters, remaining review items, settings page, Next.js security update. Supabase project `tieout-app` (Frankfurt) with finished but disabled sign-in. Independent final review: no must-fix finding. Next chat: UI pass, API key, launch video (`_UEBERGABE.md`).
 - 22.10.: planning of the voice note agent (Zuruf-Agent: WhatsApp, stage 2 brought forward, synthetic only) in `product/zuruf/` on branch `zuruf/plan`. Team go-ahead on `GESTALTUNG.md` and `PLAN.md` open.
 
 ## Not yet created
