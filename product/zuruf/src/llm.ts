@@ -55,9 +55,14 @@ export const frageStrukturiert: KiFrage = (opts) => (kiWeg() === "abo" ? frageUe
 /** Pfad zu Claude Code. Unter Windows direkt die claude.exe, damit cmd.exe die JSON-Argumente nicht verstümmelt. */
 function claudeBefehl(): string {
   if (process.env.ZURUF_CLAUDE_PFAD) return process.env.ZURUF_CLAUDE_PFAD;
-  if (process.platform === "win32" && process.env.APPDATA) {
-    const exe = path.join(process.env.APPDATA, "npm", "node_modules", "@anthropic-ai", "claude-code", "bin", "claude.exe");
-    if (existsSync(exe)) return exe;
+  if (process.platform === "win32") {
+    // Zuerst die native Installation (~/.local/bin), dann npm; eine ältere Version im PATH kann abgelaufen angemeldet sein.
+    const orte = [
+      process.env.USERPROFILE && path.join(process.env.USERPROFILE, ".local", "bin", "claude.exe"),
+      process.env.APPDATA && path.join(process.env.APPDATA, "npm", "node_modules", "@anthropic-ai", "claude-code", "bin", "claude.exe"),
+    ];
+    const exe = orte.find((o): o is string => !!o && existsSync(o));
+    if (exe) return exe;
   }
   return "claude";
 }
