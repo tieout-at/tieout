@@ -1,8 +1,8 @@
-# Schlusswerk (Arbeitstitel)
+# tieout (Arbeitstitel, vorher Schlusswerk)
 
 Der digitale Zwilling eines österreichischen Elektro- oder HKLS-Subunternehmerbetriebs. Die erste Anwendung darauf ist die Schlussrechnung: Wir finden Geld, das erbracht, aber nicht verrechnet wurde, und belegen jede Position.
 
-Name, CI und Hosting sind noch offen. Dieses Repository ist **privat**: Es enthält Strategie, Preise und Rechtsfragen.
+Arbeitstitel **tieout** (klein, ohne Punkt), Domain tieout.at, CI Planraster (Papier, Tinte, Ultramarin). Website: https://endpoint-preview.pages.dev (später tieout.at). Repository und GitHub-Organisation heißen weiter `schlusswerk`. Dieses Repository ist **privat**: Es enthält Strategie, Preise und Rechtsfragen.
 
 ## Einstieg
 
@@ -18,6 +18,7 @@ Name, CI und Hosting sind noch offen. Dieses Repository ist **privat**: Es enth�
 | `business/` | 1-Pager, Problem-Solution Statement, Business Plan, Pitch |
 | `product/` | das Produkt: Datenmodell, Backend, Frontend, synthetische Demo-Daten |
 | `website/` | die öffentliche Website |
+| `brand/` | Marke: LinkedIn-Banner (persönlich und Firmenseite), erzeugt per Skript |
 | `video/` | Skript, Storyboard und Quellen für das Produktvideo (keine großen Videodateien) |
 
 ## Regeln in Kürze

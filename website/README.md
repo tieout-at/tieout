@@ -1,6 +1,6 @@
 # Website
 
-Arbeitstitel **Tieout.** Struktur, CI und Platzhalter-Regeln: [`STRUKTUR.md`](STRUKTUR.md).
+Arbeitstitel **tieout** (klein, ohne Punkt) Struktur, CI und Platzhalter-Regeln: [`STRUKTUR.md`](STRUKTUR.md).
 
 ## Starten
 
