@@ -1,5 +1,5 @@
 // Verstehen: Die KI liest die Nachrichten und liefert Absicht und Angaben mit Zitat.
-// Sie entscheidet nichts: ob nachgefragt oder gespeichert wird, regelt gespraech.ts.
+// Sie entscheidet nichts: ob nachgefragt oder gespeichert wird, regelt agent.ts.
 
 import { z } from "zod";
 import { FIRMA, firmaAlsText, projektNachId, type Firma } from "./firma.ts";
@@ -20,7 +20,7 @@ export const ABSICHTEN = [
 ] as const;
 export type Absicht = (typeof ABSICHTEN)[number];
 
-export const ARTEN = ["auftrag", "zusatz_aenderung", "behinderung_wartezeit"] as const;
+export const ARTEN = ["auftrag", "zusatz_aenderung", "behinderung_wartezeit", "reparatur_schaden"] as const;
 export type Art = (typeof ARTEN)[number];
 export const UNKLAR_FELDER = ["ort", "leistung", "menge", "personen", "dauerStunden", "angewiesenVon", "datum"] as const;
 export type UnklarFeld = (typeof UNKLAR_FELDER)[number];
@@ -42,11 +42,14 @@ const KiEintrag = z.object({
   grund: angabe(z.string()),
   art: z.enum(ARTEN),
   unklar: z.array(z.enum(UNKLAR_FELDER)),
+  bezugId: z.string().nullable(),
 });
 
 const KiAntwort = z.object({
   absicht: z.enum(ABSICHTEN),
   enthaeltFrageGeldRecht: z.boolean(),
+  ungeduldig: z.boolean(),
+  angekuendigtePunkte: z.number().nullable(),
   eintraege: z.array(KiEintrag),
 });
 
@@ -56,11 +59,17 @@ export interface EintragMitHinweis {
   art: Art;
   /** Angaben, die der Absender gemacht hat, die aber nicht zu verstehen waren (z. B. „[unverständlich] Mann“). */
   unklar: UnklarFeld[];
+  /** Bei korrektur_gespeichert: Id des gespeicherten Eintrags, den dieser Punkt korrigiert. */
+  bezugId?: string;
 }
 
 export interface Verstaendnis {
   absicht: Absicht;
   enthaeltFrageGeldRecht: boolean;
+  /** Der Absender zeigt, dass ihn Rückfragen nerven („hab ka zeit“, „is eh klar“). */
+  ungeduldig?: boolean;
+  /** Der Absender hat eine Anzahl Punkte angekündigt („drei Sachen“). */
+  angekuendigtePunkte?: number;
   eintraege: EintragMitHinweis[];
 }
 
@@ -69,8 +78,8 @@ export interface VerstehenEingabe {
   entwurfNachrichten: Nachricht[];
   /** Stand des offenen Zurufs, falls einer offen ist. */
   entwurf?: Eintrag[];
-  /** Zuletzt gespeicherte Einträge und ihre Nachrichten, für Korrekturen danach. */
-  gespeichert?: { eintraege: Eintrag[]; nachrichten: Nachricht[] };
+  /** Kürzlich gespeicherte Einträge (mit Id) und ihre Nachrichten, für Korrekturen danach. */
+  gespeichert?: { eintraege: { id: string; eintrag: Eintrag }[]; nachrichten: Nachricht[] };
   /** Gesprächsverlauf in Kurzform (Agent und Absender), älteste zuerst. */
   verlauf: { von: "absender" | "agent"; text: string }[];
   neu: Nachricht;
@@ -87,18 +96,21 @@ Aufgabe: Bestimme die Absicht der NEUEN Nachricht und den vollständigen, aktuel
 
 Absichten:
 - zuruf: meldet eine Arbeit oder ergänzt, beantwortet oder korrigiert den offenen Zuruf. Gilt auch für die erste Meldung, wenn nichts offen ist.
-- neuer_zuruf: Ein Zuruf ist offen, aber die neue Nachricht meldet eindeutig etwas anderes, Eigenständiges. eintraege enthält dann NUR die neuen Punkte.
+- neuer_zuruf: Ein Zuruf ist offen und die neue Nachricht meldet eine weitere Arbeit (ein Nachtrag wie "und no ..."). eintraege enthält dann NUR die neuen Punkte. Nennt der Nachtrag keine Baustelle, gilt die des offenen Zurufs: projektId mit dem Zitat aus der früheren Nachricht.
 - bestaetigung: stimmt der Zusammenfassung zu (passt, ja, stimmt, basst).
 - aendern: will etwas ändern, sagt aber noch nicht was.
-- korrektur_gespeichert: Nichts ist offen, aber die Nachricht korrigiert die zuletzt gespeicherten Punkte. eintraege enthält dann den vollständigen korrigierten Stand dieser Punkte.
+- korrektur_gespeichert: Nichts ist offen, aber die Nachricht korrigiert einen oder mehrere KÜRZLICH GESPEICHERTE Punkte. eintraege enthält dann NUR die korrigierten Punkte, jeweils vollständig mit allen bisherigen Angaben (Zitate aus den alten Nachrichten bleiben gültig) und bezugId = id des gespeicherten Punkts. Unbeteiligte Punkte weglassen.
 - zurueckziehen: will die Meldung löschen oder zurücknehmen.
 - frage_geld_recht: fragt nur, ob etwas bezahlt wird, ob es verrechenbar ist, was rechtlich gilt oder was man dem GU sagen soll.
 - frage_zum_agenten: fragt, wer oder was du bist, wer das liest, was gespeichert wird.
 - kein_zuruf: Privates, Smalltalk, Unsinn, nichts zur Arbeit.
 - stopp: will nicht mehr mitmachen oder keine Nachrichten mehr.
 enthaeltFrageGeldRecht: true, wenn irgendwo in der neuen Nachricht so eine Frage steckt, auch neben einem Zuruf.
+ungeduldig: true, wenn der Absender zeigt, dass ihn Nachfragen nerven oder er keine Zeit hat ("hab ka zeit", "is eh klar", "steht eh oben").
+angekuendigtePunkte: Anzahl, wenn der Absender ankündigt, wie viele Sachen er meldet ("drei Sachen", "erstens"), sonst null. Gilt für den ganzen offenen Zuruf.
+bezugId: nur bei korrektur_gespeichert, sonst null.
 
-Punkte (eintraege): Ein Punkt ist eine Arbeit an einem Ort. Zwei verschiedene Arbeiten oder Orte sind zwei Punkte. Gib bei zuruf und korrektur_gespeichert immer ALLE Punkte des Zurufs mit allen Angaben zurück, nicht nur die Änderung. Spätere Aussagen gehen früheren vor. Bei bestaetigung, aendern, zurueckziehen, frage_*, kein_zuruf, stopp: eintraege leer.
+Punkte (eintraege): Ein Punkt ist eine Arbeit an einem Ort. Zwei verschiedene Arbeiten oder Orte sind zwei Punkte. Gib bei zuruf immer ALLE Punkte des offenen Zurufs mit allen Angaben zurück, nicht nur die Änderung. Spätere Aussagen gehen früheren vor, aber nur für den Teil, der korrigiert wird: Wird nur die Top-Nummer korrigiert, bleibt das Haus oder die Stiege im Ort stehen. Eine Korrektur ändert nicht die art eines Punkts, außer der Absender sagt dazu etwas Neues. Bei bestaetigung, aendern, zurueckziehen, frage_*, kein_zuruf, stopp: eintraege leer.
 
 Angaben: Jede Angabe hat wert, zitat und nachrichtId.
 - zitat ist eine wörtliche, zusammenhängende Stelle aus einer Nachricht des Absenders (nicht des Agenten), genau so geschrieben wie dort, kurz (1 bis 8 Wörter). Ohne solche Stelle: null. Nichts ergänzen, nichts schließen, nichts aus dem Kontext raten.
@@ -110,11 +122,11 @@ Angaben: Jede Angabe hat wert, zitat und nachrichtId.
 - menge: nur mit Zahl und Einheit (m, Stk, m², psch). Personen und Stunden sind keine Menge.
 - personen: Anzahl Leute, die gearbeitet haben ("zu zweit" = 2, "i allan" = 1). Nur wenn gesagt.
 - dauerStunden: Dauer in Stunden, so wie gesagt ("an halben Tag" ist keine Zahl, dann null). Nicht umrechnen, nicht mit Personen multiplizieren.
-- angewiesenVon: wer die Arbeit direkt angeschafft oder angeordnet hat, so wie gesagt. Wessen Wunsch es war ("weil die Schule das will"), ist nicht angewiesenVon, wenn jemand anderer es angeschafft hat. Hat niemand ausdrücklich angeschafft, aber der Absender sagt, wer es so wollte ("weil der Architekt eine andere Höhe will"), dann ist das angewiesenVon. Antwortet der Absender auf die Frage danach mit "niemand" oder "keiner", ist der wert "niemand (laut Absender)" mit diesem Zitat.
+- angewiesenVon: wer die Arbeit direkt angeschafft oder angeordnet hat, so wie gesagt. Kam der Auftrag über jemanden ("die Bewohnerin hat im Büro angerufen, der Chef hat mich geschickt"), ist der Vermittler angewiesenVon und der Auslöser gehört in grund. Wessen Wunsch es war ("weil die Schule das will"), ist nicht angewiesenVon, wenn jemand anderer es angeschafft hat. Hat niemand ausdrücklich angeschafft, aber der Absender sagt, wer es so wollte ("weil der Architekt eine andere Höhe will"), dann ist das angewiesenVon. Sagt der Absender bei Zusatzarbeit ausdrücklich "niemand" oder "keiner", ist der wert "niemand" mit diesem Zitat. Bei Reparatur, Schaden oder Wartezeit bleibt angewiesenVon null.
 - grund: warum die Arbeit nötig war, wenn gesagt ("weil die Küche woanders hinkommt" wird "Küche kommt woanders hin"). Kurz, Schriftdeutsch.
 - datum: JJJJ-MM-TT, nur wenn ein Tag genannt ist ("gestern", "am Montag"); relativ zum Zeitpunkt der Nachricht auflösen.
 - material: nur verbautes oder verbrauchtes Material, das ausdrücklich als solches genannt ist und nicht schon in leistung steht. Sonst null.
-- art: zusatz_aenderung, wenn es nach zusätzlicher, geänderter oder angeordneter Arbeit klingt (Änderung, Versetzen, Zusatz, Regie, auf Wunsch von jemandem, Mehraufwand). behinderung_wartezeit, wenn nicht gearbeitet werden konnte (Warten, fehlender Kran, Vorgewerk nicht fertig). auftrag bei normaler Arbeit laut Auftrag.
+- art: zusatz_aenderung, wenn jemand eine zusätzliche oder geänderte Arbeit angeschafft oder gewollt hat (Änderung, Versetzen, Zusatz, Regie, Mehraufwand auf Wunsch). reparatur_schaden, wenn ein Schaden, eine Undichtheit oder ein Mangel behoben wurde, ohne dass es jemand angeordnet hat, auch wenn ein anderes Gewerk den Schaden verursacht hat. behinderung_wartezeit, wenn nicht gearbeitet werden konnte (Warten, fehlender Kran, Vorgewerk nicht fertig). auftrag bei normaler Arbeit laut Auftrag.
 - unklar: Felder, zu denen der Absender etwas gesagt hat, das aber nicht zu verstehen ist (z. B. "[unverständlich] Mann" = personen, "Top [unverständlich]" = ort). Solche Felder bleiben null.
 - Fotos: Ein Foto zeigt einen Zustand, nicht was gemacht wurde. Aus einer Bildbeschreibung nur projektId (z. B. Beschriftung an der Wand) und ort übernehmen. leistung, menge, personen, dauerStunden, angewiesenVon, datum, material, grund nie aus einem Foto, nur aus Text oder Sprache.
 
@@ -130,7 +142,7 @@ function eingabeText(e: VerstehenEingabe): string {
   const teile: string[] = [];
   if (e.gespeichert && e.gespeichert.eintraege.length) {
     teile.push(
-      `ZULETZT GESPEICHERT (nur relevant für korrektur_gespeichert):\n${JSON.stringify(e.gespeichert.eintraege)}\nNachrichten dazu:\n${e.gespeichert.nachrichten.map(nachrichtZeile).join("\n")}`,
+      `KÜRZLICH GESPEICHERT (nur relevant für korrektur_gespeichert):\n${e.gespeichert.eintraege.map((g) => `id ${g.id}: ${JSON.stringify(g.eintrag)}`).join("\n")}\nNachrichten dazu:\n${e.gespeichert.nachrichten.map(nachrichtZeile).join("\n")}`,
     );
   }
   if (e.verlauf.length) {
@@ -174,11 +186,14 @@ export function kiVersteher(opts: { firma?: Firma; aufwand?: Aufwand } = {}): Ve
     return {
       absicht: antwort.absicht,
       enthaeltFrageGeldRecht: antwort.enthaeltFrageGeldRecht,
+      ungeduldig: antwort.ungeduldig,
+      angekuendigtePunkte: antwort.angekuendigtePunkte ?? undefined,
       eintraege: antwort.eintraege.map((k) => ({
         eintrag: alsEintrag(k),
         projektKandidaten: k.projektKandidaten.filter((id) => projektNachId(id)),
         art: k.art,
         unklar: k.unklar.filter((f) => !alsEintrag(k)[f]),
+        bezugId: k.bezugId ?? undefined,
       })),
     };
   };

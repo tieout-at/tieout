@@ -1,0 +1,32 @@
+{
+  "id": "h2-wenig-deutsch-gestern-muellraum",
+  "titel": "Monteur mit wenig Deutsch meldet Bodenablauf von gestern mit Foto",
+  "kategorie": "dialekt",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wenig Deutsch, Erstsprache Rumänisch, tippt kurze Wortgruppen ohne Artikel und ohne Umlaute, Verben im Infinitiv",
+    "verhalten": "Versteht kurze Sätze und Knöpfe. Bei richtiger Zusammenfassung schreibt er 'ok passt'. Bei langen oder verschachtelten Sätzen schreibt er 'nicht verstehen'. Fragt der Agent nach etwas, antwortet er mit einem Wort oder einer Zahl."
+  },
+  "start": "2026-11-04T07:12:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "foto", "inhalt": "Aufgestemmter Fliesenboden, daneben ein alter gusseiserner Bodenablauf und ein neuer Kunststoffablauf, Werkzeugkiste im Hintergrund." },
+    { "art": "text", "inhalt": "hallo. gestern favoriten haus a mullraum. boden ablauf alt kaputt, neu machen. chef von bau muster sagen. ich und kolega 3 stunde" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "w10", "ort": "Haus A, Müllraum", "leistung": "Kaputten Bodenablauf ausgebaut und neu gesetzt", "personen": 2, "dauerStunden": 3, "angewiesenVon": "Bauleiter der Bau Muster AG", "datum": "2026-11-03" }
+    ],
+    "weissNicht": ["Name vom Chef"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "w10", "ortStichwoerter": ["Müllraum", "Mullraum", "Muellraum", "Müll"], "leistungStichwoerter": ["Bodenablauf", "Ablauf", "Boden ablauf"], "personen": 2, "dauerStunden": 3, "angewiesenVonStichwoerter": ["Bau Muster", "Chef", "Bauleiter"], "datum": "2026-11-03" }
+    ],
+    "maxRueckfragen": 1,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Alles Nötige ist da: möglichst keine Rückfrage, sehr einfache kurze Zusammenfassung in leichtem Deutsch, 'gestern' als 3.11.2026 auflösen und als Datum zeigen. Nicht über das Deutsch des Absenders reden, nichts an seiner Sprache korrigieren."
+  }
+}

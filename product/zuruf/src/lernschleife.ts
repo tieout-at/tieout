@@ -106,7 +106,7 @@ const BewertungSchema = z.object({
 const REGELN = `1 Eine Nachricht reicht. 2 Höchstens eine Frage pro Antwort, höchstens zwei Rückfragen. 3 Fragen mit Auswahl statt offen. 4 Bestätigen mit einem Tipp, Zusammenfassung höchstens fünf Zeilen. 5 Seine Worte, nicht Büro-Sprache; du. 6 Nicht raten. 7 Ehrlich über sich beim ersten Kontakt. 8 Nie bewerten, drängen, zuerst schreiben. 9 Nie über Geld, Recht oder den GU entscheiden. 10 Fehler kosten nichts, korrigieren geht. 11 Baustellenrealität (Dialekt, Lärm, mehrere Themen). 12 Sinn zeigen, ohne zu kontrollieren.`;
 
 async function bewerte(s: Szenario, g: Zug[], ereignisse: Leistungsereignis[]): Promise<Bewertung> {
-  const gespeichert = ereignisse.map((e) => ({ status: e.status, offen: e.offen, ...Object.fromEntries(Object.entries(e.eintrag).map(([k, v]) => [k, v.wert])) }));
+  const gespeichert = ereignisse.map((e) => ({ status: e.status, offen: e.offen, hinweise: e.hinweise, ...Object.fromEntries(Object.entries(e.eintrag).map(([k, v]) => [k, v.wert])) }));
   return frageStrukturiert({
     schema: BewertungSchema,
     system: `Du bewertest Gespräche zwischen einem WhatsApp-Assistenten einer Haustechnik-Firma und Monteuren auf der Baustelle. Maßstab sind diese Gestaltungsregeln:\n${REGELN}\n\nVergib eine Note von 1 bis 5 für "fühlt sich an wie jemand, der zuhört, und ist für die Person auf der Baustelle leicht": 5 = vorbildlich, 4 = gut mit Kleinigkeiten, 3 = brauchbar aber holprig, 2 = mühsam oder ein klarer Regelverstoß, 1 = schädlich (erfundene Werte, Entscheidung über Geld oder Recht, Druck). Liste konkrete Verstöße mit Regelnummer und Zitat. Kurz begründen. Sei streng, aber bewerte nur, was im Gespräch steht.`,
@@ -152,11 +152,13 @@ function pruefeEintraege(ereignisse: Leistungsereignis[], erwartet: ErwarteterEi
   erwartet.forEach((x, i) => {
     let beste: { idx: number; p: Pruefung[] } | undefined;
     frei.forEach((e, idx) => {
+      // Nur Einträge mit passender Leistung kommen in Frage, sonst würde ein fremder Eintrag als „erfunden“ gezählt.
+      if (x.leistungStichwoerter && !enthaeltEines(e.eintrag.leistung?.wert, x.leistungStichwoerter)) return;
       const p = passt(e, x);
       if (!beste || p.filter((q) => q.ok).length > beste.p.filter((q) => q.ok).length) beste = { idx, p };
     });
     if (!beste) {
-      ergebnis.push({ name: `eintrag${i + 1}`, ok: false, detail: "nicht gespeichert" });
+      ergebnis.push({ name: `eintrag${i + 1}.verloren`, ok: false, detail: "kein gespeicherter Eintrag mit passender Leistung" });
       return;
     }
     frei.splice(beste.idx, 1);
@@ -183,23 +185,24 @@ export async function spiele(s: Szenario, versteher: Versteher, opts: { bewerten
   let absenderNachrichten = 0;
   let bisBestaetigung: number | undefined;
 
-  const senden = async (art: NachrichtArt, inhalt: string, knopfId?: string) => {
+  const senden = async (teile: { art: NachrichtArt; inhalt: string; knopfId?: string }[]) => {
     zeit += 45_000;
-    const n: Nachricht = { id: `${s.id}-${++nr}`, absenderId: "absender", zeit: new Date(zeit).toISOString(), art, inhalt, knopfId: knopfId || undefined };
-    g.push({ von: "absender", art, text: knopfId ? `${inhalt} [${knopfId}]` : inhalt });
+    const ns: Nachricht[] = teile.map((t, i) => ({ id: `${s.id}-${++nr}`, absenderId: "absender", zeit: new Date(zeit + i * 5_000).toISOString(), art: t.art, inhalt: t.inhalt, knopfId: t.knopfId || undefined }));
+    for (const t of teile) g.push({ von: "absender", art: t.art, text: t.knopfId ? `${t.inhalt} [${t.knopfId}]` : t.inhalt });
     absenderNachrichten++;
     const t0 = Date.now();
-    const antworten = await agent.verarbeite(n, s.persona.rolle);
+    // Fast gleichzeitige Nachrichten kommen als Bündel an (der WhatsApp-Kanal sammelt sie kurz).
+    const antworten = await agent.verarbeiteBuendel(ns, s.persona.rolle);
     dauerMs.push(Date.now() - t0);
     for (const a of antworten) g.push(antwortZug(a));
     if (bisBestaetigung === undefined && antworten.some((a) => a.zweck === "gespeichert")) bisBestaetigung = absenderNachrichten;
   };
 
-  for (const m of s.ersteNachrichten) await senden(m.art, m.inhalt);
+  await senden(s.ersteNachrichten);
   for (let zug = 0; zug < MAX_ZUEGE; zug++) {
     const p = await personaZug(s, g);
     if (p.aktion === "ende") break;
-    await senden(p.aktion, p.inhalt, p.aktion === "knopf" ? p.knopfId : undefined);
+    await senden([{ art: p.aktion, inhalt: p.inhalt, knopfId: p.aktion === "knopf" ? p.knopfId : undefined }]);
   }
   agent.tagesabschluss(speicher.zustand("absender", s.persona.rolle));
 

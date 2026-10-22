@@ -27,16 +27,15 @@ export function begruessung(firma: string): Antwort {
   return {
     zweck: "begruessung",
     text:
-      `Servus! Ich bin der Zuruf-Assistent von ${firma}, ein Programm. ` +
-      `Ich lege deine Meldungen von der Baustelle ab, lesen tut sie nur unser Büro. ` +
+      `Servus! Ich bin ein Programm von ${firma} und lege deine Meldungen von der Baustelle ab, lesen tut sie nur unser Büro. ` +
       `Mitmachen ist freiwillig, mit „stopp“ hörst du jederzeit auf. Passt das für dich?`,
     knoepfe: [KNOPF.einwJa, KNOPF.einwNein],
   };
 }
 
-export const einwilligungNochmal = (): Antwort => ({
+export const einwilligungNochmal = (meldungWartet: boolean): Antwort => ({
   zweck: "begruessung",
-  text: "Magst du mitmachen? Ja oder nein reicht.",
+  text: meldungWartet ? "Deine Meldung hab ich. Ich leg sie ab, sobald du ja sagst." : "Magst du mitmachen? Ja oder nein reicht.",
   knoepfe: [KNOPF.einwJa, KNOPF.einwNein],
 });
 
@@ -63,9 +62,22 @@ export const wiederDabei = (): Antwort => ({
   text: "Passt. Schick einfach, was du gemacht hast.",
 });
 
-export const hinweisGeldRecht = (): Antwort => ({
+export const hinweisGeldRecht = (wiederholt = false): Antwort => ({
   zweck: "hinweis_geld_recht",
-  text: "Das schaut sich unser Büro an, das entscheide ich nicht. Ich lege nur ab, was du meldest.",
+  text: wiederholt
+    ? "Versteh ich. Ich geb das so ans Büro weiter, entscheiden kann ich es nicht."
+    : "Das schaut sich unser Büro an, das entscheide ich nicht. Ich lege nur ab, was du meldest.",
+});
+
+export const sammeln = (anzahl: number): Antwort => ({
+  zweck: "sammeln",
+  text: `Hab Punkt ${anzahl}, schick weiter.`,
+});
+
+export const offenOben = (): Antwort => ({
+  zweck: "zusammenfassung",
+  text: "Deine Meldung oben ist noch offen.",
+  knoepfe: [KNOPF.passt, KNOPF.aendern],
 });
 
 export const hinweisZweck = (): Antwort => ({
@@ -143,7 +155,7 @@ export const frageUnklar = (feld: Feldname): Antwort => ({
 
 export const frageAufwand = (): Antwort => ({
   zweck: "rueckfrage",
-  text: "Wie lang hat es gedauert, und zu wievielt wart ihr?",
+  text: "Wie lang hat es gedauert?",
 });
 
 const OFFEN_NAME: Partial<Record<Feldname, string>> = {

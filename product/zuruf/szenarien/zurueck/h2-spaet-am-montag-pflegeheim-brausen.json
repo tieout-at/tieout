@@ -1,0 +1,31 @@
+{
+  "id": "h2-spaet-am-montag-pflegeheim-brausen",
+  "titel": "Freitagabend fällt ihm ein, was am Montag im Pflegeheim war",
+  "kategorie": "spaete_nachricht",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Ruhige Sprachnachricht von zu Hause, Hochdeutsch mit Wiener Färbung, Fernseher im Hintergrund",
+    "verhalten": "Drückt 'Passt', wenn alles stimmt. Steht in der Zusammenfassung ein falsches Datum (etwa heute oder der kommende Montag), schreibt er 'na, am Montag diese Woch, der Zweite'. Fragt der Agent, ob es diese Woche war, sagt er 'ja'."
+  },
+  "start": "2026-11-06T19:55:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "Nabend, hab ich ganz vergessen: Am Montag im Pflegeheim, zweiter Stock, Zimmer 203 bis 205, bei den Duschen die Brausestangen gegen so Haltegriffkombis getauscht, drei Stück. Die Heimleitung wollte das so. Ich allein, zweieinhalb Stunden." }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "mod", "ort": "2. OG, Zimmer 203 bis 205", "leistung": "Brausestangen gegen Haltegriffkombinationen getauscht", "menge": { "wert": 3, "einheit": "Stück" }, "personen": 1, "dauerStunden": 2.5, "angewiesenVon": "Heimleitung", "datum": "2026-11-02" }
+    ],
+    "weissNicht": ["Typ oder Hersteller der Haltegriffe"]
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "mod", "ortStichwoerter": ["203", "205", "2. OG", "zweiter Stock", "2.OG"], "leistungStichwoerter": ["Brause", "Haltegriff", "Dusche"], "mengeWert": 3, "personen": 1, "dauerStunden": 2.5, "angewiesenVonStichwoerter": ["Heimleitung", "Heim"], "datum": "2026-11-02" }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": ["Feierabend", "so spät"],
+    "sollVerhalten": "'Am Montag' am Freitag, 6.11.2026 als Montag, 2.11.2026 auflösen und das Datum in der Zusammenfassung ausdrücklich zeigen. Pflegeheim ist Mödling. Keine Rückfrage, kein Kommentar zur Uhrzeit oder zum Vergessen, kurz bestätigen."
+  }
+}

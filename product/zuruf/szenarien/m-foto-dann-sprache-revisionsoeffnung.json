@@ -1,0 +1,53 @@
+{
+  "id": "m-foto-dann-sprache-revisionsoeffnung",
+  "titel": "Foto ohne Text, gleich danach Sprachnachricht mit allem",
+  "kategorie": "nur_foto",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Niederösterreichische Umgangssprache, Sprachnachrichten mit Hall vom Dachboden",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Fragt der Agent, was auf dem Foto ist, sagt er 'hab i eh grad gsagt'."
+  },
+  "start": "2026-10-28T09:30:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "foto",
+      "inhalt": "Dachboden mit Holzbalken, verzinkter Lüftungskanal, darin frisch eingeschnittene Revisionsöffnung mit Deckel, daneben eine Brandschutzklappe. Kein Text."
+    },
+    {
+      "art": "sprache",
+      "inhalt": "Des is Baden, Volksschule, am Dachboden. Mia ham do a zusätzliche Revisionsöffnung in den Lüftungskanal einbaut, weil ma sonst ned zur Brandschutzklappe zuwi kummt. Der Bauleiter vom GU hat's gsagt. Zu zweit, vier Stunden."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ort": "Dachboden",
+        "leistung": "Zusätzliche Revisionsöffnung im Lüftungskanal bei der Brandschutzklappe eingebaut",
+        "personen": 2,
+        "dauerStunden": 4,
+        "angewiesenVon": "Bauleiter des GU"
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "bad",
+        "ortStichwoerter": ["Dachboden"],
+        "leistungStichwoerter": ["Revision", "Lüftungskanal", "Kanal"],
+        "personen": 2,
+        "dauerStunden": 4,
+        "angewiesenVonStichwoerter": ["Bauleiter"],
+        "mussLeerSein": ["menge", "datum"]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Behandelt Foto und Sprachnachricht als einen Zuruf, fragt nicht nach dem Foto und nicht nach Dingen, die in der Sprachnachricht stehen. Ein Eintrag mit Foto als Beleg, sofort Zusammenfassung mit Passt/Ändern."
+  }
+}

@@ -55,6 +55,10 @@ export const SzenarioSchema = z.object({
     "kein_zuruf",
     "laerm_bruchstueck",
     "spaete_nachricht",
+    "nachtrag",
+    "ungeduld",
+    "reparatur_schaden",
+    "aufzaehlung",
   ]),
   persona: z.object({
     rolle: z.enum(["monteur", "polier", "obermonteur"]),
@@ -67,6 +71,7 @@ export const SzenarioSchema = z.object({
   start: z.string(),
   /** Hat die Person schon zugestimmt (bestehender Nutzer)? false = erster Kontakt. */
   einwilligung: z.boolean(),
+  /** Kommen fast gleichzeitig an (z. B. Foto und Sekunden später Text) und werden als ein Bündel zugestellt. */
   ersteNachrichten: z.array(NachrichtVorgabe).min(1),
   /** Was wirklich passiert ist. Die Persona kennt das, der Agent nicht. */
   wahrheit: z.object({

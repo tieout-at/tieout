@@ -20,8 +20,12 @@ export interface Entwurf {
   punkte: PunktZustand[];
   gestellt: Frage[];
   phase: "sammeln" | "warte_antwort" | "warte_bestaetigung" | "warte_aenderung";
-  /** Ids der gespeicherten Ereignisse, die dieser Entwurf korrigiert (gleiche Reihenfolge wie punkte). */
-  ersetzt?: string[];
+  /** Korrektur nach dem Speichern: pro Punkt die Id des gespeicherten Ereignisses, das er ersetzt. */
+  ersetzt?: (string | undefined)[];
+  /** Absender war ungeduldig: keine weitere Rückfrage, gleich zusammenfassen. */
+  keineFragenMehr?: boolean;
+  /** Angekündigte Anzahl Punkte („drei Sachen“). Bis sie da sind, nur kurz quittieren. */
+  angekuendigt?: number;
   /** Absender hat „Weiß nicht“ oder „Keiner extra“ gedrückt. */
   anweiserBeantwortet?: boolean;
   /** Absender hat ein abgeschlossenes Projekt bestätigt. */
@@ -41,6 +45,8 @@ export interface Zustand {
   letzterZweck?: string;
   /** Nach der Begrüßung höchstens einmal nachfragen, nie drängen. */
   einwilligungErinnert?: boolean;
+  /** Zeitpunkte der Rückfragen: Die Grenze gilt pro Absender in einem Zeitfenster, nicht pro Entwurf. */
+  rueckfragen: string[];
 }
 
 export interface Speicher {
@@ -77,7 +83,7 @@ export class Arbeitsspeicher implements Speicher {
   zustand(absenderId: string, rolle: Rolle): Zustand {
     let z = this.zustaende.get(absenderId);
     if (!z) {
-      z = { absenderId, rolle, einwilligung: "offen", begruesst: false, wartend: [], verlauf: [], letzteGespeicherte: [] };
+      z = { absenderId, rolle, einwilligung: "offen", begruesst: false, wartend: [], verlauf: [], letzteGespeicherte: [], rueckfragen: [] };
       this.zustaende.set(absenderId, z);
     }
     return z;

@@ -98,4 +98,5 @@ export type Antwortzweck =
   | "stopp"
   | "gestoppt_hinweis"
   | "verstanden_nichts"
-  | "zurueckgezogen";
+  | "zurueckgezogen"
+  | "sammeln";

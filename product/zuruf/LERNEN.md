@@ -15,6 +15,77 @@ Jeder Fehler des Agenten oder unserer Arbeit kommt hierher, neuester oben. Vor j
 
 ## Einträge
 
+### 2026-10-22: Muster aus der ersten Abnahme (A1 bis A12)
+
+Ein Subagent hat die Holdout-Gespräche gelesen und nur abstrakte Muster gemeldet. Die Hauptsitzung kennt die Inhalte nicht. Das alte Holdout ist danach verbraucht und liegt jetzt bei den sichtbaren Szenarien (`z-*.json`); ein frisches Holdout (`zurueck/h2-*.json`) ist geschrieben. Zu jedem Muster gibt es ein neues sichtbares Szenario (`m-*.json`) und einen Test in `abnahme1.test.ts`.
+
+### A1 und A2 Datenverlust bei Nachtrag und Korrektur (schwerster Fehler bisher)
+- Was: Ein Nachtrag zu einer offenen Zusammenfassung wurde als neue Meldung behandelt, der erste Punkt still als unbestätigt abgelegt. Eine spätere Korrektur griff nur auf „zuletzt gespeichert“ zu, ordnete nach Position zu und überschrieb dadurch einen anderen, bestätigten Punkt. Der war danach weg. Der gemeldete „erfundene Wert“ war nur ein Folgefehler.
+- Ursache: `neuer_zuruf` legte ab und begann neu; `korrektur_gespeichert` kannte nur `letzteGespeicherte` und `ersetzt[i]` nach Index.
+- Regel: Nachträge werden angehängt, nie still abgelegt. Ohne neue Baustelle gilt die des offenen Zurufs. Korrekturen nennen die Id des gespeicherten Eintrags (`bezugId`), Kontext sind alle eigenen Einträge der letzten 3 Stunden. Unbeteiligte bleiben unverändert, nicht mehr belegte Angaben bleiben wie gespeichert. Korrekturen stellen keine Rückfragen.
+- Abgesichert durch: Tests A1, A2; Szenarien `m-nachtrag-zweiter-punkt-favoriten`, `m-korrektur-erster-von-zwei-moedling`.
+- Status: behoben, in Lauf 4 und Abnahme 2 prüfen.
+
+### A3 Teilkorrektur löscht den Rest des Felds
+- Regel (Prompt): Eine Korrektur ersetzt nur den genannten Teil („Top 19 statt 17“ lässt die Stiege stehen).
+- Abgesichert durch: Szenario `m-korrektur-nur-top-stiege-bleibt`.
+- Status: beobachten.
+
+### A4 Rückfragen-Grenze pro Entwurf statt pro Absender
+- Was: Mit mehreren Entwürfen in einem Gespräch kamen 4 Rückfragen.
+- Regel: Höchstens 2 Rückfragen pro Absender in 30 Minuten.
+- Abgesichert durch: Test A4.
+- Status: behoben.
+
+### A5 Ungeduld überhört
+- Regel: Die KI meldet `ungeduldig`. Danach keine Rückfrage mehr, sofort zusammenfassen, Fehlendes als „Offen“.
+- Abgesichert durch: Test A5, Szenario `m-ungeduld-duschkoepfe-garderobe`.
+- Status: behoben.
+
+### A6 Reparatur als Zusatzarbeit eingestuft, Einstufung schwankt
+- Regel: Neue Art `reparatur_schaden`: keine Anweiser-Frage, Hinweis „Verursacher klärt das Büro“. Eine einmal erkannte Art kippt nicht zurück auf „Auftrag“.
+- Abgesichert durch: Test A6, Szenario `m-schaden-trockenbauer-kaltwasser`.
+- Status: behoben.
+
+### A7 Doppelfrage nach dem Aufwand, auch bei Mengenarbeit
+- Regel: Nur „Wie lang hat es gedauert?“, und nur bei Zusatzarbeit ohne Menge, Leute und Stunden.
+- Abgesichert durch: Test A7, Szenario `m-klar-kondensatleitung-meter`.
+- Status: behoben.
+
+### A8 Gefragt, aber nicht beantwortet, steht nicht als offen da
+- Regel: Jede Rückfrage, deren Feld leer bleibt, kommt nach `offen` und in die Zeile „Offen: …“.
+- Abgesichert durch: Test A5.
+- Status: behoben.
+
+### A9 Angekündigte Aufzählung unterbrochen
+- Regel: Die KI meldet `angekuendigtePunkte`. Bis alle da sind, nur „Hab Punkt k, schick weiter.“
+- Abgesichert durch: Test A9, Szenario `m-aufzaehlung-drei-nachrichten-21er`.
+- Status: behoben.
+
+### A10 Foto allein löst sofort eine Rückfrage aus
+- Ursache: Der Testaufbau schickte fast gleichzeitige Nachrichten einzeln. Auf WhatsApp kommen Foto und Text oft Sekunden auseinander.
+- Regel: Der Kanal sammelt Nachrichten kurz (Bündel), der Agent antwortet einmal (`verarbeiteBuendel`). Die Lernschleife stellt `ersteNachrichten` als Bündel zu. Für Phase 3: Sammelfenster im Webhook (Länge noch festzulegen, Annahme 15 bis 30 Sekunden).
+- Abgesichert durch: Test A10, Szenario `m-foto-dann-sprache-revisionsoeffnung`.
+- Status: behoben im Agenten, Sammelfenster im Kanal offen.
+
+### A11 Zweite Geldfrage: gleicher Satz und volle Zusammenfassung noch einmal
+- Regel: Beim zweiten Mal ein anderer, kürzerer Satz. War die Zusammenfassung gerade die letzte Nachricht, nur „Deine Meldung oben ist noch offen.“ mit Knöpfen.
+- Abgesichert durch: Test A11, Szenario `m-zwei-aergerfragen-badewanne`.
+- Status: behoben.
+
+### A12 Meldung vor der Zustimmung nicht quittiert, Begrüßung zu lang
+- Regel: „Deine Meldung hab ich. Ich leg sie ab, sobald du ja sagst.“ Begrüßung auf zwei Sätze plus Frage gekürzt.
+- Abgesichert durch: Test A12, Szenario `m-erstkontakt-zweite-meldung-statt-ja`.
+- Status: behoben.
+
+### A13 Auslöser und Vermittler beim Anweiser
+- Regel (Prompt): Der Vermittler ist der Anweiser, der Auslöser gehört in `grund`.
+- Status: beobachten.
+
+### Prüfwerkzeug
+- Bewerter sieht jetzt auch die Hinweise fürs Büro.
+- Ein fehlender Eintrag heißt „verloren“, nicht mehr „erfunden“ (Zuordnung nur bei passender Leistung).
+
 ### 2026-10-22: Lauf 3 und erste Abnahme
 - Sichtbar (30): alle bestanden, Felder 100 % richtig, 0 erfunden, Rückfragen Median 0 / Max 2, Note Median 5 / Min 3, Antwort Median 3,1 s, 1,45 USD.
 - Zurückgehalten (10): nur 6 bestanden, Note Median 3,5 / Min 2, 1 erfundener Wert, Rückfragen Max 4, Felder 95 %. Durchgefallen: abgeschlossenes_projekt, korrektur, projekt_unklar, dialekt.

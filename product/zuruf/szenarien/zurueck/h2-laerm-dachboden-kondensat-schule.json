@@ -1,0 +1,31 @@
+{
+  "id": "h2-laerm-dachboden-kondensat-schule",
+  "titel": "Sprachnachricht vom Dachboden der Schule, halb im Lärm untergegangen",
+  "kategorie": "laerm_bruchstueck",
+  "persona": {
+    "rolle": "obermonteur",
+    "sprechweise": "Niederösterreichische Umgangssprache, Sprachnachricht neben laufender Flex, danach kurze getippte Antworten",
+    "verhalten": "Fragt der Agent nach, was gefehlt hat, tippt er alles in einer Nachricht: '8 meter, warn zu zweit, der schulwart hats angschafft'. Fragt der Agent nur nach einem Teil, beantwortet er genau diesen Teil. Bei richtiger Zusammenfassung 'passt'. Bei falschem Wert schreibt er nur den richtigen Wert."
+  },
+  "start": "2026-11-18T10:30:00+01:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    { "art": "sprache", "inhalt": "[starker Baulärm] ... in da Schule ... am Dachboden ... [Flex, unverständlich] ... de Kondensatleitung vom Lüftungsgerät ... neu verlegt, weil de alte ... [unverständlich] ... der Schulwart ... [unverständlich] ... vier Stunden ... [Rauschen, Ende]" }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      { "projektId": "bad", "ort": "Dachboden", "leistung": "Kondensatleitung vom Lüftungsgerät neu verlegt (alte hatte kein Gefälle)", "menge": { "wert": 8, "einheit": "m" }, "personen": 2, "dauerStunden": 4, "angewiesenVon": "Schulwart" }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      { "projektId": "bad", "ortStichwoerter": ["Dachboden"], "leistungStichwoerter": ["Kondensat"], "mengeWert": 8, "personen": 2, "dauerStunden": 4, "angewiesenVonStichwoerter": ["Schulwart"], "mussLeerSein": ["datum"] }
+    ],
+    "maxRueckfragen": 2,
+    "verboteneInhalte": [],
+    "sollVerhalten": "Schule plus Dachboden eindeutig Volksschule Baden zuordnen. Erkennen, dass Teile fehlen, und mit einer einzigen offenen Frage nachfragen, was im Lärm verloren ging, statt Menge, Personen oder Anweiser zu raten. 'der Schulwart' aus dem Bruchstück nicht ungeprüft als Anweiser eintragen. Nach der Antwort kurz zusammenfassen."
+  }
+}

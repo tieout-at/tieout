@@ -1,0 +1,47 @@
+{
+  "id": "m-schaden-trockenbauer-kaltwasser",
+  "titel": "Trockenbauer hat Kaltwasserleitung angebohrt, Monteur repariert ohne Auftrag",
+  "kategorie": "reparatur_schaden",
+  "persona": {
+    "rolle": "monteur",
+    "sprechweise": "Wiener Umgangssprache, Sprachnachricht, noch etwas aufgeregt",
+    "verhalten": "Drückt 'Passt', wenn die Zusammenfassung stimmt. Fragt der Agent, wer es angeschafft hat, sagt er 'niemand, des hat gspritzt, des muasst sofort mochn'. Fragt der Agent nach Metern oder Material, sagt er 'a Stückl Rohr und zwa Pressfittings, wurscht'."
+  },
+  "start": "2026-10-08T10:45:00+02:00",
+  "einwilligung": true,
+  "ersteNachrichten": [
+    {
+      "art": "sprache",
+      "inhalt": "Favoriten, Haus A, Keller. Der Trockenbauer hat beim Schraub'n unsere Kaltwasserleitung anbohrt, hat überall gspritzt. I hab abgedreht und des Stück ausgetauscht, i alloa, eineinhalb Stunden. Hat keiner gsagt, des muasst halt sofort mochn."
+    }
+  ],
+  "wahrheit": {
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ort": "Haus A, Keller",
+        "leistung": "Vom Trockenbauer angebohrte Kaltwasserleitung abgesperrt und Teilstück getauscht",
+        "personen": 1,
+        "dauerStunden": 1.5
+      }
+    ],
+    "weissNicht": []
+  },
+  "erwartung": {
+    "anzahlGespeichert": 1,
+    "status": "bestaetigt",
+    "eintraege": [
+      {
+        "projektId": "w10",
+        "ortStichwoerter": ["Keller"],
+        "leistungStichwoerter": ["Kaltwasser", "Leitung", "angebohrt", "repariert", "getauscht"],
+        "personen": 1,
+        "dauerStunden": 1.5,
+        "mussLeerSein": ["angewiesenVon", "menge", "datum"]
+      }
+    ],
+    "maxRueckfragen": 0,
+    "verboteneInhalte": ["Schuld", "schuld", "haftet", "Haftung", "zahlen muss", "Rechnung stellen"],
+    "sollVerhalten": "Erkennt, dass niemand angewiesen hat und der Grund ein Schaden durch ein anderes Gewerk (Trockenbauer) ist. Fragt nicht nach dem Anweiser und fragt auch sonst nichts. Hält den Verursacher als Grund fest, ohne über Schuld, Haftung oder Kosten zu reden. Kurze Zusammenfassung, nach 'Passt' kurze Bestätigung."
+  }
+}

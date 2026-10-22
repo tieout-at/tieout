@@ -1,9 +1,9 @@
 // Gesprächsregeln ohne KI: Der Versteher wird durch feste Antworten ersetzt.
 import { describe, expect, it } from "vitest";
 import { ZurufAgent } from "./agent.ts";
-import { Arbeitsspeicher } from "./speicher.ts";
+import { aktuellerStand, Arbeitsspeicher } from "./speicher.ts";
 import type { Nachricht } from "./typen.ts";
-import type { Verstaendnis, Versteher } from "./verstehen.ts";
+import type { Verstaendnis, Versteher, VerstehenEingabe } from "./verstehen.ts";
 
 let nr = 0;
 const msg = (inhalt: string, extra: Partial<Nachricht> = {}): Nachricht => ({
@@ -16,9 +16,9 @@ const msg = (inhalt: string, extra: Partial<Nachricht> = {}): Nachricht => ({
 });
 const knopf = (knopfId: string, inhalt: string) => msg(inhalt, { art: "knopf", knopfId });
 
-function stub(...antworten: ((n: Nachricht) => Verstaendnis)[]): Versteher {
+function stub(...antworten: ((n: Nachricht, e: VerstehenEingabe) => Verstaendnis)[]): Versteher {
   let i = 0;
-  return async (e) => antworten[Math.min(i++, antworten.length - 1)]!(e.neu);
+  return async (e) => antworten[Math.min(i++, antworten.length - 1)]!(e.neu, e);
 }
 
 const zuruf = (felder: Record<string, [unknown, string]>, opts: Partial<{ kandidaten: string[]; zusatz: boolean }> = {}) =>
@@ -126,10 +126,10 @@ describe("Zuruf-Agent", () => {
   });
 
   it("Korrektur nach dem Speichern: neue Version, alte bleibt", async () => {
-    const korrektur = (n: Nachricht): Verstaendnis => ({
+    const korrektur = (n: Nachricht, e: VerstehenEingabe): Verstaendnis => ({
       absicht: "korrektur_gespeichert",
       enthaeltFrageGeldRecht: false,
-      eintraege: [{ eintrag: { projektId: { wert: "w21", zitat: "Wien 21", nachrichtId: "x" }, leistung: { wert: "WC", zitat: "WC", nachrichtId: "x" }, dauerStunden: { wert: 3, zitat: "drei Stunden", nachrichtId: n.id } }, projektKandidaten: [], art: "auftrag", unklar: [] }],
+      eintraege: [{ eintrag: { projektId: { wert: "w21", zitat: "Wien 21", nachrichtId: "x" }, leistung: { wert: "WC", zitat: "WC", nachrichtId: "x" }, dauerStunden: { wert: 3, zitat: "drei Stunden", nachrichtId: n.id } }, projektKandidaten: [], art: "auftrag", unklar: [], bezugId: e.gespeichert?.eintraege[0]?.id }],
     });
     const { agent, speicher } = neu(stub(zuruf({ projektId: ["w21", "Wien 21"], leistung: ["WC", "WC"], dauerStunden: [2, "zwei Stunden"] }), korrektur));
     await agent.verarbeite(msg("Wien 21 WC zwei Stunden"));

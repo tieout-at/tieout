@@ -33,10 +33,29 @@ npm run lauf
 npm run sim
 ```
 
+## Stand der Lernschleife
+
+| Lauf | Bestanden | Note Median / Min | Erfunden | Felder richtig | Kosten |
+|---|---|---|---|---|---|
+| 1 sichtbar | 28/30 | 4 / 1 | 1 | 99 % | 1,64 USD |
+| 2 sichtbar | 25/30 | 4 / 2 | 0 | 97 % | 1,62 USD |
+| 3 sichtbar | 30/30 | 5 / 3 | 0 | 100 % | 1,45 USD |
+| Abnahme 1 zurückgehalten | 6/10 | 3,5 / 2 | 1 | 95 % | 0,84 USD |
+| 4 sichtbar (abgebrochen) | 30/32 | 5 / 3 | 1 | 100 % | 2,04 USD |
+
+Lauf 4 brach nach 32 von 50 Szenarien ab: API-Guthaben aufgebraucht. Bisher ca. 9 USD API-Kosten insgesamt.
+
+Abnahme 1 fand den schwersten Fehler bisher: Datenverlust bei Nachtrag plus Korrektur (LERNEN.md A1, A2). Behoben, mit Tests. Altes Holdout ist verbraucht und liegt jetzt sichtbar als `szenarien/z-*.json`. Frisches Holdout: `szenarien/zurueck/h2-*.json` (nicht lesen).
+
+29 Lernpunkte in `LERNEN.md`. 40 Unit-Tests grün (`agent.test.ts`, `belege.test.ts`, `abnahme1.test.ts`). 60 Szenarien (50 sichtbar, 10 zurückgehalten).
+
 ## Nächster Schritt
 
-1. Ersten Lauf auswerten, Fehler nach `LERNEN.md`, kleinste Änderung, Lauf wiederholen.
-2. Wenn die Ziele aus `GESTALTUNG.md` auf den sichtbaren Szenarien halten: einmal `--zurueck` für die Abnahme.
+1. API-Guthaben aufladen (console.anthropic.com, Billing).
+2. `npm run lauf` über alle 50 sichtbaren Szenarien vollständig, Fehler nach `LERNEN.md`.
+3. Abnahme 2: `npm run lauf -- --zurueck`. Bei Fehlern wieder nur abstrakt auswerten lassen (Subagent mit `--mit-protokoll`, Hauptsitzung liest das Protokoll nicht), danach frisches Holdout.
+4. Offen aus A10: Sammelfenster im WhatsApp-Kanal (Phase 3).
+5. Danach Phase 2 (Sprache und Foto) oder Phase 3 (echte Nummer), Entscheidung beim Team.
 
 ## Offene Fragen
 
