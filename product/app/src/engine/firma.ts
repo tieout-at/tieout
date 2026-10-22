@@ -62,6 +62,11 @@ export function pruefeFirma(f: Firmendaten): FirmenErgebnis {
     };
   });
   const offene = projekte.filter((p) => p.jetzt !== null);
+  const posten = (liste: "jetzt" | "offen") =>
+    offene.reduce((s, p) => s + ergebnisse[p.projektId].befunde.filter((b) => b.liste === liste).length, 0);
+  const naechste = offene
+    .filter((p) => p.datum?.art === "legen_bis" && p.datum.wert >= f.stichtag)
+    .sort((a, b) => a.datum!.wert.localeCompare(b.datum!.wert))[0];
   return {
     stichtag: f.stichtag,
     projekte,
@@ -73,6 +78,11 @@ export function pruefeFirma(f: Firmendaten): FirmenErgebnis {
       auftragssummeOffen: offene.reduce((s, p) => s + p.auftragssumme, 0),
       jetzt: offene.reduce((s, p) => s + (p.jetzt ?? 0), 0),
       offen: offene.reduce((s, p) => s + (p.offen ?? 0), 0),
+      postenJetzt: posten("jetzt"),
+      postenOffen: posten("offen"),
+      projekteMitJetzt: offene.filter((p) => (p.jetzt ?? 0) > 0).length,
+      projekteMitOffen: offene.filter((p) => (p.offen ?? 0) > 0).length,
     },
+    naechsteSchlussrechnung: naechste?.datum ? { projektId: naechste.projektId, datum: naechste.datum.wert } : null,
   };
 }

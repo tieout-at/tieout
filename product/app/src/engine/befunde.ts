@@ -81,6 +81,7 @@ export function mehrmengen(k: Kontext): Befund[] {
       art: !ueberLv ? "nicht_verrechnet" : ausPlanaenderung ? "mehrmenge_plan" : "mehrmenge",
       liste: "jetzt",
       titel: `${nr} ${p.kurztext.wert}`,
+      untertitel: ueberLv ? `+${menge(aufmass - p.menge.wert, einheit)} über LV` : `${menge(differenz, einheit)} erbracht, nicht verrechnet`,
       positionNr: nr,
       betrag,
       rechenweg: {
@@ -89,8 +90,8 @@ export function mehrmengen(k: Kontext): Befund[] {
           { bezeichnung: "LV-Menge", wert: menge(p.menge.wert, einheit) },
           { bezeichnung: k.grenze ? `Aufmaß bis ${datumText(k.grenze)}` : "Aufmaß", wert: menge(aufmass, einheit) },
           { bezeichnung: verrechnetLabel, wert: menge(verrechnet, einheit) },
-          { bezeichnung: "Einheitspreis laut LV", wert: euro(ep), betrag: ep },
-          { bezeichnung: `${menge(differenz, einheit)} × ${euro(ep)}`, wert: euro(betrag), betrag },
+          { bezeichnung: "Einheitspreis laut LV", wert: euro(ep) },
+          { bezeichnung: ueberLv ? "Mehrmenge" : "Nicht verrechnet", wert: `${menge(differenz, einheit)} × ${euro(ep)}`, betrag, summe: true },
         ],
         plausibilitaet,
       },
@@ -110,14 +111,15 @@ export function regie(k: Kontext): Befund[] {
       const h = stundenBetrag(rb.stundenHelfer.wert, v.regiesatzHelfer.wert);
       const betrag = m + h + rb.material.wert;
       const unterschrieben = rb.unterschriftAG.wert;
-      const teile = [`${menge(rb.stundenMonteur.wert)} h Monteur × ${euro(v.regiesatzMonteur.wert)} = ${euro(m)}`];
-      if (rb.stundenHelfer.wert > 0) teile.push(`${menge(rb.stundenHelfer.wert)} h Helfer × ${euro(v.regiesatzHelfer.wert)} = ${euro(h)}`);
-      teile.push(`Material ${euro(rb.material.wert)}`);
+      const teile = [`${menge(rb.stundenMonteur.wert)} h Monteur × ${euro(v.regiesatzMonteur.wert)}`];
+      if (rb.stundenHelfer.wert > 0) teile.push(`${menge(rb.stundenHelfer.wert)} h Helfer × ${euro(v.regiesatzHelfer.wert)}`);
+      if (rb.material.wert > 0) teile.push(`Material ${euro(rb.material.wert)}`);
       return {
         schluessel: `regie:${rb.nr.wert}`,
         art: "regie" as const,
         liste: (unterschrieben ? "jetzt" : "offen") as Liste,
         titel: `${rb.nr.wert} ${rb.taetigkeit.wert}`,
+        untertitel: !unterschrieben ? "nicht unterschrieben" : k.d.entwurf ? "unterschrieben, nicht verrechnet" : "unterschrieben, in keiner Abschlagsrechnung",
         positionNr: null,
         betrag,
         rechenweg: {
@@ -127,7 +129,7 @@ export function regie(k: Kontext): Befund[] {
             ...(rb.stundenHelfer.wert > 0
               ? [{ bezeichnung: "Helfer", wert: `${menge(rb.stundenHelfer.wert)} h × ${euro(v.regiesatzHelfer.wert)}`, betrag: h }]
               : []),
-            { bezeichnung: "Material", wert: euro(rb.material.wert), betrag: rb.material.wert },
+            ...(rb.material.wert > 0 ? [{ bezeichnung: "Material", wert: euro(rb.material.wert), betrag: rb.material.wert }] : []),
           ],
         },
         belege: nachDatum([
@@ -171,17 +173,18 @@ export function zurufRegie(k: Kontext): Befund[] {
       const h = stundenBetrag(z.stundenHelfer.wert, v.regiesatzHelfer.wert);
       const betrag = m + h;
       const teile: string[] = [];
-      if (z.stundenMonteur.wert > 0) teile.push(`${menge(z.stundenMonteur.wert)} h Monteur × ${euro(v.regiesatzMonteur.wert)} = ${euro(m)}`);
-      if (z.stundenHelfer.wert > 0) teile.push(`${menge(z.stundenHelfer.wert)} h Helfer × ${euro(v.regiesatzHelfer.wert)} = ${euro(h)}`);
+      if (z.stundenMonteur.wert > 0) teile.push(`${menge(z.stundenMonteur.wert)} h Monteur × ${euro(v.regiesatzMonteur.wert)}`);
+      if (z.stundenHelfer.wert > 0) teile.push(`${menge(z.stundenHelfer.wert)} h Helfer × ${euro(v.regiesatzHelfer.wert)}`);
       return {
         schluessel: `zuruf:${z.nr}`,
         art: "regie_zuruf" as const,
         liste: "offen" as Liste,
         titel: `${z.nr} ${z.taetigkeit.wert}`,
+        untertitel: "kein Regiebericht, keine Unterschrift",
         positionNr: null,
         betrag,
         rechenweg: {
-          text: `${teile.join(" + ")}${teile.length > 1 ? ` = ${euro(betrag)}` : ""}`,
+          text: `${teile.join(" + ")} = ${euro(betrag)}`,
           schritte: [
             ...(z.stundenMonteur.wert > 0
               ? [{ bezeichnung: "Monteur", wert: `${menge(z.stundenMonteur.wert)} h × ${euro(v.regiesatzMonteur.wert)}`, betrag: m }]
@@ -223,7 +226,7 @@ export function preisumrechnung(k: Kontext): Befund[] {
   const lohn = prozent(leistung, pg.lohnanteil.wert);
   const betrag = prozent(lohn, aenderung);
   if (betrag <= 0) return [];
-  const blaetter = k.d.aufmass.filter((b) => istAbDatum(b.leistungVon.wert, stichtag)).map((b) => b.nr);
+  const blaetter = k.d.aufmass.filter((b) => istAbDatum(b.leistungVon.wert, stichtag));
 
   return [
     {
@@ -231,6 +234,7 @@ export function preisumrechnung(k: Kontext): Befund[] {
       art: "preisumrechnung",
       liste: "jetzt",
       titel: `Preisumrechnung Lohn ab ${datumText(stichtag)} (ÖNORM B 2111)`,
+      untertitel: `${ix.name.wert} +${prozentText(aenderung)}`,
       positionNr: null,
       betrag,
       rechenweg: {
@@ -242,13 +246,16 @@ export function preisumrechnung(k: Kontext): Befund[] {
             bezeichnung: `${ix.name.wert}: ${menge(ix.basis.wert)} → ${menge(ix.aktuell.wert)}`,
             wert: prozentText(aenderung),
           },
-          { bezeichnung: "Preisumrechnung", wert: euro(betrag), betrag },
+          { bezeichnung: "Preisumrechnung", wert: `${euro(lohn)} × ${prozentText(aenderung)}`, betrag, summe: true },
         ],
       },
-      belege: [
+      belege: nachDatum([
         beleg(`Vertrag Pkt. ${pg.punkt}`, `veränderliche Preise, Lohnanteil ${prozentText(pg.lohnanteil.wert, 0)}, ab ${datumText(stichtag)}`, pg.stichtag.quelle, k.d.vertrag.datum.wert),
         beleg(`Indexblatt ${ix.name.wert}`, `${menge(ix.basis.wert)} → ${menge(ix.aktuell.wert)}`, ix.aktuell.quelle, ix.stand.wert),
-      ],
+        ...blaetter.map((b) =>
+          beleg(`Aufmaßblatt ${b.nr}`, `Leistung ab ${datumText(b.leistungVon.wert)}`, b.leistungVon.quelle, b.datum.wert),
+        ),
+      ]),
       pruefstand: "maschinell",
     },
   ];
@@ -277,6 +284,7 @@ export function anmeldungen(k: Kontext): Befund[] {
           art: "pauschale" as const,
           liste: "verloren" as Liste,
           titel: a.gegenstand.wert,
+          untertitel: `laut Vertrag Pkt. ${pauschale.punkt} pauschal`,
           positionNr: null,
           betrag,
           rechenweg: { ...rechenweg, text: `${rechenweg.text}; laut Vertrag Pkt. ${pauschale.punkt} pauschal enthalten` },
@@ -288,7 +296,8 @@ export function anmeldungen(k: Kontext): Befund[] {
         schluessel: `anmeldung:${m.dokumentId}`,
         art: "aenderung" as const,
         liste: "offen" as Liste,
-        titel: `${a.gegenstand.wert}, angemeldet ${tagMonat(m.datum.wert)}, nie bepreist`,
+        titel: a.gegenstand.wert,
+        untertitel: `angemeldet ${tagMonat(m.datum.wert)}, nie bepreist`,
         positionNr: null,
         betrag,
         rechenweg: { ...rechenweg, text: `Untergrenze aus eigener Kalkulation: ${rechenweg.text}` },
@@ -307,6 +316,7 @@ export function anwaltsHinweise(k: Kontext): Befund[] {
       art: m.kategorie.wert === "terminaenderung" ? ("terminaenderung" as const) : ("behinderung" as const),
       liste: "anwalt" as Liste,
       titel: `${m.kategorie.wert === "terminaenderung" ? "Terminänderung" : "Behinderung"} (Mail GU ${tagMonat(m.datum.wert)})`,
+      untertitel: "Hinweis ohne Betrag",
       positionNr: null,
       betrag: null,
       rechenweg: null,

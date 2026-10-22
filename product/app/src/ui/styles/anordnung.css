@@ -1,0 +1,664 @@
+/* Schlusswerk: Anordnung der Bildschirme (Rahmen, Spalten, Hinweisboxen).
+ * Übernommen aus den Schlüsselbildschirmen v2 (product/ui-fundament/gen-screens.mjs), ergänzt für die App.
+ * Nur Layout, alle Werte aus tokens.css. */
+
+html,
+body {
+  height: 100%;
+}
+
+/* Rahmen: Seitenleiste links, rechts Kopfzeile und Inhalt (eigener Bildlauf wie Linear und Attio) */
+.scr {
+  display: flex;
+  height: 100%;
+  min-height: 640px;
+}
+.scr-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.scr-body {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-5) var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.scr-body > * {
+  flex: none;
+}
+
+/* Seitenleiste: Abschnitte „Firma“ und „Projekt“ (Attio-Navigation mit Gruppen-Label) */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.nav-group > .label {
+  padding: 0 var(--space-2);
+}
+.nav-fill {
+  flex: 1;
+}
+.sw-switch--static {
+  cursor: default;
+}
+
+/* Spalten: Hauptbereich und schmale Seitenspalte */
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: var(--space-5);
+  align-items: start;
+}
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Einleitungssatz mit Zahlen (Kuro, Linear) */
+.lead {
+  margin: 0;
+}
+.lead b {
+  font-weight: 600;
+}
+.lead a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.lead a:hover {
+  text-decoration: underline;
+}
+
+/* Fakten in einer Zeile (Projektkopf) */
+.facts {
+  gap: var(--space-4);
+}
+.facts b {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Schlüssel-Wert-Liste in Seitenpanels */
+.kv {
+  display: flex;
+  flex-direction: column;
+}
+.kv > div,
+.kv > a {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+.kv > *:last-child {
+  border-bottom: 0;
+}
+.kv span {
+  color: var(--text-secondary);
+}
+.kv b {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Befund: links Befund, rechts Original */
+.split {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(400px, 42%) minmax(0, 1fr);
+  min-height: 0;
+}
+.split-left {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+.split-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.split-scroll > * {
+  flex: none;
+}
+.split-right {
+  display: flex;
+  min-height: 0;
+}
+.split-right .sw-viewer {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+}
+.fhead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.fhead h1 {
+  margin: 0;
+}
+
+/* Hinweisbox Kürzungsrisiko und Hinweise ohne Betrag */
+.callout {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--warn-soft);
+  color: var(--text);
+}
+.callout .sw-ico {
+  color: var(--warn);
+  margin-top: 2px;
+}
+.callout b {
+  display: block;
+  font-weight: 600;
+  color: var(--warn);
+}
+.hint {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+.hint:last-child {
+  border-bottom: 0;
+}
+.hint .sw-ico {
+  color: var(--warn);
+  margin-top: 2px;
+}
+.hint span {
+  color: var(--text-secondary);
+}
+
+.toast-wrap {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+}
+.zoom {
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tabellen in einem eigenen Bildlauf, damit nichts abgeschnitten wird oder die Seite verbreitert */
+.tw {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* Seitentitel in der Kopfzeile als Überschrift (wie <b> im Fundament) */
+.sw-pagehead__path h1 {
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hell/Dunkel als echter Knopf, aussehend wie ein Eintrag der Navigation */
+.sw-nav button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--tab-h);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.sw-nav button .sw-ico {
+  color: var(--text-muted);
+}
+.sw-nav button:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* Zeilen, die als Ganzes ein Link sind (Projektliste, Befundliste) */
+.sw-table tbody tr[data-href] {
+  cursor: pointer;
+}
+.sw-table tbody tr[data-href]:hover td {
+  background: var(--surface-hover);
+}
+.row-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Punkt plus Wort ohne Rahmen (Linear-Gruppenköpfe und Statusspalte): Ampel, Gruppenköpfe der Listen */
+.sw-dotlabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+.sw-dotlabel::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: var(--text-muted);
+}
+.sw-dotlabel--pos::before {
+  background: var(--pos);
+}
+.sw-dotlabel--warn::before {
+  background: var(--warn);
+}
+.sw-dotlabel--neg::before {
+  background: var(--neg);
+}
+.sw-dotlabel--law::before {
+  background: var(--law);
+}
+.sw-table .grp td .sw-dotlabel + .sw-count {
+  margin-left: var(--space-2);
+}
+
+/* Warnsymbol in eigener schmaler Spalte, damit die Ziffernkante gerade bleibt (reebuild, Ramp) */
+.sw-table td.risk {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+}
+.sw-table td.risk .sw-risk {
+  margin-left: 0;
+}
+
+/* Seitentitel im Inhalt (reebuild „Projekt: …“, Linear-Titel) mit Faktenzeile darunter */
+.ptitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+}
+.ptitle h2 {
+  margin: 0;
+}
+
+/* Befund: neutrale Hinweisbox, Beweiskette, Zoom im Betrachter */
+.callout--neutral {
+  background: var(--surface-subtle);
+}
+.callout--neutral .sw-ico {
+  color: var(--text-muted);
+}
+.callout--neutral b {
+  color: var(--text-secondary);
+}
+.plain {
+  margin: 0;
+}
+.sw-ev {
+  text-align: left;
+}
+/* Zoom über die Layout-Größe (CSS zoom), damit die vergrößerte Seite scrollbar bleibt statt abgeschnitten */
+.doc-zoom {
+  width: 100%;
+  max-width: 560px;
+  flex: none;
+}
+.doc-zoom--80 {
+  zoom: 0.8;
+}
+.doc-zoom--90 {
+  zoom: 0.9;
+}
+.doc-zoom--110 {
+  zoom: 1.1;
+}
+.doc-zoom--125 {
+  zoom: 1.25;
+}
+.doc-zoom--150 {
+  zoom: 1.5;
+}
+.sw-viewer__canvas {
+  justify-content: safe center;
+}
+
+/* Belegseiten im A4-Format (reebuild, Kuro: ganze Seite), Plan mit Rahmen, Zuruf als Chat */
+.sw-page {
+  aspect-ratio: 1 / 1.414;
+}
+.doc-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+.doc-sum {
+  text-align: right;
+  font-weight: 600;
+}
+.doc-plan {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-sans);
+}
+.doc-note {
+  font-size: 12px;
+}
+.sw-page--chat {
+  background: var(--doc-figure-soft);
+}
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+.chat__kopf {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--doc-line);
+  color: var(--doc-ink-secondary);
+  font-size: 12px;
+}
+.chat__kopf b {
+  color: var(--doc-ink);
+  font-size: 13px;
+}
+.chat__msg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-width: 80%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--doc-paper);
+  color: var(--doc-ink);
+}
+.chat__msg--ein {
+  align-self: flex-start;
+}
+.chat__msg--aus {
+  align-self: flex-end;
+  background: var(--doc-mark);
+}
+.chat__msg--kurz {
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.chat__msg .sw-photo {
+  width: 220px;
+}
+.chat__label {
+  color: var(--doc-ink-secondary);
+  font-size: 11px;
+}
+.chat__zeit {
+  align-self: flex-end;
+  color: var(--doc-muted);
+  font-size: 11px;
+}
+
+/* Hinweise am Befund ohne Farbfläche (Ramp, reebuild: Status an der Zeile) */
+.flag {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+.flag .sw-ico {
+  margin-top: 2px;
+  color: var(--text-muted);
+}
+.flag > div {
+  display: flex;
+  flex-direction: column;
+}
+.flag b {
+  font-weight: 600;
+}
+.flag span {
+  color: var(--text-secondary);
+}
+.flag--warn .sw-ico,
+.flag--warn b {
+  color: var(--warn);
+}
+.rechenweg {
+  border-top: 1px solid var(--line-strong);
+}
+.sw-decide__step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+[data-nav="zu"] .sw-nav a,
+[data-nav="zu"] .sw-nav button {
+  justify-content: center;
+  padding: 0;
+}
+@media (hover: none) {
+  .sw-kbd {
+    display: none;
+  }
+}
+
+/* Tabellenbreiten als Klasse (nicht inline), damit das Handy-Layout sie aufheben kann */
+.tab-firma {
+  min-width: 900px;
+}
+.tab-befunde {
+  min-width: 560px;
+}
+
+/* Marke (Platzhalter bis Name und Logo feststehen) und Einklappen der Seitenleiste (Linear: nur Symbole) */
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.sw-brand {
+  gap: var(--space-2);
+}
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--action);
+  color: var(--on-action);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+.nav-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tab-h);
+  height: var(--tab-h);
+  flex: none;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.nav-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+.sw-sidebar {
+  transition: width 120ms ease;
+}
+[data-nav="zu"] .sw-sidebar {
+  width: 56px;
+}
+[data-nav="zu"] .sw-sidebar .nav-text,
+[data-nav="zu"] .sw-sidebar .sw-count,
+[data-nav="zu"] .sw-sidebar .sw-switch,
+[data-nav="zu"] .sw-sidebar .nav-group > .label,
+[data-nav="zu"] .sw-sidebar .brand-name {
+  display: none;
+}
+[data-nav="zu"] .brand-row {
+  flex-direction: column;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sw-sidebar {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .scr {
+    flex-direction: column;
+  }
+  .sw-sidebar {
+    width: auto;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line-strong);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .sw-sidebar .sw-switch,
+  .sw-sidebar .nav-fill,
+  .sw-sidebar .nav-group > .label,
+  .sw-sidebar .nav-toggle {
+    display: none;
+  }
+  [data-nav="zu"] .sw-sidebar {
+    width: auto;
+  }
+  [data-nav="zu"] .sw-sidebar .nav-text,
+  [data-nav="zu"] .sw-sidebar .brand-name {
+    display: inline;
+  }
+  [data-nav="zu"] .sw-sidebar .sw-count {
+    display: inline;
+  }
+  .sw-nav button {
+    white-space: nowrap;
+  }
+  .split-left {
+    min-height: auto;
+  }
+  .split-scroll {
+    flex: none;
+    overflow: visible;
+  }
+  .nav-group {
+    flex-direction: row;
+  }
+  .sw-nav {
+    flex-direction: row;
+  }
+  .sw-nav a {
+    white-space: nowrap;
+  }
+  .cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    overflow: auto;
+  }
+  .split-right {
+    min-height: 560px;
+  }
+  .sw-viewer__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sw-viewer__rail {
+    display: none;
+  }
+  .sw-steps {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .sw-step:nth-child(2) {
+    border-right: 0;
+  }
+  .sw-pagehead,
+  .scr-body {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .sw-pagehead .sw-btn {
+    display: none;
+  }
+}
+
+/* Handy: Tabellen als zweizeilige Liste (Linear mobil), Kennzahlen als waagrechte Reihe */
+@media (max-width: 640px) {
+  .tab-firma,
+  .tab-befunde {
+    min-width: 0;
+    table-layout: auto;
+  }
+  .sw-table.liste-mobil thead,
+  .sw-table.liste-mobil colgroup,
+  .sw-table.liste-mobil .nur-breit {
+    display: none;
+  }
+  .sw-table.liste-mobil tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+  .sw-table.liste-mobil td {
+    border-bottom: 0;
+  }
+  .sw-table.liste-mobil .grp td {
+    height: auto;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+  .sw-kpis {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(180px, 1fr);
+    grid-template-columns: none;
+    overflow-x: auto;
+  }
+  .sw-kpi .kpi {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  .sw-pagehead__path .sw-crumb {
+    display: none;
+  }
+}

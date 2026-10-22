@@ -28,3 +28,4 @@ Thumbs.db
 npm-debug.log*
 *.local.sql
 .claude/settings.local.json
+qa-screens/

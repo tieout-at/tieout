@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
-import { SOLL_FAELLE, SOLL_FIRMA, SOLL_HINWEISE_KLEIN, SOLL_PROJEKTE } from "@/demo/firma/loesung";
+import { SOLL_FAELLE, SOLL_FIRMA, SOLL_HINWEISE_KLEIN, SOLL_NAECHSTE, SOLL_PROJEKTE } from "@/demo/firma/loesung";
 import { ampel, pruefeFirma, tageZwischen } from "./firma";
 
 const f = erzeugeFirma();
@@ -26,6 +26,11 @@ describe("Firma: Übersicht gegen die Lösungsliste", () => {
 
   it("Summen: 34.268,10 € jetzt verrechenbar, 11.532,30 € angemeldet und offen, getrennt", () => {
     expect(e.summen).toEqual(SOLL_FIRMA);
+  });
+
+  it("Nächste Schlussrechnung: W21 am 31.10.2026, nie ein vergangenes Datum", () => {
+    expect(e.naechsteSchlussrechnung).toEqual(SOLL_NAECHSTE);
+    expect(pruefeFirma({ ...f, stichtag: "2026-11-01" }).naechsteSchlussrechnung).toEqual({ projektId: "p3-buero-w3", datum: "2026-12-04" });
   });
 
   it("Reihenfolge der Projekte wie in der Lösungsliste", () => {

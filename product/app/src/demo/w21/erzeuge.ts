@@ -102,7 +102,7 @@ const BLAETTER: BlattDef[] = [
   { nr: "AB-09", von: "2026-05-01", bis: "2026-07-31", datum: "2026-08-04", titel: "Trinkwasser, 2. Abschnitt", ag: true },
   { nr: "AB-10", von: "2026-07-01", bis: "2026-08-31", datum: "2026-09-03", titel: "Dämmung Heizung und Sanitär", ag: true },
   { nr: "AB-11", von: "2026-07-01", bis: "2026-09-15", datum: "2026-09-17", titel: "Sanitär Fertigmontage", ag: true },
-  { nr: "AB-12", von: "2026-07-01", bis: "2026-09-15", datum: "2026-09-18", titel: "Heizkörper und Armaturen Stiege 1–3, Fertigmontage", ag: false },
+  { nr: "AB-12", von: "2026-07-01", bis: "2026-09-15", datum: "2026-09-18", titel: "Heizkörper und Armaturen Stiege 1 bis 3, Fertigmontage", ag: false },
   { nr: "AB-13", von: "2026-07-01", bis: "2026-09-30", datum: "2026-10-02", titel: "Lüftung Wickelfalz, Luftauslässe", ag: true },
   { nr: "AB-14", von: "2026-08-01", bis: "2026-10-15", datum: "2026-10-16", titel: "MSR, Inbetriebnahmen, Prüfungen", ag: true },
 ];
@@ -373,7 +373,7 @@ export function erzeugeW21(): Datensatz {
       .forEach(({ p, menge }, i) => {
         const seite = Math.floor(i / ZEILEN_JE_BLATT) + 1;
         const qa = q(id, seite, `Zeile ${p.nr}`, zeileBox(i, ZEILEN_JE_BLATT));
-        zeilen.push({ positionNr: f(p.nr, qa), menge: f(menge, qa), ort: f(p.lg === "28" ? "Technikraum, alle Stiegen" : "Stiege 1–3", qa) });
+        zeilen.push({ positionNr: f(p.nr, qa), menge: f(menge, qa), ort: f(p.lg === "28" ? "Technikraum, alle Stiegen" : "Stiege 1 bis 3", qa) });
       });
     const seiten = Math.max(1, Math.ceil(zeilen.length / ZEILEN_JE_BLATT));
     dok(id, "aufmass", `${b.nr}_Aufmass_${b.titel.replace(/[ ,]+/g, "_")}.pdf`, b.datum, seiten);
@@ -587,12 +587,12 @@ export function erzeugeW21(): Datensatz {
       const qp = (stelle: string, box?: [number, number, number, number]) => q(id, 1, stelle, box);
       const vermerke: Plan["vermerke"] = [];
       if (nr === "H-201" && index === "C")
-        vermerke.push({ typ: "stand" as const, positionNr: f(J1, qp("Grundriss Top 7–13")), text: f("1 Heizkörper Typ 22, 600/1000 je Top 7–13", qp("Grundriss Top 7–13", [80, 260, 420, 180])) });
+        vermerke.push({ typ: "stand" as const, positionNr: f(J1, qp("Grundriss Top 7 bis 13")), text: f("1 Heizkörper Typ 22, 600/1000 je Top 7 bis 13", qp("Grundriss Top 7 bis 13", [80, 260, 420, 180])) });
       if (nr === "H-201" && index === "D")
         vermerke.push({
           typ: "aenderung" as const,
-          positionNr: f(J1, qp("Änderungswolke Top 7–13")),
-          text: f("Räume Top 7–13 geteilt, je Top 2 Heizkörper zusätzlich (14 Stk)", qp("Änderungswolke Top 7–13", [70, 250, 440, 200])),
+          positionNr: f(J1, qp("Änderungswolke Top 7 bis 13")),
+          text: f("Räume Top 7 bis 13 geteilt, je Top 2 Heizkörper zusätzlich (14 Stk)", qp("Änderungswolke Top 7 bis 13", [70, 250, 440, 200])),
         });
       if (nr === "L-310" && index === "E")
         vermerke.push({ typ: "stand" as const, positionNr: f(J7, qp("Trasse Abluft Gang")), text: f("Trasse Abluft Stiege 3 über den Gang, Wickelfalzrohr DN 200", qp("Trasse Abluft Gang", [60, 300, 460, 120])) });

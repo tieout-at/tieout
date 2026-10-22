@@ -15,7 +15,8 @@ export interface Beleg {
 export interface Rechenweg {
   /** Ganzer Rechenweg in einer Zeile, z. B. „(100 − 86) Stk × 456,00 € = 6.384,00 €“. */
   text: string;
-  schritte: { bezeichnung: string; wert: string; betrag?: Cent }[];
+  /** Schritte für die Tabelle; „summe“ markiert die Schlusszeile, die den Betrag ergibt. */
+  schritte: { bezeichnung: string; wert: string; betrag?: Cent; summe?: boolean }[];
   /** Zusätzliche Plausibilität (z. B. K7), fließt nicht in den Betrag ein. */
   plausibilitaet?: string;
 }
@@ -40,6 +41,8 @@ export interface Befund {
   art: BefundArt;
   liste: Liste;
   titel: string;
+  /** Kurze Unterzeile für Listen, z. B. „+14 Stk über LV“ oder „nicht unterschrieben“. */
+  untertitel: string;
   positionNr: string | null;
   /** null bei Hinweisen ohne Betrag („braucht Anwalt“). */
   betrag: Cent | null;
@@ -204,5 +207,12 @@ export interface FirmenErgebnis {
     auftragssummeOffen: Cent;
     jetzt: Cent;
     offen: Cent;
+    /** Anzahl der Posten in Liste 1 bzw. 2 über alle offenen Projekte. */
+    postenJetzt: number;
+    postenOffen: number;
+    projekteMitJetzt: number;
+    projekteMitOffen: number;
   };
+  /** Früheste „Schlussrechnung legen bis“ ab dem Stichtag unter den offenen Projekten. */
+  naechsteSchlussrechnung: { projektId: string; datum: Datum } | null;
 }
