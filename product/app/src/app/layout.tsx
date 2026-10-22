@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { navDaten } from "@/daten/demo";
 import { Seitenleiste } from "@/ui/Seitenleiste";
 import { THEMA_SKRIPT } from "@/ui/thema";
+import { ToastBereich } from "@/ui/Toast";
 import "./globals.css";
 
 // Schriften werden beim Build geladen und von der eigenen Domain ausgeliefert (kein Aufruf bei Google im Betrieb).
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Seitenleiste firma={nav.firma} untertitel={nav.untertitel} auftraggeber={nav.auftraggeber} projekte={nav.projekte} />
           <div className="scr-main">{children}</div>
         </div>
+        <ToastBereich />
       </body>
     </html>
   );

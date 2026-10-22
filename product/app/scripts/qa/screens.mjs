@@ -16,6 +16,10 @@ const SEITEN = [
   ["w21", "/projekte/w21-b-hkls"],
   ["p2", "/projekte/p2-w22-bt3"],
   ["p6", "/projekte/p6-rha-w23"],
+  ["w21-befunde", "/projekte/w21-b-hkls/befunde"],
+  ["w21-j1", "/projekte/w21-b-hkls/befunde/mehrmenge-22-04-12B"],
+  ["w21-rb11", "/projekte/w21-b-hkls/befunde/regie-RB-11"],
+  ["w21-z6", "/projekte/w21-b-hkls/befunde/zuruf-Z6"],
 ];
 const ANSICHTEN = [
   ["hell-1440", "1440,1000", false],

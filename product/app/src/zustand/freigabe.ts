@@ -5,7 +5,7 @@
 
 import type { Liste } from "@/engine/typen";
 
-export type Aktion = "uebernehmen" | "freigeben" | "verwerfen" | "anwalt" | "zurueckstellen" | "zurueck";
+export type Aktion = "uebernehmen" | "freigeben" | "verwerfen" | "anwalt" | "zurueckstellen" | "zurueck" | "oeffnen";
 export type Rolle = "M" | "I";
 export type Stand = "pruefen" | "uebernommen" | "freigegeben" | "verworfen" | "anwalt" | "zurueckgestellt";
 
@@ -27,9 +27,9 @@ export const ERLAUBT: Record<Stand, Aktion[]> = {
   pruefen: ["uebernehmen", "verwerfen", "anwalt", "zurueckstellen"],
   zurueckgestellt: ["uebernehmen", "verwerfen", "anwalt"],
   uebernommen: ["freigeben", "zurueck"],
-  freigegeben: [],
-  verworfen: [],
-  anwalt: [],
+  freigegeben: ["oeffnen"],
+  verworfen: ["oeffnen"],
+  anwalt: ["oeffnen"],
 };
 
 const NACH: Record<Aktion, Stand> = {
@@ -39,6 +39,7 @@ const NACH: Record<Aktion, Stand> = {
   anwalt: "anwalt",
   zurueckstellen: "zurueckgestellt",
   zurueck: "pruefen",
+  oeffnen: "pruefen",
 };
 
 export const ROLLE_FUER: Record<Aktion, Rolle> = {
@@ -48,6 +49,7 @@ export const ROLLE_FUER: Record<Aktion, Rolle> = {
   zurueckstellen: "M",
   freigeben: "I",
   zurueck: "I",
+  oeffnen: "M",
 };
 
 export function startStand(liste: Liste): Stand {

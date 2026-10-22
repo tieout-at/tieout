@@ -3,7 +3,7 @@
  * Ab jetzt ist diese Datei die Quelle: Änderungen hier, nicht im Artifact. Nur Werte aus tokens.css. */
 :root, [data-theme="light"] {
   color-scheme: light;
-  --bg: #f4f4f8;
+  --bg: #ffffff; /* 22.10.: Inhalt auf Weiß wie Linear und Attio, nur die Seitenleiste getönt */
   --surface: #ffffff;
   --surface-subtle: #fafafb;
   --surface-hover: #f0f0f4;
@@ -46,7 +46,7 @@
 }
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #08090a;
+  --bg: #0f1011;
   --surface: #0f1011;
   --surface-subtle: #141516;
   --surface-hover: #1a1b1d;

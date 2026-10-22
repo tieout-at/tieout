@@ -8,7 +8,6 @@ import { ART_TEXT, LISTEN, teileTitel } from "./befund-texte";
 import { betrag } from "./format";
 import { Ico } from "./Ico";
 import { StandZelle } from "./Stand";
-import { Statusmarke } from "./Statusmarke";
 import { Zeilennavigation } from "./Zeilennavigation";
 
 export function BefundTabelle({
@@ -27,23 +26,25 @@ export function BefundTabelle({
   const gruppen = LISTEN.map((l) => ({ ...l, posten: befunde.filter((b) => b.liste === l.liste) })).filter((g) => g.posten.length);
   return (
     <Zeilennavigation>
-      <table className="sw-table" style={{ tableLayout: "fixed", minWidth: 560 }}>
+      <table className="sw-table tab-befunde liste-mobil" style={{ tableLayout: "fixed" }}>
         <colgroup>
           <col />
-          <col style={{ width: 150 }} />
-          <col style={{ width: 150 }} />
+          <col style={{ width: 128 }} />
+          <col style={{ width: 24 }} />
+          <col style={{ width: 140 }} />
         </colgroup>
         <thead>
           <tr>
             <th>Posten</th>
             <th className="r">Betrag</th>
+            <th />
             <th>Stand</th>
           </tr>
         </thead>
         <tbody>
           {gruppen.length === 0 && (
             <tr>
-              <td colSpan={3} className="sw-muted">
+              <td colSpan={4} className="sw-muted">
                 Keine Treffer.
               </td>
             </tr>
@@ -73,11 +74,12 @@ function GruppenZeilen({
     <>
       <tr className="grp">
         <td>
-          <Statusmarke ton={g.ton}>{g.text}</Statusmarke>
+          <span className={g.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${g.ton}`}>{g.text}</span>
           <span className="sw-count">{g.posten.length}</span>
         </td>
         <td className="r">{g.liste === "anwalt" ? "" : betrag(summe)}</td>
-        <td />
+        <td className="nur-breit" />
+        <td className="nur-breit" />
       </tr>
       {g.posten.map((b) => {
         const t = teileTitel(b.titel);
@@ -99,16 +101,16 @@ function GruppenZeilen({
                 <span>{ART_TEXT[b.art]}</span>
               </div>
             </td>
-            <td className="r">
-              {b.betrag !== null && betrag(b.betrag)}
+            <td className="r">{b.betrag !== null && betrag(b.betrag)}</td>
+            <td className="risk nur-breit">
               {risiken.has(b.schluessel) && (
-                <span className="sw-risk" title="Kürzungsrisiko aus GU-Sicht">
+                <span className="sw-risk" title="Kürzungsrisiko aus GU-Sicht" aria-label="Kürzungsrisiko aus GU-Sicht">
                   <Ico icon={TriangleAlert} />
                 </span>
               )}
             </td>
-            <td>
-              <StandZelle projektId={projektId} schluessel={b.schluessel} liste={b.liste} />
+            <td className="nur-breit">
+              <StandZelle projektId={projektId} schluessel={b.schluessel} liste={b.liste} leerBeiPruefen />
             </td>
           </tr>
         );

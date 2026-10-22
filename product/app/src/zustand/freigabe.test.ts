@@ -18,8 +18,14 @@ describe("Freigabe: Stand aus dem Verlauf", () => {
     expect(standAus([e("uebernehmen"), e("zurueck"), e("verwerfen")], "regie:RB-07", "jetzt")).toBe("verworfen");
   });
 
-  it("Hinweise „Braucht Anwalt“ starten so und bleiben so", () => {
+  it("Hinweise „Braucht Anwalt“ starten so; Übernehmen ändert nichts", () => {
     expect(standAus([e("uebernehmen", "hinweis:x")], "hinweis:x", "anwalt")).toBe("anwalt");
+  });
+
+  it("Wieder öffnen nach Freigabe oder Verwerfen, nicht aus „Prüfen“", () => {
+    expect(standAus([e("uebernehmen"), e("freigeben"), e("oeffnen")], "regie:RB-07", "jetzt")).toBe("pruefen");
+    expect(standAus([e("verwerfen"), e("oeffnen"), e("uebernehmen")], "regie:RB-07", "jetzt")).toBe("uebernommen");
+    expect(standAus([e("oeffnen"), e("freigeben")], "regie:RB-07", "jetzt")).toBe("pruefen");
   });
 
   it("Einträge anderer Posten wirken nicht", () => {

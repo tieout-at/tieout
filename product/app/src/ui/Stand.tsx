@@ -28,9 +28,12 @@ export function StandMarke({ stand }: { stand: Stand }) {
   );
 }
 
-export function StandZelle({ projektId, schluessel, liste }: { projektId: string; schluessel: string; liste: Liste }) {
+/** In Listen bleibt „Prüfen“ leer (Linear: nur abweichende Stände fallen auf); entschiedene Posten zeigen ihren Stand. */
+export function StandZelle({ projektId, schluessel, liste, leerBeiPruefen = false }: { projektId: string; schluessel: string; liste: Liste; leerBeiPruefen?: boolean }) {
   const verlauf = useVerlauf(projektId);
-  return <StandMarke stand={standAus(verlauf, schluessel, liste)} />;
+  const stand = standAus(verlauf, schluessel, liste);
+  if (leerBeiPruefen && stand === "pruefen") return null;
+  return <StandMarke stand={stand} />;
 }
 
 /** Zählt Posten im Stand „Freigegeben“ (nur Stufe 2 zählt). */

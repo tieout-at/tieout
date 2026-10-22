@@ -4,22 +4,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { firma } from "@/daten/demo";
-import type { Ampel, ProjektDatumArt, ProjektZeile } from "@/engine";
+import type { Ampel, ProjektZeile } from "@/engine";
 import { anzahl, betrag, datum } from "@/ui/format";
 import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
 import { Panel } from "@/ui/Panel";
 import { Seitenkopf } from "@/ui/Seitenkopf";
-import { Statusmarke, type Ton } from "@/ui/Statusmarke";
+import type { Ton } from "@/ui/Statusmarke";
 import { Zeilennavigation } from "@/ui/Zeilennavigation";
 
 export const metadata: Metadata = { title: "Projekte" };
-
-const DATUM_TEXT: Record<ProjektDatumArt, string> = {
-  legen_bis: "Schlussrechnung legen bis",
-  letzte_ar: "letzte Abschlagsrechnung",
-  gelegt: "Schlussrechnung gelegt",
-  schlusszahlung: "Schlusszahlung",
-};
 
 /** Ampel als Punkt plus eigenes Wort (Bauteil „Projektliste mit Ampel“, src/ui/README.md). */
 const AMPEL: Record<Ampel, { ton: Ton; wort: string }> = {
@@ -45,20 +38,11 @@ function Zeile({ p }: { p: ProjektZeile }) {
           <span>{p.auftraggeber.name}</span>
         </div>
       </td>
-      <td>
-        <Statusmarke ton={a.ton}>{a.wort}</Statusmarke>
-      </td>
-      <td className="sw-td-2">
-        {p.datum && (
-          <div className="sw-cell">
-            <b className="sw-num">{datum(p.datum.wert)}</b>
-            <span>{DATUM_TEXT[p.datum.art]}</span>
-          </div>
-        )}
-      </td>
-      <td className="r">{betrag(p.auftragssumme)}</td>
+      <td className="nur-breit">{p.ampel !== "grau" && <span className={a.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${a.ton}`}>{a.wort}</span>}</td>
+      <td className="sw-num nur-breit">{p.datum?.art === "legen_bis" && datum(p.datum.wert)}</td>
+      <td className="r nur-breit">{betrag(p.auftragssumme)}</td>
       <td className="r">{p.jetzt !== null && betrag(p.jetzt)}</td>
-      <td className="r">{p.offen !== null && betrag(p.offen)}</td>
+      <td className="r nur-breit">{p.offen !== null && betrag(p.offen)}</td>
     </tr>
   );
 }
@@ -90,20 +74,20 @@ export default function Firmenuebersicht() {
         </Kennzahlen>
         <Panel titel="Projekte" rechts={<span className="sw-count">{e.summen.projekte}</span>}>
           <Zeilennavigation>
-            <table className="sw-table" style={{ tableLayout: "fixed", minWidth: 960 }}>
+            <table className="sw-table tab-firma liste-mobil" style={{ tableLayout: "fixed" }}>
               <colgroup>
                 <col />
-                <col style={{ width: 140 }} />
-                <col style={{ width: 176 }} />
-                <col style={{ width: 128 }} />
+                <col style={{ width: 132 }} />
+                <col style={{ width: 104 }} />
+                <col style={{ width: 132 }} />
+                <col style={{ width: 148 }} />
                 <col style={{ width: 164 }} />
-                <col style={{ width: 176 }} />
               </colgroup>
               <thead>
                 <tr>
                   <th>Projekt</th>
                   <th>Ampel</th>
-                  <th>Datum</th>
+                  <th>Legen bis</th>
                   <th className="r">Auftrag</th>
                   <th className="r">Jetzt verrechenbar</th>
                   <th className="r">Angemeldet und offen</th>
@@ -111,12 +95,9 @@ export default function Firmenuebersicht() {
               </thead>
               <tbody>
                 <tr className="grp">
-                  <td colSpan={3}>
+                  <td colSpan={6}>
                     Im Abgleich<span className="sw-count">{offen.length}</span>
                   </td>
-                  <td className="r">{betrag(e.summen.auftragssummeOffen)}</td>
-                  <td className="r">{betrag(e.summen.jetzt)}</td>
-                  <td className="r">{betrag(e.summen.offen)}</td>
                 </tr>
                 {offen.map((p) => (
                   <Zeile key={p.projektId} p={p} />
@@ -131,9 +112,9 @@ export default function Firmenuebersicht() {
                 ))}
                 <tr className="sum">
                   <td colSpan={3}>Alle Projekte</td>
-                  <td className="r">{betrag(e.summen.auftragssumme)}</td>
-                  <td />
-                  <td />
+                  <td className="r nur-breit">{betrag(e.summen.auftragssumme)}</td>
+                  <td className="r">{betrag(e.summen.jetzt)}</td>
+                  <td className="r nur-breit">{betrag(e.summen.offen)}</td>
                 </tr>
               </tbody>
             </table>

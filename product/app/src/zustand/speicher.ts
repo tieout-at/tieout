@@ -74,3 +74,17 @@ export function rueckgaengig(projektId: string): Eintrag | null {
 export function zuruecksetzen(projektId: string) {
   schreiben(projektId, LEER);
 }
+
+/** „Demo zurücksetzen“: alle Freigaben aller Projekte im Browser löschen. */
+export function allesZuruecksetzen() {
+  const ids = new Set(zwischen.keys());
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k?.startsWith(PRAEFIX)) ids.add(k.slice(PRAEFIX.length));
+    }
+  } catch {
+    // ohne Speicher gibt es nur den Zwischenstand
+  }
+  ids.forEach((id) => schreiben(id, LEER));
+}

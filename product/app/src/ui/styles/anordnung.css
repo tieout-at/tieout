@@ -96,7 +96,7 @@ body {
   display: flex;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--line);
   color: inherit;
   text-decoration: none;
@@ -116,7 +116,7 @@ body {
 .split {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(420px, 560px) minmax(0, 1fr);
+  grid-template-columns: minmax(440px, 600px) minmax(0, 1fr);
   min-height: 0;
 }
 .split-left {
@@ -253,6 +253,166 @@ body {
   text-decoration: none;
 }
 
+/* Punkt plus Wort ohne Rahmen (Linear-Gruppenköpfe und Statusspalte): Ampel, Gruppenköpfe der Listen */
+.sw-dotlabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+.sw-dotlabel::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: var(--text-muted);
+}
+.sw-dotlabel--pos::before {
+  background: var(--pos);
+}
+.sw-dotlabel--warn::before {
+  background: var(--warn);
+}
+.sw-dotlabel--neg::before {
+  background: var(--neg);
+}
+.sw-dotlabel--law::before {
+  background: var(--law);
+}
+.sw-table .grp td .sw-dotlabel + .sw-count {
+  margin-left: var(--space-2);
+}
+
+/* Warnsymbol in eigener schmaler Spalte, damit die Ziffernkante gerade bleibt (reebuild, Ramp) */
+.sw-table td.risk {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+}
+.sw-table td.risk .sw-risk {
+  margin-left: 0;
+}
+
+/* Seitentitel im Inhalt (reebuild „Projekt: …“, Linear-Titel) mit Faktenzeile darunter */
+.ptitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+}
+.ptitle h2 {
+  margin: 0;
+}
+
+/* Befund: neutrale Hinweisbox, Beweiskette, Zoom im Betrachter */
+.callout--neutral {
+  background: var(--surface-subtle);
+}
+.callout--neutral .sw-ico {
+  color: var(--text-muted);
+}
+.callout--neutral b {
+  color: var(--text-secondary);
+}
+.plain {
+  margin: 0;
+}
+.sw-ev {
+  text-align: left;
+}
+.doc-zoom {
+  width: 100%;
+  max-width: 560px;
+  transform-origin: top center;
+}
+.doc-zoom--80 {
+  transform: scale(0.8);
+}
+.doc-zoom--90 {
+  transform: scale(0.9);
+}
+.doc-zoom--110 {
+  transform: scale(1.1);
+}
+.doc-zoom--125 {
+  transform: scale(1.25);
+}
+.doc-zoom--150 {
+  transform: scale(1.5);
+}
+
+/* Tabellenbreiten als Klasse (nicht inline), damit das Handy-Layout sie aufheben kann */
+.tab-firma {
+  min-width: 900px;
+}
+.tab-befunde {
+  min-width: 560px;
+}
+
+/* Marke (Platzhalter bis Name und Logo feststehen) und Einklappen der Seitenleiste (Linear: nur Symbole) */
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.sw-brand {
+  gap: var(--space-2);
+}
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--action);
+  color: var(--on-action);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+.nav-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tab-h);
+  height: var(--tab-h);
+  flex: none;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.nav-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+.sw-sidebar {
+  transition: width 120ms ease;
+}
+[data-nav="zu"] .sw-sidebar {
+  width: 56px;
+}
+[data-nav="zu"] .sw-sidebar .nav-text,
+[data-nav="zu"] .sw-sidebar .sw-count,
+[data-nav="zu"] .sw-sidebar .sw-switch,
+[data-nav="zu"] .sw-sidebar .nav-group > .label,
+[data-nav="zu"] .sw-sidebar .brand-name {
+  display: none;
+}
+[data-nav="zu"] .brand-row {
+  flex-direction: column;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sw-sidebar {
+    transition: none;
+  }
+}
+
 @media (max-width: 900px) {
   .scr {
     flex-direction: column;
@@ -270,8 +430,29 @@ body {
   }
   .sw-sidebar .sw-switch,
   .sw-sidebar .nav-fill,
-  .sw-sidebar .nav-group > .label {
+  .sw-sidebar .nav-group > .label,
+  .sw-sidebar .nav-toggle {
     display: none;
+  }
+  [data-nav="zu"] .sw-sidebar {
+    width: auto;
+  }
+  [data-nav="zu"] .sw-sidebar .nav-text,
+  [data-nav="zu"] .sw-sidebar .brand-name {
+    display: inline;
+  }
+  [data-nav="zu"] .sw-sidebar .sw-count {
+    display: inline;
+  }
+  .sw-nav button {
+    white-space: nowrap;
+  }
+  .split-left {
+    min-height: auto;
+  }
+  .split-scroll {
+    flex: none;
+    overflow: visible;
   }
   .nav-group {
     flex-direction: row;
@@ -304,6 +485,47 @@ body {
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
   .sw-pagehead .sw-btn {
+    display: none;
+  }
+}
+
+/* Handy: Tabellen als zweizeilige Liste (Linear mobil), Kennzahlen als waagrechte Reihe */
+@media (max-width: 640px) {
+  .tab-firma,
+  .tab-befunde {
+    min-width: 0;
+    table-layout: auto;
+  }
+  .sw-table.liste-mobil thead,
+  .sw-table.liste-mobil colgroup,
+  .sw-table.liste-mobil .nur-breit {
+    display: none;
+  }
+  .sw-table.liste-mobil tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+  .sw-table.liste-mobil td {
+    border-bottom: 0;
+  }
+  .sw-table.liste-mobil .grp td {
+    height: auto;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+  .sw-kpis {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(180px, 1fr);
+    grid-template-columns: none;
+    overflow-x: auto;
+  }
+  .sw-kpi .kpi {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  .sw-pagehead__path .sw-crumb {
     display: none;
   }
 }
