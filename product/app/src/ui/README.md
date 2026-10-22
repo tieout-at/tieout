@@ -5,6 +5,9 @@ Seit 22.10.2026 ist die App die Quelle des UI-Fundaments. Regeln, Begriffe und d
 | Bauteil | Datei | Vorlage |
 |---|---|---|
 | Marke Tieout (23.10.): Bildmarke und Wortmarke oben in der Seitenleiste, darunter die Firma als Arbeitsbereich; eingeklappt nur die Bildmarke | `Logo.tsx` | Kopf der Website (`website/components/ui/Logo.tsx`), Linear (Marke oben, Arbeitsbereich darunter) |
+| Einstellungen (23.10.): Abschnitte mit Zeilen, Bezeichnung links, Wert rechts, Linien statt Kästen; Profil und Mitglieder nur mit Anmeldung | `Einstellungen.tsx`, `konto.css` | Linear „Settings“, Attio „Workspace settings“ |
+| Anmeldeseite (23.10., per Schalter aus): Papier mit Planraster, eckige Knöpfe in Ultramarin wie die Website, eine schmale Spalte | `Anmelden.tsx`, `konto.css` | Website tieout, Linear-Anmeldung |
+| Rahmen (23.10.): Seitenleiste und Inhalt, Anmeldeseite ohne Rahmen | `Rahmen.tsx` | Linear, Attio |
 | Seitenleiste: Firma oben, Projekte als Baum ohne Ampelpunkt (Ampel-Wort im Tooltip), aktives Projekt aufgeklappt | `Seitenleiste.tsx` | Linear (Arbeitsbereich oben, „Your teams“ als Baum, aktiver Eintrag als Fläche, Zähler rechts), Attio (Gruppen-Label) |
 | Seitenkopf | `Seitenkopf.tsx` | Linear-Kopfzeile, Attio |
 | Kennzahl | `Kennzahl.tsx` | reebuild-Projektübersicht R-C, Stripe-Übersicht. Seit 23.10. ohne Linien und Trenner, nur Abstand; am Handy waagrecht scrollbar mit Randblende |

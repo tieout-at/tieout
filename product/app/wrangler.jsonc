@@ -1,13 +1,19 @@
-// Cloudflare: die Demo als statische Dateien (Worker nur mit Assets, kein Server-Code).
+// Cloudflare: die App als statische Dateien plus ein kleines Prüfskript davor (worker/index.ts).
 // Cloudflare baut bei jedem Push selbst (Workers Builds, Stammverzeichnis product/app):
 // main geht online, jeder andere Branch bekommt eine eigene Vorschau-Adresse.
-// Zugangsschutz über Cloudflare Access, eingestellt im Dashboard, nicht hier.
+// Anmeldung über Supabase (src/anmeldung/konfig.ts); solange dort nichts steht, lässt das Skript alles durch
+// und der Schutz läuft wie bisher über Cloudflare Access (eingestellt im Dashboard, nicht hier).
+// Geheimer Schlüssel nur als Secret: `npx wrangler secret put SUPABASE_SECRET_KEY` oder im Dashboard.
 {
   "name": "schlusswerk-demo",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./out",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    // Das Skript läuft vor allen Seiten, nicht vor Bausteinen und der Anmeldeseite (spart Aufrufe).
+    "run_worker_first": ["/*", "!/_next/static/*", "!/anmelden/*"]
   },
   "workers_dev": true,
   "preview_urls": true,

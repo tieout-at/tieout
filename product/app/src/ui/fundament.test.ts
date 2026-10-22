@@ -63,7 +63,8 @@ describe("UI-Fundament", () => {
   });
 
   it("jede Seite hat den Seitenkopf (mit „Synthetisch“)", () => {
-    const seiten = OBERFLAECHE.filter((p) => /(page|not-found)\.tsx$/.test(p));
+    // Ausnahme: die Anmeldeseite zeigt keine Daten und steht ohne Rahmen.
+    const seiten = OBERFLAECHE.filter((p) => /(page|not-found)\.tsx$/.test(p) && !/anmelden/.test(p));
     expect(seiten.length).toBeGreaterThan(0);
     expect(seiten.filter((p) => !readFileSync(p, "utf8").includes("<Seitenkopf")).map((p) => relative(WURZEL, p))).toEqual([]);
   });
