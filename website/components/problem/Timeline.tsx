@@ -7,7 +7,7 @@ type T = Messages["solution"]["timeline"];
 
 /**
  * Problem als Projektverlauf: oben die Änderungen auf der Baustelle über die Wochen,
- * unten, was davon in der Schlussrechnung landet. Umschalter vergleicht heute mit Tieout.
+ * unten, was davon in der Schlussrechnung landet. Umschalter vergleicht heute mit Tieout
  */
 export function Timeline({ t, locale }: { t: T; locale: Locale }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -36,7 +36,7 @@ export function Timeline({ t, locale }: { t: T; locale: Locale }) {
     setWithEp(false);
     setStep(0);
     const timers = events.map((_, i) => window.setTimeout(() => setStep(i + 1), 500 + i * 650));
-    // Nach dem Durchlauf einmal automatisch auf „Mit Tieout.“ umschalten.
+    // Nach dem Durchlauf einmal automatisch auf „Mit Tieout“ umschalten.
     timers.push(window.setTimeout(() => setWithEp(true), 500 + events.length * 650 + 1800));
     return () => timers.forEach(clearTimeout);
   }, [started, run, events]);
@@ -56,11 +56,6 @@ export function Timeline({ t, locale }: { t: T; locale: Locale }) {
           <button type="button" aria-pressed={withEp} onClick={() => setWithEp(true)}>{t.with}</button>
         </div>
       </div>
-
-      <p className="tl__glossary">
-        <span aria-hidden="true">i</span>
-        {t.glossary}
-      </p>
 
       <div className="tl__grid">
         <span className="tl__track">{t.trackSite}</span>

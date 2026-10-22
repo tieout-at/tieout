@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Tieout. Schlussrechnungen für Elektro- und HKLS-Betriebe",
-    "description": "Tieout. prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
+    "title": "Tieout Schlussrechnungen für Elektro- und HKLS-Betriebe",
+    "description": "Tieout prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
   },
   "nav": {
     "cta": "Demo buchen",
@@ -23,7 +23,7 @@
     "eyebrow": "Für Elektro- und HKLS-Betriebe",
     "title1": "Schlussrechnungen,",
     "title2": "die nichts liegen lassen.",
-    "sub": "Tieout. prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
+    "sub": "Tieout prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
     "cta": "Demo buchen",
     "secondary": "So funktioniert es",
     "cards": {
@@ -44,9 +44,9 @@
   "solution": {
     "problemEyebrow": "02 · Problem",
     "title": "Am Projektende fehlt Geld, das längst verdient ist.",
-    "problem": "Stundenarbeit (Regie) ohne Unterschrift, Mehrmengen, Änderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Und Auftraggeber prüfen Rechnungen zunehmend mit Software.",
+    "problem": "Stundenarbeit ohne Unterschrift, Mehrmengen, Änderungen per Zuruf: Was auf der Baustelle vereinbart wurde, landet oft nicht in der Schlussrechnung. Die Belege dafür liegen verstreut in Mails, Plänen, Fotos und Köpfen. Und Auftraggeber prüfen Rechnungen zunehmend mit Software.",
     "solutionEyebrow": "03 · Lösung",
-    "solution": "Tieout. verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
+    "solution": "Tieout verbindet alle Daten Ihres Betriebs zu einem digitalen Zwilling und prüft damit jede Schlussrechnung: Was gebaut wurde, kommt auch in die Rechnung.",
     "flow": {
       "inputs": "Ihre Daten",
       "twin": "Digitaler Zwilling",
@@ -89,7 +89,7 @@
         },
         {
           "k": "regie",
-          "label": "Regieberichte",
+          "label": "Stundenzettel",
           "detail": "Scan",
           "g": 1
         },
@@ -158,7 +158,7 @@
       "outputTitle": "Schlussrechnung",
       "outputProject": "Projekt Wien 21",
       "checks": [
-        "Vergessene Regie gefunden",
+        "Vergessene Stunden gefunden",
         "Mehrmengen erkannt",
         "Planänderungen eingerechnet",
         "Vorab geprüft wie vom Auftraggeber",
@@ -194,7 +194,7 @@
           "✓"
         ],
         [
-          "Regie Technikraum",
+          "Stunden Technikraum",
           "–",
           "6 h",
           "0 h",
@@ -216,7 +216,7 @@
       "trackSite": "Baustelle",
       "trackInvoice": "Schlussrechnung",
       "without": "Heute",
-      "with": "Mit Tieout.",
+      "with": "Mit Tieout",
       "missing": "fehlt",
       "billed": "verrechnet",
       "found": "gefunden",
@@ -235,8 +235,8 @@
         },
         {
           "week": "KW 15",
-          "type": "Regie · Stunden",
-          "text": "Kabeltrasse verlängert, 18 Stunden, Bericht unterschrieben",
+          "type": "Stundenarbeit",
+          "text": "Kabeltrasse verlängert, 18 Stunden, Stundenzettel unterschrieben",
           "amount": 1290,
           "billed": true
         },
@@ -249,8 +249,8 @@
         },
         {
           "week": "KW 23",
-          "type": "Regie · Stunden",
-          "text": "Technikraum umgebaut, 6 Stunden, Bericht ohne Unterschrift",
+          "type": "Stundenarbeit",
+          "text": "Technikraum umgebaut, 6 Stunden, Stundenzettel ohne Unterschrift",
           "amount": 390,
           "billed": false
         },
@@ -268,20 +268,19 @@
           "amount": 1640,
           "billed": false
         }
-      ],
-      "glossary": "Regie = Zusatzarbeit, die nach Stunden statt nach Leistungsverzeichnis abgerechnet wird. Ohne unterschriebenen Regiebericht wird sie oft nicht bezahlt."
+      ]
     }
   },
   "video": {
     "eyebrow": "04 · Produktvideo",
-    "title": "Tieout. in drei Minuten.",
+    "title": "Tieout in drei Minuten.",
     "placeholder": "[[PLATZHALTER: Produktvideo]]",
     "soon": "Das Video folgt.",
     "play": "Video abspielen"
   },
   "team": {
     "eyebrow": "05 · Über uns",
-    "title": "Wer Tieout. baut.",
+    "title": "Wer Tieout baut.",
     "role": "Co-Founder",
     "linkedin": "LinkedIn",
     "members": [
@@ -308,7 +307,8 @@
         "photo": "/team/schrader.jpg",
         "linkedin": "https://www.linkedin.com/in/santino-schrader/",
         "logos": [
-          "tuwien"
+          "tuwien",
+          "hanswomen"
         ]
       },
       {
@@ -325,7 +325,7 @@
   "contact": {
     "eyebrow": "06 · Demo",
     "title": "Demo buchen.",
-    "sub": "Wir zeigen Ihnen Tieout. an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
+    "sub": "Wir zeigen Ihnen Tieout an einem Beispielprojekt. Sie entscheiden danach, ob es zu Ihrem Betrieb passt.",
     "points": [
       "30 Minuten, online",
       "Live an einem Beispielprojekt",
@@ -342,7 +342,7 @@
     },
     "optional": "optional",
     "messagePlaceholder": "Gewerk, Größe, worum es Ihnen geht …",
-    "consent": "Ich bin einverstanden, dass Tieout. mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
+    "consent": "Ich bin einverstanden, dass Tieout mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
     "submit": "Demo anfragen",
     "errorName": "Bitte Namen angeben.",
     "errorEmail": "Bitte eine gültige Mailadresse angeben.",

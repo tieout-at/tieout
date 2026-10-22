@@ -1,4 +1,4 @@
-/* Tieout. Planraster-CI. Drei Farben: Papier, Tinte, Ultramarin. Rasterlinien nur als Hintergrund. */
+/* Tieout Planraster-CI. Drei Farben: Papier, Tinte, Ultramarin. Rasterlinien nur als Hintergrund. */
 :root {
   --paper: #f4f6f9;
   --ink: #0a1020;
@@ -83,7 +83,6 @@ img { display: block; max-width: 100%; }
 .header__right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
 .wordmark { font-weight: 600; font-size: 22px; letter-spacing: -0.03em; text-decoration: none; display: inline-flex; align-items: center; gap: 9px; }
 
-.wordmark__dot { color: var(--ultra); }
 
 /* Sprachumschalter: Schiebeschalter */
 .langsw { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; align-items: center; height: 40px; padding: 4px; border: 1px solid var(--ink-15); background: var(--white); font-family: var(--font-mono); font-size: 13px; letter-spacing: .06em; }
@@ -408,8 +407,6 @@ img { display: block; max-width: 100%; }
 .mnav--dark .mnav__rail::before { background: rgba(255,255,255,.3); }
 .mnav--dark .mnav__progress { background: var(--white); }
 .mnav__label, .mnav__tick::after, .mnav__rail::before { transition: background .3s, color .3s; }
-.tl__glossary { display: flex; gap: 10px; align-items: flex-start; margin: -4px 0 16px; font-size: 13px; color: var(--ink-60); }
-.tl__glossary span { flex: none; width: 18px; height: 18px; display: grid; place-items: center; border: 1px solid var(--ultra); color: var(--ultra); font-family: var(--font-mono); font-size: 11px; margin-top: 1px; }
 
 .chip--pulse { border-color: var(--ultra); box-shadow: 0 0 0 3px var(--ultra-20); }
 

@@ -6,6 +6,7 @@ const LOGO_ALT: Record<string, string> = {
   tuwien: "TU Wien",
   tacto: "Tacto",
   enpal: "Enpal",
+  hanswomen: "Hans(wo)men Group",
   usc: "University of Southern California",
 };
 
