@@ -42,6 +42,7 @@ Texte nur in `messages/` ändern, nie im Code. Neue Platzhalter immer als `[[PLA
 **https://endpoint-preview.pages.dev** (Deutsch) und `/en/` (Englisch). Offen erreichbar, ohne Passwort (Entscheidung Maxi D., 22.10.2026).
 
 - Gehostet im privaten Cloudflare-Konto von Maxi D., Pages-Projekt `endpoint-preview`.
+- Eigene Domain **tieout.at** (registriert bei easyname, 22.10.2026). In Cloudflare als Zone angelegt (Free), `tieout.at` und `www.tieout.at` als CNAME auf `endpoint-preview.pages.dev` und als Custom Domains am Pages-Projekt. Offen: bei easyname die Nameserver auf `cheryl.ns.cloudflare.com` und `hugh.ns.cloudflare.com` umstellen. Erst dann ist die Seite unter tieout.at erreichbar.
 - `npm run deploy` aktualisiert die öffentliche Seite.
 - `npm run deploy:geschuetzt` lädt nur auf `vorschau.endpoint-preview.pages.dev`. Diese Adresse bleibt per Cloudflare Access geschützt (Login per Mail-Code) und eignet sich für Entwürfe, die noch nicht offen sein sollen.
 - `noindex` bleibt gesetzt: Suchmaschinen nehmen die Seite nicht auf. Wer den Link hat, kann sie aber öffnen.
