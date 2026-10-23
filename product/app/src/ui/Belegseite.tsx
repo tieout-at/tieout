@@ -169,7 +169,7 @@ function VertragsSeite({ d, beleg }: { d: Datensatz; beleg: Beleg }) {
   return (
     <>
       <Titel titel="Bauvertrag" meta={`vom ${datum(v.datum.wert)}, Seite ${beleg.quelle.seite}`} />
-      <Tabelle kopf={["Punkt", "Regelung", "Inhalt"]} markiert={i} zeilen={punkte.map(([a, b, c]) => [a, b, c])} />
+      <Tabelle kopf={["Punkt", "Regelung", "Inhalt"]} markiert={i} zeilen={punkte.map(([a, b, c]) => [a, b, c])} ids={punkte.map(([a]) => `pkt-${a.replace("Pkt. ", "")}`)} />
     </>
   );
 }

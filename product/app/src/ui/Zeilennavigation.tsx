@@ -112,6 +112,7 @@ export function Zeilennavigation({ children }: { children: React.ReactNode }) {
     };
     const taste = (ev: KeyboardEvent) => {
       if (ev.ctrlKey || ev.altKey || ev.metaKey || ev.repeat) return;
+      if (ev.key === "Enter" && (ev.target as HTMLElement).closest("a, button")) return;
       const tr = (ev.target as HTMLElement).closest<HTMLTableRowElement>("tr[data-href]");
       if (!tr) return;
       if (ev.key === "Enter" && tr.dataset.href) {
