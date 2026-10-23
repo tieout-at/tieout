@@ -1,6 +1,6 @@
 # tieout (working title, formerly Schlusswerk): project context for Claude Code
 
-This repository is the working folder for the WU Hackathon project (public on GitHub at github.com/tieout-at/tieout). Internal documents (status, handover notes, dossier, research) live in the private repository github.com/tieout-at/intern. Read this file first, then `_STATUS.md` and `docs/dossier-v3.md` from tieout-at/intern.
+This repository is the working folder for the WU Hackathon project (public on GitHub at github.com/tieout-at/tieout). Internal documents (status, handover notes, dossier, research) live in the private repository github.com/tieout-at/intern. It is cloned locally into `intern/` in this folder (ignored by git). Read this file first, then `intern/_UEBERGABE.md`, `intern/_STATUS.md` and `intern/docs/dossier-v3.md`.
 
 ## What it is about
 
