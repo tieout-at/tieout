@@ -7,7 +7,7 @@ import { ShieldAlert } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
-import { firma, navDaten, zuEntscheiden } from "@/daten/demo";
+import { firma, hatSchlussrechnung, navDaten, zuEntscheiden } from "@/daten/demo";
 import type { Ampel, ProjektZeile } from "@/engine";
 import { Bauglyphe } from "@/ui/Bauglyphe";
 import { anzahl, betrag, datum } from "@/ui/format";
@@ -48,7 +48,7 @@ function RisikoSchritt({ p, anzahlRisiken, summe }: { p: ProjektZeile; anzahlRis
         <Ico icon={ShieldAlert} />
       </span>
       <span className="db-schritt__text">
-        <Link href={`/projekte/${p.projektId}/posten/`} className="db-schritt__link">
+        <Link href={hatSchlussrechnung(p.projektId) ? `/projekte/${p.projektId}/schlussrechnung/` : `/projekte/${p.projektId}/posten/`} className="db-schritt__link">
           Kürzungsrisiko {p.kurz} vorbeugen
         </Link>
         <span className="meta sw-muted">
