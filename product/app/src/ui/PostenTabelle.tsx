@@ -6,14 +6,14 @@ import { TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 import type { Befund, Ergebnis } from "@/engine/typen";
-import { ART_TEXT, LISTEN, teileTitel } from "./befund-texte";
+import { ART_TEXT, LISTEN, teileTitel } from "./posten-texte";
 import { betrag } from "./format";
 import { GruppenTitel } from "./Gruppe";
 import { Ico } from "./Ico";
 import { StandZelle } from "./Stand";
 import { Zeilennavigation } from "./Zeilennavigation";
 
-export function BefundTabelle({
+export function PostenTabelle({
   projektId,
   befunde,
   summen,
@@ -35,10 +35,10 @@ export function BefundTabelle({
   const gruppen = LISTEN.map((l) => ({ ...l, posten: befunde.filter((b) => b.liste === l.liste) })).filter((g) => g.posten.length);
   return (
     <Zeilennavigation>
-      <table className="sw-table tab-liste tab-befunde liste-mobil">
+      <table className="sw-table tab-liste tab-posten liste-mobil">
         <colgroup>
           <col />
-          <col className="befund-art" style={{ width: 216 }} />
+          <col className="posten-art" style={{ width: 216 }} />
           <col style={{ width: 120 }} />
           <col style={{ width: 24 }} />
           <col style={{ width: 136 }} />
@@ -46,7 +46,7 @@ export function BefundTabelle({
         <thead>
           <tr>
             <th>Posten</th>
-            <th className="befund-art">Art</th>
+            <th className="posten-art">Art</th>
             <th className="r">Betrag</th>
             <th />
             <th>Stand</th>
@@ -95,7 +95,7 @@ function GruppenZeilen({
             <span className="sw-count">{g.posten.length}</span>
           </GruppenTitel>
         </td>
-        <td className="befund-art nur-breit" />
+        <td className="posten-art nur-breit" />
         <td className="r">{summe === null ? "" : betrag(summe)}</td>
         <td className="nur-breit" />
         <td className="nur-breit" />
@@ -115,7 +115,7 @@ function GruppenZeilen({
                 t.text
               )}
             </td>
-            <td className="befund-art neben nur-breit">{ART_TEXT[b.art]}</td>
+            <td className="posten-art neben nur-breit">{ART_TEXT[b.art]}</td>
             <td className="r">{b.betrag !== null && betrag(b.betrag)}</td>
             <td className="risk nur-breit">
               {risiken.has(b.schluessel) && (

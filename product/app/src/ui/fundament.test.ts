@@ -62,6 +62,23 @@ describe("UI-Fundament", () => {
     expect(verstoesse).toEqual([]);
   });
 
+  it("keine alten Begriffe im sichtbaren Text: Posten, Belege, LV-Positionen, WhatsApp-Meldung (Entscheidung Maxi S. 23.10.)", () => {
+    // Nur Text in Anführungszeichen und JSX-Text; Bezeichner im Code (Typ `Befund`, Schlüssel „zuruf:Z6“) bleiben erlaubt.
+    const alt = /\b(Befunde?|Befunds|Zurufe?|Zurufs|Ordner|Ledger)\b/;
+    const texte = /"([^"\n]*)"|`([^`\n]*)`|„([^“\n]*)“|>([^<>{}\n]+)</g;
+    const quellen = [...OBERFLAECHE.filter((p) => p.endsWith(".tsx")), ...TEXTQUELLEN, ...dateien(join(WURZEL, "daten"), [".ts"])];
+    const verstoesse: string[] = [];
+    for (const p of quellen)
+      readFileSync(p, "utf8")
+        .split(/\r?\n/)
+        .forEach((zeile, i) => {
+          const code = zeile.trim();
+          if (code.startsWith("//") || code.startsWith("*") || code.startsWith("/*")) return;
+          for (const m of code.matchAll(texte)) if (alt.test(m.slice(1).join(" "))) verstoesse.push(`${relative(WURZEL, p)}:${i + 1}`);
+        });
+    expect(verstoesse).toEqual([]);
+  });
+
   it("jede Seite hat den Seitenkopf", () => {
     // Ausnahme: die Anmeldeseite zeigt keine Daten und steht ohne Rahmen.
     const seiten = OBERFLAECHE.filter((p) => /(page|not-found)\.tsx$/.test(p) && !/anmelden/.test(p));

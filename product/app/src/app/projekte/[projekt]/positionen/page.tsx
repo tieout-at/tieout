@@ -2,8 +2,8 @@
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { befundSlug, firma, leistungsgruppen, projekt, projektIds } from "@/daten/demo";
-import { LedgerTabelle, type LedgerReihe } from "@/ui/LedgerTabelle";
+import { postenSlug, firma, leistungsgruppen, projekt, projektIds } from "@/daten/demo";
+import { PositionenTabelle, type PositionsReihe } from "@/ui/PositionenTabelle";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 
 type Props = { params: Promise<{ projekt: string }> };
@@ -24,7 +24,7 @@ export default async function Ledger({ params }: Props) {
   const { daten } = firma();
   if (!e.abgleich) notFound();
   // Nur die Felder, die die Tabelle braucht: die Zeilen gehen als Daten mit jeder Seite an den Browser.
-  const zeilen: LedgerReihe[] = e.ledger.map((z) => {
+  const zeilen: PositionsReihe[] = e.ledger.map((z) => {
     const b = e.befunde.find((x) => x.schluessel.endsWith(`:${z.positionNr}`));
     return {
       positionNr: z.positionNr,
@@ -36,14 +36,14 @@ export default async function Ledger({ params }: Props) {
       bezahltBetrag: z.bezahltBetrag,
       differenzBetrag: z.differenzBetrag,
       naechsteArMenge: z.naechsteArMenge,
-      befundHref: b ? `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/` : null,
+      befundHref: b ? `/projekte/${id}/posten/${postenSlug(b.schluessel)}/` : null,
     };
   });
   return (
     <>
       <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}/` }]} titel="LV-Positionen" />
       <main className="scr-body">
-        <LedgerTabelle zeilen={zeilen} gruppen={leistungsgruppen()} />
+        <PositionenTabelle zeilen={zeilen} gruppen={leistungsgruppen()} />
       </main>
     </>
   );

@@ -119,7 +119,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.zeit-ev__befund {
+.zeit-ev__posten {
   padding-top: 2px;
   color: var(--text-secondary);
   font-size: var(--fs-sm);
@@ -133,11 +133,11 @@
     grid-template-columns: 40px 24px minmax(0, 1fr);
     gap: var(--space-2);
   }
-  .zeit-ev__befund {
+  .zeit-ev__posten {
     grid-column: 3;
     padding-top: 0;
   }
-  .zeit-ev__befund:empty {
+  .zeit-ev__posten:empty {
     display: none;
   }
 }

@@ -1,9 +1,9 @@
 // Ordner eines Projekts: Belegmatrix (LV-Position × Belegart) und alle Dokumente mit Duplikaten.
 
 import type { Metadata } from "next";
-import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
-import { belegmatrix, dokumentliste } from "@/daten/ordner";
-import { Ordner } from "@/ui/Ordner";
+import { postenSlug, firma, projekt, projektIds } from "@/daten/demo";
+import { belegmatrix, dokumentliste } from "@/daten/belege";
+import { Belege } from "@/ui/Belege";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 
 type Props = { params: Promise<{ projekt: string }> };
@@ -27,7 +27,7 @@ export default async function OrdnerSeite({ params }: Props) {
     <>
       <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: basis }]} titel="Belege" />
       <main className="scr-body">
-        <Ordner matrix={belegmatrix(d, e, (s) => `${basis}/befunde/${befundSlug(s)}/`)} dokumente={dokumentliste(d)} basis={basis} />
+        <Belege matrix={belegmatrix(d, e, (s) => `${basis}/posten/${postenSlug(s)}/`)} dokumente={dokumentliste(d)} basis={basis} />
       </main>
     </>
   );

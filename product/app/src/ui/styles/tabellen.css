@@ -27,7 +27,7 @@
   }
 }
 .tw,
-.ledger-rahmen {
+.positionen-rahmen {
   animation: rand-blende linear both;
   animation-timeline: scroll(self inline);
 }
@@ -151,14 +151,14 @@ tbody[data-zu] > tr:not(.grp) {
 }
 
 /* Befunde: Art nur, wenn die Tabelle breit genug ist (Projektübersicht hat eine schmale Spalte) */
-.tab-befunde {
+.tab-posten {
   min-width: 560px;
 }
-.tab-befunde .sw-pos-nr {
+.tab-posten .sw-pos-nr {
   min-width: 72px;
 }
 @container (max-width: 899px) {
-  .tab-befunde .befund-art {
+  .tab-posten .posten-art {
     display: none;
   }
 }
@@ -166,7 +166,7 @@ tbody[data-zu] > tr:not(.grp) {
 /* Handy: Tabellen als einzeilige Liste (Linear mobil) */
 @media (max-width: 640px) {
   .tab-firma,
-  .tab-befunde {
+  .tab-posten {
     min-width: 0;
     table-layout: auto;
   }
@@ -227,28 +227,28 @@ tbody[data-zu] > tr:not(.grp) {
   }
 }
 
-/* Ledger: Tabelle über die volle Breite, am Handy waagrecht scrollbar; Aufmaß über LV-Menge betont */
-.ledger {
+/* LV-Positionen und Belege: Tabelle über die volle Breite, am Handy waagrecht scrollbar; Aufmaß über LV-Menge betont */
+.listenbereich {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
-.ledger-rahmen {
+.positionen-rahmen {
   overflow-x: auto;
 }
-.tab-ledger {
+.tab-positionen {
   min-width: 960px;
 }
-.tab-ledger td.sw-pos-nr {
+.tab-positionen td.sw-pos-nr {
   display: table-cell;
   margin: 0;
 }
-.ledger-text {
+.positionen-text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.ledger-ueber {
+.positionen-ueber {
   font-weight: 500;
 }
 .sw-suche {

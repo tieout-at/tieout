@@ -1,15 +1,15 @@
 "use client";
 
-// Echter Chat gegen den Zuruf-Agenten (Schalter ZURUF_ECHT im Worker an). Gleiche Hülle wie die vorgespielte Szene: Monteur
+// Echter Chat gegen den WhatsApp-Agenten (Schalter ZURUF_ECHT im Worker an). Gleiche Hülle wie die vorgespielte Szene: Monteur
 // rechts, Agent links. Der Server merkt sich nichts; der Gesprächsstand liegt im Browser und geht bei jeder Nachricht mit.
 // Gespeicherte Einträge landen je Projekt in der Ablage (zustand/zurufe.ts), nie im Rechenkern.
 
 import { RotateCcw, Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { Knopf, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
-import { ZURUF_API } from "@/zuruf/schalter";
-import { alsZeile, browserAblage, chatLesen, chatSchreiben, useChat, type ChatZeile, type ZurufRoutenAntwort } from "@/zustand/zurufe";
-import { neueZurufId } from "@/zuruf/abbildung";
+import { ZURUF_API } from "@/whatsapp/schalter";
+import { alsZeile, browserAblage, chatLesen, chatSchreiben, useChat, type ChatZeile, type ZurufRoutenAntwort } from "@/zustand/meldungen";
+import { neueZurufId } from "@/whatsapp/abbildung";
 import { Ico } from "./Ico";
 
 /** Ein Absender je Browser; der Agent kennt ihn nur als Kennung und Rolle (§ 96a ArbVG: keine Namen). */
@@ -24,7 +24,7 @@ function uhrzeit(iso: string): string {
   return new Date(iso).toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Vienna" });
 }
 
-export function ZurufChat({
+export function WhatsAppChat({
   projektId,
   demoAnzahl,
   kurz,
@@ -106,13 +106,13 @@ export function ZurufChat({
 
   const letzte = chat.zeilen.at(-1);
   return (
-    <div className="szene" role="dialog" aria-modal="false" aria-label="Zuruf per WhatsApp, echter Agent">
+    <div className="szene" role="dialog" aria-modal="false" aria-label="WhatsApp-Agent, echt">
       <div className="szene__kopf">
         <span className="szene__avatar" aria-hidden="true">
           S
         </span>
         <span className="szene__wer">
-          <b>Zuruf-Agent</b>
+          <b>WhatsApp-Agent</b>
           <span>{wartet ? "schreibt …" : `Synthetisch, ${kurz[projektId] ?? ""}`}</span>
         </span>
         <span className="szene__aktionen">

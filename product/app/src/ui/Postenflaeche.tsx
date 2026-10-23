@@ -37,7 +37,7 @@ const SYMBOL: Record<BelegTyp, LucideIcon> = {
 
 const ZOOM = [80, 90, 100, 110, 125, 150];
 
-export function Befundflaeche({ kopf, belege, freigabe, start = 0 }: { kopf: React.ReactNode; belege: BelegAnsicht[]; freigabe: React.ReactNode; start?: number }) {
+export function Postenflaeche({ kopf, belege, freigabe, start = 0 }: { kopf: React.ReactNode; belege: BelegAnsicht[]; freigabe: React.ReactNode; start?: number }) {
   const [aktiv, setAktiv] = useState(start);
   const [zoom, setZoom] = useState(2);
   const betrachter = useRef<HTMLDivElement>(null);

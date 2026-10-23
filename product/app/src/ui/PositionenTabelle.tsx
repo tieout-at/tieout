@@ -10,16 +10,17 @@
 
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import type { LedgerZeile } from "@/engine/typen";
 import { menge } from "@/engine/geld";
 import { betrag, zahl } from "./format";
 import { GruppenTitel } from "./Gruppe";
+import { useGemerkt } from "./herkunft";
 import { Ico } from "./Ico";
 import { useStufenweise, Zeilennavigation } from "./Zeilennavigation";
 
 /** Nur die Felder, die die Tabelle zeigt oder filtert (geht als Daten an den Browser). */
-export interface LedgerReihe
+export interface PositionsReihe
   extends Pick<LedgerZeile, "positionNr" | "kurztext" | "einheit" | "lvMenge" | "aufmassMenge" | "verrechnetMenge" | "bezahltBetrag" | "differenzBetrag" | "naechsteArMenge"> {
   /** Befund zu dieser Position, falls es einen gibt. */
   befundHref: string | null;
@@ -27,7 +28,7 @@ export interface LedgerReihe
 
 type Filter = "alle" | "differenz" | "ueber" | "naechste" | "offen";
 
-const FILTER: { f: Filter; text: string; passt: (z: LedgerReihe) => boolean }[] = [
+const FILTER: { f: Filter; text: string; passt: (z: PositionsReihe) => boolean }[] = [
   { f: "alle", text: "Alle", passt: () => true },
   { f: "differenz", text: "Nicht verrechnet", passt: (z) => z.differenzBetrag > 0 },
   { f: "ueber", text: "Über LV-Menge", passt: (z) => z.aufmassMenge > z.lvMenge },
@@ -39,11 +40,11 @@ function gruppeVon(nr: string): string {
   return nr.slice(0, 2);
 }
 
-const nrVon = (z: LedgerReihe) => z.positionNr;
+const nrVon = (z: PositionsReihe) => z.positionNr;
 
-export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; gruppen: Record<string, string> }) {
-  const [filter, setFilter] = useState<Filter>("alle");
-  const [suche, setSuche] = useState("");
+export function PositionenTabelle({ zeilen, gruppen }: { zeilen: PositionsReihe[]; gruppen: Record<string, string> }) {
+  const [filter, setFilter] = useGemerkt<Filter>("filter", "alle");
+  const [suche, setSuche] = useGemerkt("suche", "");
   const anzahl = useMemo(() => FILTER.map((x) => zeilen.filter(x.passt).length), [zeilen]);
   const sichtbar = useMemo(() => {
     const f = FILTER.find((x) => x.f === filter)!;
@@ -53,7 +54,7 @@ export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; grup
   const tabelle = useTabelle(sichtbar, useStufenweise(sichtbar, nrVon), gruppen);
 
   return (
-    <section className="ledger" aria-label="Ledger">
+    <section className="listenbereich" aria-label="LV-Positionen">
       <div className="zeit-leiste">
         <div className="sw-tabs zeit-filter" role="group" aria-label="Filter">
           {FILTER.map((x, i) => {
@@ -78,13 +79,13 @@ export function LedgerTabelle({ zeilen, gruppen }: { zeilen: LedgerReihe[]; grup
 }
 
 /** `sichtbar`: alle Treffer (Zähler je Gruppe), `zeigen`: die davon schon gebauten Zeilen (useStufenweise). */
-function useTabelle(sichtbar: LedgerReihe[], zeigen: LedgerReihe[], gruppen: Record<string, string>) {
+function useTabelle(sichtbar: PositionsReihe[], zeigen: PositionsReihe[], gruppen: Record<string, string>) {
   return useMemo(() => {
     const lgs = [...new Set(zeigen.map((z) => gruppeVon(z.positionNr)))];
     return (
       <Zeilennavigation>
-        <div className="ledger-rahmen">
-          <table className="sw-table tab-liste tab-ledger">
+        <div className="positionen-rahmen">
+          <table className="sw-table tab-liste tab-positionen">
             <colgroup>
               <col style={{ width: 96 }} />
               <col />
@@ -130,7 +131,7 @@ function useTabelle(sichtbar: LedgerReihe[], zeigen: LedgerReihe[], gruppen: Rec
   }, [sichtbar, zeigen, gruppen]);
 }
 
-function LgZeilen({ gruppe, titel, anzahl, zeilen }: { gruppe: string; titel: string; anzahl: number; zeilen: LedgerReihe[] }) {
+function LgZeilen({ gruppe, titel, anzahl, zeilen }: { gruppe: string; titel: string; anzahl: number; zeilen: PositionsReihe[] }) {
   return (
     <tbody data-gruppe={gruppe}>
       <tr className="grp">
@@ -148,11 +149,11 @@ function LgZeilen({ gruppe, titel, anzahl, zeilen }: { gruppe: string; titel: st
   );
 }
 
-const Zeile = memo(function Zeile({ z }: { z: LedgerReihe }) {
+const Zeile = memo(function Zeile({ z }: { z: PositionsReihe }) {
   return (
     <tr data-href={z.befundHref ?? undefined} tabIndex={z.befundHref ? 0 : undefined}>
       <td className="sw-pos-nr">{z.positionNr}</td>
-      <td className="ledger-text" title={z.kurztext}>
+      <td className="positionen-text" title={z.kurztext}>
         {z.befundHref ? (
           <Link href={z.befundHref} className="row-link" tabIndex={-1}>
             {z.kurztext}
@@ -163,7 +164,7 @@ const Zeile = memo(function Zeile({ z }: { z: LedgerReihe }) {
       </td>
       <td className="neben">{z.einheit}</td>
       <td className="r">{menge(z.lvMenge)}</td>
-      <td className={z.aufmassMenge > z.lvMenge ? "r ledger-ueber" : "r"}>{z.aufmassMenge > 0 ? menge(z.aufmassMenge) : ""}</td>
+      <td className={z.aufmassMenge > z.lvMenge ? "r positionen-ueber" : "r"}>{z.aufmassMenge > 0 ? menge(z.aufmassMenge) : ""}</td>
       <td className="r">{z.verrechnetMenge > 0 ? menge(z.verrechnetMenge) : ""}</td>
       <td className="r">{z.bezahltBetrag !== 0 ? betrag(z.bezahltBetrag) : ""}</td>
       <td className="r">{z.differenzBetrag > 0 ? betrag(z.differenzBetrag) : ""}</td>

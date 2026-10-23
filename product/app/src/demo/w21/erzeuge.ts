@@ -792,7 +792,7 @@ function eineMinuteSpaeter(zeitpunkt: string): string {
 
 function erzeugeZurufe(): Zuruf[] {
   return ZURUFE.map((z) => {
-    const id = `zuruf-${z.nr.toLowerCase()}`;
+    const id = `whatsapp-${z.nr.toLowerCase()}`;
     const qt = q(id, 1, "Sprachnachricht, Transkript");
     const qa = q(id, 1, "Zusammenfassung des Agenten, bestätigt");
     return {

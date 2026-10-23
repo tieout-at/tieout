@@ -82,15 +82,18 @@ const ART: Record<string, string> = {
   gu_korrektur: "Auftraggeber",
 };
 
+/** Art einer WhatsApp-Meldung in der Dokumentliste. */
+export const MELDUNG = "WhatsApp-Meldung";
+
 export function dokumentliste(d: Datensatz): DokumentZeile[] {
   const gesehen = new Set<string>();
   const liste: DokumentZeile[] = d.dokumente.map((x) => {
     const duplikat = gesehen.has(x.inhaltHash);
     gesehen.add(x.inhaltHash);
-    return { id: x.id, art: ART[x.art] ?? x.art, datei: x.dateiname, datum: x.datum, kanal: x.kanal === "whatsapp" ? "WhatsApp" : "Ordner", seiten: x.seiten, duplikat };
+    return { id: x.id, art: ART[x.art] ?? x.art, datei: x.dateiname, datum: x.datum, kanal: x.kanal === "whatsapp" ? "WhatsApp" : "Import", seiten: x.seiten, duplikat };
   });
   for (const z of d.zurufe) {
-    liste.push({ id: z.id, art: "Zuruf", datei: `WhatsApp ${z.nr}`, datum: z.zeitpunkt.slice(0, 10), kanal: "WhatsApp", seiten: 1, duplikat: false });
+    liste.push({ id: z.id, art: MELDUNG, datei: `WhatsApp ${z.nr}`, datum: z.zeitpunkt.slice(0, 10), kanal: "WhatsApp", seiten: 1, duplikat: false });
   }
   return liste.sort((a, b) => b.datum.localeCompare(a.datum) || a.datei.localeCompare(b.datei));
 }

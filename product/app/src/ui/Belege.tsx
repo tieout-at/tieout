@@ -9,9 +9,11 @@
 
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { memo, useMemo, useState } from "react";
-import type { Belegart, DokumentZeile, MatrixZeile } from "@/daten/ordner";
+import { memo, useMemo } from "react";
+import type { Belegart, DokumentZeile, MatrixZeile } from "@/daten/belege";
 import { datum, zahl } from "./format";
+import { MELDUNG } from "@/daten/belege";
+import { useGemerkt } from "./herkunft";
 import { Ico } from "./Ico";
 import { useLinkFolgen, useStufenweise, Zeilennavigation } from "./Zeilennavigation";
 
@@ -22,17 +24,17 @@ const SPALTEN: { art: Belegart; text: string }[] = [
   { art: "plan", text: "Plan" },
   { art: "mail", text: "Mail" },
   { art: "foto", text: "Foto" },
-  { art: "zuruf", text: "Zuruf" },
+  { art: "zuruf", text: "WhatsApp" },
 ];
 
 type Ansicht = "befund" | "alle" | "dokumente" | "zurufe";
 
-export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; dokumente: DokumentZeile[]; basis: string }) {
-  const dateien = useMemo(() => dokumente.filter((x) => x.art !== "Zuruf"), [dokumente]);
-  const zurufe = useMemo(() => dokumente.filter((x) => x.art === "Zuruf"), [dokumente]);
+export function Belege({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; dokumente: DokumentZeile[]; basis: string }) {
+  const dateien = useMemo(() => dokumente.filter((x) => x.art !== MELDUNG), [dokumente]);
+  const zurufe = useMemo(() => dokumente.filter((x) => x.art === MELDUNG), [dokumente]);
   const mitBefund = useMemo(() => matrix.filter((z) => z.befundHref), [matrix]);
-  const [ansicht, setAnsicht] = useState<Ansicht>(mitBefund.length ? "befund" : "alle");
-  const [suche, setSuche] = useState("");
+  const [ansicht, setAnsicht] = useGemerkt<Ansicht>("ansicht", mitBefund.length ? "befund" : "alle");
+  const [suche, setSuche] = useGemerkt("suche", "");
   const s = suche.trim().toLowerCase();
   const dok = ansicht === "dokumente" || ansicht === "zurufe";
   const docs = useMemo(
@@ -44,14 +46,14 @@ export function Ordner({ matrix, dokumente, basis }: { matrix: MatrixZeile[]; do
     [ansicht, s, mitBefund, matrix],
   );
   const reiter: { a: Ansicht; text: string; n: number }[] = [
-    { a: "befund", text: "Positionen mit Befund", n: mitBefund.length },
+    { a: "befund", text: "Mit Posten", n: mitBefund.length },
     { a: "alle", text: "Alle Positionen", n: matrix.length },
     { a: "dokumente", text: "Dokumente", n: dateien.length },
-    { a: "zurufe", text: "Zurufe", n: zurufe.length },
+    { a: "zurufe", text: "WhatsApp", n: zurufe.length },
   ];
 
   return (
-    <section className="ledger" aria-label="Ordner">
+    <section className="listenbereich" aria-label="Belege">
       <div className="zeit-leiste">
         <div className="sw-tabs zeit-filter" role="group" aria-label="Ansicht">
           {reiter
@@ -134,7 +136,7 @@ const MatrixReihe = memo(function MatrixReihe({ z, basis, folgen }: { z: MatrixZ
         <td key={x.art} className="matrix-zelle">
           {z.zellen[x.art].slice(0, 2).map((f) => (
             // Schrägstrich vor dem Anker wie bei next/link mit trailingSlash
-            <a key={f.id} className="matrix-link" href={`${basis}/ordner/${f.id}/${f.anker ? `#pos-${f.anker}` : ""}`} {...folgen}>
+            <a key={f.id} className="matrix-link" href={`${basis}/belege/${f.id}/${f.anker ? `#pos-${f.anker}` : ""}`} {...folgen}>
               {f.text}
             </a>
           ))}
@@ -180,7 +182,7 @@ function Dokumente({ liste: alle, basis }: { liste: DokumentZeile[]; basis: stri
           {liste.map((x) => (
             <tr key={x.id} className={x.duplikat ? "dok-duplikat" : undefined}>
               <td title={x.datei}>
-                <a className="matrix-link dok-datei" href={`${basis}/ordner/${x.id}/`} {...folgen}>
+                <a className="matrix-link dok-datei" href={`${basis}/belege/${x.id}/`} {...folgen}>
                   {x.datei}
                 </a>
               </td>

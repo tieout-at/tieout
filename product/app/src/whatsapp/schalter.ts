@@ -20,12 +20,12 @@ function verfuegbar(): Promise<boolean> {
   return status;
 }
 
-export function zurufAbschalten() {
+export function agentAbschalten() {
   status = Promise.resolve(false);
 }
 
 /** Ist der echte Agent verfügbar? Bis zur Antwort und bei Fehlern: nein. `fragen` = false fragt gar nicht. */
-export function useZurufVerfuegbar(fragen: boolean): [boolean, () => void] {
+export function useAgentVerfuegbar(fragen: boolean): [boolean, () => void] {
   const [an, setAn] = useState(false);
   useEffect(() => {
     if (!fragen) return;
@@ -38,7 +38,7 @@ export function useZurufVerfuegbar(fragen: boolean): [boolean, () => void] {
   return [
     an,
     () => {
-      zurufAbschalten();
+      agentAbschalten();
       setAn(false);
     },
   ];

@@ -8,13 +8,13 @@
 
 import { useSyncExternalStore } from "react";
 import type { Antwort, Knopf, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
-import type { NeuerZuruf } from "@/zuruf/abbildung";
+import type { NeueMeldung } from "@/whatsapp/abbildung";
 
-export interface ZurufAblage {
+export interface MeldungAblage {
   /** Aktuelle Fassung jedes Ereignisses des Projekts, ohne zurückgezogene, älteste zuerst. */
-  lesen(projektId: string): readonly NeuerZuruf[];
+  lesen(projektId: string): readonly NeueMeldung[];
   /** Hängt neue Ereignisse (oder neue Fassungen) an; `demoAnzahl` = Zurufe der Demo, die Nummern laufen danach weiter. */
-  anhaengen(projektId: string, ereignisse: Leistungsereignis[], nachrichten: Nachricht[], demoAnzahl: number): readonly NeuerZuruf[];
+  anhaengen(projektId: string, ereignisse: Leistungsereignis[], nachrichten: Nachricht[], demoAnzahl: number): readonly NeueMeldung[];
 }
 
 interface Projektstand {
@@ -56,7 +56,7 @@ export interface Chatstand {
 
 const PRAEFIX = "sw-zuruf-v1:";
 const CHAT = "sw-zuruf-chat-v1";
-const LEER: readonly NeuerZuruf[] = [];
+const LEER: readonly NeueMeldung[] = [];
 const LEERER_CHAT: Chatstand = { zeilen: [] };
 const hoerer = new Set<() => void>();
 const zwischen = new Map<string, { roh: string | null; wert: unknown }>();
@@ -110,7 +110,7 @@ function projektstand(projektId: string): Projektstand {
   return lesenRoh<Projektstand>(PRAEFIX + projektId, { ereignisse: [], nachrichten: [], nummern: {} }, (w) => w as Projektstand);
 }
 
-function aktuell(p: Projektstand): NeuerZuruf[] {
+function aktuell(p: Projektstand): NeueMeldung[] {
   const neueste = new Map<string, Leistungsereignis>();
   for (const e of p.ereignisse) if ((neueste.get(e.id)?.version ?? 0) < e.version) neueste.set(e.id, e);
   return [...neueste.values()]
@@ -118,9 +118,9 @@ function aktuell(p: Projektstand): NeuerZuruf[] {
     .map((e) => ({ nr: p.nummern[e.id] ?? "Z", ereignis: e, nachrichten: p.nachrichten.filter((m) => e.nachrichtIds.includes(m.id)) }));
 }
 
-const zwischenAktuell = new Map<string, { p: Projektstand; liste: readonly NeuerZuruf[] }>();
+const zwischenAktuell = new Map<string, { p: Projektstand; liste: readonly NeueMeldung[] }>();
 
-export const browserAblage: ZurufAblage = {
+export const browserAblage: MeldungAblage = {
   lesen(projektId) {
     const p = projektstand(projektId);
     const z = zwischenAktuell.get(projektId);
@@ -151,7 +151,7 @@ function abonnieren(h: () => void) {
 }
 
 /** Neue Zurufe eines Projekts; im Server-Rendering leer. */
-export function useNeueZurufe(projektId: string, an: boolean): readonly NeuerZuruf[] {
+export function useNeueMeldungen(projektId: string, an: boolean): readonly NeueMeldung[] {
   return useSyncExternalStore(
     abonnieren,
     () => (an ? browserAblage.lesen(projektId) : LEER),
@@ -177,7 +177,7 @@ export function alsZeile(a: Antwort, zeit: string): ChatZeile {
 }
 
 /** Für „Demo zurücksetzen“: alle neuen Zurufe und den Chat löschen; liefert den alten Stand für Rückgängig. */
-export function zurufeZuruecksetzen(): Map<string, string> {
+export function meldungenZuruecksetzen(): Map<string, string> {
   const vorher = new Map<string, string>();
   const schluessel = new Set([...ohneSpeicher.keys()]);
   try {
@@ -196,6 +196,6 @@ export function zurufeZuruecksetzen(): Map<string, string> {
   return vorher;
 }
 
-export function zurufeWiederherstellen(vorher: Map<string, string>) {
+export function meldungenWiederherstellen(vorher: Map<string, string>) {
   vorher.forEach((r, k) => schreibenRoh(k, JSON.parse(r)));
 }

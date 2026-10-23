@@ -1,30 +1,30 @@
-// Befund mit Beleg-Panel: Betrag, Kürzungsrisiko, Rechenweg, Beweiskette, zweistufige Freigabe;
+// Posten mit Beleg-Panel: Betrag, Kürzungsrisiko, Rechenweg, Beweiskette, zweistufige Freigabe;
 // rechts das Original mit markierter Fundstelle.
 
 import { Info, TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
-import { befund, befundSlug, firma, projekt, projektIds } from "@/daten/demo";
+import { einPosten, postenSlug, firma, projekt, projektIds } from "@/daten/demo";
 import type { DokumentArt } from "@/domain/typen";
 import { prozentText } from "@/engine/geld";
 import { KUERZUNGSGRUND_TEXT, type Beleg } from "@/engine";
-import { ART_TEXT, LISTEN, teileTitel } from "@/ui/befund-texte";
-import { Befundflaeche, type BelegAnsicht, type BelegTyp } from "@/ui/Befundflaeche";
+import { ART_TEXT, LISTEN, teileTitel } from "@/ui/posten-texte";
+import { Postenflaeche, type BelegAnsicht, type BelegTyp } from "@/ui/Postenflaeche";
 import { Belegseite, belegDatei } from "@/ui/Belegseite";
 import { betrag, datum } from "@/ui/format";
 import { Freigabeleiste } from "@/ui/Freigabeleiste";
 import { Ico } from "@/ui/Ico";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 
-type Props = { params: Promise<{ projekt: string; befund: string }> };
+type Props = { params: Promise<{ projekt: string; posten: string }> };
 
 export const dynamicParams = false;
 export function generateStaticParams() {
-  return projektIds().flatMap(({ projekt: id }) => projekt(id).e.befunde.map((b) => ({ projekt: id, befund: befundSlug(b.schluessel) })));
+  return projektIds().flatMap(({ projekt: id }) => projekt(id).e.befunde.map((b) => ({ projekt: id, posten: postenSlug(b.schluessel) })));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { projekt: id, befund: slug } = await params;
-  const { d, b } = befund(id, slug);
+  const { projekt: id, posten: slug } = await params;
+  const { d, b } = einPosten(id, slug);
   return { title: `${d.projekt.kurz} ${b.titel}` };
 }
 
@@ -59,9 +59,9 @@ const TYP: Partial<Record<DokumentArt, BelegTyp>> = {
   indexblatt: "tabelle",
 };
 
-export default async function BefundSeite({ params }: Props) {
-  const { projekt: id, befund: slug } = await params;
-  const { d, e, b } = befund(id, slug);
+export default async function PostenSeite({ params }: Props) {
+  const { projekt: id, posten: slug } = await params;
+  const { d, e, b } = einPosten(id, slug);
   const { daten } = firma();
   const t = teileTitel(b.titel);
   const liste = LISTEN.find((l) => l.liste === b.liste)!;
@@ -87,7 +87,7 @@ export default async function BefundSeite({ params }: Props) {
       datei: datei.datei,
       seite: datei.seite,
       seiten: datei.seiten,
-      kurz: zuruf ? "Zuruf" : plan ? `Plan ${plan.index.wert}` : dok ? (KURZ[dok.art] ?? "Beleg") : "Beleg",
+      kurz: zuruf ? "WhatsApp" : plan ? `Plan ${plan.index.wert}` : dok ? (KURZ[dok.art] ?? "Beleg") : "Beleg",
       typ: zuruf ? "zuruf" : dok ? (TYP[dok.art] ?? "sonst") : "sonst",
       seiteInhalt: <Belegseite d={d} beleg={x} />,
     };
@@ -173,11 +173,12 @@ export default async function BefundSeite({ params }: Props) {
         pfad={[
           { text: daten.firma.name, href: "/" },
           { text: d.projekt.kurz, href: `/projekte/${id}/` },
-          { text: "Posten", href: `/projekte/${id}/befunde/` },
+          { text: "Posten", href: `/projekte/${id}/posten/` },
         ]}
         titel={t.kennung ?? ART_TEXT[b.art]}
+        zurueck={`/projekte/${id}/posten/`}
       />
-      <Befundflaeche
+      <Postenflaeche
         kopf={kopf}
         belege={belege}
         start={start}

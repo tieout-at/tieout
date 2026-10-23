@@ -125,7 +125,7 @@ export function zeitachse(d: Datensatz, e: Ergebnis): Ereignis[] {
       zeit: x.zeitpunkt,
       art: "zuruf",
       titel: x.taetigkeit.wert,
-      text: `Zuruf ${x.nr}, ${x.absender}`,
+      text: `WhatsApp-Meldung ${x.nr}, ${x.absender}`,
       marke: null,
       befunde: z.get(x.id)?.length ?? 0,
     });

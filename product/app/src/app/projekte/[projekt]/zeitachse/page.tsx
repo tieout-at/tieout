@@ -5,9 +5,9 @@ import { firma, projekt, projektIds } from "@/daten/demo";
 import { zeitachse } from "@/daten/zeitachse";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 import { Zeitachse, type ZurufEcht } from "@/ui/Zeitachse";
-import type { SzeneZuruf } from "@/ui/ZurufSzene";
+import type { SzeneMeldung } from "@/ui/WhatsAppSzene";
 import { datum } from "@/ui/format";
-import { zurufVerstanden } from "@/ui/zuruf-text";
+import { meldungVerstanden } from "@/ui/meldung-text";
 
 type Props = { params: Promise<{ projekt: string }> };
 
@@ -27,7 +27,7 @@ export default async function ZeitachseSeite({ params }: Props) {
   const { daten } = firma();
   // Für die Szene der jüngste Zuruf des Projekts (W21: Z6).
   const z = [...d.zurufe].sort((a, b) => b.zeitpunkt.localeCompare(a.zeitpunkt))[0];
-  const szene: SzeneZuruf | undefined = z && {
+  const szene: SzeneMeldung | undefined = z && {
     id: z.id,
     nr: z.nr,
     absender: z.absender,
@@ -36,7 +36,7 @@ export default async function ZeitachseSeite({ params }: Props) {
     uhrzeitJa: z.bestaetigt.zeitpunkt.slice(11, 16),
     foto: z.foto !== null,
     transkript: z.transkript.wert,
-    zusammenfassung: zurufVerstanden(z, d.projekt.name),
+    zusammenfassung: meldungVerstanden(z, d.projekt.name),
   };
   // Für den echten Chat; ob er verfügbar ist, fragt die Seite im Browser beim Worker (Schalter ZURUF_ECHT).
   const echt: ZurufEcht = {

@@ -1,4 +1,4 @@
-// Firma für den Zuruf-Agenten aus dem Firmenzwilling der App: eine Quelle, nicht doppelt gepflegt.
+// Firma für den WhatsApp-Agenten aus dem Firmenzwilling der App: eine Quelle, nicht doppelt gepflegt.
 // Der Generator schreibt das Ergebnis nach data/generated/zuruf-firma.json; Worker und lokaler Server lesen es dort.
 // Rufnamen und Bereiche sind nur Orientierung für die KI (wie Leute auf der Baustelle reden), keine Pflichtliste.
 
@@ -8,7 +8,7 @@ import type { Firma as ZurufFirma } from "../../../zuruf/src/firma";
 const LAUFEND: ProjektStatus[] = ["in_ausfuehrung", "sr_vorbereiten"];
 const GEWERK: Record<string, string> = { HKLS: "HKLS (Heizung, Klima, Lüftung, Sanitär)" };
 
-export function zurufFirma(f: Firmendaten): ZurufFirma {
+export function agentFirma(f: Firmendaten): ZurufFirma {
   // „Wohnhausanlage Wien 21“: Gebäudeart vorne, Ort dahinter. Die Gebäudeart ist nur ein Rufname, wenn sie eindeutig ist.
   const art = (name: string) => name.split(" ")[0]!;
   const anzahlArt = new Map<string, number>();

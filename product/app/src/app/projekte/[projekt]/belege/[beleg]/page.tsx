@@ -1,15 +1,15 @@
-// Ein Beleg im Original (Dokument aus dem Ordner oder Zuruf aus WhatsApp): links die Fakten und die Befunde, die ihn
+// Ein Beleg im Original (importiertes Dokument oder WhatsApp-Meldung): links die Fakten und die Posten, die ihn
 // zitieren, rechts die Seite. Ziel jedes Eintrags der Zeitachse.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
 import { notFound } from "next/navigation";
-import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
+import { postenSlug, firma, projekt, projektIds } from "@/daten/demo";
 import { zitate } from "@/daten/zeitachse";
 import type { Datensatz, DokumentArt } from "@/domain/typen";
 import type { Beleg } from "@/engine";
-import { ART_TEXT, teileTitel } from "@/ui/befund-texte";
+import { ART_TEXT, teileTitel } from "@/ui/posten-texte";
 import { AnkerMarke } from "@/ui/AnkerMarke";
 import { Belegseite } from "@/ui/Belegseite";
 import { betrag, datum, zeitpunkt } from "@/ui/format";
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { projekt: id, beleg } = await params;
   const { d } = projekt(id);
   const { dok, zuruf } = finde(d, beleg);
-  return { title: `${d.projekt.kurz} ${zuruf ? `Zuruf ${zuruf.nr}` : dok!.dateiname}` };
+  return { title: `${d.projekt.kurz} ${zuruf ? `WhatsApp-Meldung ${zuruf.nr}` : dok!.dateiname}` };
 }
 
 export default async function BelegSeite({ params }: Props) {
@@ -83,7 +83,7 @@ export default async function BelegSeite({ params }: Props) {
 
   const fakten: [string, string][] = zuruf
     ? [
-        ["Art", "Zuruf"],
+        ["Art", "WhatsApp-Meldung"],
         ["Kanal", "WhatsApp"],
         ["Absender", zuruf.absender],
         ["Zeitpunkt", zeitpunkt(zuruf.zeitpunkt)],
@@ -91,7 +91,7 @@ export default async function BelegSeite({ params }: Props) {
       ]
     : [
         ["Art", ART[dok!.art]],
-        ["Kanal", dok!.kanal === "whatsapp" ? "WhatsApp" : "Ordner"],
+        ["Kanal", dok!.kanal === "whatsapp" ? "WhatsApp" : "Import"],
         ["Datum", datum(dok!.datum)],
         ["Seiten", String(dok!.seiten)],
         ...(kopien > 0 ? ([["Duplikate", `${kopien} zusammengeführt`]] as [string, string][]) : []),
@@ -103,9 +103,10 @@ export default async function BelegSeite({ params }: Props) {
         pfad={[
           { text: daten.firma.name, href: "/" },
           { text: d.projekt.kurz, href: `/projekte/${id}/` },
-          { text: "Belege", href: `/projekte/${id}/ordner/` },
+          { text: "Belege", href: `/projekte/${id}/belege/` },
         ]}
-        titel={zuruf ? `Zuruf ${zuruf.nr}` : ART[dok!.art]}
+        titel={zuruf ? `WhatsApp-Meldung ${zuruf.nr}` : ART[dok!.art]}
+        zurueck={`/projekte/${id}/belege/`}
       />
       <div className="split">
         <div className="split-left">
@@ -128,7 +129,7 @@ export default async function BelegSeite({ params }: Props) {
                   {befunde.map((b) => {
                     const t = teileTitel(b.titel);
                     return (
-                      <Link key={b.schluessel} href={`/projekte/${id}/befunde/${befundSlug(b.schluessel)}/`}>
+                      <Link key={b.schluessel} href={`/projekte/${id}/posten/${postenSlug(b.schluessel)}/`}>
                         <span>
                           {t.kennung && <span className="sw-pos-nr">{t.kennung}</span>}
                           {t.kennung ? t.text : ART_TEXT[b.art]}

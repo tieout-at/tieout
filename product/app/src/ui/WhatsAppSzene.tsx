@@ -9,7 +9,7 @@ import { Check, Mic, Play, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Ico } from "./Ico";
 
-export interface SzeneZuruf {
+export interface SzeneMeldung {
   id: string;
   nr: string;
   absender: string;
@@ -29,7 +29,7 @@ const TAKT = [300, 1100, 2300, 3000, 4300];
 // Wellenform der Sprachnachricht (feste Höhen, damit Server und Browser dasselbe zeichnen).
 const WELLE = [5, 9, 14, 8, 16, 11, 6, 13, 18, 10, 7, 15, 12, 5, 9, 17, 11, 8, 14, 6, 10, 16, 9, 5, 12, 8];
 
-export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void; onZu: () => void }) {
+export function WhatsAppSzene({ z, onJa, onZu }: { z: SzeneMeldung; onJa: () => void; onZu: () => void }) {
   // Ohne Bewegung (Systemeinstellung) steht alles sofort da. Die Szene öffnet erst nach einem Klick, also im Browser.
   const [ruhig] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [schritt, setSchritt] = useState(ruhig ? TAKT.length : 0);
@@ -68,13 +68,13 @@ export function ZurufSzene({ z, onJa, onZu }: { z: SzeneZuruf; onJa: () => void;
   };
 
   return (
-    <div className="szene" role="dialog" aria-modal="false" aria-label={`Zuruf ${z.nr} per WhatsApp, vorgespielt`}>
+    <div className="szene" role="dialog" aria-modal="false" aria-label={`WhatsApp-Meldung ${z.nr}, vorgespielt`}>
       <div className="szene__kopf">
         <span className="szene__avatar" aria-hidden="true">
           S
         </span>
         <span className="szene__wer">
-          <b>Zuruf-Agent</b>
+          <b>WhatsApp-Agent</b>
           <span>{schritt === 4 ? "schreibt …" : "Vorgespielt"}</span>
         </span>
         <button ref={schliessen} type="button" className="sw-btn sw-btn--ghost sw-btn--sm" aria-label="Szene schließen" onClick={onZu}>

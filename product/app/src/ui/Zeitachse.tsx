@@ -7,13 +7,14 @@ import { FileText, Image as Bild, Mail, Map as Karte, MessageCircle, Receipt, Ru
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Ereignis, EreignisArt } from "@/daten/zeitachse";
-import { alsZuruf, type NeuerZuruf } from "@/zuruf/abbildung";
-import { useZurufVerfuegbar } from "@/zuruf/schalter";
-import { useNeueZurufe } from "@/zustand/zurufe";
+import { alsZuruf, type NeueMeldung } from "@/whatsapp/abbildung";
+import { useAgentVerfuegbar } from "@/whatsapp/schalter";
+import { useNeueMeldungen } from "@/zustand/meldungen";
+import { useGemerkt } from "./herkunft";
 import { Ico } from "./Ico";
 import { zeigeToast } from "./Toast";
-import { ZurufChat } from "./ZurufChat";
-import { ZurufSzene, type SzeneZuruf } from "./ZurufSzene";
+import { WhatsAppChat } from "./WhatsAppChat";
+import { WhatsAppSzene, type SzeneMeldung } from "./WhatsAppSzene";
 
 const SYMBOL: Record<EreignisArt, LucideIcon> = {
   zuruf: MessageCircle,
@@ -30,8 +31,8 @@ type Filter = "alle" | "befund" | EreignisArt;
 
 const FILTER: { f: Filter; text: string }[] = [
   { f: "alle", text: "Alle" },
-  { f: "befund", text: "Mit Befund" },
-  { f: "zuruf", text: "Zurufe" },
+  { f: "befund", text: "Mit Posten" },
+  { f: "zuruf", text: "WhatsApp" },
   { f: "mail", text: "Mails" },
   { f: "regie", text: "Regie" },
   { f: "aufmass", text: "Aufmaß" },
@@ -47,9 +48,9 @@ function passt(e: Ereignis, f: Filter): boolean {
 }
 
 /** Neuer Zuruf aus dem Browser als Ereignis, beschriftet wie die Zurufe der Demo. */
-function alsEreignis(n: NeuerZuruf): Ereignis {
+function alsEreignis(n: NeueMeldung): Ereignis {
   const z = alsZuruf(n);
-  return { id: z.id, zeit: z.zeitpunkt, art: "zuruf", titel: z.taetigkeit.wert, text: `Zuruf ${z.nr}, ${z.absender}`, marke: { text: "Offen", ton: "warn" }, befunde: 0 };
+  return { id: z.id, zeit: z.zeitpunkt, art: "zuruf", titel: z.taetigkeit.wert, text: `WhatsApp-Meldung ${z.nr}, ${z.absender}`, marke: { text: "Offen", ton: "warn" }, befunde: 0 };
 }
 
 /** Für den echten Chat (Schalter ZURUF_ECHT im Worker): Projekt, Zahl der Demo-Zurufe und Kurznamen je Projekt. */
@@ -59,17 +60,17 @@ export interface ZurufEcht {
   kurz: Record<string, string>;
 }
 
-export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { ereignisse: Ereignis[]; basis: string; szene?: SzeneZuruf; echt?: ZurufEcht }) {
+export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { ereignisse: Ereignis[]; basis: string; szene?: SzeneMeldung; echt?: ZurufEcht }) {
   // Echter Agent nur, wenn der Worker ihn als verfügbar meldet; sonst (und bis zur Antwort) die vorgespielte Szene.
-  const [verfuegbar, abschalten] = useZurufVerfuegbar(!!echt);
+  const [verfuegbar, abschalten] = useAgentVerfuegbar(!!echt);
   // Neue Zurufe liegen im Browser und kommen zu den vorberechneten Ereignissen dazu.
-  const neue = useNeueZurufe(echt?.projektId ?? "", !!echt);
+  const neue = useNeueMeldungen(echt?.projektId ?? "", !!echt);
   const neuIds = new Map(neue.map((n) => [alsZuruf(n).id, n.ereignis.id]));
   const ereignisse = neue.length
     ? [...vorberechnet, ...neue.map(alsEreignis)].sort((a, b) => b.zeit.localeCompare(a.zeit) || a.id.localeCompare(b.id))
     : vorberechnet;
   const [chat, setChat] = useState(false);
-  const [filter, setFilter] = useState<Filter>("alle");
+  const [filter, setFilter] = useGemerkt<Filter>("filter", "alle");
   // Während die Szene läuft, fehlt ihr Zuruf in der Zeitachse; nach „Ja“ erscheint er markiert.
   const [spielt, setSpielt] = useState(false);
   const [neu, setNeu] = useState<string | null>(null);
@@ -134,7 +135,7 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
         )}
       </div>
       {chat && echt && (
-        <ZurufChat
+        <WhatsAppChat
           projektId={echt.projektId}
           demoAnzahl={echt.demoAnzahl}
           kurz={echt.kurz}
@@ -149,15 +150,15 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
             if (szene) setSpielt(true);
           }}
           onNeu={(id, nr, projekt) => {
-            if (projekt !== echt.projektId) return zeigeToast(`Zuruf ${nr} in ${echt.kurz[projekt] ?? projekt} abgelegt`);
+            if (projekt !== echt.projektId) return zeigeToast(`WhatsApp-Meldung ${nr} in ${echt.kurz[projekt] ?? projekt} abgelegt`);
             setFilter((f) => (f === "alle" || f === "zuruf" ? f : "alle"));
             setNeu(id);
-            zeigeToast(`Zuruf ${nr} in der Zeitachse`);
+            zeigeToast(`WhatsApp-Meldung ${nr} in der Zeitachse`);
           }}
         />
       )}
       {spielt && szene && (
-        <ZurufSzene
+        <WhatsAppSzene
           z={szene}
           onZu={() => {
             setSpielt(false);
@@ -167,7 +168,7 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
             setSpielt(false);
             setFilter((f) => (f === "alle" || f === "zuruf" ? f : "alle"));
             setNeu(szene.id);
-            zeigeToast(`Zuruf ${szene.nr} in der Zeitachse`);
+            zeigeToast(`WhatsApp-Meldung ${szene.nr} in der Zeitachse`);
           }}
         />
       )}
@@ -187,14 +188,14 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
                 <span className="zeit-ev__knoten">
                   <Ico icon={SYMBOL[e.art]} />
                 </span>
-                <Link className="zeit-ev__inhalt" href={neuIds.has(e.id) ? `${basis}/zuruf/?id=${encodeURIComponent(neuIds.get(e.id)!)}` : `${basis}/ordner/${e.id}`}>
+                <Link className="zeit-ev__inhalt" href={neuIds.has(e.id) ? `${basis}/whatsapp/?id=${encodeURIComponent(neuIds.get(e.id)!)}` : `${basis}/belege/${e.id}`}>
                   <span className="zeit-ev__titel">
                     <b>{e.titel}</b>
                     {e.marke && <span className={e.marke.ton === "warn" ? "sw-dotlabel sw-dotlabel--warn zeit-ev__marke" : "sw-dotlabel zeit-ev__marke"}>{e.marke.text}</span>}
                   </span>
                   <span className="zeit-ev__text">{e.text}</span>
                 </Link>
-                <span className="zeit-ev__befund">{e.befunde > 0 && (e.befunde === 1 ? "1 Befund" : `${e.befunde} Befunde`)}</span>
+                <span className="zeit-ev__posten">{e.befunde > 0 && (e.befunde === 1 ? "1 Posten" : `${e.befunde} Posten`)}</span>
               </li>
             ))}
           </ol>

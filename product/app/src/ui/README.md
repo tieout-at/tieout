@@ -14,13 +14,13 @@ Since 22.10.2026 the app is the source of the UI foundation. Rules, terms and th
 | Panel | `Panel.tsx` | Linear, Attio (border instead of shadow) |
 | Status marker | `Statusmarke.tsx` | Linear labels |
 | Status | `Stand.tsx` | Linear status column, reebuild approval |
-| Step bar (flow, new 22.10.) | `Schrittleiste.tsx`, `ablauf.css` | Linear project "Milestones" (columns with a number), Stripe payment timeline (marker on a line), reebuild R-E (fixed, numbered steps). Chosen over the Stripe setup checklist (vertical, too much height and text) and reebuild pills (status only, no number). Every step shows the number from the calculation core and is a link as a whole (folder, folder, ledger, findings). Step 4: one stroke per item in a fixed order, colored by status (instead of a progress ring without content) |
-| Findings table | `BefundTabelle.tsx` | Linear "Group by", reebuild R-B, Ramp (notice on the row) |
+| Step bar (flow, new 22.10.) | `Schrittleiste.tsx`, `ablauf.css` | Linear project "Milestones" (columns with a number), Stripe payment timeline (marker on a line), reebuild R-E (fixed, numbered steps). Chosen over the Stripe setup checklist (vertical, too much height and text) and reebuild pills (status only, no number). Every step shows the number from the calculation core and is a link as a whole (Belege, Belege, LV-Positionen, Posten). Step 4: one stroke per item in a fixed order, colored by status (instead of a progress ring without content) |
+| Item table (Posten) | `PostenTabelle.tsx` | Linear "Group by", reebuild R-B, Ramp (notice on the row) |
 | Row navigation | `Zeilennavigation.tsx` | Linear (click, Enter, j/k) |
 | Timeline | `Zeitachse.tsx` | Linear activity (icon on the line), Attio timeline (month headers), filters as tabs with counters |
-| Field report scene (Zuruf, mock) | `ZurufSzene.tsx` | Messenger chat, neutral without a third-party brand; paper colors like evidence (Belege) |
-| Ledger | `LedgerTabelle.tsx` | reebuild R-B, Linear "Group by", Attio search above the table. Row 36 px, header 32 px without fill, fixed columns (`.tab-liste`); on the phone the right edge fades out while more columns follow (`.tw`, `.ledger-rahmen`, controlled by scrolling); column „Nächste AR“ (next interim invoice) shows the quantity from the calculation core, no marker per row |
-| Evidence matrix and document list | `Ordner.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B. Single line, an empty cell means no evidence (no word), a row with a finding (Befund) opens it via click, Enter, j/k |
+| WhatsApp scene (mock) | `WhatsAppSzene.tsx` | Messenger chat, neutral without a third-party brand; paper colors like evidence (Belege) |
+| LV-Positionen | `PositionenTabelle.tsx` | reebuild R-B, Linear "Group by", Attio search above the table. Row 36 px, header 32 px without fill, fixed columns (`.tab-liste`); on the phone the right edge fades out while more columns follow (`.tw`, `.positionen-rahmen`, controlled by scrolling); column „Nächste AR“ (next interim invoice) shows the quantity from the calculation core, no marker per row |
+| Evidence matrix and document list (Belege) | `Belege.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B. Single line, an empty cell means no evidence (no word), a row with an item (Posten) opens it via click, Enter, j/k |
 | **Project list with traffic light** (new) | `../app/page.tsx` | Linear project list (groups by state, counter in the group header), reebuild R-B (amounts right-aligned, totals), status marker for the traffic light |
 
 ## Project list with traffic light

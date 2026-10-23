@@ -1,6 +1,6 @@
 # Demo dataset: built-in cases (solution list v2)
 
-As of: 22.10.2026, **v2** following Dossier v3 (company with 8 projects, field reports (Zurufe), GC history; changes below under "Changes compared to v1"). v1 came from the reviewer round (findings 1–40, "Changes compared to v0"). **Everything is synthetic and fictitious.** This list is the target for the generator: the calculation core must find exactly these cases, with exactly these amounts and without false alarms. All figures have been recalculated to the cent by script. Not yet reviewed professionally by someone from construction: assumptions are marked with **(Annahme)** (assumption).
+As of: 22.10.2026, **v2** following Dossier v3 (company with 8 projects, WhatsApp messages (WhatsApp-Meldungen), GC history; changes below under "Changes compared to v1"). v1 came from the reviewer round (findings 1–40, "Changes compared to v0"). **Everything is synthetic and fictitious.** This list is the target for the generator: the calculation core must find exactly these cases, with exactly these amounts and without false alarms. All figures have been recalculated to the cent by script. Not yet reviewed professionally by someone from construction: assumptions are marked with **(Annahme)** (assumption).
 
 **Demo reference date (Demo-Stichtag):** Thursday, 22.10.2026. The demo always calculates with this "today" so that traffic light and status stay the same.
 
@@ -9,7 +9,7 @@ As of: 22.10.2026, **v2** following Dossier v3 (company with 8 projects, field r
 - **Haustechnik Beispiel GmbH (fiktiv)**, HVAC and plumbing (HKLS), based in Vienna. 8 projects in the twin, contract sums totalling 6.560.000,00 €.
 - Clients (all fictitious): **Hochbau Beispiel GmbH** (general contractor (GU), 4 projects), **Generalbau Beispiel AG** (GU, 2 projects), **Gemeinde Beispielstadt** (public client (öffentlicher AG), 1 project), **Wohnbau Beispiel GmbH** (property developer (Bauträger), 1 project).
 - Employees appear only as a role (e.g. "Monteur, Trupp 2" (fitter, crew 2)), never by name.
-- Assumption for the demo: bill of quantities (LV), measurements (Aufmaß), interim invoices (Abschlagsrechnungen) and contracts are in the company's ERP; daywork reports (Regieberichte) on paper (scan), mails in the mailbox, field reports (Zurufe) via WhatsApp. Needed for the column "Belegquelle" (evidence source).
+- Assumption for the demo: bill of quantities (LV), measurements (Aufmaß), interim invoices (Abschlagsrechnungen) and contracts are in the company's ERP; daywork reports (Regieberichte) on paper (scan), mails in the mailbox, WhatsApp messages (WhatsApp-Meldungen) via WhatsApp. Needed for the column "Belegquelle" (evidence source).
 
 ## Project W21 (fully worked out)
 
@@ -25,7 +25,7 @@ As of: 22.10.2026, **v2** following Dossier v3 (company with 8 projects, field r
 - LV: 380 positions (LG 22 heating 124, LG 24 sanitary 138, LG 26 ventilation 82, LG 28 MSR (measurement, control and regulation) 36).
 - Daywork reports: 16, of which 11 invoiced, 3 signed and not invoiced (J2–J4), 2 not signed (O1, O2).
 - Plan H-201: index C 1 radiator per unit (Top) 7–13 (7 pcs), index D 3 per unit (21 pcs, +14).
-- **Field reports (Zurufe): 6** via WhatsApp (channel WhatsApp, not in the folder; the 81 documents remain). Per field report: voice message with transcript, a photo in 5 cases, time taken from the message timestamp (Annahme: WhatsApp removes EXIF, unverified according to the dossier, to be tested), sender as a role, confirmed by the sender. 4 support existing items, 2 have no daywork report (O4, O5).
+- **WhatsApp messages (WhatsApp-Meldungen): 6** via WhatsApp (channel WhatsApp, not in the folder; the 81 documents remain). Per field report: voice message with transcript, a photo in 5 cases, time taken from the message timestamp (Annahme: WhatsApp removes EXIF, unverified according to the dossier, to be tested), sender as a role, confirmed by the sender. 4 support existing items, 2 have no daywork report (O4, O5).
 
 | # | Time | Sender | Content (transcript, shortened) | Photo | Reference |
 |---|---|---|---|---|---|
@@ -141,7 +141,7 @@ Small, but real datasets: the calculation core calculates their amounts as for W
 
 **Rule for ongoing projects (without final invoice draft):** work performed against interim invoices. A finding arises only for work whose measurement sheet or daywork report is dated **before the date of the last interim invoice** and is in no AR. This applies to both lists. Newer work is normal and goes into the next AR, it is not a finding (Annahme, to be checked with the insider). Signed daywork → list 1, unsigned → list 2, as for W21. New finding type "performed, not invoiced" (erbracht, nicht verrechnet) for quantities that stay below the LV quantity.
 
-**What the tool shows for P2 to P5:** overview, ledger and findings. Pre-check and cascade only for W21 (Annahme for the demo). P2 to P8 have all measurement sheets countersigned and no correction sheets for open ARs.
+**What the tool shows for P2 to P5:** overview, LV-Positionen and items (Posten). Pre-check and cascade only for W21 (Annahme for the demo). P2 to P8 have all measurement sheets countersigned and no correction sheets for open ARs.
 
 | # | Project | Client | Contract sum | Status | Date | Billable now | Notified and open | Traffic light |
 |---|---|---|---|---|---|---|---|---|
@@ -226,7 +226,7 @@ Spoken sentence in the script (0:25, HVAC and plumbing version instead of "Steck
 1. Fitter, crew 1 sends a photo (radiator in the new place) and a voice message (transcript as Z6).
 2. Agent replies: "Thanks. This is how I understood it: Wohnhausanlage Wien 21, staircase 2, unit 9. Radiator in the living room relocated, no LV position. 6 h fitter, 6 h helper. Instructed by the GU foreman. Daywork report: none. Is that correct?" Buttons: "Ja" (Yes), "Ändern" (Change).
 3. Tap on "Ja". Agent: "Gespeichert." (Saved.)
-4. The timeline shows the entry "08.09.2026, 14:30 · Zuruf · Heizkörper Top 9 versetzt" (field report · radiator unit 9 relocated) with photo and transcript, and list 2 shows item O4 (687,00 €).
+4. The timeline shows the entry "08.09.2026, 14:30 · WhatsApp-Meldung · Heizkörper Top 9 versetzt" (field report · radiator unit 9 relocated) with photo and transcript, and list 2 shows item O4 (687,00 €).
 
 The agent names no amount and does not say whether something is billable. The amount is only shown by the tool, from the calculation core.
 

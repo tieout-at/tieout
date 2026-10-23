@@ -7,27 +7,27 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Angabe, Eintrag, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
-import { alsZuruf, offenText, type NeuerZuruf } from "@/zuruf/abbildung";
-import { useNeueZurufe } from "@/zustand/zurufe";
+import { alsZuruf, offenText, type NeueMeldung } from "@/whatsapp/abbildung";
+import { useNeueMeldungen } from "@/zustand/meldungen";
 import { zeitpunkt } from "./format";
 import { GruppenTitel } from "./Gruppe";
 
-const href = (basis: string, n: NeuerZuruf) => `${basis}/zuruf/?id=${encodeURIComponent(n.ereignis.id)}`;
+const href = (basis: string, n: NeueMeldung) => `${basis}/whatsapp/?id=${encodeURIComponent(n.ereignis.id)}`;
 
-/** Gruppe „Neu per Zuruf“ hinter „Angemeldet und offen“ in der Befundtabelle. Ohne neue Zurufe: nichts. */
-export function NeueZurufZeilen({ projektId, basis }: { projektId: string; basis: string }) {
-  const neue = useNeueZurufe(projektId, true);
+/** Gruppe „Neu per WhatsApp“ hinter „Angemeldet und offen“ in der Postentabelle. Ohne neue Meldungen: nichts. */
+export function NeueMeldungZeilen({ projektId, basis }: { projektId: string; basis: string }) {
+  const neue = useNeueMeldungen(projektId, true);
   if (!neue.length) return null;
   return (
     <tbody data-gruppe="zuruf-neu">
       <tr className="grp">
         <td>
           <GruppenTitel>
-            <span className="sw-dotlabel sw-dotlabel--warn">Neu per Zuruf, ohne Betrag</span>
+            <span className="sw-dotlabel sw-dotlabel--warn">Neu per WhatsApp, ohne Betrag</span>
             <span className="sw-count">{neue.length}</span>
           </GruppenTitel>
         </td>
-        <td className="befund-art nur-breit" />
+        <td className="posten-art nur-breit" />
         <td className="r" />
         <td className="nur-breit" />
         <td className="nur-breit" />
@@ -43,7 +43,7 @@ export function NeueZurufZeilen({ projektId, basis }: { projektId: string; basis
                 {z.taetigkeit.wert}
               </Link>
             </td>
-            <td className="befund-art neben nur-breit">Zuruf</td>
+            <td className="posten-art neben nur-breit">WhatsApp</td>
             <td className="r" />
             <td className="risk nur-breit" />
             <td className="nur-breit sw-muted" title={`Offen: ${offenText(n.ereignis)}`}>
@@ -116,21 +116,21 @@ function Chat({ e, nachrichten, absender }: { e: Leistungsereignis; nachrichten:
   );
 }
 
-/** Belegseite eines neuen Zurufs: links die Angaben mit Zitat, rechts die Nachrichten im Original. */
-export function NeuerZurufBeleg({ projektId, kurz }: { projektId: string; kurz: Record<string, string> }) {
+/** Belegseite einer neuen WhatsApp-Meldung: links die Angaben mit Zitat, rechts die Nachrichten im Original. */
+export function NeueMeldungBeleg({ projektId, kurz }: { projektId: string; kurz: Record<string, string> }) {
   const id = useSearchParams().get("id");
-  const n = useNeueZurufe(projektId, true).find((x) => x.ereignis.id === id);
+  const n = useNeueMeldungen(projektId, true).find((x) => x.ereignis.id === id);
   if (!n) {
     return (
       <main className="scr-body">
-        <p className="sw-muted">Dieser Zuruf liegt nicht in diesem Browser.</p>
+        <p className="sw-muted">Diese WhatsApp-Meldung liegt nicht in diesem Browser.</p>
       </main>
     );
   }
   const z = alsZuruf(n);
   const e = n.ereignis;
   const fakten: [string, string][] = [
-    ["Art", "Zuruf"],
+    ["Art", "WhatsApp-Meldung"],
     ["Kanal", "WhatsApp, Demo-Chat"],
     ["Absender", z.absender],
     ["Zeitpunkt", zeitpunkt(z.zeitpunkt)],

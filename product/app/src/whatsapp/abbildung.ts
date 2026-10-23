@@ -21,7 +21,7 @@ const OFFEN: Partial<Record<Feldname, string>> = {
 };
 
 /** Ein gespeicherter neuer Zuruf im Browser: aktuelle Fassung des Ereignisses, seine Nachrichten, die vergebene Nummer. */
-export interface NeuerZuruf {
+export interface NeueMeldung {
   nr: string;
   ereignis: Leistungsereignis;
   nachrichten: Nachricht[];
@@ -33,7 +33,7 @@ function feld<T>(id: string, a: Angabe<T> | undefined, leer: T): Feld<T> {
   return { wert: a ? a.wert : leer, quelle: { dokumentId: id, seite: 1, stelle: a ? `„${a.zitat}“` : undefined } };
 }
 
-export function alsZuruf(n: NeuerZuruf): Zuruf {
+export function alsZuruf(n: NeueMeldung): Zuruf {
   const { ereignis: e } = n;
   const id = neueZurufId(e.id);
   const absender = ROLLE[e.rolle];

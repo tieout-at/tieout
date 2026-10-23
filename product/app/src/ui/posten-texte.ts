@@ -8,7 +8,7 @@ export const ART_TEXT: Record<BefundArt, string> = {
   mehrmenge: "Mehrmenge",
   nicht_verrechnet: "Erbracht, nicht verrechnet",
   regie: "Regie",
-  regie_zuruf: "Regie aus Zuruf",
+  regie_zuruf: "Regie aus WhatsApp",
   preisumrechnung: "Preisumrechnung",
   aenderung: "Änderung",
   pauschale: "Pauschale",

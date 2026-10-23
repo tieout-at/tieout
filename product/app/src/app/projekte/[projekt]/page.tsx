@@ -4,9 +4,9 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { befundSlug, firma, projekt, projektIds } from "@/daten/demo";
+import { postenSlug, firma, projekt, projektIds } from "@/daten/demo";
 import type { Ergebnis } from "@/engine";
-import { BefundTabelle } from "@/ui/BefundTabelle";
+import { PostenTabelle } from "@/ui/PostenTabelle";
 import { anzahl, betrag, datum } from "@/ui/format";
 import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
 import { Panel } from "@/ui/Panel";
@@ -48,7 +48,7 @@ export default async function ProjektUebersicht({ params }: Props) {
   const p = d.projekt;
   const ag = daten.auftraggeber.find((a) => a.id === p.auftraggeberId);
   const basis = `/projekte/${id}`;
-  const href = (schluessel: string) => `${basis}/befunde/${befundSlug(schluessel)}/`;
+  const href = (schluessel: string) => `${basis}/posten/${postenSlug(schluessel)}/`;
   // „Braucht Anwalt“ geht an die Kanzlei und ist damit schon entschieden: zählt weder bei „Zu entscheiden“ noch bei
   // „x von y freigegeben“, steht in der Tabelle als eigene Gruppe mit eigenem Zähler.
   const entscheiden = e.befunde.filter((b) => b.liste !== "anwalt").map((b) => ({ schluessel: b.schluessel, liste: b.liste, href: href(b.schluessel) }));
@@ -59,7 +59,7 @@ export default async function ProjektUebersicht({ params }: Props) {
   const zurufeAlsBeleg = new Set(
     e.befunde.filter((b) => b.art !== "regie_zuruf").flatMap((b) => b.belege.map((x) => x.quelle.dokumentId).filter((x) => zurufIds.has(x))),
   ).size;
-  const einlesenZeile = [zurufe ? anzahl(zurufe, "Zuruf", "Zurufe") : "", e.import.duplikate ? anzahl(e.import.duplikate, "Duplikat", "Duplikate") : ""].filter(Boolean).join(", ");
+  const einlesenZeile = [zurufe ? anzahl(zurufe, "WhatsApp-Meldung", "WhatsApp-Meldungen") : "", e.import.duplikate ? anzahl(e.import.duplikate, "Duplikat", "Duplikate") : ""].filter(Boolean).join(", ");
 
   return (
     <>
@@ -110,24 +110,24 @@ export default async function ProjektUebersicht({ params }: Props) {
           <>
             <Schrittleiste
               schritte={[
-                { titel: "Einlesen", zahl: e.import.dokumente, einheit: e.import.dokumente === 1 ? "Dokument" : "Dokumente", zeile: einlesenZeile, erledigt: true, href: `${basis}/ordner` },
+                { titel: "Einlesen", zahl: e.import.dokumente, einheit: e.import.dokumente === 1 ? "Dokument" : "Dokumente", zeile: einlesenZeile, erledigt: true, href: `${basis}/belege` },
                 {
                   titel: "Datensätze",
                   zahl: e.import.eindeutig,
                   einheit: "eindeutig",
                   zeile: anzahl(e.import.korrigierteFelder, "Feld korrigiert", "Felder korrigiert"),
                   erledigt: true,
-                  href: `${basis}/ordner`,
+                  href: `${basis}/belege`,
                   hinweis: "Ein Datensatz je Dokument ohne Duplikate, jedes Feld mit Quelle",
                 },
-                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(e.befunde.length, "Posten", "Posten"), erledigt: true, href: `${basis}/ledger` },
+                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(e.befunde.length, "Posten", "Posten"), erledigt: true, href: `${basis}/positionen` },
                 {
                   titel: "Prüfen und Freigeben",
                   zahl: <FreigegebenZahl projektId={id} posten={entscheiden} />,
                   einheit: "freigegeben",
                   zeile: <FreigabeStriche projektId={id} posten={entscheiden} />,
                   erledigt: false,
-                  href: `${basis}/befunde`,
+                  href: `${basis}/posten`,
                 },
               ]}
             />
@@ -144,7 +144,7 @@ export default async function ProjektUebersicht({ params }: Props) {
             </Kennzahlen>
             <div className="cols">
               <Panel titel="Zu entscheiden" rechts={<span className="sw-count">{entscheiden.length}</span>}>
-                <BefundTabelle projektId={id} befunde={e.befunde} summen={e.summen} risiken={risiken} href={(b) => href(b.schluessel)} />
+                <PostenTabelle projektId={id} befunde={e.befunde} summen={e.summen} risiken={risiken} href={(b) => href(b.schluessel)} />
               </Panel>
               <aside className="ab-props">
                 <section className="ab-props__gruppe">
@@ -159,7 +159,7 @@ export default async function ProjektUebersicht({ params }: Props) {
                 {zurufe > 0 && (
                   <section className="ab-props__gruppe">
                     <h3 className="ab-props__kopf">
-                      <Link href={`${basis}/zeitachse`}>Zurufe</Link> <span className="sw-count">{zurufe}</span>
+                      <Link href={`${basis}/zeitachse`}>WhatsApp-Meldungen</Link> <span className="sw-count">{zurufe}</span>
                     </h3>
                     <Eigenschaft text="Als Beleg" wert={zurufeAlsBeleg} />
                     <Eigenschaft text="Ohne Regiebericht" wert={zurufePosten} />

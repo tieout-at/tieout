@@ -53,10 +53,10 @@ export function projektNav(p: Pick<NavProjekt, "id" | "abgleich">): Eintrag[] {
   const keinAbgleich = p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen";
   return [
     { href: `${basis}/`, icon: LayoutGrid, text: "Übersicht" },
-    { href: `${basis}/befunde/`, icon: ListChecks, text: "Posten", praefix: true, posten: true, folgt: keinAbgleich },
+    { href: `${basis}/posten/`, icon: ListChecks, text: "Posten", praefix: true, posten: true, folgt: keinAbgleich },
     { href: `${basis}/schlussrechnung/`, icon: FileText, text: "Schlussrechnung", folgt: "Schlussrechnung folgt in UI-Runde 1, Schritt 3b" },
-    { href: `${basis}/ordner/`, icon: FolderOpen, text: "Belege", praefix: true },
-    { href: `${basis}/ledger/`, icon: Table, text: "LV-Positionen", folgt: keinAbgleich },
+    { href: `${basis}/belege/`, icon: FolderOpen, text: "Belege", praefix: true },
+    { href: `${basis}/positionen/`, icon: Table, text: "LV-Positionen", folgt: keinAbgleich },
     { href: `${basis}/zeitachse/`, icon: History, text: "Zeitachse" },
   ].filter((e) => !e.folgt);
 }

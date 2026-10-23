@@ -1,10 +1,10 @@
-// Beleg eines neuen Zurufs aus dem echten Chat (Schalter ZURUF_ECHT an). Die Seite ist statisch, der Zuruf liegt im
-// Browser: Kennung als ?id=…, gelesen im Browser. Ziel der neuen Einträge in Zeitachse und Befunden.
+// Beleg einer neuen WhatsApp-Meldung aus dem echten Chat (Schalter ZURUF_ECHT an). Die Seite ist statisch, die Meldung
+// liegt im Browser: Kennung als ?id=…, gelesen im Browser. Ziel der neuen Einträge in Zeitachse und Posten.
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { firma, projekt, projektIds } from "@/daten/demo";
-import { NeuerZurufBeleg } from "@/ui/NeueZurufe";
+import { NeueMeldungBeleg } from "@/ui/NeueMeldungen";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 
 type Props = { params: Promise<{ projekt: string }> };
@@ -16,10 +16,10 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { d } = projekt((await params).projekt);
-  return { title: `${d.projekt.kurz} Neuer Zuruf` };
+  return { title: `${d.projekt.kurz} Neue WhatsApp-Meldung` };
 }
 
-export default async function NeuerZurufSeite({ params }: Props) {
+export default async function NeueMeldungSeite({ params }: Props) {
   const id = (await params).projekt;
   const { d } = projekt(id);
   const { daten } = firma();
@@ -32,10 +32,11 @@ export default async function NeuerZurufSeite({ params }: Props) {
           { text: d.projekt.kurz, href: `/projekte/${id}/` },
           { text: "Zeitachse", href: `/projekte/${id}/zeitachse` },
         ]}
-        titel="Neuer Zuruf"
+        titel="Neue WhatsApp-Meldung"
+        zurueck={`/projekte/${id}/zeitachse/`}
       />
       <Suspense>
-        <NeuerZurufBeleg projektId={id} kurz={kurz} />
+        <NeueMeldungBeleg projektId={id} kurz={kurz} />
       </Suspense>
     </>
   );

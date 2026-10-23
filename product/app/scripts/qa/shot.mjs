@@ -1,6 +1,6 @@
 // Ein Screenshot mit Edge headless (Windows), wartet, bis die Datei da ist.
 // Aufruf: node scripts/qa/shot.mjs <name> <url> [breite,höhe] [dunkel]
-// Beispiel: node scripts/qa/shot.mjs ledger http://localhost:3100/projekte/w21-b-hkls/ledger 1440,900 dunkel
+// Beispiel: node scripts/qa/shot.mjs positionen http://localhost:3100/projekte/w21-b-hkls/positionen 1440,900 dunkel
 // Ablage: qa-shots/<name>.png (nicht im Repository). Edge rendert headless nicht schmaler als etwa 500 px.
 
 import { spawn } from "node:child_process";

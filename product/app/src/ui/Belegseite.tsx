@@ -7,7 +7,7 @@ import type { Datensatz, Dokument, Quelle, Rechnung, Zuruf } from "@/domain/type
 import { menge, prozentText } from "@/engine/geld";
 import type { Beleg } from "@/engine/typen";
 import { betrag, datum, zeitpunkt } from "./format";
-import { zurufAntwort } from "./zuruf-text";
+import { meldungAntwort } from "./meldung-text";
 
 function Synth() {
   return <span className="sw-page__synth">Synthetisch</span>;
@@ -253,7 +253,7 @@ function ZurufSeite({ z, projektName }: { z: Zuruf; projektName: string }) {
         <span className="sw-mark">„{z.transkript.wert}“</span>
         <span className="chat__zeit">{z.zeitpunkt.slice(11, 16)}</span>
       </div>
-      <div className="chat__msg chat__msg--ein">{zurufAntwort(z, projektName)}</div>
+      <div className="chat__msg chat__msg--ein">{meldungAntwort(z, projektName)}</div>
       <div className="chat__msg chat__msg--aus chat__msg--kurz">
         Ja<span className="chat__zeit">{z.bestaetigt.zeitpunkt.slice(11, 16)}</span>
       </div>

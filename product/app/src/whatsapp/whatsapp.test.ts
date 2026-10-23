@@ -1,15 +1,15 @@
-// Einbau des Zuruf-Agenten: Firma für den Agenten, Abbildung Leistungsereignis → Zuruf, Wortlaut der Szene.
+// Einbau des WhatsApp-Agenten: Firma für den Agenten, Abbildung Leistungsereignis → Zuruf, Wortlaut der Szene.
 import { describe, expect, it } from "vitest";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
-import { zurufAntwort } from "@/ui/zuruf-text";
+import { meldungAntwort } from "@/ui/meldung-text";
 import type { Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
 import { alsZuruf, offenText } from "./abbildung";
-import { zurufFirma } from "./firma";
+import { agentFirma } from "./firma";
 
 const daten = erzeugeFirma();
 
-describe("Firma für den Zuruf-Agenten", () => {
-  const f = zurufFirma(daten);
+describe("Firma für den WhatsApp-Agenten", () => {
+  const f = agentFirma(daten);
 
   it("kommt aus dem Firmenzwilling: alle Projekte mit denselben Kennungen", () => {
     expect(f.name).toBe(daten.firma.name);
@@ -68,7 +68,7 @@ describe("Wortlaut der Szene", () => {
   it("Szene und Belegseite sagen dasselbe wie die Lösungsliste (Demo_Faelle.md, Szene Schritt 2)", () => {
     const w21 = daten.projekte[0]!;
     const z6 = w21.zurufe.find((z) => z.nr === "Z6")!;
-    expect(zurufAntwort(z6, w21.projekt.name)).toBe(
+    expect(meldungAntwort(z6, w21.projekt.name)).toBe(
       "Danke. So habe ich es verstanden: Wohnhausanlage Wien 21, Stiege 2, Top 9. Heizkörper im Wohnzimmer versetzt, keine LV-Position. 6 h Monteur, 6 h Helfer. Angewiesen vom Polier GU. Regiebericht: keiner. Stimmt das?",
     );
   });
