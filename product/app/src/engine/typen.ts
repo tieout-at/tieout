@@ -215,4 +215,16 @@ export interface FirmenErgebnis {
   };
   /** Früheste „Schlussrechnung legen bis“ ab dem Stichtag unter den offenen Projekten. */
   naechsteSchlussrechnung: { projektId: string; datum: Datum } | null;
+  /** „Nur außerhalb ERP“ über alle offenen Projekte, gleiche Form wie je Projekt (Annahme: Datei = ERP). */
+  ausserhalbErp: Ergebnis["ausserhalbErp"];
+  /** Listen 1 und 2 der offenen Projekte nach Stand des Belegs (Regel in `geldStand`). */
+  geld: Record<GeldStand, { betrag: Cent; anzahl: number }>;
 }
+
+/**
+ * Stand des Belegs eines Postens mit Betrag in Liste 1 oder 2:
+ * „belegt“ = Liste 1; „beleg_fehlt“ = Liste 2, Abhilfe ist ein Regiebericht oder eine Unterschrift
+ * (Regie nicht unterschrieben, Regie nur aus WhatsApp-Meldung); „angemeldet“ = Liste 2, angemeldet,
+ * aber nie bepreist (Änderung per Mail).
+ */
+export type GeldStand = "belegt" | "beleg_fehlt" | "angemeldet";
