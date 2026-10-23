@@ -1,6 +1,6 @@
 # tieout: rules for Claude Code
 
-This folder is the public repository github.com/tieout-at/tieout (public because the hackathon jury has the link). Strategy, prices, gates, the dossier and team status live in the private repository tieout-at/intern, cloned next to this folder as `../tieout-intern` (read it, never copy from it into this repository). Read this file, then `docs/_UEBERGABE.md` and `docs/_STATUS.md`.
+This folder is the public repository github.com/tieout-at/tieout (opened for the hackathon jury; the hackathon has ended, and the product is now developed without a deadline until it is ready for customers and investors). Strategy, prices, gates, the dossier and team status live in the private repository tieout-at/intern, cloned next to this folder as `../tieout-intern` (read it, never copy from it into this repository). Read this file, then `docs/_UEBERGABE.md` and `docs/_STATUS.md`.
 
 ## Where things stand
 

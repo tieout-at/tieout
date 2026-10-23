@@ -14,13 +14,13 @@
 
 | No. | Step | Result | Check-in | Status |
 |---|---|---|---|---|
-| 0 | Neuordnung | tag and branch v1, worker `app` frozen, new folder and structure, `intern` as `tieout-intern`, old folders removed | jury link still shows v1, structure and log accepted | done 23.10. |
+| 0 | Neuordnung | tag and branch v1, worker `app` frozen, new folder and structure, `intern` as `tieout-intern`, old folders removed | public link (`app.tieout.workers.dev`) still shows v1, structure and log accepted | done 23.10. |
 | 0b | Inhalt neu | `SPEZIFIKATION.md` from zero along Ihre Daten, Zwilling, Ergebnis: objects, screens, Abschluss-Lauf, vocabulary, demo case; every Attio element measured against the three steps; decision what to port from the v1 core; first customer test | specification and customer test accepted | done 23.10.: `SPEZIFIKATION.md`, customer test 1 passed, decisions E1 to E16 taken (delegated by Maxi S. to Claude) |
 | 0c | Demo-Daten neu | solution list v3 per `SPEZIFIKATION.md` 7.1: short professional names, 5 projects, at most 8 finds in the main project, realistic amounts, figures for E13 and E14, floor with Mittellohnkosten; spec examples switched | list recomputed by script and by an independent checker, go by Maxi S. | done 23.10.: `Demo_Faelle.md` v3 and `demo_faelle_check.mjs` (every amount, every date, amount audit of the specification); checker found no arithmetic error, 28 notes worked in; go by Maxi S. |
 | 1 | Hülle | app created, tokens as `DESIGN.md`, sidebar with the sections "Ihre Daten", "Digitaler Zwilling", "Ergebnis" (specification 4.1), header, Strg K, all navigation points with empty states as in Attio; online at `app-neu` | screenshot next to Attio | next |
 | 2 | Kern | calculation per specification (ported or new), tests against the solution list, amount audit | tests green, amounts unchanged or changed with a go | open |
 | 3 | Tabellen | view bar, table, sort, filter, columns, footer; projects and Funde with sample data | tables | open |
-| 4 | Datensätze | project and Auftraggeber: attributes, highlights, tabs, activity, history | project Wohnpark Mooshaim | open |
+| 4 | Datensätze | project and Auftraggeber: attributes, highlights, tabs, activity, history; decide the draft "making the twin visible" (`SPEZIFIKATION.md` 4.4) | project Wohnpark Mooshaim | open |
 | 5 | Funde | calculation path, documents, original on the right, decision, history; second customer test | radiator find F1 played through, test passed | open |
 | 6 | Board und Listen | kanban by stage, lists | board Wohnpark Mooshaim | open |
 | 7 | Aufgaben, Notizen, Start | tasks from gaps, modal, notes, start page | start page | open |
@@ -28,9 +28,9 @@
 | 9 | Abläufe | canvas one to one as in Attio with triggers, run steps, checks and tasks; "Abschluss-Lauf", "Lauf je Abschlagsrechnung", "Meldung zu Regiebericht"; runs (`SPEZIFIKATION.md` 5.2) | run for the main project, live | open |
 | 10 | Backend | sign-in on, company, files, decisions, demo access | two accounts, one file, one approval | open |
 | 11 | Frag tieout | only after a team go | optional | open |
-| 12 | Umschalten | fourth customer test, worker `app` on the new app, live check | jury link shows the new app | open |
+| 12 | Umschalten | fourth customer test, worker `app` on the new app, live check | the public link `app.tieout.workers.dev` shows the new app | open |
 
-Hackathon target (mid November): steps 0 to 8 with the main project of the new demo data.
+Phase: the hackathon has ended. tieout is now in product development without a deadline; the goal is a product that is ready for customers and investors. The steps keep their order, and quality comes before speed.
 
 ## Customer tests by subagents
 
@@ -61,3 +61,4 @@ Solution list v3, accepted by Maxi S. on 23.10.2026; changes only with his go (a
 - `agent/` docs (`GESTALTUNG.md`, `PLAN.md`) still use Wien 21 as an example; to be switched when the agent is touched.
 - Names: "Mooshaim" is close to the real Moosham (a castle and two hamlets); kept by Maxi S. on 23.10.2026 because it is a project, not an Auftraggeber.
 - Private repository: report of customer test 1 in `../tieout-intern/docs/kundentests/`, commit there with a go.
+- Draft, not decided: making the twin visible (input Maxi D., 23.10.2026), `SPEZIFIKATION.md` 4.4. Recommendation: "Zwilling-Übersicht" (the website picture with real counts) in step 4, "Belegabdeckung" in step 5 or 8, no free graph view, not on the Abläufe canvas. Maxi S. decides at step 4.

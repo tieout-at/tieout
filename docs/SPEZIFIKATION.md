@@ -260,6 +260,21 @@ Search also finds the abbreviations people type ("LV", "AR 3", "RB 11", "AB 12")
 
 Never less understandable than the website: the three step names, the Ebene 1 box (Auftraggeber, Verträge, Preisbasis, Projekte), the Ebene 2 table, the Ergebnis card with its checks and the words "fehlt" and "verrechnet" must appear in the app with the website's words.
 
+### 4.4 Draft, not decided: making the twin visible
+
+**Input (Maxi D., 23.10.2026):** it would be good to show the twin's data visually as well; what matters most is the complete, aggregated database on which the Schlussrechnung is built. Visualising such a database gives first insights even before the analytics on top of it exist.
+
+**Assessment (Claude, to be decided by Maxi S. at step 4):**
+
+1. The core stays the database: every object with source, review state and Verlauf (section 2). A view earns its place only if it shows completeness or a gap that leads to a decision or a task.
+2. **Not a free graph of all objects** (nodes and lines, as on many "digital twin" marketing pictures): it impresses in a pitch, but the Abrechnung decides in tables and lists, and Attio has no such view either (section 4.2). Kept as a website picture, which section 03 already is.
+3. **Not the "Abläufe" canvas** (E4): the canvas shows how invoices are checked (a process); the twin is the data. Putting data on the canvas makes step 9 bigger without giving the user a new decision.
+4. **Candidate A, "Zwilling-Übersicht":** the website's section 03 picture (Ihre Daten → Digitaler Zwilling → Ergebnis) as the first page of "Digitaler Zwilling", with real counts (Wohnpark Mooshaim: 77 Belege with 4 duplicates, 4 WhatsApp-Meldungen, 286 positions, 8 Funde) and every box a link to its list. Website and app then share one picture, and the user sees at a glance that the folder is complete. Small once `kern/` and the tables exist (step 4).
+5. **Candidate B, "Belegabdeckung" per project:** positions as rows, kinds of evidence (Leistungsverzeichnis, Plan, Aufmaß, Regiebericht, E-Mail, Foto, WhatsApp) as columns, each cell coloured by Belegstand; an empty cell becomes a task. It answers "Ist alles belegt?" before the Schlussrechnung. Medium effort (step 5 or 8).
+6. **First insights from the data alone** belong in "Berichte" (step 8): Belegstand per project, unsigned Regieberichte, cuts per Auftraggeber, deductions without contract item. They work before any Schlussrechnung is checked.
+
+Until decided, nothing here changes the order of the steps.
+
 ## 5. Abschluss-Lauf and Abläufe
 
 ### 5.1 The five steps
@@ -443,7 +458,7 @@ Taken on 23.10.2026: Maxi S. delegated the decisions to Claude with the guidelin
 | E5 | Decisions and the result | The Rechnungsabschluss includes every "belegt" find not set to "Nicht verrechnen"; final outputs only once every find is decided | a human decides every line, and the solution list stays the reference |
 | E6 | Release roles | "Prüfung" (Abrechnung), "Freigabe" (Geschäftsführung); the Bauleitung confirms site facts through a task on the phone | one clear job per customer role |
 | E7 | WhatsApp word | "WhatsApp-Meldung" in the app; the website keeps its own words (section 7.1) | one word everywhere in the app |
-| E8 | Demo access | The sample company opens without sign-in, marked "Beispieldaten"; sign-in only for real companies (build step 10) | jurors see the product in one click |
+| E8 | Demo access | The sample company opens without sign-in, marked "Beispieldaten"; sign-in only for real companies (build step 10) | customers and investors see the product in one click |
 | E9 | Not in the app | Coding sheet (a) to (d), "Frag tieout", mail series, own photo app; ÖNORM and BMD export not before a real customer needs them | nothing for the three steps, internal measurement, or shown before it works |
 | E10 | Column word | "Erbracht" instead of "gebaut" in the app; proposed to Maxi D. for the website | all three test customers stumbled ("Stunden baut man nicht"); the trade says "erbracht" for quantities and hours |
 | E11 | Trade words | "Rechnungsabschluss" instead of "Prüfkaskade"; "Rechtsfrage" instead of "Braucht Anwalt" | the billing clerk did not know "Prüfkaskade" and would not show "Braucht Anwalt" to her boss |
@@ -505,6 +520,6 @@ Taken on 23.10.2026: Maxi S. delegated the decisions to Claude with the guidelin
 | Search must accept "LV", "AR 3", "RB 11" | AR | yes | 4.1 |
 | Fact check: 32 points (wrong section references, "six" checks, largest line, v1 module reasons for `abrechnung.ts`, `ledger.ts`, `geld.ts`, `belegquelle.ts`, missing Attio elements, missing "fehlt", demo default state, quote of the 20 % note, strategy wording) | fact check | each re-measured against the source or the v1 code | all fixed in this version; the quote is restored and the wording change is part of E1 |
 | Help after the Schlussrechnung (answering the Auftraggeber's cuts) | AR | yes | recorded in 11.7, not proposed (decided earlier) |
-| README calls it a hackathon project | GF | yes | not part of this step |
+| README calls it a hackathon project | GF | yes | README changed on 23.10.2026: the hackathon has ended, the product is in development |
 
 The full report with all three answers is kept in the private repository.

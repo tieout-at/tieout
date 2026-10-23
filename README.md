@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>The digital twin for electrical and MEP contractors. First application: the final invoice.</b><br />
-  Hackathon project at WU Vienna, Open Track
+  Started as a hackathon project at WU Vienna (Open Track), now in product development
 </p>
 
 <p align="center">
