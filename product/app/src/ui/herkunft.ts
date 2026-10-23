@@ -43,16 +43,23 @@ export function useHerkunft() {
     if (zurueckNach !== hier) return;
     zurueckNach = null;
     const y = scroll.get(hier) ?? 0;
-    // The list may render in two steps (useStufenweise): try for a few frames until the position is reachable.
-    let runden = 0;
+    // The list may render in two steps (useStufenweise): keep setting the position for up to 2 seconds until it is
+    // reachable, but stop as soon as the user scrolls or types.
+    const bis = performance.now() + 2000;
     let rahmen = 0;
     const setzen = () => {
       const el = document.querySelector<HTMLElement>(".scr-body");
       if (el) el.scrollTop = y;
-      if (++runden < 30 && (!el || Math.abs(el.scrollTop - y) > 1)) rahmen = requestAnimationFrame(setzen);
+      if (performance.now() < bis && (!el || Math.abs(el.scrollTop - y) > 1)) rahmen = requestAnimationFrame(setzen);
     };
+    const aufhoeren = () => cancelAnimationFrame(rahmen);
+    const ereignisse = ["wheel", "touchstart", "keydown", "pointerdown"];
+    ereignisse.forEach((e) => window.addEventListener(e, aufhoeren, { once: true, passive: true }));
     setzen();
-    return () => cancelAnimationFrame(rahmen);
+    return () => {
+      aufhoeren();
+      ereignisse.forEach((e) => window.removeEventListener(e, aufhoeren));
+    };
   }, [pfad]);
 
   useEffect(() => {
