@@ -1,52 +1,36 @@
-# Handover: step 0b, Inhalt neu
+# Handover: step 0c, Demo-Daten neu
 
-**As of:** Friday, 23 October 2026, late evening, after step 0. Written by Claude for Maxi S.
+**As of:** Friday, 23 October 2026, night, after step 0b. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
 
 ## Goal
 
-`docs/SPEZIFIKATION.md`, written from zero: what v2 shows and calculates, built strictly along the three steps of the website section 03, **Ihre Daten → Digitaler Zwilling → Ergebnis**, with these words and in this order. Then a first customer test on the specification with three subagents. No app code in this step, no change to amounts.
+A new solution list `docs/Demo_Faelle.md` (v3) that follows `docs/SPEZIFIKATION.md` section 7.1: short professional names, fewer things, realistic amounts, the same story as the website. Then the examples in the specification are switched to it, and the website change is prepared. No app code in this step. The list is the yardstick for the core (step 2), so every cent is recomputed and independently checked before Maxi S. gives the go.
 
 ## Read first
 
 1. `CLAUDE.md`, `docs/_STATUS.md`, this file.
-2. `../tieout-intern/docs/Plan_Neustart.md`: Attio inventory and measurements, the Attio to tieout translation table, the customer tests (with the price points for "würde zahlen").
-3. `../tieout-intern/docs/dossier-v3.md`, sections 0, 3, 12 and 15.
-4. The yardstick: `website/messages/de.json`, key `solution` (section 02 Problem and section 03 Lösung with the three steps, their groups and items); live at https://tieout-at.pages.dev. Section 02 shows the site timeline (WhatsApp, Stunden, E-Mail, Plan, Foto) against the final invoice with "fehlt" and "verrechnet".
-5. `docs/Demo_Faelle.md`: solution list and all demo amounts.
-6. v1 as reference, not as template: https://app.tieout.workers.dev, code under the tag `v1-archiv` (`product/app/src/engine`, `product/app/src/domain`).
-7. Attio as UI reference: screen recording `../_vorlagen/Attio.mp4` (318 MB) and the Attio workspace (access described in the plan in `../tieout-intern`).
+2. `docs/SPEZIFIKATION.md`: 7.1 (rules for the new data), 3 (Ergebnis and its rules), 5.2 (Abläufe, "Lauf je Abschlagsrechnung"), 9 (questions for the insider), 10 (decisions), 12 (customer test).
+3. `docs/Demo_Faelle.md` (v2): keep its structure (lists, Vorprüfung, Rechnungsabschluss with payments per Abschlagsrechnung, Schlussbesprechungs-Blatt, evidence source, other projects, Auftraggeber history, WhatsApp scene, insider questions), replace names and amounts.
+4. `website/messages/de.json`, keys `solution.timeline` and `solution.flow.projectData`: the six events and the Ebene 2 table the main project must match.
+5. `../tieout-intern/docs/kundentests/2026-10-23_kundentest-1_spezifikation.md`: what the test customers found unrealistic (radiator accessories, hours for relocating a radiator, floor rule, one-sided Aufmaß).
+6. v1 generator under tag `v1-archiv` (`product/app/src/demo`), only to see which inputs the core needs per project.
 
-## What the specification contains
+## Steps
 
-1. **Ihre Daten.** Systeme (ERP-Rechnungen, AVA-Preise), Dokumente (Pläne mit Index, Leistungsverzeichnis, Aufmaß, Stundenzettel), Kommunikation (E-Mail-Anweisungen, WhatsApp-Meldungen, Fotos, Sprachnachrichten). For each: which object it becomes, how it comes in (stage 0: a project folder is imported), what the user sees of it.
-2. **Digitaler Zwilling.** Ebene 1 Betrieb (Auftraggeber, Verträge, Preisbasis, Projekte) and Ebene 2 Projekt (Leistungen je Position: beauftragt, gebaut, verrechnet, offen). Objects with their fields, source, review state and history, described in words, not code.
-3. **Ergebnis.** The Schlussrechnung: vergessene Stunden gefunden, Mehrmengen erkannt, Planänderungen eingerechnet, vorab geprüft wie vom Auftraggeber, zu jeder Position ein Beleg, zusätzlich verrechenbar. Plus the outputs of dossier v3 section 3.6 that survive the challenge.
-4. **Screens.** One line per Attio element of the translation table: what it contributes to Daten, Zwilling or Ergebnis. Nothing contributed: out (for example Sequences). Missing: added (position table beauftragt, gebaut, verrechnet, offen; timeline; Schlussrechnung with fehlt and verrechnet). Never less understandable than the website.
-5. **Abschluss-Lauf.** Ordner lesen → Abgleich → Vorprüfung → Entwurf → Ausgaben, each with input, output and who confirms.
-6. **Vocabulary.** One table: German UI word, meaning, words we never use instead. Known gap: `docs/Demo_Faelle.md` still calls the amount on the final meeting sheet "claim" (section "Final meeting sheet"); replace it with the agreed German term, wording only, amounts unchanged.
-7. **Demo case Wien 21.** Which screen shows which amount from `Demo_Faelle.md`; the three-minute click path.
-8. **v1 calculation core.** Per module of `product/app/src/engine` (tag `v1-archiv`): port, rewrite or drop, with the reason. The amounts in `_STATUS.md` stay unless Maxi S. gives a go.
-9. **Open questions for the construction insider,** marked as such (no `PLATZHALTER` in this public file).
-
-Mocks are optional (low fidelity, for example one board per screen) and only if Maxi S. wants them; the first customer test runs on the text.
-
-## First customer test
-
-Three fresh subagents, started separately, without our context. Each gets only `README.md`, `docs/SPEZIFIKATION.md` and the task: "Lies die Spezifikation. Würdest du das kaufen? Was ist unverständlich?"
-
-- **Abrechnerin:** writes the final invoice, 20 years of experience, distrusts software.
-- **Geschäftsführer:** pays, wants to see the benefit in five minutes.
-- **Bauleiter:** knows the site, checks whether the Posten are right and whether he can explain them to his fitters.
-
-Verdicts with evidence (what was read, where they got stuck): **verstanden** (in their own words: what tieout does, what the amount is), **würde zahlen** (price points from the plan in `../tieout-intern`), **Gamechanger oder nicht** (what is missing, concretely). "Genutzt" starts with the clickable app after step 5. **Passed when** all three understand the three steps and name the benefit in one sentence. The main chat re-checks every finding against the specification before acting on it. The full report with price verdicts goes to `../tieout-intern/docs/kundentests/`; findings without prices go into a section "Kundentest" in `SPEZIFIKATION.md`.
+1. **Names.** Propose three options each for the business, the Auftraggeber and the five projects (with a two-word short name), check each against the Austrian company register and the web, and let Maxi S. pick. An Auftraggeber must never resemble a real company.
+2. **Main project.** Contract sum, Leistungsverzeichnis, the six website events in HKLS (4 not invoiced, 2 invoiced), at most 8 finds and 1 Rechtsfrage, 2 to 3 Vorprüfung positions (one already cut), one "Abzug ohne Vertragspunkt", Rechnungsabschluss with payments, "davon mit Kürzungsrisiko" (E13), "Restforderung laut Vertrag" (E14), Schlussbesprechungs-Blatt with the floor from the Mittellohnkosten. "Zusätzlich verrechenbar" between 1,5 % and 2,5 % of the contract sum.
+3. **Other projects.** Two ongoing (one shows "Lauf je Abschlagsrechnung": a WhatsApp-Meldung that becomes a signed Regiebericht within days), two closed ones that feed the Auftraggeber history.
+4. **Check.** Every amount by script in integer cents with the check written into the file; then one independent checker, claim by claim; re-measure its findings; Maxi S. gives the go.
+5. **Follow-up.** Switch the examples in `SPEZIFIKATION.md` (sections 0, 1.5, 2, 3, 7) to the new list, with the amount audit (every amount in the specification is in the list). Prepare the website texts (`website/messages/de.json` and `en.json`) on their own branch; nothing goes live without a go.
 
 ## Done when
 
-- `docs/SPEZIFIKATION.md` covers points 1 to 9 and was accepted by Maxi S.
-- Customer test run, passed, findings worked in or listed as open.
-- `_STATUS.md` updated, this file rewritten for step 1 (Hülle), pull request merged with Maxi S.'s go.
+- `Demo_Faelle.md` v3 recomputed, independently checked, accepted by Maxi S.
+- `SPEZIFIKATION.md` uses the new names and amounts; amount audit clean.
+- Website change prepared as its own pull request, not deployed.
+- `_STATUS.md` updated (new protected amounts), this file rewritten for step 1 (Hülle; the step 1 brief written after step 0b is in commit `a055666`), pull request merged with Maxi S.'s go.
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 0b, Inhalt neu. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 0b: `docs/SPEZIFIKATION.md` von null entlang der drei Stufen der Website-Sektion 03 (Ihre Daten, Digitaler Zwilling, Ergebnis), jedes Attio-Element daran gemessen, Entscheidung zum alten Rechenkern, danach der erste Kundentest mit drei Subagenten (Abrechnerin, Geschäftsführer, Bauleiter). Widersprich mir, wo der Inhalt schwach ist. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor dem Push. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 0c, Demo-Daten neu. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 0c: neue Lösungsliste `docs/Demo_Faelle.md` nach `SPEZIFIKATION.md` Abschnitt 7.1, mit kurzen professionellen Namen (zeig mir je drei Vorschläge), weniger Funden, realistischen Beträgen und derselben Geschichte wie die Website. Jeder Cent per Skript und von einem unabhängigen Prüfer geprüft. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor dem Push und bevor die Website etwas Neues zeigt. Deutsch, einfach, Ergebnis zuerst.
