@@ -20,7 +20,7 @@
 | 1 | Hülle | app created, tokens as `DESIGN.md`, sidebar with the sections "Ihre Daten", "Digitaler Zwilling", "Ergebnis" (specification 4.1), header, Strg K, all navigation points with empty states as in Attio; online at `app-neu` | screenshot next to Attio | next |
 | 2 | Kern | calculation per specification (ported or new), tests against the solution list, amount audit | tests green, amounts unchanged or changed with a go | open |
 | 3 | Tabellen | view bar, table, sort, filter, columns, footer; projects and Funde with sample data | tables | open |
-| 4 | Datensätze | project and Auftraggeber: attributes, highlights, tabs, activity, history | project Wohnpark Mooshaim | open |
+| 4 | Datensätze | project and Auftraggeber: attributes, highlights, tabs, activity, history; decide the draft "making the twin visible" (`SPEZIFIKATION.md` 4.4) | project Wohnpark Mooshaim | open |
 | 5 | Funde | calculation path, documents, original on the right, decision, history; second customer test | radiator find F1 played through, test passed | open |
 | 6 | Board und Listen | kanban by stage, lists | board Wohnpark Mooshaim | open |
 | 7 | Aufgaben, Notizen, Start | tasks from gaps, modal, notes, start page | start page | open |
@@ -61,3 +61,4 @@ Solution list v3, accepted by Maxi S. on 23.10.2026; changes only with his go (a
 - `agent/` docs (`GESTALTUNG.md`, `PLAN.md`) still use Wien 21 as an example; to be switched when the agent is touched.
 - Names: "Mooshaim" is close to the real Moosham (a castle and two hamlets); kept by Maxi S. on 23.10.2026 because it is a project, not an Auftraggeber.
 - Private repository: report of customer test 1 in `../tieout-intern/docs/kundentests/`, commit there with a go.
+- Draft, not decided: making the twin visible (input Maxi D., 23.10.2026), `SPEZIFIKATION.md` 4.4. Recommendation: "Zwilling-Übersicht" (the website picture with real counts) in step 4, "Belegabdeckung" in step 5 or 8, no free graph view, not on the Abläufe canvas. Maxi S. decides at step 4.
