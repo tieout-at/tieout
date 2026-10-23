@@ -12,6 +12,8 @@ export type BelegTyp = "lv" | "plan" | "mail" | "foto" | "aufmass" | "tabelle" |
 
 export interface BelegAnsicht {
   key: string;
+  /** Dokument oder WhatsApp-Meldung; Quellen-Chips im Kopf mit data-beleg öffnen den Beleg hier im Betrachter. */
+  dokumentId: string;
   titel: string;
   text: string;
   datum: string | null;
@@ -49,9 +51,19 @@ export function Postenflaeche({ kopf, belege, freigabe, start = 0 }: { kopf: Rea
     if (window.innerWidth <= 900) betrachter.current?.scrollIntoView({ block: "start" });
   };
 
+  // Quellen-Chips im Rechenweg: liegt der Beleg in der Kette, öffnet er rechts statt auf einer eigenen Seite.
+  const quelleKlick = (ev: React.MouseEvent) => {
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button !== 0) return;
+    const chip = (ev.target as HTMLElement).closest<HTMLElement>("[data-beleg]");
+    const i = chip ? belege.findIndex((x) => x.dokumentId === chip.dataset.beleg) : -1;
+    if (i < 0) return;
+    ev.preventDefault();
+    waehlen(i);
+  };
+
   return (
     <div className="split">
-      <div className="split-left">
+      <div className="split-left" onClick={quelleKlick}>
         <div className="split-scroll">
           {kopf}
           <section className="sw-stack" aria-label="Beweiskette">

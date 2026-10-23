@@ -6,9 +6,11 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import { postenSlug, firma, projekt, projektIds } from "@/daten/demo";
+import { geleseneFelder, type Korrektur } from "@/daten/felder";
 import { zitate } from "@/daten/zeitachse";
 import type { Datensatz, DokumentArt } from "@/domain/typen";
 import type { Beleg } from "@/engine";
+import { menge } from "@/engine/geld";
 import { ART_TEXT, teileTitel } from "@/ui/posten-texte";
 import { AnkerMarke } from "@/ui/AnkerMarke";
 import { Belegseite } from "@/ui/Belegseite";
@@ -49,6 +51,19 @@ function umbrechbar(name: string) {
   ));
 }
 
+/** Korrigiertes Feld lesbar: Bezeichnung aus der Stelle, Wert in seiner Einheit. */
+function korrekturText(d: Datensatz, k: Korrektur): { was: string; wert: string; vorher: string } {
+  if (k.feld === "menge") {
+    const nr = k.stelle.match(/\d\d\.\d\d\.\d\d[A-Z]/)?.[0] ?? k.stelle;
+    const einheit = d.lv.find((p) => p.nr.wert === nr)?.einheit.wert;
+    return { was: `${nr} Menge`, wert: menge(Number(k.wert), einheit), vorher: menge(Number(k.vorher), einheit) };
+  }
+  const was = (k.stelle.split(", ").at(-1) ?? k.feld).replace(/^EXIF /, "");
+  if (k.feld.startsWith("stunden")) return { was, wert: menge(Number(k.wert), "h"), vorher: menge(Number(k.vorher), "h") };
+  const zeit = (x: number | string) => (String(x).length > 10 ? zeitpunkt(String(x)) : datum(String(x)));
+  return { was, wert: zeit(k.wert), vorher: zeit(k.vorher) };
+}
+
 export const dynamicParams = false;
 export function generateStaticParams() {
   return projektIds().flatMap(({ projekt: id }) => {
@@ -80,6 +95,7 @@ export default async function BelegSeite({ params }: Props) {
   const kopien = dok ? d.dokumente.filter((x) => x.inhaltHash === dok.inhaltHash).length - 1 : 0;
   const befunde = (zitate(e).get(belegId) ?? []).map((s) => e.befunde.find((b) => b.schluessel === s)!);
   const datei = zuruf ? `WhatsApp ${zuruf.nr}` : dok!.dateiname;
+  const felder = geleseneFelder(d, belegId);
 
   const fakten: [string, string][] = zuruf
     ? [
@@ -122,6 +138,29 @@ export default async function BelegSeite({ params }: Props) {
                 </div>
               ))}
             </div>
+            {felder.gelesen > 0 && (
+              <section className="sw-stack" aria-label="Eingelesen">
+                <span className="label">Eingelesen</span>
+                <div className="kv">
+                  <div>
+                    <span>{felder.gelesen === 1 ? "1 Feld" : `${felder.gelesen} Felder`}</span>
+                    <b>{felder.korrekturen.length === 0 ? "maschinell gelesen" : `davon ${felder.korrekturen.length} korrigiert`}</b>
+                  </div>
+                  {felder.korrekturen.map((k) => {
+                    const t = korrekturText(d, k);
+                    return (
+                      <div key={`${k.feld}-${k.stelle}`} className="beleg-korrektur">
+                        <span>{t.was}</span>
+                        <b>
+                          {t.wert}
+                          <span className="beleg-korrektur__vorher">korrigiert, vorher {t.vorher}</span>
+                        </b>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
             {befunde.length > 0 && (
               <section className="sw-stack" aria-label="Zitiert in">
                 <span className="label">Zitiert in {befunde.length}</span>

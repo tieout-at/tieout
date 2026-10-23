@@ -13,6 +13,7 @@ import { Belegseite, belegDatei } from "@/ui/Belegseite";
 import { betrag, datum } from "@/ui/format";
 import { Freigabeleiste } from "@/ui/Freigabeleiste";
 import { Ico } from "@/ui/Ico";
+import { Quellen } from "@/ui/Quellen";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 
 type Props = { params: Promise<{ projekt: string; posten: string }> };
@@ -81,6 +82,7 @@ export default async function PostenSeite({ params }: Props) {
     const datei = belegDatei(d, x);
     return {
       key: `${i}-${x.quelle.dokumentId}`,
+      dokumentId: x.quelle.dokumentId,
       titel: x.titel,
       text: x.text,
       datum: x.datum ? datum(x.datum) : null,
@@ -150,7 +152,10 @@ export default async function PostenSeite({ params }: Props) {
           <tbody>
             {schritte.map((s) => (
               <tr key={s.bezeichnung}>
-                <td>{s.bezeichnung}</td>
+                <td>
+                  <span className="rw-bez">{s.bezeichnung}</span>
+                  <Quellen d={d} basis={`/projekte/${id}`} quellen={s.quellen} />
+                </td>
                 <td className="r calc">{nurBetrag(s.wert, s.betrag) ? "" : s.wert}</td>
                 <td className="r">{s.betrag !== undefined && betrag(s.betrag)}</td>
               </tr>

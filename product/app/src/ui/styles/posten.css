@@ -146,3 +146,27 @@
     min-height: 560px;
   }
 }
+
+/* Quellen je Rechenschritt (UI-Runde 1, Schritt 4, k4): Chips unter der Bezeichnung, wie in der Beweiskette */
+.rw-bez {
+  display: block;
+}
+.rw-quellen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: 2px;
+}
+.rw-quellen .sw-source {
+  height: 20px;
+  text-decoration: none;
+}
+.rw-quellen .sw-source:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.rw-quellen__mehr {
+  align-self: center;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
