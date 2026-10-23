@@ -48,6 +48,7 @@ Visible text, routes, file names and UI components use the new terms. The calcul
 
 ## Way of working
 - `npm run typecheck`, `npm run lint`, `npm test` green before every commit.
+- After `npm run build`, `npm run qa:betraege` checks every euro amount on the built pages against the calculation core and the dataset, and the headline amounts of `Demo_Faelle.md` per page (table `ERWARTET` at the top of `scripts/qa/betraege.mjs`; add a row for every new screen). Also runs in CI.
 - New rule = positive test and counter-check in `regeln.test.ts`. Changes to the dataset: `pruefung.test.ts` must still match the solution list exactly.
 - Work on a separate branch, into `main` only via pull request. Claude may create and merge pull requests itself if there are no conflicts; review briefly beforehand (diff, typecheck, lint, tests) and report to Maxi S. (permission 22.10.2026). Afterwards update `../README.md` (section "Status").
 

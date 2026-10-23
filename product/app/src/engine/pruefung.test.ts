@@ -1,7 +1,8 @@
 // Ende-zu-Ende: Rechenkern auf dem synthetischen Datensatz W21 gegen die Lösungsliste (Demo_Faelle.md v2).
 
 import { describe, expect, it } from "vitest";
-import { erzeugeW21 } from "@/demo/w21/erzeuge";
+import type { Datensatz, Feld } from "@/domain/typen";
+import { erzeugeW21, fehlgelesen } from "@/demo/w21/erzeuge";
 import {
   SOLL_AUSSERHALB_ERP,
   SOLL_BEFUNDE,
@@ -85,6 +86,43 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
     expect(e.ausserhalbErp).toEqual(SOLL_AUSSERHALB_ERP);
   });
 
+  it("Rechenwege: jeder Schritt mit Wert aus einem Dokument hat Quellen in vorhandenen Dokumenten, Schlusszeilen keine", () => {
+    const ids = new Set([...d.dokumente.map((x) => x.id), ...d.zurufe.map((z) => z.id)]);
+    for (const b of e.befunde.filter((x) => x.rechenweg)) {
+      for (const s of b.rechenweg!.schritte) {
+        const name = `${b.schluessel}, ${s.bezeichnung}`;
+        if (s.summe) {
+          expect(s.quellen, name).toBeUndefined();
+          continue;
+        }
+        expect(s.quellen?.length, name).toBeGreaterThan(0);
+        for (const q of s.quellen!) expect(ids.has(q.dokumentId), `${name}: ${q.dokumentId}`).toBe(true);
+      }
+    }
+  });
+
+  it("Rechenwege J1 bis J8, O1, O2: Quellen zeigen auf LV, Aufmaß, Entwurf, Regiebericht, Vertrag, Indexblatt", () => {
+    const dokumente = (schluessel: string) =>
+      Object.fromEntries(
+        e.befunde.find((b) => b.schluessel === schluessel)!.rechenweg!.schritte.filter((s) => !s.summe).map((s) => [s.bezeichnung, s.quellen!.map((q) => q.dokumentId)]),
+      );
+    const mehrmenge = (aufmass: string[]) => ({ "LV-Menge": ["lv"], Aufmaß: aufmass, Verrechnet: ["sr-entwurf"], "Einheitspreis laut LV": ["lv"] });
+    expect(dokumente("mehrmenge:22.04.12B")).toEqual(mehrmenge(["ab-12"]));
+    expect(dokumente("mehrmenge:24.02.05A")).toEqual(mehrmenge(["ab-04", "ab-09"]));
+    expect(dokumente("mehrmenge:22.06.03C")).toEqual(mehrmenge(["ab-10"]));
+    expect(dokumente("mehrmenge:26.03.04A")).toEqual(mehrmenge(["ab-13"]));
+    expect(dokumente("regie:RB-07")).toEqual({ Monteur: ["rb-07", "vertrag"], Material: ["rb-07"] });
+    expect(dokumente("regie:RB-11")).toEqual({ Monteur: ["rb-11", "vertrag"], Helfer: ["rb-11", "vertrag"], Material: ["rb-11"] });
+    expect(dokumente("regie:RB-14")).toEqual({ Monteur: ["rb-14", "vertrag"], Material: ["rb-14"] });
+    expect(dokumente("regie:RB-12")).toEqual({ Monteur: ["rb-12", "vertrag"], Helfer: ["rb-12", "vertrag"], Material: ["rb-12"] });
+    expect(dokumente("regie:RB-15")).toEqual({ Monteur: ["rb-15", "vertrag"], Material: ["rb-15"] });
+    const j8 = Object.values(dokumente("preisumrechnung"));
+    expect(j8[0]).toEqual(d.aufmass.filter((b) => b.leistungVon.wert >= "2026-05-01").map((b) => b.dokumentId));
+    expect(j8.slice(1)).toEqual([["vertrag"], ["indexblatt", "indexblatt"]]);
+    const vertragsstelle = e.befunde.find((b) => b.schluessel === "regie:RB-07")!.rechenweg!.schritte[0].quellen![1];
+    expect(vertragsstelle).toEqual({ dokumentId: "vertrag", seite: 6, stelle: "Pkt. 6.3" });
+  });
+
   it("A1: Hinweis ohne Betrag und ohne Wort „Forcierung“", () => {
     const a1 = e.befunde.find((b) => b.liste === "anwalt")!;
     expect(a1.betrag).toBeNull();
@@ -131,6 +169,32 @@ describe("W21: Prüfkaskade, Zahlungen, Import", () => {
       expect({ pruefung: z.pruefung ?? undefined, quelle: z.quelle }, s.bezeichnung).toEqual({ pruefung: s.pruefung, quelle: s.quelle });
     }
     expect(e.kaskade!.restforderung).toBe(17_006_089);
+  });
+
+  it("Kaskade: jede Zeile mit Quelle hat Belege in vorhandenen Dokumenten, Zwischensummen keine", () => {
+    const ids = new Set(d.dokumente.map((x) => x.id));
+    for (const z of e.kaskade!.zeilen) {
+      if (z.quelle === null) {
+        expect(z.belege, z.bezeichnung).toEqual([]);
+        continue;
+      }
+      expect(z.belege.length, z.bezeichnung).toBeGreaterThan(0);
+      for (const b of z.belege) expect(ids.has(b.quelle.dokumentId), `${z.bezeichnung}: ${b.quelle.dokumentId}`).toBe(true);
+    }
+  });
+
+  it("Kaskade: Belege zeigen auf Entwurf, Vertragspunkt, GU-Abzugsschreiben und Zahlungsavisos", () => {
+    const stellen = Object.fromEntries(
+      e.kaskade!.zeilen.filter((z) => z.quelle).map((z) => [z.bezeichnung, z.belege.map((b) => `${b.quelle.dokumentId} S. ${b.quelle.seite} ${b.quelle.stelle}`)]),
+    );
+    expect(stellen).toEqual({
+      "Leistungssumme laut Entwurf inkl. Liste 1": ["sr-entwurf S. 22 Summe Leistung"],
+      Nachlass: ["vertrag S. 5 Pkt. 5.1"],
+      "Baustrom und Bauwasser": ["vertrag S. 4 Pkt. 4.6", "gu-abzug S. 1 Absatz 1"],
+      Bauschadensumlage: ["gu-abzug S. 1 Absatz 2"],
+      "Haftrücklass": ["vertrag S. 9 Pkt. 9.2"],
+      "Zahlungen auf AR1, AR2, AR3": ["zahlung-ar1 S. 1 Zahlbetrag", "zahlung-ar2 S. 1 Zahlbetrag", "zahlung-ar3 S. 1 Zahlbetrag"],
+    });
   });
 
   it("Zahlungen je AR nach der Rechenregel", () => {
@@ -191,5 +255,44 @@ describe("W21: Invarianten", () => {
 
   it("Generator ist deterministisch", () => {
     expect(JSON.stringify(erzeugeW21())).toBe(JSON.stringify(d));
+  });
+});
+
+describe("W21: Korrekturen beim Einlesen behalten den alten Wert", () => {
+  const mitVorher = (wert: unknown): Feld<unknown>[] => {
+    if (Array.isArray(wert)) return wert.flatMap(mitVorher);
+    if (!wert || typeof wert !== "object") return [];
+    const o = wert as Record<string, unknown>;
+    const selbst = "quelle" in o && "wert" in o && "vorher" in o ? [o as unknown as Feld<unknown>] : [];
+    return [...selbst, ...Object.values(o).flatMap(mitVorher)];
+  };
+
+  it("genau die 25 korrigierten Felder tragen „vorher“, jeweils anders als der Wert", () => {
+    const felder = mitVorher(d);
+    expect(felder.length).toBe(25);
+    for (const x of felder) {
+      expect(x.korrigiert).toBe(true);
+      expect(x.vorher).not.toEqual(x.wert);
+    }
+  });
+
+  it("12 Aufmaßmengen, 10 Regiestunden, 2 Mail-Daten, 1 Fotodatum", () => {
+    expect({
+      aufmass: mitVorher(d.aufmass).length,
+      regie: mitVorher(d.regie.map((r) => r.stundenMonteur)).length,
+      mails: mitVorher(d.mails.map((m) => m.datum)).length,
+      fotos: mitVorher(d.fotos.map((x) => x.exifDatum)).length,
+    }).toEqual({ aufmass: 12, regie: 10, mails: 2, fotos: 1 });
+  });
+
+  it("Lesefehler ist eine reine Funktion des richtigen Werts", () => {
+    expect([fehlgelesen(1_600), fehlgelesen(81_250), fehlgelesen(50)]).toEqual([1_500, 81_750, 850]);
+    expect([fehlgelesen("2026-01-14"), fehlgelesen("2026-02-19T10:15")]).toEqual(["2025-01-14", "2025-02-19T10:15"]);
+  });
+
+  it("der Rechenkern liest „vorher“ nie: gleiches Ergebnis mit und ohne", () => {
+    const ohne = JSON.parse(JSON.stringify(d, (k, v) => (k === "vorher" ? undefined : v))) as Datensatz;
+    expect(mitVorher(ohne).length).toBe(0);
+    expect(pruefe(ohne)).toEqual(e);
   });
 });

@@ -12,6 +12,7 @@ import {
   FileText,
   FolderOpen,
   History,
+  House,
   LayoutGrid,
   ListChecks,
   Menu,
@@ -48,13 +49,13 @@ interface Eintrag {
 }
 
 /** Bildschirme eines Projekts in fester Reihenfolge; dieselbe Liste nutzt die Suche. */
-export function projektNav(p: Pick<NavProjekt, "id" | "abgleich">): Eintrag[] {
+export function projektNav(p: Pick<NavProjekt, "id" | "abgleich" | "schlussrechnung">): Eintrag[] {
   const basis = `/projekte/${p.id}`;
   const keinAbgleich = p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen";
   return [
     { href: `${basis}/`, icon: LayoutGrid, text: "Übersicht" },
     { href: `${basis}/posten/`, icon: ListChecks, text: "Posten", praefix: true, posten: true, folgt: keinAbgleich },
-    { href: `${basis}/schlussrechnung/`, icon: FileText, text: "Schlussrechnung", folgt: "Schlussrechnung folgt in UI-Runde 1, Schritt 3b" },
+    { href: `${basis}/schlussrechnung/`, icon: FileText, text: "Schlussrechnung", folgt: p.schlussrechnung ? undefined : "Schlussrechnung nur für Projekte mit Werten in der Lösungsliste" },
     { href: `${basis}/belege/`, icon: FolderOpen, text: "Belege", praefix: true },
     { href: `${basis}/positionen/`, icon: Table, text: "LV-Positionen", folgt: keinAbgleich },
     { href: `${basis}/zeitachse/`, icon: History, text: "Zeitachse" },
@@ -270,12 +271,16 @@ export function Seitenleiste({ firma, untertitel, projekte }: { firma: string; u
             <span className="nav-text">Suchen</span>
             <span className="sw-kbd nav-kbd">Strg K</span>
           </button>
+          <Link href="/" aria-current={pfad === "/" ? "page" : undefined} title="Übersicht">
+            <Ico icon={House} />
+            <span className="nav-text">Übersicht</span>
+          </Link>
         </nav>
         <nav className="nav-gruppe" aria-label="Projekte">
-          <Link href="/" className="nav-gruppe__kopf" aria-current={pfad === "/" ? "page" : undefined}>
+          <div className="nav-gruppe__kopf nav-gruppe__kopf--fest">
             <span className="nav-text">Projekte</span>
             <span className="sw-count">{imAbgleich.length}</span>
-          </Link>
+          </div>
           <div className="sw-nav nav-baum">{imAbgleich.map(zeile)}</div>
         </nav>
         {fertig.length > 0 && (

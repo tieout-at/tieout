@@ -34,3 +34,5 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Beträge
+        run: npm run qa:betraege

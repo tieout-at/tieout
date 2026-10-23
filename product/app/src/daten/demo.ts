@@ -30,6 +30,20 @@ export function projekt(id: string): { d: Datensatz; e: Ergebnis } {
   return { d, e: e.ergebnisse[id] };
 }
 
+/**
+ * Projekte mit eigener Schlussrechnungs-Seite: nur die, deren Kaskade und Vorprüfung in der Lösungsliste stehen
+ * (Demo_Faelle.md hat sie nur für W21). P3 hat auch einen Entwurf, seine Werte sind aber nicht freigegeben.
+ */
+const SCHLUSSRECHNUNG_SEITE = new Set(["w21-b-hkls"]);
+
+export function hatSchlussrechnung(id: string): boolean {
+  return SCHLUSSRECHNUNG_SEITE.has(id) && laden().e.ergebnisse[id]?.kaskade !== null;
+}
+
+export function schlussrechnungIds(): { projekt: string }[] {
+  return laden().f.projekte.filter((p) => hatSchlussrechnung(p.projekt.id)).map((p) => ({ projekt: p.projekt.id }));
+}
+
 export function projektIds(): { projekt: string }[] {
   return laden().f.projekte.map((p) => ({ projekt: p.projekt.id }));
 }
@@ -40,6 +54,28 @@ export function projektIds(): { projekt: string }[] {
  */
 export function postenSlug(schluessel: string): string {
   return schluessel.replace(/^zuruf:/, "whatsapp:").replace(/[:.]/g, "-");
+}
+
+/** Ein Posten zum Entscheiden mit Adresse, in der Reihenfolge, in der man prüft. */
+export interface ZuEntscheiden {
+  schluessel: string;
+  liste: Liste;
+  href: string;
+}
+
+/**
+ * Posten, über die zu entscheiden ist (ohne „Braucht Anwalt“), in Prüfreihenfolge: zuerst die Posten, die der GU
+ * kürzen würde (größtes Kürzungsrisiko zuerst), dann die übrigen in der Reihenfolge des Rechenkerns. So beginnt
+ * „Weiter prüfen“ beim Posten, der am meisten Verteidigung braucht (W21: J1, Mehrmenge aus Planänderung).
+ */
+export function zuEntscheiden(projektId: string, e: Ergebnis): ZuEntscheiden[] {
+  const risiko = new Map<string, number>();
+  for (const r of e.vorpruefung?.risiken ?? []) if (r.befundSchluessel) risiko.set(r.befundSchluessel, Math.max(risiko.get(r.befundSchluessel) ?? 0, r.betrag));
+  return e.befunde
+    .filter((b) => b.liste !== "anwalt")
+    .map((b, i) => ({ b, i, r: risiko.get(b.schluessel) ?? -1 }))
+    .sort((x, y) => y.r - x.r || x.i - y.i)
+    .map(({ b }) => ({ schluessel: b.schluessel, liste: b.liste, href: `/projekte/${projektId}/posten/${postenSlug(b.schluessel)}/` }));
 }
 
 export function einPosten(projektId: string, slug: string): { d: Datensatz; e: Ergebnis; b: Befund } {
@@ -68,6 +104,8 @@ export interface NavProjekt {
   kurz: string;
   name: string;
   abgleich: boolean;
+  /** Eigene Schlussrechnungs-Seite (nur mit Werten in der Lösungsliste). */
+  schlussrechnung: boolean;
   /** Ampel aus dem Rechenkern (Firmenübersicht); „rot“ zeigt die Frist in der Seitenleiste. */
   ampel: Ampel;
   /** Frist „Schlussrechnung legen bis“ (ISO), nur wenn sie drängt. */
@@ -96,6 +134,7 @@ export function navDaten(): { firma: string; untertitel: string; projekte: NavPr
         kurz: d.projekt.kurz,
         name: d.projekt.name,
         abgleich: x.abgleich,
+        schlussrechnung: hatSchlussrechnung(id),
         ampel,
         frist: ampel === "rot" && zeile?.datum?.art === "legen_bis" ? zeile.datum.wert : null,
         gebaeude: gebaeudeAus(d.projekt.name),

@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "generate": "tsx scripts/generate/index.ts",
-    "prebuild": "tsx scripts/generate/index.ts"
+    "prebuild": "tsx scripts/generate/index.ts",
+    "qa:betraege": "tsx scripts/qa/betraege.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",

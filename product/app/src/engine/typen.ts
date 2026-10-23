@@ -12,11 +12,23 @@ export interface Beleg {
   quelle: Quelle;
 }
 
+export interface RechenSchritt {
+  bezeichnung: string;
+  wert: string;
+  betrag?: Cent;
+  summe?: boolean;
+  /**
+   * Stellen in den Dokumenten, aus denen die Werte des Schritts stammen, z. B. Stunden im Regiebericht und
+   * Regiesatz im Vertrag, oder die Aufmaßblätter einer Menge. Fehlt bei Schritten, die nur gerechnet sind.
+   */
+  quellen?: Quelle[];
+}
+
 export interface Rechenweg {
   /** Ganzer Rechenweg in einer Zeile, z. B. „(100 − 86) Stk × 456,00 € = 6.384,00 €“. */
   text: string;
   /** Schritte für die Tabelle; „summe“ markiert die Schlusszeile, die den Betrag ergibt. */
-  schritte: { bezeichnung: string; wert: string; betrag?: Cent; summe?: boolean }[];
+  schritte: RechenSchritt[];
   /** Zusätzliche Plausibilität (z. B. K7), fließt nicht in den Betrag ein. */
   plausibilitaet?: string;
 }
@@ -128,6 +140,11 @@ export interface KaskadenZeile {
   pruefung: "laut_vertrag" | "abweichung" | "abzug_ohne_vertragspunkt" | null;
   vertragspunkt: string | null;
   betrag: Cent;
+  /**
+   * Dokumente hinter der Zeile, jeweils mit Seite und Stelle: Entwurf (Leistungssumme), Vertragspunkt und
+   * GU-Abzugsschreiben (Sätze), Zahlungsavisos (Zahlungen). Leer bei Zwischensummen, die nur gerechnet sind.
+   */
+  belege: Beleg[];
 }
 
 export interface ImportStand {

@@ -3,9 +3,10 @@
 // Jeder Satz wird mit dem Vertrag abgeglichen: laut Vertrag / Abweichung / kein Vertragspunkt.
 // Rundung: jede Zeile einzeln kaufmännisch auf Cent; Abzüge auf die Summe nach Nachlass,
 // Einbehalte auf den Betrag vor Einbehalten.
+// Jede Zeile mit Quelle trägt ihre Belege aus dem Datensatz (Seite und Stelle), nie aus der Lösungsliste.
 
 import type { AbzugArt } from "@/domain/typen";
-import { prozent } from "./geld";
+import { euro, prozent, prozentText } from "./geld";
 import type { Kontext } from "./kontext";
 import type { Befund, KaskadenZeile } from "./typen";
 
@@ -40,6 +41,14 @@ export function kaskade(k: Kontext, befunde: Befund[]) {
       pruefung: null,
       vertragspunkt: null,
       betrag: leistungssumme,
+      belege: [
+        {
+          titel: "Schlussrechnungs-Entwurf",
+          text: `Summe Leistung ${euro(entwurf)}, ohne Liste 1`,
+          datum: k.d.entwurf.datum.wert,
+          quelle: k.d.entwurf.summe.quelle,
+        },
+      ],
     },
   ];
 
@@ -63,10 +72,18 @@ export function kaskade(k: Kontext, befunde: Befund[]) {
         pruefung,
         vertragspunkt: vs?.punkt ?? null,
         betrag: -betrag,
+        belege: [
+          ...(vs
+            ? [{ titel: `Vertrag Pkt. ${vs.punkt}`, text: `${NAME[art]} ${prozentText(vs.satz.wert, 2)}`, datum: v.datum.wert, quelle: vs.satz.quelle }]
+            : []),
+          ...(gu && k.d.guAbzug
+            ? [{ titel: "GU-Abzugsschreiben", text: `${NAME[art]} ${prozentText(gu.satz.wert, 2)}`, datum: k.d.guAbzug.datum.wert, quelle: gu.satz.quelle }]
+            : []),
+        ],
       });
     }
     basis -= abzuege;
-    zeilen.push({ bezeichnung: stufe.summe, art: "summe", abzugArt: null, satz: null, quelle: null, pruefung: null, vertragspunkt: null, betrag: basis });
+    zeilen.push({ bezeichnung: stufe.summe, art: "summe", abzugArt: null, satz: null, quelle: null, pruefung: null, vertragspunkt: null, betrag: basis, belege: [] });
   }
 
   const schlussrechnungsbetrag = basis;
@@ -80,9 +97,15 @@ export function kaskade(k: Kontext, befunde: Befund[]) {
     pruefung: null,
     vertragspunkt: null,
     betrag: -zahlungen,
+    belege: k.d.zahlungen.map((z) => ({
+      titel: `Zahlungsavis ${z.rechnungNr.wert}`,
+      text: `Zahlbetrag ${euro(z.betrag.wert)}`,
+      datum: z.datum.wert,
+      quelle: z.betrag.quelle,
+    })),
   });
   const restforderung = schlussrechnungsbetrag - zahlungen;
-  zeilen.push({ bezeichnung: "Restforderung", art: "summe", abzugArt: null, satz: null, quelle: null, pruefung: null, vertragspunkt: null, betrag: restforderung });
+  zeilen.push({ bezeichnung: "Restforderung", art: "summe", abzugArt: null, satz: null, quelle: null, pruefung: null, vertragspunkt: null, betrag: restforderung, belege: [] });
 
   return { zeilen, leistungssumme, schlussrechnungsbetrag, zahlungen, restforderung };
 }
