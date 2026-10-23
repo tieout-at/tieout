@@ -8,7 +8,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { erzeugeFirma } from "../../src/demo/firma/erzeuge";
-import { pruefeFirma } from "../../src/engine";
+import { abrechnung, guHistorie, pruefeFirma } from "../../src/engine";
 
 // Headline amounts of the solution list per page. Extend this when a new screen is built.
 // Every amount must also be a headline amount in Demo_Faelle.md (bold or in a section heading).
@@ -78,6 +78,9 @@ function sammle(wert, pfad, ziel) {
 const firma = erzeugeFirma();
 const kern = new Set();
 sammle(pruefeFirma(firma), [], kern);
+// GU-Historie (Firmenebene) und Abrechnung der Projekte mit gelegter und bezahlter Schlussrechnung (P7, P8)
+sammle(guHistorie(firma), [], kern);
+for (const d of firma.projekte) sammle(abrechnung(d), [], kern);
 const daten = new Set();
 sammle(firma, [], daten);
 const erlaubt = new Set([...kern, ...daten]);

@@ -39,3 +39,96 @@
 .sr-blatt .gleich__link {
   color: var(--doc-mark-line);
 }
+
+/* Übersicht ohne Abgleich (P6 bis P8): Abrechnung als Blatt, rechts Kürzungen, Nachträge, Auftraggeber bisher */
+.ab-spalte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.ab-spalte--allein {
+  max-width: 480px;
+}
+.ab-nachgerechnet {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--doc-ink-secondary);
+}
+.ab-nachgerechnet .sw-ico {
+  width: 14px;
+  height: 14px;
+  color: var(--doc-mark-line);
+}
+.ab-nachgerechnet--warn .sw-ico {
+  color: var(--doc-risk-line);
+}
+.ab-stand {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.ab-stand--nein {
+  color: var(--warn);
+}
+.ab-bisher {
+  margin: 0;
+  padding: var(--space-1) var(--space-4);
+}
+/* Zwei Spalten: Begriff links, Wert rechts; die Zeile darunter rechtsbündig über die ganze Breite */
+.ab-bisher > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--line);
+}
+.ab-bisher dt {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.ab-bisher dd {
+  display: contents;
+}
+.ab-bisher dd b {
+  font-weight: 500;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ab-bisher dd span {
+  grid-column: 1 / -1;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ab-gruende {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+}
+.ab-gruende li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.ab-gruende .label {
+  margin-bottom: var(--space-1);
+}
+.ab-gruende li > span:first-child::first-letter {
+  text-transform: uppercase;
+}
+.ab-gruende__projekte {
+  display: flex;
+  gap: var(--space-2);
+  flex: none;
+}

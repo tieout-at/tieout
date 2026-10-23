@@ -172,7 +172,8 @@ export function ergaenzeSchluss(d: Datensatz, s: SchlussDef): Datensatz {
     const bp = satz(art);
     if (bp === null) return 0;
     const betrag = prozent(basis, bp);
-    abzuege.push({ art, betrag: f(betrag, qz(`${NAME[art]} ${(bp / 100).toLocaleString("de-AT")} %`)) });
+    const qs = qz(`${NAME[art]} ${(bp / 100).toLocaleString("de-AT")} %`);
+    abzuege.push({ art, betrag: f(betrag, qs), satz: f(bp, qs) });
     return betrag;
   };
   let basis = summe - gekuerzt;

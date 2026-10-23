@@ -267,6 +267,8 @@ export interface Rechnung {
 export interface ZahlungsAbzug {
   art: AbzugArt | "kuerzung" | "abschlagszahlungen";
   betrag: Feld<Cent>;
+  /** Satz, wie ihn das Avis nennt (nur bei Sätzen wie Nachlass oder Rücklass). */
+  satz?: Feld<Bp>;
 }
 
 export interface Zahlung {

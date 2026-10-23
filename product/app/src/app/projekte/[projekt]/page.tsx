@@ -7,8 +7,9 @@
 import { Camera } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { firma, hatSchlussrechnung, postenSlug, projekt, projektIds, zuEntscheiden } from "@/daten/demo";
+import { firma, hatSchlussrechnung, historie, postenSlug, projekt, projektAbrechnung, projektIds, schonBeiAuftraggeber, zuEntscheiden } from "@/daten/demo";
 import { BELEGQUELLE_TEXT } from "@/engine";
+import { AbrechnungBlatt, AuftraggeberBisher, Kuerzungen, Nachtraege } from "@/ui/Abgeschlossen";
 import { Ergebniskette, type Glied } from "@/ui/Ergebniskette";
 import { anzahl, betrag, datum, zeitpunkt } from "@/ui/format";
 import { Ico } from "@/ui/Ico";
@@ -59,6 +60,10 @@ export default async function ProjektUebersicht({ params }: Props) {
     verloren: e.befunde.filter((b) => b.liste === "verloren").length,
   };
   const nichtsOffen = entscheiden.length === 0;
+  // Ohne Abgleich (Schlussrechnung gelegt oder abgeschlossen): Abrechnung aus Rechnung, Korrekturblatt und Avis.
+  const abr = projektAbrechnung(id);
+  const zahlungsavis = d.zahlungen.find((z) => z.rechnungNr.wert === abr?.rechnung.nr)?.dokumentId ?? "";
+  const bisher = e.abgleich ? null : historie().auftraggeber.find((h) => h.auftraggeber.id === p.auftraggeberId && h.kuerzungen.length + h.abzuege.length + h.nachtraege.anzahl > 0);
 
   // Letzte WhatsApp-Meldung und der Posten, den sie belegt oder ausgelöst hat.
   const meldung = [...d.zurufe].sort((a, b) => b.zeitpunkt.localeCompare(a.zeitpunkt))[0];
@@ -158,6 +163,11 @@ export default async function ProjektUebersicht({ params }: Props) {
                 Letzte Abschlagsrechnung <b>{datum(e.grenze)}</b>
               </span>
             )}
+            {!e.abgleich && (
+              <span>
+                <b>{p.status === "abgeschlossen" ? "Abgeschlossen" : "Schlussrechnung gelegt"}</b>
+              </span>
+            )}
             {ag && (
               <span>
                 {ag.art === "gu" ? "GU" : "Auftraggeber"} <b>{ag.name}</b>
@@ -172,11 +182,51 @@ export default async function ProjektUebersicht({ params }: Props) {
           </div>
         </div>
 
-        {!e.abgleich && (
-          <Kennzahlen>
-            {p.schlussrechnungGelegt && <Kennzahl label="Schlussrechnung gelegt" wert={datum(p.schlussrechnungGelegt)} kontext={ag ? `an ${ag.name}` : ""} />}
-            {p.schlusszahlung && <Kennzahl label="Schlusszahlung" wert={datum(p.schlusszahlung)} kontext="Projekt abgeschlossen" />}
-          </Kennzahlen>
+        {!e.abgleich && abr && (
+          <>
+            <Ergebniskette
+              glieder={[
+                { titel: "Gelegt", wert: betrag(abr.rechnung.summe), zeile: `Schlussrechnung ${datum(abr.rechnung.datum)}`, href: `${basis}/belege/${d.schlussrechnung!.dokumentId}/`, stand: "erledigt" },
+                {
+                  titel: "Gekürzt",
+                  wert: betrag(abr.gekuerzt),
+                  zeile: anzahl(abr.kuerzungen.length, "Position laut Korrekturblatt", "Positionen laut Korrekturblatt"),
+                  href: `${basis}/belege/${abr.kuerzungen[0]?.beleg.quelle.dokumentId ?? ""}/`,
+                  stand: "erledigt",
+                },
+                { titel: "Einbehalten", wert: betrag(abr.einbehalten), zeile: "Haftrücklass", href: `${basis}/belege/${zahlungsavis}/#pos-haftruecklass`, stand: "erledigt" },
+                {
+                  titel: "Bezahlt",
+                  wert: betrag(abr.schlusszahlung.betrag),
+                  zeile: `${datum(abr.schlusszahlung.datum)}, nach ${anzahl(abr.schlusszahlung.tage, "Tag", "Tagen")}`,
+                  href: `${basis}/belege/${zahlungsavis}/#pos-zahlbetrag`,
+                  stand: "erledigt",
+                },
+              ]}
+            />
+            <div className="sr-raster">
+              <AbrechnungBlatt basis={basis} name={`${p.name}, ${p.los}`} a={abr} gleicherGrund={schonBeiAuftraggeber(id, "abzug_ohne_vertragspunkt")} />
+              <aside className="ab-spalte">
+                <Kuerzungen basis={basis} a={abr} gleich={(grund) => schonBeiAuftraggeber(id, grund)} />
+                <Nachtraege basis={basis} a={abr} />
+                {bisher && <AuftraggeberBisher h={bisher} />}
+              </aside>
+            </div>
+          </>
+        )}
+
+        {!e.abgleich && !abr && (
+          <>
+            <Kennzahlen>
+              {p.schlussrechnungGelegt && <Kennzahl label="Schlussrechnung gelegt" wert={datum(p.schlussrechnungGelegt)} kontext={ag ? `an ${ag.name}` : ""} />}
+              <Kennzahl label="Schlusszahlung" wert={p.schlusszahlung ? datum(p.schlusszahlung) : "offen"} kontext={p.schlusszahlung ? "Projekt abgeschlossen" : "noch kein Zahlungsavis"} />
+            </Kennzahlen>
+            {bisher && (
+              <div className="ab-spalte ab-spalte--allein">
+                <AuftraggeberBisher h={bisher} />
+              </div>
+            )}
+          </>
         )}
 
         {e.abgleich && (

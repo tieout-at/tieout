@@ -295,3 +295,41 @@ export interface AuftraggeberHistorie {
 export interface GuHistorie {
   auftraggeber: AuftraggeberHistorie[];
 }
+
+// ---------- Abrechnung eines abgeschlossenen Projekts ----------
+
+/** Eine Zeile der Abrechnung: von der gelegten Schlussrechnung über Kürzungen und Abzüge bis zur Schlusszahlung. */
+export interface AbrechnungsZeile {
+  bezeichnung: string;
+  art: "rechnung" | "kuerzung" | "abzug" | "summe" | "zahlung" | "ergebnis";
+  abzugArt: AbzugArt | null;
+  /** Satz laut Zahlungsavis; null bei Zeilen ohne Satz. */
+  satz: Bp | null;
+  /** Satz gegen den Vertrag; derselbe Schlüssel „abzug_ohne_vertragspunkt“ wie in Kaskade und GU-Historie. */
+  pruefung: "laut_vertrag" | "abweichung" | "abzug_ohne_vertragspunkt" | null;
+  vertragspunkt: string | null;
+  betrag: Cent;
+  /** Dokumente hinter der Zeile; leer bei Zwischensummen, die nur gerechnet sind. */
+  belege: Beleg[];
+}
+
+export interface Abrechnung {
+  rechnung: { nr: string; datum: Datum; summe: Cent };
+  zeilen: AbrechnungsZeile[];
+  /** Summe der Kürzungen laut Korrekturblatt. */
+  gekuerzt: Cent;
+  /** Haftrücklass, den der Auftraggeber einbehält. */
+  einbehalten: Cent;
+  schlusszahlung: {
+    /** Zahlbetrag laut Avis. */
+    betrag: Cent;
+    datum: Datum;
+    /** Tage von der gelegten Schlussrechnung bis zur Zahlung. */
+    tage: number;
+    /** Nachgerechnet: Schlussrechnung minus alle Zeilen des Avis. */
+    nachgerechnet: Cent;
+    stimmt: boolean;
+  };
+  kuerzungen: HistorieKuerzung[];
+  nachtraege: { nr: string; titel: string; betrag: Cent; beauftragt: boolean; beleg: Beleg }[];
+}

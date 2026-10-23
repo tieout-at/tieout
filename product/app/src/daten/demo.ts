@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import { LG_NAME } from "@/demo/w21/katalog";
 import type { Datensatz, Firmendaten, Kuerzungsgrund } from "@/domain/typen";
-import { gleicherGrund, guHistorie, pruefeFirma, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis, type GuHistorie, type Liste } from "@/engine";
+import { abrechnung, gleicherGrund, guHistorie, pruefeFirma, type Abrechnung, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis, type GuHistorie, type Liste } from "@/engine";
 
 let cache: { f: Firmendaten; e: FirmenErgebnis; h: GuHistorie } | null = null;
 
@@ -171,4 +171,10 @@ export function navDaten(): { firma: string; untertitel: string; projekte: NavPr
 /** Namen der Leistungsgruppen (heute aus dem synthetischen Katalog, später aus dem LV). */
 export function leistungsgruppen(): Record<string, string> {
   return LG_NAME;
+}
+
+/** Abrechnung einer gelegten und bezahlten Schlussrechnung (Projekte ohne Abgleich); sonst null. */
+export function projektAbrechnung(id: string): Abrechnung | null {
+  const { d, e } = projekt(id);
+  return e.abgleich ? null : abrechnung(d);
 }
