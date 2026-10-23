@@ -23,6 +23,30 @@ function Mark({ an, risiko = false, children }: { an: boolean; risiko?: boolean;
   return <span className={risiko ? "sw-mark sw-mark--risk" : "sw-mark"}>{children}</span>;
 }
 
+/** Mailtext mit markierter Kernstelle; steht das Zitat nicht im Text, folgt es als eigener Absatz. */
+function MailText({ text, zitat }: { text: string | null; zitat: string | null }) {
+  const stelle = text && zitat ? text.indexOf(zitat) : -1;
+  if (text && zitat && stelle >= 0) {
+    return (
+      <p>
+        {text.slice(0, stelle)}
+        <Mark an>{zitat}</Mark>
+        {text.slice(stelle + zitat.length)}
+      </p>
+    );
+  }
+  return (
+    <>
+      {text && <p>{text}</p>}
+      {zitat && (
+        <p>
+          <Mark an>{zitat}</Mark>
+        </p>
+      )}
+    </>
+  );
+}
+
 function Kopf({ zeilen }: { zeilen: [string, React.ReactNode][] }) {
   return (
     <div className="sw-page__head">
@@ -137,7 +161,7 @@ function VertragsSeite({ d, beleg }: { d: Datensatz; beleg: Beleg }) {
     ["Pkt. 6.3", "Regiesätze Monteur und Helfer", `${betrag(v.regiesatzMonteur.wert)} und ${betrag(v.regiesatzHelfer.wert)} je Stunde`],
   ];
   for (const s of v.saetze) punkte.push([`Pkt. ${s.punkt}`, NAME[s.art] ?? s.art, prozentText(s.satz.wert, 2)]);
-  for (const p of v.pauschalen) punkte.push([`Pkt. ${p.punkt}`, "Pauschal enthalten", p.text.wert]);
+  for (const p of v.pauschalen) punkte.push([`Pkt. ${p.punkt}`, "Pauschale", p.text.wert]);
   const pg = v.preisgleitung;
   if (pg) punkte.push([`Pkt. ${pg.punkt}`, "Veränderliche Preise", `Lohnanteil ${prozentText(pg.lohnanteil.wert, 0)}, ${pg.indexName.wert}, Leistungen ab ${datum(pg.stichtag.wert)}`]);
   punkte.sort((a, b) => a[0].localeCompare(b[0], "de", { numeric: true }));
@@ -365,11 +389,7 @@ function Inhalt({ d, dok, beleg, ganz }: { d: Datensatz; dok: Dokument; beleg: B
               ["Betreff", m.betreff.wert],
             ]}
           />
-          {m.zitat && (
-            <p>
-              <Mark an>{m.zitat.wert}</Mark>
-            </p>
-          )}
+          <MailText text={m.text?.wert ?? null} zitat={m.zitat?.wert ?? null} />
           <p>Mit freundlichen Grüßen</p>
         </>
       );
@@ -386,6 +406,7 @@ function Inhalt({ d, dok, beleg, ganz }: { d: Datensatz; dok: Dokument; beleg: B
           <Kopf
             zeilen={[
               ["Datei", dok.dateiname],
+              ["Motiv", ft?.motiv.wert ?? ""],
               ["Aufnahme", ft ? zeitpunkt(ft.exifDatum.wert) : datum(dok.datum)],
               ["Ort", <Mark key="ort" an>{ft?.ort.wert ?? ""}</Mark>],
             ]}

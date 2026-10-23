@@ -21,11 +21,11 @@ As of: 22.10.2026, **v2** following Dossier v3 (company with 8 projects, field r
 - Average wage price (Mittellohnpreis) according to own calculation (K3): 56,80 €/h (Annahme)
 - Contract: discount (Nachlass) 3 % (item 5.1); site power and site water (Baustrom und Bauwasser) 0,8 % (item 4.6); performance retention (Deckungsrücklass) 5 % on interim invoices, released with the final invoice (item 9.1); warranty retention (Haftrücklass) 3 % on the final invoice, replaceable by bank guarantee (item 9.2); site setup (Baustelleneinrichtung) as a lump sum (item 4.3). **No** construction damage levy (Bauschadensumlage) in the contract.
 - Interim invoices (AR): AR1 31.03.2026 312.400,00 €; AR2 30.06.2026 418.900,00 €; AR3 30.09.2026 356.200,00 €; cumulative 1.087.500,00 €
-- Folder: 165 documents, of which 12 duplicates. Implemented in the repo with 57 mails instead of 60, and in exchange the timesheet for calendar week (KW) 23 (for G2), index sheet (Indexblatt, for J8) and final invoice draft (1.218.640,00 €) as separate documents. Otherwise: 1 contract, 1 LV, 1 K7, 14 measurement sheets (Aufmaßblätter), 16 daywork reports, 3 AR, 3 payment advices (Zahlungsavisos), 40 photos, 24 plans (index C/D/E), 1 GU deduction letter (GU-Abzugsschreiben), 1 GU correction sheet AR3 (GU-Korrekturblatt). During import, 31 fields corrected by hand.
+- Folder: 81 documents, of which 4 duplicates: 1 contract, 1 LV, 1 K7, 14 measurement sheets (Aufmaßblätter), 16 daywork reports, 1 timesheet for calendar week (KW) 23 (for G2), 3 AR, 3 payment advices (Zahlungsavisos), 1 index sheet (Indexblatt, for J8), 1 final invoice draft (1.218.640,00 €), 1 GU deduction letter (GU-Abzugsschreiben), 1 GU correction sheet AR3 (GU-Korrekturblatt), 18 mails (16 originals, 2 duplicates), 10 photos (8 originals, 2 duplicates), 9 plans (H-101, H-201, L-310, each index C/D/E). During import, 25 fields corrected by hand (12 measured quantities, 10 daywork hours, 2 mail dates, 1 photo date).
 - LV: 380 positions (LG 22 heating 124, LG 24 sanitary 138, LG 26 ventilation 82, LG 28 MSR (measurement, control and regulation) 36).
 - Daywork reports: 16, of which 11 invoiced, 3 signed and not invoiced (J2–J4), 2 not signed (O1, O2).
 - Plan H-201: index C 1 radiator per unit (Top) 7–13 (7 pcs), index D 3 per unit (21 pcs, +14).
-- **Field reports (Zurufe): 6** via WhatsApp (channel WhatsApp, not in the folder; the 165 documents remain). Per field report: voice message with transcript, a photo in 5 cases, time taken from the message timestamp (Annahme: WhatsApp removes EXIF, unverified according to the dossier, to be tested), sender as a role, confirmed by the sender. 4 support existing items, 2 have no daywork report (O4, O5).
+- **Field reports (Zurufe): 6** via WhatsApp (channel WhatsApp, not in the folder; the 81 documents remain). Per field report: voice message with transcript, a photo in 5 cases, time taken from the message timestamp (Annahme: WhatsApp removes EXIF, unverified according to the dossier, to be tested), sender as a role, confirmed by the sender. 4 support existing items, 2 have no daywork report (O4, O5).
 
 | # | Time | Sender | Content (transcript, shortened) | Photo | Reference |
 |---|---|---|---|---|---|
@@ -38,7 +38,7 @@ As of: 22.10.2026, **v2** following Dossier v3 (company with 8 projects, field r
 
 Rules: "Two men" = 1 fitter + 1 helper (Annahme). Field reports Z1 to Z4 deliberately name no hours, so that G2 (timesheet against daywork report) stays unchanged; Z5 (KW 34) and Z6 (KW 37) fall in weeks without a timesheet. The agent assesses nothing; whether a field report is billable is decided by the human. Who gave the instruction according to the field report is only recorded, not assessed.
 
-**For the build (data model and tests):** Field reports are separate objects in the project twin (channel WhatsApp) with their own identifier, not part of the 165 folder documents. The rule "every piece of evidence points to an existing document" applies to folder documents **or** field reports. Field report evidence attaches to findings J1, J3, J4 and O1 (J1 then has 7 instead of 6 pieces of evidence). O4 and O5 are not daywork reports and do not count in the daywork statistics (stays 16 / 11 / 3 / 2).
+**For the build (data model and tests):** Field reports are separate objects in the project twin (channel WhatsApp) with their own identifier, not part of the 81 folder documents. The rule "every piece of evidence points to an existing document" applies to folder documents **or** field reports. Field report evidence attaches to findings J1, J3, J4 and O1 (J1 then has 7 instead of 6 pieces of evidence). O4 and O5 are not daywork reports and do not count in the daywork statistics (stays 16 / 11 / 3 / 2).
 
 ## List 1: billable now, 8 items, 27.410,00 €
 
@@ -74,9 +74,9 @@ Plus a **note without amount**: A1 "Terminänderung (Mail GU 02.07.: Fertigstell
 
 ## List 3: lost, 1 item, 1.180,00 €
 
-| # | Content | Reason | Amount |
-|---|---|---|---|
-| V1 | Site setup container relocated twice | included in the lump sum per contract item 4.3 | 1.180,00 € |
+| # | Content | Reason | Calculation | Amount |
+|---|---|---|---|---|
+| V1 | Site setup container relocated twice | included in the lump sum per contract item 4.3 | 16 h × 56,80 € (average wage price) + crane 271,20 € = 1.180,00 € | 1.180,00 € |
 
 ## Pre-check from the GU perspective (Vorprüfung aus GU-Sicht): 4 positions at risk of deduction, 8.767,50 €
 
