@@ -3,7 +3,7 @@
 
 import { Info, TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
-import { einPosten, postenSlug, firma, projekt, projektIds } from "@/daten/demo";
+import { einPosten, postenSlug, firma, projekt, projektIds, schonBeiAuftraggeber } from "@/daten/demo";
 import type { DokumentArt } from "@/domain/typen";
 import { prozentText } from "@/engine/geld";
 import { KUERZUNGSGRUND_TEXT, type Beleg } from "@/engine";
@@ -12,6 +12,7 @@ import { Postenflaeche, type BelegAnsicht, type BelegTyp } from "@/ui/Postenflae
 import { Belegseite, belegDatei } from "@/ui/Belegseite";
 import { betrag, datum } from "@/ui/format";
 import { Freigabeleiste } from "@/ui/Freigabeleiste";
+import { GleicherGrund } from "@/ui/GleicherGrund";
 import { Ico } from "@/ui/Ico";
 import { Quellen } from "@/ui/Quellen";
 import { Seitenkopf } from "@/ui/Seitenkopf";
@@ -128,6 +129,7 @@ export default async function PostenSeite({ params }: Props) {
             </b>
             <span>{risiko.detail}</span>
             <span>{risiko.abhilfe}</span>
+            <GleicherGrund treffer={schonBeiAuftraggeber(d.projekt.id, risiko.grund)} />
           </div>
         </div>
       )}

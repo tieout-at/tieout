@@ -9,11 +9,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
-import { firma, hatSchlussrechnung, postenSlug, projekt, schlussrechnungIds } from "@/daten/demo";
+import { firma, hatSchlussrechnung, postenSlug, projekt, schlussrechnungIds, schonBeiAuftraggeber } from "@/daten/demo";
 import { prozentText } from "@/engine/geld";
 import { KUERZUNGSGRUND_TEXT, type Beleg, type KaskadenZeile } from "@/engine";
 import { anzahl, betrag, datum } from "@/ui/format";
 import { teileTitel } from "@/ui/posten-texte";
+import { GleicherGrund } from "@/ui/GleicherGrund";
 import { DruckKnopf, FreigabeStufen } from "@/ui/Schlussrechnung";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 import { FreigegebenZahl, StandZelle } from "@/ui/Stand";
@@ -173,6 +174,11 @@ export default async function Schlussrechnung({ params }: Props) {
                         <td>
                           {z.bezeichnung}
                           {p && <span className={`${p.klasse} sr-nur-schirm`}>{p.text}</span>}
+                          {z.pruefung === "abzug_ohne_vertragspunkt" && (
+                            <span className="sr-historie sr-nur-schirm">
+                              <GleicherGrund treffer={schonBeiAuftraggeber(id, "abzug_ohne_vertragspunkt")} />
+                            </span>
+                          )}
                           {z.belege.length > 0 && belege}
                         </td>
                         <td className="sr-satz">{z.satz !== null ? prozentText(z.satz, 2) : ""}</td>
@@ -213,6 +219,7 @@ export default async function Schlussrechnung({ params }: Props) {
                           {r.bereitsGekuerzt && ", bereits gekürzt"}
                         </span>
                         <span className="sr-risiko__abhilfe">{r.abhilfe}</span>
+                        {!r.bereitsGekuerzt && <GleicherGrund treffer={schonBeiAuftraggeber(id, r.grund)} ohneLink />}
                       </Link>
                     </li>
                   );

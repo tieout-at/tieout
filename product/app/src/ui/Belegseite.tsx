@@ -359,7 +359,9 @@ function Inhalt({ d, dok, beleg, ganz }: { d: Datensatz; dok: Dokument; beleg: B
       return (
         <>
           <Titel titel={`Zahlungsavis ${rechnungName(z.rechnungNr.wert)}`} meta={`vom ${datum(z.datum.wert)}`} />
-          <Tabelle kopf={["Zeile", "Betrag"]} markiert={zeilen.findIndex(([, , q]) => q.dokumentId === dok.id && trifft(beleg.quelle, q.stelle))} zeilen={zeilen.map(([a, b]) => [a, b])} />
+          <Tabelle kopf={["Zeile", "Betrag"]} markiert={zeilen.findIndex(([, , q]) => q.dokumentId === dok.id && trifft(beleg.quelle, q.stelle))} zeilen={zeilen.map(([a, b]) => [a, b])}
+            ids={ganz ? [...(zeilen.length > z.abzuege.length + 1 ? ["pos-rechnung"] : []), ...z.abzuege.map((a) => `pos-${a.art}`), "pos-zahlbetrag"] : undefined}
+          />
         </>
       );
     }
@@ -406,6 +408,7 @@ function Inhalt({ d, dok, beleg, ganz }: { d: Datensatz; dok: Dokument; beleg: B
             kopf={["Pos.", "Kürzung", "Grund"]}
             markiert={kb.zeilen.findIndex((z) => trifft(beleg.quelle, z.kuerzung.quelle.stelle))}
             zeilen={kb.zeilen.map((z) => [z.positionNr.wert, betrag(z.kuerzung.wert), z.text.wert])}
+            ids={ganz ? kb.zeilen.map((z) => `pos-${z.positionNr.wert}`) : undefined}
           />
         </>
       );
