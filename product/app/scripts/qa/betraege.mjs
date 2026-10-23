@@ -13,7 +13,7 @@ import { pruefeFirma } from "../../src/engine";
 // Headline amounts of the solution list per page. Extend this when a new screen is built.
 // Every amount must also be a headline amount in Demo_Faelle.md (bold or in a section heading).
 const ERWARTET = [
-  { seite: "/", betraege: ["34.268,10", "11.532,30"] },
+  { seite: "/", betraege: ["34.268,10", "11.532,30", "3.179,50", "8.352,80", "20.975,90"] },
   { seite: "/projekte/w21-b-hkls/", betraege: ["27.410,00", "11.282,30", "1.180,00", "8.767,50"] },
   { seite: "/projekte/w21-b-hkls/schlussrechnung/", betraege: ["170.060,89", "8.767,50"] },
 ];

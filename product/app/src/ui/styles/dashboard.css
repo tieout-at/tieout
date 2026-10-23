@@ -429,3 +429,18 @@
     animation: none;
   }
 }
+
+/* Aufteilung von „Angemeldet und offen“ nach Stand des Belegs (Rechenkern `geld`), nie zusammengezählt */
+.db-teile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.db-teile span {
+  white-space: nowrap;
+}
+.db-teile b {
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}

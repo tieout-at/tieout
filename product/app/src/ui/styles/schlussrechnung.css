@@ -418,7 +418,19 @@
   }
 }
 
+/* Beweispaket für den GU (Maxi S. 23.10.): interne Vermerke nur am Bildschirm, im Druck neutrale Bezeichnungen */
+.sr-nur-druck {
+  display: none;
+}
+
 @media print {
+  .sr-nur-druck {
+    display: inline;
+  }
+  .sr-nur-schirm,
+  .sr-liste1 li .sw-status {
+    display: none !important;
+  }
   .sw-sidebar,
   .sw-mobilkopf,
   .sw-pagehead,
