@@ -13,7 +13,7 @@ v2 is rebuilt from zero (decided 23.10.2026): UI modelled on Attio's layout, beh
 | `agent/` | WhatsApp agent (Santino), taken over unchanged from v1 `product/zuruf`; its own `CLAUDE.md` applies there |
 | `website/` | public website; `website/STRUKTUR.md` is binding |
 | `brand/` | logo and graphics |
-| `docs/` | `_STATUS.md`, `_UEBERGABE.md`, `_BEREINIGUNG.md` (clean-up log), `Demo_Faelle.md` (solution list); later `SPEZIFIKATION.md`, `DESIGN.md` |
+| `docs/` | `_STATUS.md`, `_UEBERGABE.md`, `_BEREINIGUNG.md` (clean-up log), `SPEZIFIKATION.md`, `Demo_Faelle.md` (solution list) with `demo_faelle_check.mjs` (recomputes every amount; run before every change to either file); later `DESIGN.md` |
 
 ## Rules
 
