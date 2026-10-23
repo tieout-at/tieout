@@ -42,6 +42,28 @@ export function postenSlug(schluessel: string): string {
   return schluessel.replace(/^zuruf:/, "whatsapp:").replace(/[:.]/g, "-");
 }
 
+/** Ein Posten zum Entscheiden mit Adresse, in der Reihenfolge, in der man prüft. */
+export interface ZuEntscheiden {
+  schluessel: string;
+  liste: Liste;
+  href: string;
+}
+
+/**
+ * Posten, über die zu entscheiden ist (ohne „Braucht Anwalt“), in Prüfreihenfolge: zuerst die Posten, die der GU
+ * kürzen würde (größtes Kürzungsrisiko zuerst), dann die übrigen in der Reihenfolge des Rechenkerns. So beginnt
+ * „Weiter prüfen“ beim Posten, der am meisten Verteidigung braucht (W21: J1, Mehrmenge aus Planänderung).
+ */
+export function zuEntscheiden(projektId: string, e: Ergebnis): ZuEntscheiden[] {
+  const risiko = new Map<string, number>();
+  for (const r of e.vorpruefung?.risiken ?? []) if (r.befundSchluessel) risiko.set(r.befundSchluessel, Math.max(risiko.get(r.befundSchluessel) ?? 0, r.betrag));
+  return e.befunde
+    .filter((b) => b.liste !== "anwalt")
+    .map((b, i) => ({ b, i, r: risiko.get(b.schluessel) ?? -1 }))
+    .sort((x, y) => y.r - x.r || x.i - y.i)
+    .map(({ b }) => ({ schluessel: b.schluessel, liste: b.liste, href: `/projekte/${projektId}/posten/${postenSlug(b.schluessel)}/` }));
+}
+
 export function einPosten(projektId: string, slug: string): { d: Datensatz; e: Ergebnis; b: Befund } {
   const { d, e } = projekt(projektId);
   const b = e.befunde.find((x) => postenSlug(x.schluessel) === slug);

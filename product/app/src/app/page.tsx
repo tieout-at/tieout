@@ -1,133 +1,225 @@
-// Firmenübersicht: alle Projekte der Firma mit Ampel, Datum und Beträgen aus dem Rechenkern.
-// „Jetzt verrechenbar“ ist die Hauptzahl, „angemeldet und offen“ steht getrennt daneben, nie zusammengezählt.
+// Dashboard der Firma (UI-Runde 1, Schritt 2, Option A „Lagebild“; Vorlage: Linear „My issues“ für „Als Nächstes“,
+// Stripe-Übersicht für die eine große Zahl, Attio-Karten für die Projekte, Planraster der Website).
+// In fünf Sekunden: wie viel jetzt verrechenbar ist, wo es liegt, was als Nächstes dran ist.
+// Alle Beträge aus dem Rechenkern; „jetzt verrechenbar“ und „angemeldet und offen“ stehen nie zusammengezählt.
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { firma } from "@/daten/demo";
+import { firma, navDaten, zuEntscheiden } from "@/daten/demo";
 import type { Ampel, ProjektZeile } from "@/engine";
+import { Bauglyphe } from "@/ui/Bauglyphe";
 import { anzahl, betrag, datum } from "@/ui/format";
-import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
+import { Kennzahl } from "@/ui/Kennzahl";
+import { Panel } from "@/ui/Panel";
 import { Seitenkopf } from "@/ui/Seitenkopf";
-import type { Ton } from "@/ui/Statusmarke";
-import { Zeilennavigation } from "@/ui/Zeilennavigation";
-import { GruppenTitel } from "@/ui/Gruppe";
+import { FreigabeStriche, FreigegebenZahl } from "@/ui/Stand";
+import { WeiterPruefen } from "@/ui/WeiterPruefen";
 
-export const metadata: Metadata = { title: "Projekte" };
+export const metadata: Metadata = { title: "Übersicht" };
 
-/** Ampel als Punkt plus eigenes Wort (Bauteil „Projektliste mit Ampel“, src/ui/README.md). */
-const AMPEL: Record<Ampel, { ton: Ton; wort: string }> = {
-  rot: { ton: "neg", wort: "Bald legen" },
-  gelb: { ton: "warn", wort: "Beträge offen" },
-  gruen: { ton: "pos", wort: "Nichts offen" },
-  grau: { ton: "neutral", wort: "Kein Abgleich" },
+/** Ampel als Wort (Bauteil „Projektliste mit Ampel“, src/ui/README.md). */
+const AMPEL: Record<Ampel, { klasse: string; wort: string }> = {
+  rot: { klasse: "sw-dotlabel sw-dotlabel--neg", wort: "Bald legen" },
+  gelb: { klasse: "sw-dotlabel sw-dotlabel--warn", wort: "Beträge offen" },
+  gruen: { klasse: "sw-dotlabel sw-dotlabel--pos", wort: "Nichts offen" },
+  grau: { klasse: "sw-dotlabel", wort: "Kein Abgleich" },
 };
 
-function Zeile({ p }: { p: ProjektZeile }) {
-  const href = `/projekte/${p.projektId}/`;
-  const a = AMPEL[p.ampel];
+const MONAT = ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+
+/** Datum als Kalenderblatt: Monat oben, Tag groß (Linear-Fälligkeit, Apple-Kalender). */
+function Blatt({ iso, dringend }: { iso: string; dringend?: boolean }) {
   return (
-    <tr data-href={href} tabIndex={0}>
-      <td title={p.name}>
-        <span className="sw-pos-nr">{p.kurz}</span>
-        <Link href={href} className="row-link" tabIndex={-1}>
-          {p.name}
-        </Link>
-      </td>
-      <td className="neben nur-breit" title={p.auftraggeber.name}>
-        {p.auftraggeber.name}
-      </td>
-      <td className="mobil-ampel">{p.ampel !== "grau" && <span className={a.ton === "neutral" ? "sw-dotlabel" : `sw-dotlabel sw-dotlabel--${a.ton}`}>{a.wort}</span>}</td>
-      <td className="sw-num mobil-datum">{p.datum?.art === "legen_bis" && datum(p.datum.wert)}</td>
-      <td className="r nur-breit">{betrag(p.auftragssumme)}</td>
-      <td className="r">{p.jetzt !== null && betrag(p.jetzt)}</td>
-      <td className="r nur-breit">{p.offen !== null && betrag(p.offen)}</td>
-    </tr>
+    <span className={dringend ? "db-blatt db-blatt--dringend" : "db-blatt"} title={datum(iso)}>
+      <span>{MONAT[Number(iso.slice(5, 7)) - 1]}</span>
+      <b>{Number(iso.slice(8, 10))}</b>
+    </span>
   );
 }
 
-export default function Firmenuebersicht() {
+function datumZeile(p: ProjektZeile): string {
+  if (!p.datum) return "";
+  const text = { legen_bis: "legen bis", letzte_ar: "letzte AR", gelegt: "Schlussrechnung gelegt", schlusszahlung: "Schlusszahlung" }[p.datum.art];
+  return `${text} ${datum(p.datum.wert)}`;
+}
+
+export default function Dashboard() {
   const { daten, ergebnis: e } = firma();
+  const nav = new Map(navDaten().projekte.map((p) => [p.id, p]));
   const offen = e.projekte.filter((p) => p.jetzt !== null);
   const zu = e.projekte.filter((p) => p.jetzt === null);
-  const naechste = e.naechsteSchlussrechnung ? e.projekte.find((p) => p.projektId === e.naechsteSchlussrechnung!.projektId) : undefined;
+  // Reihenfolge im Balken und in der Legende: größter Betrag zuerst (nur Sortierung, keine Rechnung).
+  const mitJetzt = offen.filter((p) => (p.jetzt ?? 0) > 0).sort((a, b) => (b.jetzt ?? 0) - (a.jetzt ?? 0));
+  const entscheiden = new Map(offen.map((p) => [p.projektId, zuEntscheiden(p.projektId, e.ergebnisse[p.projektId])]));
+  const fristen = offen
+    .filter((p) => p.datum?.art === "legen_bis" && p.datum.wert >= e.stichtag)
+    .sort((a, b) => a.datum!.wert.localeCompare(b.datum!.wert));
+  const risiken = offen.filter((p) => (e.ergebnisse[p.projektId].vorpruefung?.risiken.length ?? 0) > 0);
 
   return (
     <>
-      <Seitenkopf pfad={[{ text: daten.firma.name }]} titel="Projekte" />
-      <main className="scr-body">
-        <Kennzahlen>
-          <Kennzahl
-            label="Jetzt verrechenbar"
-            wert={betrag(e.summen.jetzt)}
-            kontext={`${anzahl(e.summen.postenJetzt, "Posten", "Posten")} in ${anzahl(e.summen.projekteMitJetzt, "Projekt", "Projekten")}`}
-          />
+      <Seitenkopf pfad={[{ text: daten.firma.name }]} titel="Übersicht" />
+      <main className="scr-body db">
+        <section className="db-kopf">
+          <div className="db-held">
+            <span className="label">Jetzt verrechenbar</span>
+            <span className="db-held__zahl">{betrag(e.summen.jetzt)}</span>
+            <span className="db-held__ctx">
+              {anzahl(e.summen.postenJetzt, "Posten", "Posten")} in {anzahl(e.summen.projekteMitJetzt, "Projekt", "Projekten")}
+            </span>
+            <div className="db-balken" aria-hidden="true">
+              {mitJetzt.map((p, i) => (
+                <span key={p.projektId} className="db-balken__teil" data-stufe={Math.min(i, 3)} style={{ width: `${((p.jetzt ?? 0) / e.summen.jetzt) * 100}%` }} />
+              ))}
+            </div>
+            <ul className="db-legende">
+              {mitJetzt.map((p, i) => (
+                <li key={p.projektId}>
+                  <Link href={`/projekte/${p.projektId}/`}>
+                    <span className="db-legende__farbe" data-stufe={Math.min(i, 3)} aria-hidden="true" />
+                    <span className="db-legende__name">{p.name}</span>
+                    <b>{betrag(p.jetzt ?? 0)}</b>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <Panel titel="Als Nächstes" className="db-naechstes">
+            <ol className="db-schritte">
+              {fristen.map((p, i) => (
+                <li key={p.projektId} className="db-schritt">
+                  <Blatt iso={p.datum!.wert} dringend={p.ampel === "rot"} />
+                  <span className="db-schritt__text">
+                    <Link href={`/projekte/${p.projektId}/`} className="db-schritt__link">
+                      Schlussrechnung {p.kurz} legen
+                    </Link>
+                    <span className="meta sw-muted">
+                      <FreigegebenZahl projektId={p.projektId} posten={entscheiden.get(p.projektId) ?? []} /> Posten freigegeben
+                    </span>
+                  </span>
+                  <WeiterPruefen
+                    projektId={p.projektId}
+                    posten={entscheiden.get(p.projektId) ?? []}
+                    text="Prüfen"
+                    className={i === 0 ? "sw-btn sw-btn--accent sw-btn--sm db-schritt__knopf" : "sw-btn sw-btn--sm db-schritt__knopf"}
+                  />
+                </li>
+              ))}
+              {risiken.map((p) => {
+                const v = e.ergebnisse[p.projektId].vorpruefung!;
+                return (
+                  <li key={`risiko-${p.projektId}`} className="db-schritt">
+                    {p.datum?.art === "legen_bis" ? <Blatt iso={p.datum.wert} /> : <span className="db-blatt" aria-hidden="true" />}
+                    <span className="db-schritt__text">
+                      <Link href={`/projekte/${p.projektId}/posten/`} className="db-schritt__link">
+                        Kürzungsrisiko {p.kurz} vorbeugen
+                      </Link>
+                      <span className="meta sw-muted">
+                        {anzahl(v.risiken.length, "Position", "Positionen")}, {betrag(v.summe)}
+                      </span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          </Panel>
+        </section>
+
+        <section className="db-neben">
           <Kennzahl
             label="Angemeldet und offen"
             wert={betrag(e.summen.offen)}
             kontext={`${anzahl(e.summen.postenOffen, "Posten", "Posten")} in ${anzahl(e.summen.projekteMitOffen, "Projekt", "Projekten")}`}
           />
-          {e.naechsteSchlussrechnung && naechste && (
-            <Kennzahl label="Schlussrechnung legen bis" wert={datum(e.naechsteSchlussrechnung.datum)} kontext={`${naechste.kurz} ${naechste.name}`} />
+          {risiken.map((p) => {
+            const v = e.ergebnisse[p.projektId].vorpruefung!;
+            return (
+              <Kennzahl
+                key={p.projektId}
+                label={`Kürzungsrisiko ${p.kurz}`}
+                wert={betrag(v.summe)}
+                kontext={`${anzahl(v.risiken.length, "Position", "Positionen")}, bereits gekürzt ${betrag(v.bereitsGekuerzt.betrag)}`}
+              />
+            );
+          })}
+          <Kennzahl label="Auftrag im Abgleich" wert={betrag(e.summen.auftragssummeOffen)} kontext={`${e.summen.offeneProjekte} von ${e.summen.projekte} Projekten`} />
+        </section>
+
+        <section className="db-projekte" aria-labelledby="db-projekte-titel">
+          <h2 id="db-projekte-titel" className="section-title">
+            Projekte im Abgleich <span className="sw-count">{offen.length}</span>
+          </h2>
+          <div className="db-karten">
+            {offen.map((p) => {
+              const n = nav.get(p.projektId);
+              const posten = entscheiden.get(p.projektId) ?? [];
+              const a = AMPEL[p.ampel];
+              return (
+                <Link key={p.projektId} href={`/projekte/${p.projektId}/`} className="db-karte" data-ampel={p.ampel}>
+                  <span className="db-karte__kopf">
+                    {n && <Bauglyphe art={n.gebaeude} geschosse={n.geschosse} dringend={p.ampel === "rot"} />}
+                    <span className={a.klasse}>{a.wort}</span>
+                  </span>
+                  <span className="db-karte__name">{p.name}</span>
+                  <span className="db-karte__ag">
+                    <span className="sw-pos-nr">{p.kurz}</span>
+                    {p.auftraggeber.name}
+                  </span>
+                  <span className="db-karte__betrag" title="Jetzt verrechenbar">
+                    {betrag(p.jetzt ?? 0)}
+                  </span>
+                  <span className="db-karte__zeile" title="Angemeldet und offen">
+                    <span>Angemeldet</span>
+                    <b>{betrag(p.offen ?? 0)}</b>
+                  </span>
+                  <span className="db-karte__fuss">
+                    {posten.length > 0 ? (
+                      <>
+                        <FreigabeStriche projektId={p.projektId} posten={posten} />
+                        <span>
+                          <FreigegebenZahl projektId={p.projektId} posten={posten} /> freigegeben
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="ab-striche" aria-hidden="true" />
+                        <span>keine Posten</span>
+                      </>
+                    )}
+                  </span>
+                  <span className="db-karte__datum">{datumZeile(p)}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          {zu.length > 0 && (
+            <>
+              <h2 className="section-title db-projekte__zu">
+                Schlussrechnung gelegt oder abgeschlossen <span className="sw-count">{zu.length}</span>
+              </h2>
+              <ul className="db-fertig">
+                {zu.map((p) => {
+                  const n = nav.get(p.projektId);
+                  return (
+                    <li key={p.projektId}>
+                      <Link href={`/projekte/${p.projektId}/`}>
+                        {n && <Bauglyphe art={n.gebaeude} geschosse={n.geschosse} ruhig />}
+                        <span className="db-fertig__name">
+                          <span className="sw-pos-nr">{p.kurz}</span>
+                          {p.name}
+                        </span>
+                        <span className="db-fertig__ag">{p.auftraggeber.name}</span>
+                        <span className="db-fertig__datum">{datumZeile(p)}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
           )}
-        </Kennzahlen>
-        <Zeilennavigation>
-          <table className="sw-table tab-liste tab-firma liste-mobil">
-            <colgroup>
-              <col />
-              <col style={{ width: 176 }} />
-              <col style={{ width: 128 }} />
-              <col style={{ width: 104 }} />
-              <col style={{ width: 128 }} />
-              <col style={{ width: 136 }} />
-              <col style={{ width: 160 }} />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Projekt</th>
-                <th className="nur-breit">Auftraggeber</th>
-                <th className="nur-breit">Ampel</th>
-                <th className="nur-breit">Legen bis</th>
-                <th className="r nur-breit">Auftrag</th>
-                <th className="r">Jetzt verrechenbar</th>
-                <th className="r nur-breit">Angemeldet und offen</th>
-              </tr>
-            </thead>
-            <tbody data-gruppe="abgleich">
-              <tr className="grp">
-                <td colSpan={7}>
-                  <GruppenTitel>
-                    Im Abgleich<span className="sw-count">{offen.length}</span>
-                  </GruppenTitel>
-                </td>
-              </tr>
-              {offen.map((p) => (
-                <Zeile key={p.projektId} p={p} />
-              ))}
-            </tbody>
-            <tbody data-gruppe="gelegt">
-              <tr className="grp">
-                <td colSpan={7}>
-                  <GruppenTitel>
-                    Schlussrechnung gelegt oder abgeschlossen<span className="sw-count">{zu.length}</span>
-                  </GruppenTitel>
-                </td>
-              </tr>
-              {zu.map((p) => (
-                <Zeile key={p.projektId} p={p} />
-              ))}
-            </tbody>
-            <tbody>
-              <tr className="sum">
-                <td colSpan={4}>
-                  Alle Projekte<span className="sw-count">{e.summen.projekte}</span>
-                </td>
-                <td className="r nur-breit">{betrag(e.summen.auftragssumme)}</td>
-                <td className="r">{betrag(e.summen.jetzt)}</td>
-                <td className="r nur-breit">{betrag(e.summen.offen)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </Zeilennavigation>
+        </section>
       </main>
     </>
   );

@@ -10,6 +10,7 @@
 @import "../ui/styles/beleg.css";
 @import "../ui/styles/zeitachse.css";
 @import "../ui/styles/konto.css";
+@import "../ui/styles/dashboard.css";
 
 /* Schriften selbst ausgeliefert (next/font), Namen aus den Tokens bleiben als Rückfall */
 :root {

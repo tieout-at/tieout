@@ -4,7 +4,7 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { postenSlug, firma, projekt, projektIds } from "@/daten/demo";
+import { postenSlug, firma, projekt, projektIds, zuEntscheiden } from "@/daten/demo";
 import type { Ergebnis } from "@/engine";
 import { PostenTabelle } from "@/ui/PostenTabelle";
 import { anzahl, betrag, datum } from "@/ui/format";
@@ -51,7 +51,8 @@ export default async function ProjektUebersicht({ params }: Props) {
   const href = (schluessel: string) => `${basis}/posten/${postenSlug(schluessel)}/`;
   // „Braucht Anwalt“ geht an die Kanzlei und ist damit schon entschieden: zählt weder bei „Zu entscheiden“ noch bei
   // „x von y freigegeben“, steht in der Tabelle als eigene Gruppe mit eigenem Zähler.
-  const entscheiden = e.befunde.filter((b) => b.liste !== "anwalt").map((b) => ({ schluessel: b.schluessel, liste: b.liste, href: href(b.schluessel) }));
+  // Reihenfolge: Posten mit Kürzungsrisiko zuerst, damit „Weiter prüfen“ bei J1 beginnt (daten/demo.ts).
+  const entscheiden = zuEntscheiden(id, e);
   const risiken = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
   const zurufe = d.zurufe.length;
   const zurufIds = new Set(d.zurufe.map((z) => z.id));
@@ -120,7 +121,7 @@ export default async function ProjektUebersicht({ params }: Props) {
                   href: `${basis}/belege`,
                   hinweis: "Ein Datensatz je Dokument ohne Duplikate, jedes Feld mit Quelle",
                 },
-                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(e.befunde.length, "Posten", "Posten"), erledigt: true, href: `${basis}/positionen` },
+                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(entscheiden.length, "Posten", "Posten"), erledigt: true, href: `${basis}/positionen` },
                 {
                   titel: "Prüfen und Freigeben",
                   zahl: <FreigegebenZahl projektId={id} posten={entscheiden} />,
