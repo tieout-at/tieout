@@ -215,6 +215,27 @@ From the completed projects, the correction sheets and the payments. Facts only,
 
 Change orders (Nachträge): Hochbau P7 N1 additional heating circuit manifolds 8.640,00 € (accepted), N2 rerouting of underground drainage pipe (Grundleitung) 3.120,00 € (accepted), N3 additional winter construction costs 2.480,00 € (rejected); Generalbau P8 N1 additional cooling for server room 12.400,00 €, N2 additional sanitary quantities for wellness area 5.860,00 € (both accepted).
 
+**Inputs for P7 and P8 (approved by Maxi S. 23.10.2026, synthetic, for step 3c).** The amounts above stay unchanged; these are the documents the generator needs to produce them. Calculation rule as for W21: (final invoice − cuts) − discount, then the other rates on the amount after discount, then warranty retention, then the payments already made.
+
+| | P7 Hochbau Beispiel | P8 Generalbau Beispiel |
+|---|---|---|
+| Contract rates | discount 3 % (item 5.1), site power and water 0,8 % (item 4.6), warranty retention 3 % (item 9.2); **no** construction damage levy | discount 2 % (item 5.1), warranty retention 3 % (item 9.2); nothing else |
+| Daywork rates | 62,50 / 52,00 €/h | 64,00 / 53,50 €/h |
+| Final invoice | 20.11.2025, 1.082.990,19 € | 30.06.2025, 1.506.940,00 € |
+| Cut 1 | 22.04.10A, 12 pcs on measurement sheet AB-09, not countersigned, 12 × 351,00 = 4.212,00 € | RB-09 "Leitungen wegen Fremdgewerk umgelegt, Ebene 3", 12.05.2025, not signed: 20 h × 64,00 + 16 h × 53,50 + material 174,00 = 2.310,00 € |
+| Cut 2 | 24.05.03A, line printed 59.446,40 € instead of 144 × 412,00 = 59.328,00 €: 118,40 € | new LV item 26.02.03A "Wickelfalzrohr DN 125 inkl. Formteile", 32,81 €/m, LV 400 m, invoiced 450 m, measured 400 m: 50 m × 32,81 = 1.640,50 € |
+| After cuts | 1.078.659,79 € | 1.502.989,50 € |
+| Discount | 32.359,79 € | 30.059,79 € |
+| After discount | 1.046.300,00 € | 1.472.929,71 € |
+| Site power and water | 8.370,40 € | – |
+| Construction damage levy (deduction without contract item) | 5.231,50 € | – |
+| Warranty retention 3 % | 30.980,94 € | 44.187,89 € |
+| Remaining | 1.001.717,16 € | 1.428.741,82 € |
+| Paid on interim invoices (Annahme, no AR details) | 905.000,00 € | 1.320.000,00 € |
+| Final payment | 18.02.2026, 96.717,16 € (90 days) | 12.09.2025, 108.741,82 € (74 days) |
+
+Check P7: 1.082.990,19 − 4.330,40 = 1.078.659,79; × 3 % = 32.359,79; 1.078.659,79 − 32.359,79 = 1.046.300,00; × 0,8 % = 8.370,40; × 0,5 % = 5.231,50; 1.046.300,00 − 8.370,40 − 5.231,50 = 1.032.698,10; × 3 % = 30.980,94; 1.032.698,10 − 30.980,94 = 1.001.717,16; − 905.000,00 = 96.717,16 €. Check P8: 1.506.940,00 − 3.950,50 = 1.502.989,50; × 2 % = 30.059,79; 1.472.929,71; × 3 % = 44.187,89; 1.428.741,82; − 1.320.000,00 = 108.741,82 €.
+
 **Bridge to the demo (script 2:35):** For W21, the pre-check shows G1 "measurement not countersigned" (6.384,00 €) and the cascade shows the construction damage levy "deduction without contract item" (6.043,34 €). Hochbau Beispiel already cut or deducted both in P7. Matching via the key of the reason, not via the text. Note in the tool, neutral: "Gleicher Grund bei diesem Auftraggeber schon in P7." (Same reason with this client already in P7.)
 
 ## WhatsApp scene (mock, script 0:25 to 0:55)
