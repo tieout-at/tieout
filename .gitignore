@@ -1,3 +1,6 @@
+# Private repository tieout-at/intern, cloned locally (never commit its content here)
+/intern/
+
 # Secrets
 .env
 .env.*
