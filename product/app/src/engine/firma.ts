@@ -5,9 +5,43 @@
 
 import type { Datensatz, Firmendaten } from "@/domain/typen";
 import { pruefe } from "./pruefe";
-import type { Ampel, Ergebnis, FirmenErgebnis, ProjektZeile } from "./typen";
+import type { Ampel, Befund, Ergebnis, FirmenErgebnis, GeldStand, ProjektZeile } from "./typen";
 
 export const AMPEL_TAGE = 21;
+
+/** Stand des Belegs je Posten; null für Liste 3, Hinweise ohne Betrag und alles ohne Betrag. */
+export function geldStand(b: Pick<Befund, "liste" | "art" | "betrag">): GeldStand | null {
+  if (b.betrag === null) return null;
+  if (b.liste === "jetzt") return "belegt";
+  if (b.liste !== "offen") return null;
+  return b.art === "regie" || b.art === "regie_zuruf" ? "beleg_fehlt" : "angemeldet";
+}
+
+/** Listen 1 und 2 nach Stand des Belegs, über die gegebenen Ergebnisse. */
+export function geldAufteilung(ergebnisse: Ergebnis[]): FirmenErgebnis["geld"] {
+  const geld: FirmenErgebnis["geld"] = { belegt: { betrag: 0, anzahl: 0 }, beleg_fehlt: { betrag: 0, anzahl: 0 }, angemeldet: { betrag: 0, anzahl: 0 } };
+  for (const e of ergebnisse)
+    for (const b of e.befunde) {
+      const stand = geldStand(b);
+      if (!stand) continue;
+      geld[stand].betrag += b.betrag!;
+      geld[stand].anzahl++;
+    }
+  return geld;
+}
+
+/** „Nur außerhalb ERP“ über die gegebenen Ergebnisse, aus `Ergebnis.ausserhalbErp` je Projekt. */
+export function ausserhalbErpFirma(ergebnisse: Ergebnis[]): FirmenErgebnis["ausserhalbErp"] {
+  return ergebnisse.reduce(
+    (s, e) => ({
+      betrag: s.betrag + e.ausserhalbErp.betrag,
+      anzahl: s.anzahl + e.ausserhalbErp.anzahl,
+      vonBetrag: s.vonBetrag + e.ausserhalbErp.vonBetrag,
+      vonAnzahl: s.vonAnzahl + e.ausserhalbErp.vonAnzahl,
+    }),
+    { betrag: 0, anzahl: 0, vonBetrag: 0, vonAnzahl: 0 },
+  );
+}
 
 /** Tage von a bis b (ISO-Daten), ganzzahlig. */
 export function tageZwischen(a: string, b: string): number {
@@ -84,5 +118,7 @@ export function pruefeFirma(f: Firmendaten): FirmenErgebnis {
       projekteMitOffen: offene.filter((p) => (p.offen ?? 0) > 0).length,
     },
     naechsteSchlussrechnung: naechste?.datum ? { projektId: naechste.projektId, datum: naechste.datum.wert } : null,
+    ausserhalbErp: ausserhalbErpFirma(offene.map((p) => ergebnisse[p.projektId])),
+    geld: geldAufteilung(offene.map((p) => ergebnisse[p.projektId])),
   };
 }

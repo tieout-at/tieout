@@ -158,6 +158,19 @@ Small, but real datasets: the calculation core calculates their amounts as for W
 
 The company overview shows **"jetzt verrechenbar" (billable now, 34.268,10 €) as the main figure** and "angemeldet und offen" (notified and open, 11.532,30 €) separately next to it, never added together. The dossier calls this "offen verrechenbar" (open billable); in the tool, the two list terms from the project are kept so that company and project use the same words.
 
+**Company figures for the dashboard (approved by Maxi S. 23.10.2026, synthetic):**
+
+| Figure | Amount | Items | Rule |
+|---|---|---|---|
+| Only outside ERP | 20.975,90 € | 13 of 20 | items of lists 1 and 2 in the open projects without proof of work from a file (assumption: file = ERP) |
+| of which W21 | 16.164,70 € | 8 of 13 | unchanged, see "Evidence source per item" |
+| Lists 1 and 2, open projects | 45.800,40 € | 20 | 34.268,10 + 11.532,30 |
+| belegt (evidenced) | 34.268,10 € | 14 | list 1 |
+| Beleg fehlt noch (evidence still missing) | 3.179,50 € | 5 | list 2, daywork not signed or only from a WhatsApp message: O1, O2, O4, O5, P2-O1 |
+| angemeldet (notified) | 8.352,80 € | 1 | list 2, notified but never priced: O3 |
+
+Only outside ERP by amount 45,8 %, by count 65,0 %. Check: 16.164,70 + 1.588,30 + 413,90 + 250,00 + 1.864,60 + 694,40 = 20.975,90 €; 1.021,50 + 721,00 + 687,00 + 500,00 + 250,00 = 3.179,50 €; 34.268,10 + 3.179,50 + 8.352,80 = 45.800,40 €. The three parts are shown side by side, never as one total. **Synthetic, no evidence for the lead hypothesis.**
+
 **Traffic light (fixed rule, status only, never accent colour):** red = final invoice to be submitted no later than 21 days after the demo reference date **and** now + open > 0; yellow = now + open > 0; green = nothing open; grey = final invoice submitted or completed. The date is displayed, not a countdown.
 
 **Cases per project:**

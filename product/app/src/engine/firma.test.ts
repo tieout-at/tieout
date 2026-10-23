@@ -3,7 +3,8 @@
 import { describe, expect, it } from "vitest";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import { SOLL_FAELLE, SOLL_FIRMA, SOLL_HINWEISE_KLEIN, SOLL_NAECHSTE, SOLL_PROJEKTE } from "@/demo/firma/loesung";
-import { ampel, pruefeFirma, tageZwischen } from "./firma";
+import { SOLL_AUSSERHALB_ERP } from "@/demo/w21/loesung";
+import { ampel, geldAufteilung, geldStand, pruefeFirma, tageZwischen } from "./firma";
 
 const f = erzeugeFirma();
 const e = pruefeFirma(f);
@@ -31,6 +32,40 @@ describe("Firma: Übersicht gegen die Lösungsliste", () => {
   it("Nächste Schlussrechnung: W21 am 31.10.2026, nie ein vergangenes Datum", () => {
     expect(e.naechsteSchlussrechnung).toEqual(SOLL_NAECHSTE);
     expect(pruefeFirma({ ...f, stichtag: "2026-11-01" }).naechsteSchlussrechnung).toEqual({ projektId: "p3-buero-w3", datum: "2026-12-04" });
+  });
+
+  // Vorgeschlagene Werte, noch nicht in Demo_Faelle.md (wartet auf das Go von Maxi S., Entwurfs-PR).
+  it("nur außerhalb ERP über die offenen Projekte: 20.975,90 € in 13 von 20 Posten (45.800,40 €)", () => {
+    expect(e.ausserhalbErp).toEqual({ betrag: 2_097_590, anzahl: 13, vonBetrag: 4_580_040, vonAnzahl: 20 });
+    expect(nachKurz("W21").e.ausserhalbErp).toEqual(SOLL_AUSSERHALB_ERP);
+    expect(e.ausserhalbErp.vonBetrag).toBe(SOLL_FIRMA.jetzt + SOLL_FIRMA.offen);
+    expect(e.ausserhalbErp.vonAnzahl).toBe(SOLL_FIRMA.postenJetzt + SOLL_FIRMA.postenOffen);
+  });
+
+  it("Geld nach Stand des Belegs: belegt 34.268,10 €, Beleg fehlt noch 3.179,50 €, angemeldet 8.352,80 €", () => {
+    expect(e.geld).toEqual({
+      belegt: { betrag: 3_426_810, anzahl: 14 },
+      beleg_fehlt: { betrag: 317_950, anzahl: 5 },
+      angemeldet: { betrag: 835_280, anzahl: 1 },
+    });
+    expect(e.geld.belegt).toEqual({ betrag: SOLL_FIRMA.jetzt, anzahl: SOLL_FIRMA.postenJetzt });
+    expect(e.geld.beleg_fehlt.betrag + e.geld.angemeldet.betrag).toBe(SOLL_FIRMA.offen);
+  });
+
+  it("Stand des Belegs je Posten: O1, O2, O4, O5, P2-O1 fehlt noch, O3 angemeldet, V1 und A1 ohne", () => {
+    const stand = (kurz: string, schluessel: string) => geldStand(nachKurz(kurz).e.befunde.find((b) => b.schluessel === schluessel)!);
+    expect(["regie:RB-12", "regie:RB-15", "zuruf:Z6", "zuruf:Z5"].map((s) => stand("W21", s))).toEqual(Array(4).fill("beleg_fehlt"));
+    expect(stand("P2", "regie:RB-06")).toBe("beleg_fehlt");
+    expect(stand("W21", "anmeldung:mail-0314-technikraum")).toBe("angemeldet");
+    expect([stand("W21", "regie:RB-07"), stand("W21", "mehrmenge:22.04.12B")]).toEqual(["belegt", "belegt"]);
+    expect([stand("W21", "vertrag:mail-0520-container"), stand("W21", "hinweis:mail-0702-termin")]).toEqual([null, null]);
+  });
+
+  it("Gegenprobe: ein Projekt mit gelegter Schlussrechnung zählt nicht mit", () => {
+    expect(geldAufteilung([])).toEqual({ belegt: { betrag: 0, anzahl: 0 }, beleg_fehlt: { betrag: 0, anzahl: 0 }, angemeldet: { betrag: 0, anzahl: 0 } });
+    const ohneW21 = pruefeFirma({ ...f, projekte: f.projekte.map((d) => (d.projekt.kurz === "W21" ? { ...d, projekt: { ...d.projekt, status: "sr_gelegt" as const } } : d)) });
+    expect(ohneW21.geld.belegt.betrag).toBe(SOLL_FIRMA.jetzt - 2_741_000);
+    expect(ohneW21.ausserhalbErp.betrag).toBe(2_097_590 - SOLL_AUSSERHALB_ERP.betrag);
   });
 
   it("Reihenfolge der Projekte wie in der Lösungsliste", () => {
