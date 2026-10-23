@@ -117,7 +117,7 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
             }}
           >
             <Ico icon={Smartphone} />
-            Zuruf schicken
+            WhatsApp-Meldung schicken
           </button>
         ) : szene && (
           <button
@@ -130,7 +130,7 @@ export function Zeitachse({ ereignisse: vorberechnet, basis, szene, echt }: { er
             }}
           >
             <Ico icon={Smartphone} />
-            Zuruf vorspielen
+            WhatsApp-Meldung vorspielen
           </button>
         )}
       </div>
