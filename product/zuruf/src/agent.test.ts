@@ -1,6 +1,6 @@
 // Gesprächsregeln ohne KI: Der Versteher wird durch feste Antworten ersetzt.
 import { describe, expect, it } from "vitest";
-import { WhatsAppAgent } from "./agent.ts";
+import { ZurufAgent } from "./agent.ts";
 import type { Firma } from "./firma.ts";
 import { aktuellerStand, Arbeitsspeicher, type SpeicherDaten } from "./speicher.ts";
 import type { Nachricht } from "./typen.ts";
@@ -39,10 +39,10 @@ const zuruf = (felder: Record<string, [unknown, string]>, opts: Partial<{ kandid
 function neu(versteher: Versteher, einwilligung = true) {
   const speicher = new Arbeitsspeicher();
   if (einwilligung) speicher.setzeEinwilligung("a1", "monteur");
-  return { agent: new WhatsAppAgent(speicher, versteher), speicher };
+  return { agent: new ZurufAgent(speicher, versteher), speicher };
 }
 
-describe("WhatsApp-Agent", () => {
+describe("Zuruf-Agent", () => {
   it("vollständiger Zuruf: keine Rückfrage, Zusammenfassung, nach Passt gespeichert", async () => {
     const text = "Wien 21, Top 5, Heizkörper versetzt, der Bauleiter vom GU hat des so wollen, zu zweit, sechs Stunden";
     const { agent, speicher } = neu(
@@ -275,7 +275,7 @@ describe("Einbau in die App", () => {
   it("nutzt die übergebene Firma für Knöpfe und Zusammenfassung", async () => {
     const speicher = new Arbeitsspeicher();
     speicher.setzeEinwilligung("a1", "monteur");
-    const agent = new WhatsAppAgent(speicher, stub(zuruf({ leistung: ["Kernbohrung", "Kernbohrung"] }, { kandidaten: ["a1-proj", "a2-proj"] })), { firma });
+    const agent = new ZurufAgent(speicher, stub(zuruf({ leistung: ["Kernbohrung", "Kernbohrung"] }, { kandidaten: ["a1-proj", "a2-proj"] })), { firma });
     const a1 = await agent.verarbeite(msg("Kernbohrung gmacht"));
     expect(a1[0]!.knoepfe?.map((k) => k.titel)).toEqual(["Anlage 1", "Anlage 2"]);
     const a2 = await agent.verarbeite(knopf("projekt:a2-proj", "Anlage 2"));
@@ -289,7 +289,7 @@ describe("Einbau in die App", () => {
     let stand = JSON.parse(JSON.stringify(start.alsDaten())) as SpeicherDaten;
     const schritt = async (n: Nachricht) => {
       const speicher = Arbeitsspeicher.aus(stand);
-      const antworten = await new WhatsAppAgent(speicher, versteher).verarbeite(n);
+      const antworten = await new ZurufAgent(speicher, versteher).verarbeite(n);
       stand = JSON.parse(JSON.stringify(speicher.alsDaten())) as SpeicherDaten;
       return antworten;
     };

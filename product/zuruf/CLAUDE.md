@@ -1,6 +1,6 @@
-# WhatsApp agent: rules for Claude Code
+# Zuruf agent: rules for Claude Code
 
-The WhatsApp agent is the third way into the twin (Dossier v3, section 3.4): a fitter or site foreman sends a photo or voice note via WhatsApp, the agent assigns it, summarises it, the sender confirms with one tap, and a work event with a source is created in the project twin.
+The Zuruf agent is the third way into the twin (Dossier v3, section 3.4): a fitter or site foreman sends a photo or voice note via WhatsApp, the agent assigns it, summarises it, the sender confirms with one tap, and a work event with a source is created in the project twin.
 
 The rules in `../../CLAUDE.md` (repo root) and `../app/CLAUDE.md` apply in addition.
 
@@ -30,8 +30,7 @@ The rules in `../../CLAUDE.md` (repo root) and `../app/CLAUDE.md` apply in addit
 
 ## Way of working (Arbeitsweise)
 
-- One branch per work package (`whatsapp/...`), into `main` only via pull request.
-- Naming: the visible terms are "WhatsApp-Agent" and "WhatsApp-Meldung" (decision Maxi S. 23.10.2026). Inside this package the old word stays where it is wired to the AI or to infrastructure: the agent actions (`neuer_zuruf`, `kein_zuruf`), prompts, scenario files, the route `/api/zuruf/…`, the switches `ZURUF_ECHT` and `ZURUF_KI`, and the Supabase objects in `worker/supabase.sql`.
+- One branch per work package (`zuruf/...`), into `main` only via pull request.
 - Before writing code with the Claude API, load the skill `claude-api` (model names, parameters, caching).
 - Every change to the agent's behaviour: first a scenario in `szenarien/` that shows the bug, then the change, then run the learning loop (procedure in `PLAN.md`, section Lernschleife).
 - Every bug found goes into `LERNEN.md`, with cause, rule and the scenario that will catch it in future.

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "npx --yes serve@14.2.6 out -l 3000",
     "lint": "eslint",
-    "postinstall": "npm ci --prefix ../whatsapp --no-audit --no-fund",
+    "postinstall": "npm ci --prefix ../zuruf --no-audit --no-fund",
     "pretypecheck": "tsx scripts/generate/index.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

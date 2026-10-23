@@ -4,7 +4,7 @@
 // nichts; das Büro klärt Stunden und Regiebericht (Go Maxi S. 22.10.2026: neue Zurufe ohne Betrag).
 
 import type { Feld, Zuruf } from "@/domain/typen";
-import type { Angabe, Feldname, Leistungsereignis, Nachricht, Rolle } from "../../../whatsapp/src/typen";
+import type { Angabe, Feldname, Leistungsereignis, Nachricht, Rolle } from "../../../zuruf/src/typen";
 
 export const ROLLE: Record<Rolle, string> = { monteur: "Monteur", polier: "Polier", obermonteur: "Obermonteur", unbekannt: "Absender" };
 

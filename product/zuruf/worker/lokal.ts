@@ -1,6 +1,6 @@
 // Nur zum lokalen Testen: dieselbe Route wie im Worker, als kleiner Node-Server auf Port 3103.
-// KI nach ZURUF_KI in product/whatsapp/.env (abo = Claude-Abo, api = Schlüssel). Firma aus dem Generator der App
-// (product/app/data/generated/agent-firma.json, entsteht mit `npm run generate` in product/app).
+// KI nach ZURUF_KI in product/zuruf/.env (abo = Claude-Abo, api = Schlüssel). Firma aus dem Generator der App
+// (product/app/data/generated/zuruf-firma.json, entsteht mit `npm run generate` in product/app).
 // Start: npm run app-server. Die App ruft ihn auf, wenn sie mit NEXT_PUBLIC_ZURUF_API=http://localhost:3103/api/zuruf läuft.
 
 import { createServer } from "node:http";
@@ -13,7 +13,7 @@ import { speicherZaehler, zurufRoute } from "./route.ts";
 
 const PORT = Number(process.env.ZURUF_PORT ?? 3103);
 const hier = path.dirname(fileURLToPath(import.meta.url));
-const firma = JSON.parse(readFileSync(path.join(hier, "..", "..", "app", "data", "generated", "agent-firma.json"), "utf8")) as Firma;
+const firma = JSON.parse(readFileSync(path.join(hier, "..", "..", "app", "data", "generated", "zuruf-firma.json"), "utf8")) as Firma;
 const zaehler = speicherZaehler();
 
 createServer(async (req, res) => {

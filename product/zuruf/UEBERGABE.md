@@ -9,18 +9,18 @@ This file is the memory between sessions and Claude accounts. Overwrite it at th
 ## Integration into the app (go from Maxi S. 22.10.) (Einbau in die App)
 
 - Route `POST /api/zuruf/nachricht` and `GET /api/zuruf/status` in `worker/route.ts`: switch read at runtime, 40 AI calls per day and 20 US dollars per month (actual cost per reply, `antwortKostenUsd` in ki.ts), time in Vienna local time, conversation state comes from the browser and goes back updated. Tests in `worker/route.test.ts`.
-- Local: `npm run app-server` (port 3103, AI according to `ZURUF_KI`, company from `../app/data/generated/agent-firma.json`, run `npm run generate` in `product/app` first). For the app, `product/app/.env.local` with `NEXT_PUBLIC_ZURUF_API=http://localhost:3103/api/zuruf` (the local server always reports itself as available).
+- Local: `npm run app-server` (port 3103, AI according to `ZURUF_KI`, company from `../app/data/generated/zuruf-firma.json`, run `npm run generate` in `product/app` first). For the app, `product/app/.env.local` with `NEXT_PUBLIC_ZURUF_API=http://localhost:3103/api/zuruf` (the local server always reports itself as available).
 - Online: hooked into `product/app/worker/index.ts` (without login before the assets, with login after the session; `zurufAnfrage`), `nodejs_compat` in `wrangler.jsonc`, counter in Supabase (`worker/supabase.sql`: table `zuruf_tageszaehler`, functions `zuruf_stand`, `zuruf_buche`). If the table, the secret `ANTHROPIC_API_KEY` or `ZURUF_ECHT=an` (secret, read at runtime) is missing, the status reports "not available" („nicht verfügbar“) and the app plays the staged scene. Online off until a go from Maxi S.
 - The app installs this package as well (`postinstall` in `product/app/package.json`), so that the worker bundle and type check find `zod` and the SDK.
 - Node only, never in worker or browser: `src/llm.ts` (subscription, .env), `src/speicher-datei.ts` (JSONL). Runs everywhere: `src/ki.ts`, `src/agent.ts`, `src/speicher.ts`, `worker/route.ts` (checked bundled: no `node:` imports; with the SDK in the worker 289 KiB gzip).
 - Real run 23.10. (subscription, local): „21er Stiege 3 Top 18, Waschtisch im Bad versetzt, Fliesen kommen anders, Bauleiter vom GU hat angschafft, zu zweit vier Stunden“ was fully recognised (location, work performed, reason, 2 people, 4 hours, instructing person), after „Passt“ Z7 in timeline, "open" („offen“) list and evidence page. On Windows, `llm.ts` now takes the native installation first (`%USERPROFILE%.localinclaude.exe`); an older version in the PATH had an expired login.
-- The app's browser code only imports types from this package (`src/typen.ts`, `src/firma.ts`); only the app's worker uses `worker/route.ts`. Own CI: `.github/workflows/produkt-whatsapp.yml`.
-- Next step: storage B in Supabase (`worker/supabase.sql`, table `zuruf_ereignis`, append only, RLS per company via `app_metadata.firma`) instead of browser storage, with the same interface `MeldungAblage`.
+- The app's browser code only imports types from this package (`src/typen.ts`, `src/firma.ts`); only the app's worker uses `worker/route.ts`. Own CI: `.github/workflows/produkt-zuruf.yml`.
+- Next step: storage B in Supabase (`worker/supabase.sql`, table `zuruf_ereignis`, append only, RLS per company via `app_metadata.firma`) instead of browser storage, with the same interface `ZurufAblage`.
 
 ## Done (Erledigt)
 
-- Phase 0: folder, rules, design, plan. Anthropic API key is in `product/whatsapp/.env` (ignored), test successful.
-- Package `product/whatsapp/` (TypeScript, Node 22, Vitest, `@anthropic-ai/sdk`, `zod`).
+- Phase 0: folder, rules, design, plan. Anthropic API key is in `product/zuruf/.env` (ignored), test successful.
+- Package `product/zuruf/` (TypeScript, Node 22, Vitest, `@anthropic-ai/sdk`, `zod`).
 - `src/typen.ts` data model (message, item with quote, entry, work event with version).
 - `src/firma.ts` small synthetic company twin (5 projects, Wien 21 and Wien 10 deliberately easy to confuse, Tulln closed).
 - `src/belege.ts` evidence check: an item without a literal quote is discarded. Tests in `belege.test.ts`.
@@ -34,7 +34,7 @@ This file is the memory between sessions and Claude accounts. Overwrite it at th
 ## Commands (Befehle)
 
 ```powershell
-cd product/whatsapp
+cd product/zuruf
 npm ci
 npm run typecheck
 npm test
@@ -65,7 +65,7 @@ Acceptance 1 found the most serious bug so far: data loss on addendum plus corre
 
 ## AI via subscription or API (KI über Abo oder API)
 
-`product/whatsapp/.env` contains `ZURUF_KI=abo`: agent, persona and rater run via Claude Code with the Claude subscription (`claude` must be logged in, `claude auth status`). Costs no API credit, but counts against the subscription limit and is slower (approx. 5 to 16 s per reply instead of 2.5 s). A run over 4 scenarios took 1:13 min, so over 50 scenarios roughly 15 to 20 min and approx. 200 calls. With `ZURUF_KI=api` everything runs via the API key again (credit was used up on 22.10.). On another account: log in to `claude` there, then that account's subscription applies.
+`product/zuruf/.env` contains `ZURUF_KI=abo`: agent, persona and rater run via Claude Code with the Claude subscription (`claude` must be logged in, `claude auth status`). Costs no API credit, but counts against the subscription limit and is slower (approx. 5 to 16 s per reply instead of 2.5 s). A run over 4 scenarios took 1:13 min, so over 50 scenarios roughly 15 to 20 min and approx. 200 calls. With `ZURUF_KI=api` everything runs via the API key again (credit was used up on 22.10.). On another account: log in to `claude` there, then that account's subscription applies.
 
 ## Simulator
 
@@ -94,6 +94,6 @@ Chat in WhatsApp style (light and dark), sender via a row of buttons, office vie
 
    On a computer without the repo, first `git clone https://github.com/schlusswerk/schlusswerk.git`, then `cd schlusswerk`. In Git Bash, on Mac and Linux, `git fetch origin && git checkout zuruf/plan` also works.
 
-2. Start Claude Code in the repo and write: „Lies `product/whatsapp/CLAUDE.md` und `product/whatsapp/UEBERGABE.md` und mach beim nächsten Schritt weiter.“ (Read `product/whatsapp/CLAUDE.md` and `product/whatsapp/UEBERGABE.md` and continue with the next step.)
+2. Start Claude Code in the repo and write: „Lies `product/zuruf/CLAUDE.md` und `product/zuruf/UEBERGABE.md` und mach beim nächsten Schritt weiter.“ (Read `product/zuruf/CLAUDE.md` and `product/zuruf/UEBERGABE.md` and continue with the next step.)
 
-3. On a new computer you need `product/whatsapp/.env` with `ANTHROPIC_API_KEY=` (template `.env.example`). Never commit the key.
+3. On a new computer you need `product/zuruf/.env` with `ANTHROPIC_API_KEY=` (template `.env.example`). Never commit the key.

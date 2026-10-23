@@ -1,9 +1,9 @@
 // Firma für den WhatsApp-Agenten aus dem Firmenzwilling der App: eine Quelle, nicht doppelt gepflegt.
-// Der Generator schreibt das Ergebnis nach data/generated/agent-firma.json; Worker und lokaler Server lesen es dort.
+// Der Generator schreibt das Ergebnis nach data/generated/zuruf-firma.json; Worker und lokaler Server lesen es dort.
 // Rufnamen und Bereiche sind nur Orientierung für die KI (wie Leute auf der Baustelle reden), keine Pflichtliste.
 
 import type { Firmendaten, ProjektStatus } from "@/domain/typen";
-import type { Firma as ZurufFirma } from "../../../whatsapp/src/firma";
+import type { Firma as ZurufFirma } from "../../../zuruf/src/firma";
 
 const LAUFEND: ProjektStatus[] = ["in_ausfuehrung", "sr_vorbereiten"];
 const GEWERK: Record<string, string> = { HKLS: "HKLS (Heizung, Klima, Lüftung, Sanitär)" };

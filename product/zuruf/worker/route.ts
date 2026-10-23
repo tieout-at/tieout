@@ -1,4 +1,4 @@
-// Route des WhatsApp-Agenten für die App. Läuft im Cloudflare Worker der App und lokal in lokal.ts.
+// Route des Zuruf-Agenten für die App. Läuft im Cloudflare Worker der App und lokal in lokal.ts.
 // GET  /api/zuruf/status:    ist der echte Agent gerade verfügbar? (Schalter an, eingerichtet, Grenzen nicht erreicht)
 // POST /api/zuruf/nachricht: eine Nachricht an den Agenten. Ohne Server-Zustand: Der Browser schickt den
 // Gesprächsstand mit und bekommt ihn neu zurück. Beträge gibt es hier nie; die KI läuft nur über `frage`
@@ -6,7 +6,7 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
-import { WhatsAppAgent } from "../src/agent.ts";
+import { ZurufAgent } from "../src/agent.ts";
 import type { Firma } from "../src/firma.ts";
 import { apiFrage, type KiFrage } from "../src/ki.ts";
 import { Arbeitsspeicher, type SpeicherDaten } from "../src/speicher.ts";
@@ -154,7 +154,7 @@ export async function zurufRoute(request: Request, opts: RoutenOptionen): Promis
     return ki(anfrage);
   };
   const bekannt = new Set(stand.ereignisse.map((e) => `${e.id}@${e.version}`));
-  const agent = new WhatsAppAgent(vorher, kiVersteher({ frage: gezaehlt, firma: opts.firma }), { firma: opts.firma, kanal: "simulator", firmenname: opts.firma.name });
+  const agent = new ZurufAgent(vorher, kiVersteher({ frage: gezaehlt, firma: opts.firma }), { firma: opts.firma, kanal: "simulator", firmenname: opts.firma.name });
   // Zeit setzt der Server, nicht der Browser.
   const antworten = await agent.verarbeiteBuendel(
     nachrichten.map((n) => ({ ...n, zeit: wienZeit(jetzt) })),

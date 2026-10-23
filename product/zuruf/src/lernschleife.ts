@@ -2,7 +2,7 @@
 // Die Persona kennt nur Persona und Wahrheit, nicht die Regeln des Agenten.
 
 import { z } from "zod";
-import { WhatsAppAgent } from "./agent.ts";
+import { ZurufAgent } from "./agent.ts";
 import { normalisiere } from "./belege.ts";
 import { projektNachId } from "./firma.ts";
 import { frageStrukturiert } from "./llm.ts";
@@ -177,7 +177,7 @@ function antwortZug(a: Antwort): Zug {
 export async function spiele(s: Szenario, versteher: Versteher, opts: { bewerten: boolean }): Promise<Ergebnis> {
   const speicher = new Arbeitsspeicher();
   if (s.einwilligung) speicher.setzeEinwilligung("absender", s.persona.rolle);
-  const agent = new WhatsAppAgent(speicher, versteher);
+  const agent = new ZurufAgent(speicher, versteher);
   const g: Zug[] = [];
   const dauerMs: number[] = [];
   let zeit = new Date(s.start).getTime();

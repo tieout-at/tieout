@@ -5,9 +5,9 @@
 
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Firma } from "../../whatsapp/src/firma.ts";
-import { zurufAnfrage, type Zaehler, type ZurufUmgebung } from "../../whatsapp/worker/route.ts";
-import agentFirma from "../data/generated/agent-firma.json";
+import type { Firma } from "../../zuruf/src/firma.ts";
+import { zurufAnfrage, type Zaehler, type ZurufUmgebung } from "../../zuruf/worker/route.ts";
+import agentFirma from "../data/generated/zuruf-firma.json";
 import { ANMELDESEITE, ANMELDUNG_AN, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../src/anmeldung/konfig";
 import { neueAdresse } from "../src/umleitung";
 
@@ -23,9 +23,10 @@ const OFFEN = [/^\/anmelden(\/|$)/, /^\/_next\/static\//, /^\/favicon\.ico$/, /^
 const worker = {
   async fetch(anfrage: Request, env: Env): Promise<Response> {
     const url = new URL(anfrage.url);
-    // Old addresses from before the rename (befunde, ordner, ledger, zuruf): permanent redirect, before the sign-in check.
+    // Old addresses from before the rename (befunde, ordner, ledger, zuruf): temporary redirect (302, terms decided
+    // for now, a 301 would stay in browsers), before the sign-in check.
     const neu = neueAdresse(url.pathname);
-    if (neu) return Response.redirect(`${url.origin}${neu}${url.search}`, 301);
+    if (neu) return Response.redirect(`${url.origin}${neu}${url.search}`, 302);
     // WhatsApp-Agent ohne Login (App per Link): hier, vor den Assets. Mit Login erst nach der Sitzungsprüfung in `schnittstelle`.
     if (!ANMELDUNG_AN) {
       const z = await zuruf(anfrage, env);
@@ -67,7 +68,7 @@ const worker = {
 export default worker;
 
 /**
- * WhatsApp-Agent (product/whatsapp) für /api/zuruf/…, sonst null. Echt nur mit ZURUF_ECHT=an, Schlüssel und Zähler in
+ * WhatsApp-Agent (product/zuruf) für /api/zuruf/…, sonst null. Echt nur mit ZURUF_ECHT=an, Schlüssel und Zähler in
  * Supabase; sonst meldet der Status „nicht verfügbar“ und die App spielt die Szene vor, ohne KI-Aufruf.
  * Schutz ohne Login: Schalter, 40 KI-Aufrufe pro Tag, 20 US-Dollar pro Monat, Monatslimit in der Anthropic-Konsole.
  */
@@ -117,7 +118,7 @@ async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Resp
 }
 
 /**
- * KI-Aufrufe und Kosten in Supabase (product/whatsapp/worker/supabase.sql: zuruf_stand, zuruf_buche).
+ * KI-Aufrufe und Kosten in Supabase (product/zuruf/worker/supabase.sql: zuruf_stand, zuruf_buche).
  * Fehlt die Tabelle oder geht etwas schief, gelten die Grenzen als erreicht: dann spielt die App die Szene vor.
  */
 function supabaseZaehler(admin: SupabaseClient): Zaehler {

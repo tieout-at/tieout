@@ -38,7 +38,7 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 | Part | What you get | Where |
 |---|---|---|
 | Product app | the twin of a synthetic contractor with eight projects, findings with original documents, approval flow, calculation core tested to the cent | [app.tieout.workers.dev](https://app.tieout.workers.dev) |
-| WhatsApp agent | fitters report work from the site by text, voice note or photo; the agent asks back and files a structured entry with its source | `product/whatsapp/` |
+| WhatsApp agent | fitters report work from the site by text, voice note or photo; the agent asks back and files a structured entry with its source | `product/zuruf/` |
 | Website | product story in German and English, interactive twin animation, demo booking | [tieout-at.pages.dev](https://tieout-at.pages.dev) |
 
 ## How it works
@@ -101,7 +101,7 @@ flowchart LR
 | Stage | How it is built |
 |---|---|
 | **Inputs** | Three channels in the data model: upload of documents (folder), WhatsApp, and connectors to ERP and email. In the demo, a generator (`scripts/generate`) produces a complete synthetic contractor with eight projects as JSON. |
-| **WhatsApp agent** (`product/whatsapp`) | TypeScript, Anthropic SDK (Claude) and Zod. The model only reads and quotes; whether to ask back or to file is deterministic code, and replies are fixed German sentences. Runs as an API route inside the app's Cloudflare Worker, with usage limits and append-only storage in Supabase (Postgres, Frankfurt). A browser simulator with test scenarios is used for development. |
+| **WhatsApp agent** (`product/zuruf`) | TypeScript, Anthropic SDK (Claude) and Zod. The model only reads and quotes; whether to ask back or to file is deterministic code, and replies are fixed German sentences. Runs as an API route inside the app's Cloudflare Worker, with usage limits and append-only storage in Supabase (Postgres, Frankfurt). A browser simulator with test scenarios is used for development. |
 | **Digital twin** (`product/app/src/domain`, `src/daten`) | TypeScript data model "record with source": every field is a value plus its source (document, page, position, highlight box) and a review state (machine-read, confirmed, blocked). Amounts in whole cents, percentages in basis points. Hierarchy business → client → project → documents and line items. All screens read through one data-access layer, so a per-business database plugs in at a single place. |
 | **Final-invoice run** (`product/app/src/engine`) | Pure TypeScript functions: `pruefe()` builds the context of a project, derives all items (Posten), a ledger across every bill-of-quantities item (shown as LV-Positionen), the cascade and the pre-check; `pruefeFirma()` rolls this up for the whole business. Rounding and money in integer cents, tested with Vitest against a reference solution to the cent. |
 | **Approval and screens** (`product/app/src/app`, `src/ui`, `src/zustand`) | Next.js 16 and React 19, static export. Two-step approval stored as a history with undo; every number opens the original document with the source highlighted. |
@@ -115,7 +115,7 @@ flowchart LR
 ├── CLAUDE.md            working rules, also for AI coding agents
 ├── product/             the product
 │   ├── app/             demo app: Next.js, calculation core, worker
-│   ├── whatsapp/        WhatsApp agent, simulator and test scenarios
+│   ├── zuruf/           WhatsApp agent, simulator and test scenarios
 │   ├── ui-fundament/    design system v2 as reference
 │   └── docs/            plan, scope, reference solution, review reports
 ├── website/             public website (Next.js, DE/EN)
@@ -130,7 +130,7 @@ Each area has its own README: [`product/`](product/README.md), [`website/`](webs
 |---|---|---|
 | Product app | `cd product/app && npm ci && npm run dev` | http://localhost:3000 |
 | Website | `cd website && npm install && npm run dev` | http://localhost:3210 |
-| WhatsApp agent simulator | `cd product/whatsapp && npm ci && npm run sim` | see [`product/whatsapp/PLAN.md`](product/whatsapp/PLAN.md) |
+| WhatsApp agent simulator | `cd product/zuruf && npm ci && npm run sim` | see [`product/zuruf/PLAN.md`](product/zuruf/PLAN.md) |
 
 Node 22 or newer. Before every pull request in `product/app`: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
 

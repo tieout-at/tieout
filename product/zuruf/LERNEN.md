@@ -44,8 +44,8 @@ Every mistake made by the agent or in our work goes here, newest at the top. Rea
 - Not yet analysed (would use up the holdout): the two weak holdout cases. Next step: a subagent analyses them abstractly.
 
 ### L17 Bundle: first part of the report lost
-- What: `z-korrektur-top-und-stunden-nach-passt`. A voice note (radiator) and seconds later a text (floor drain) arrived as a bundle. The AI read the text as an addendum to an empty report and only returned the floor drain. The radiator was missing from the summary, was confirmed with „Passt“ and was gone. The later correction did not find it and started from scratch. Rating 2.
-- Cause: The first message of the bundle appeared in the prompt as an "open report" („offener Zuruf“) with an empty state.
+- What: `z-korrektur-top-und-stunden-nach-passt`. A voice note (radiator) and seconds later a text (floor drain) arrived as a bundle. The AI read the text as an addendum to an empty Zuruf and only returned the floor drain. The radiator was missing from the summary, was confirmed with „Passt“ and was gone. The later correction did not find it and started from scratch. Rating 2.
+- Cause: The first message of the bundle appeared in the prompt as an "open Zuruf" („offener Zuruf“) with an empty state.
 - Rule: Bundled messages appear in the prompt as „NEUE NACHRICHTEN … zusammen EINE Meldung, kein Punkt darf fehlen“ (NEW MESSAGES … together ONE report, no item may be missing). Code as a safety net: without an open Zuruf, „Nachtrag“ (addendum) in a bundle becomes „zuruf“.
 - Secured by: test L17 in `abnahme1.test.ts`, scenario `z-korrektur-top-und-stunden-nach-passt` (now rating 4).
 - Status: fixed.
@@ -65,7 +65,7 @@ A subagent read the holdout conversations and only reported abstract patterns. T
 ### A1 and A2 Data loss on addendum and correction (most serious bug so far)
 - What: An addendum to an open summary was treated as a new report, and the first item was silently filed as unconfirmed. A later correction only accessed "last saved", matched by position and thereby overwrote another, confirmed item. That item was gone afterwards. The reported "invented value" was only a follow-on error.
 - Cause: `neuer_zuruf` filed and started anew; `korrektur_gespeichert` only knew `letzteGespeicherte` and `ersetzt[i]` by index.
-- Rule: Addenda are appended, never silently filed. Without a new site, the site of the open report applies. Corrections name the id of the saved entry (`bezugId`), context is all of the sender's own entries from the last 3 hours. Uninvolved entries stay unchanged, details no longer supported stay as saved. Corrections do not ask follow-up questions.
+- Rule: Addenda are appended, never silently filed. Without a new site, the site of the open Zuruf applies. Corrections name the id of the saved entry (`bezugId`), context is all of the sender's own entries from the last 3 hours. Uninvolved entries stay unchanged, details no longer supported stay as saved. Corrections do not ask follow-up questions.
 - Secured by: tests A1, A2; scenarios `m-nachtrag-zweiter-punkt-favoriten`, `m-korrektur-erster-von-zwei-moedling`.
 - Status: fixed, check in run 4 and acceptance 2.
 
@@ -241,7 +241,7 @@ The ratings rose clearly (12 times rating 5 instead of 6), invented values down 
 - Status: fixed.
 
 ### L11 „stopp“ in the middle of the conversation unclear
-- What: `stopp-mitten-im-gespraech`. The reply did not say that the report in progress was discarded; re-entry only with the code word „start“.
+- What: `stopp-mitten-im-gespraech`. The reply did not say that the Zuruf in progress was discarded; re-entry only with the code word „start“.
 - Rule: On stopp, say that what was started has been discarded. After that: whoever writes again is asked once „Soll ich wieder aufnehmen?“ (Shall I start recording again?) (button or yes/no), no code word needed.
 - Secured by: test „stopp sagt, dass der angefangene Zuruf verworfen ist“.
 - Status: fixed.

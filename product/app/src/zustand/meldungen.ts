@@ -7,7 +7,7 @@
 // Dazu der Gesprächsstand des Chats (der Server merkt sich nichts) und „Demo zurücksetzen“.
 
 import { useSyncExternalStore } from "react";
-import type { Antwort, Knopf, Leistungsereignis, Nachricht } from "../../../whatsapp/src/typen";
+import type { Antwort, Knopf, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
 import type { NeueMeldung } from "@/whatsapp/abbildung";
 
 export interface MeldungAblage {
@@ -32,7 +32,7 @@ export interface ChatZeile {
 }
 
 /**
- * Gesprächsstand, wie ihn die Route zurückgibt (SpeicherDaten in product/whatsapp/src/speicher.ts). Die App liest daraus nur
+ * Gesprächsstand, wie ihn die Route zurückgibt (SpeicherDaten in product/zuruf/src/speicher.ts). Die App liest daraus nur
  * die Nachrichten; der Rest geht unverändert zurück. Eigener Typ, damit die App nur typen.ts des Zuruf-Pakets einbindet.
  */
 export interface ZurufStand {
@@ -41,7 +41,7 @@ export interface ZurufStand {
   ereignisse: Leistungsereignis[];
 }
 
-/** Antwort von POST /api/zuruf/nachricht (RoutenAntwort in product/whatsapp/worker/route.ts). */
+/** Antwort von POST /api/zuruf/nachricht (RoutenAntwort in product/zuruf/worker/route.ts). */
 export interface ZurufRoutenAntwort {
   antworten: Antwort[];
   stand: ZurufStand;

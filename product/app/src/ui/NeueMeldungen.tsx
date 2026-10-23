@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import type { Angabe, Eintrag, Leistungsereignis, Nachricht } from "../../../whatsapp/src/typen";
+import type { Angabe, Eintrag, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
 import { alsZuruf, offenText, type NeueMeldung } from "@/whatsapp/abbildung";
 import { useNeueMeldungen } from "@/zustand/meldungen";
 import { zeitpunkt } from "./format";

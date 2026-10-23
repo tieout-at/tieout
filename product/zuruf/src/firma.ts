@@ -1,4 +1,4 @@
-// Kleiner synthetischer Firmen-Zwilling für den WhatsApp-Agenten. Alles fiktiv.
+// Kleiner synthetischer Firmen-Zwilling für den Zuruf-Agenten. Alles fiktiv.
 // Vorläufig: Sobald die Lösungsliste v2 (Firma mit 8 Projekten) im Generator der App steht, kommt die Projektliste von dort.
 
 export type ProjektStatus = "laufend" | "abgeschlossen";

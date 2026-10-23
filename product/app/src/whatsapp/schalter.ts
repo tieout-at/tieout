@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 
-/** Adresse der Routen. Online dieselbe Adresse wie die Seite; lokal der Server aus product/whatsapp (npm run app-server). */
+/** Adresse der Routen. Online dieselbe Adresse wie die Seite; lokal der Server aus product/zuruf (npm run app-server). */
 export const ZURUF_API = process.env.NEXT_PUBLIC_ZURUF_API ?? "/api/zuruf";
 
 let status: Promise<boolean> | null = null;

@@ -6,7 +6,7 @@
 
 import { RotateCcw, Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { Knopf, Leistungsereignis, Nachricht } from "../../../whatsapp/src/typen";
+import type { Knopf, Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
 import { ZURUF_API } from "@/whatsapp/schalter";
 import { alsZeile, browserAblage, chatLesen, chatSchreiben, useChat, type ChatZeile, type ZurufRoutenAntwort } from "@/zustand/meldungen";
 import { neueZurufId } from "@/whatsapp/abbildung";

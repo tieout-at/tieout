@@ -5,7 +5,7 @@ import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { WhatsAppAgent } from "../src/agent.ts";
+import { ZurufAgent } from "../src/agent.ts";
 import { FIRMA } from "../src/firma.ts";
 import { frageStrukturiert, kiWeg, kostenUsd } from "../src/llm.ts";
 import { aktuellerStand } from "../src/speicher.ts";
@@ -17,7 +17,7 @@ const hier = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT ?? 4321);
 
 let speicher = new Dateispeicher(path.join(hier, "..", "laeufe", "sim"));
-let agent = new WhatsAppAgent(speicher, kiVersteher({ frage: frageStrukturiert }), { kanal: "simulator" });
+let agent = new ZurufAgent(speicher, kiVersteher({ frage: frageStrukturiert }), { kanal: "simulator" });
 let nr = 0;
 
 function json(res: import("node:http").ServerResponse, status: number, daten: unknown) {
@@ -63,7 +63,7 @@ createServer(async (req, res) => {
     }
     if (req.method === "POST" && req.url === "/zuruecksetzen") {
       speicher = new Dateispeicher(path.join(hier, "..", "laeufe", "sim"));
-      agent = new WhatsAppAgent(speicher, kiVersteher({ frage: frageStrukturiert }), { kanal: "simulator" });
+      agent = new ZurufAgent(speicher, kiVersteher({ frage: frageStrukturiert }), { kanal: "simulator" });
       return json(res, 200, { ok: true });
     }
     json(res, 404, { fehler: "nicht gefunden" });

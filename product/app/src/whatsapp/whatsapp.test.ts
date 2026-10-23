@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import { meldungAntwort } from "@/ui/meldung-text";
-import type { Leistungsereignis, Nachricht } from "../../../whatsapp/src/typen";
+import type { Leistungsereignis, Nachricht } from "../../../zuruf/src/typen";
 import { alsZuruf, offenText } from "./abbildung";
 import { agentFirma } from "./firma";
 

@@ -1,4 +1,4 @@
-// Datenmodell des WhatsApp-Agenten.
+// Datenmodell des Zuruf-Agenten.
 // Jede Angabe in einem Eintrag trägt das Zitat aus der Nachricht, die sie belegt („nicht raten“).
 // Der Absender ist nur Herkunft (Rolle und interne Kennung), nie Gegenstand einer Auswertung (§ 96a ArbVG).
 

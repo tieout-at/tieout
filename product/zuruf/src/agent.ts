@@ -43,7 +43,7 @@ export interface Protokoll {
   fehler: string[];
 }
 
-export class WhatsAppAgent {
+export class ZurufAgent {
   readonly protokoll: Protokoll = { verworfen: [], angepasst: [], fehler: [] };
   private zaehler = 0;
 

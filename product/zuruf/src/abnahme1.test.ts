@@ -1,6 +1,6 @@
 // Regressionstests zu den Mustern aus der ersten Abnahme (LERNEN.md, A1 bis A12). Der Versteher ist durch feste Antworten ersetzt.
 import { describe, expect, it } from "vitest";
-import { WhatsAppAgent } from "./agent.ts";
+import { ZurufAgent } from "./agent.ts";
 import { aktuellerStand, Arbeitsspeicher } from "./speicher.ts";
 import type { Eintrag, Nachricht } from "./typen.ts";
 import type { Art, EintragMitHinweis, Verstaendnis, Versteher, VerstehenEingabe } from "./verstehen.ts";
@@ -24,7 +24,7 @@ function stub(...antworten: ((n: Nachricht, e: VerstehenEingabe) => Verstaendnis
 function neu(versteher: Versteher, einwilligung = true) {
   const speicher = new Arbeitsspeicher();
   if (einwilligung) speicher.setzeEinwilligung("a1", "monteur");
-  return { agent: new WhatsAppAgent(speicher, versteher), speicher };
+  return { agent: new ZurufAgent(speicher, versteher), speicher };
 }
 
 const a = <T,>(wert: T, zitat: string, nachrichtId: string) => ({ wert, zitat, nachrichtId });

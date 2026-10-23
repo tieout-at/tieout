@@ -1,5 +1,5 @@
-// Old addresses from before the rename (UI round 1, step 1a, decision Maxi S. 23.10.2026) lead permanently to the new
-// ones, because the jury and the team have links. The Worker answers them before anything else (worker/index.ts).
+// Old addresses from before the rename (UI round 1, step 1a, decision Maxi S. 23.10.2026) lead to the new ones,
+// because the jury and the team have links. Temporary (302): the terms are decided for now, and browsers keep a 301. The Worker answers them before anything else (worker/index.ts).
 // Pure function, no access to the assets: what does not exist afterwards ends on the normal 404 page.
 
 const ABSCHNITT: Record<string, string> = { befunde: "posten", ordner: "belege", ledger: "positionen", zuruf: "whatsapp" };

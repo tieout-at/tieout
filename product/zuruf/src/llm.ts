@@ -1,4 +1,4 @@
-// Nur Node: lädt product/whatsapp/.env und wählt den KI-Weg. Der Kern (Modell, API-Anfrage, Verbrauch) steht in ki.ts
+// Nur Node: lädt product/zuruf/.env und wählt den KI-Weg. Der Kern (Modell, API-Anfrage, Verbrauch) steht in ki.ts
 // und läuft auch im Cloudflare Worker; diese Datei nie in den Worker oder den Browser importieren.
 //
 // Zwei Wege, umschaltbar mit ZURUF_KI in .env oder Umgebung:
@@ -20,7 +20,7 @@ export { Ablehnung, kostenUsd, MODELL, verbrauch, type Anfrage, type Aufwand, ty
 let client: Anthropic | undefined;
 let envGeladen = false;
 
-/** Lädt product/whatsapp/.env einmal. Werte aus der Umgebung gehen vor. */
+/** Lädt product/zuruf/.env einmal. Werte aus der Umgebung gehen vor. */
 function ladeEnv(): void {
   if (envGeladen) return;
   envGeladen = true;
