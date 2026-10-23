@@ -30,6 +30,20 @@ export function projekt(id: string): { d: Datensatz; e: Ergebnis } {
   return { d, e: e.ergebnisse[id] };
 }
 
+/**
+ * Projekte mit eigener Schlussrechnungs-Seite: nur die, deren Kaskade und Vorprüfung in der Lösungsliste stehen
+ * (Demo_Faelle.md hat sie nur für W21). P3 hat auch einen Entwurf, seine Werte sind aber nicht freigegeben.
+ */
+const SCHLUSSRECHNUNG_SEITE = new Set(["w21-b-hkls"]);
+
+export function hatSchlussrechnung(id: string): boolean {
+  return SCHLUSSRECHNUNG_SEITE.has(id) && laden().e.ergebnisse[id]?.kaskade !== null;
+}
+
+export function schlussrechnungIds(): { projekt: string }[] {
+  return laden().f.projekte.filter((p) => hatSchlussrechnung(p.projekt.id)).map((p) => ({ projekt: p.projekt.id }));
+}
+
 export function projektIds(): { projekt: string }[] {
   return laden().f.projekte.map((p) => ({ projekt: p.projekt.id }));
 }
@@ -90,6 +104,8 @@ export interface NavProjekt {
   kurz: string;
   name: string;
   abgleich: boolean;
+  /** Eigene Schlussrechnungs-Seite (nur mit Werten in der Lösungsliste). */
+  schlussrechnung: boolean;
   /** Ampel aus dem Rechenkern (Firmenübersicht); „rot“ zeigt die Frist in der Seitenleiste. */
   ampel: Ampel;
   /** Frist „Schlussrechnung legen bis“ (ISO), nur wenn sie drängt. */
@@ -118,6 +134,7 @@ export function navDaten(): { firma: string; untertitel: string; projekte: NavPr
         kurz: d.projekt.kurz,
         name: d.projekt.name,
         abgleich: x.abgleich,
+        schlussrechnung: hatSchlussrechnung(id),
         ampel,
         frist: ampel === "rot" && zeile?.datum?.art === "legen_bis" ? zeile.datum.wert : null,
         gebaeude: gebaeudeAus(d.projekt.name),

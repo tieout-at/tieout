@@ -1,0 +1,463 @@
+/* Schlussrechnung (UI-Runde 1, Schritt 3b, Option A „Rechnungsblatt“, src/app/projekte/[projekt]/schlussrechnung).
+ * Vorlagen: reebuild R-A Prüfkaskade, Stripe-Rechnung als Blatt auf grauem Grund, Kuro-Fundstellen als Chips.
+ * Beim Drucken nur das Blatt und das Beweispaket. Nur Werte aus tokens.css. */
+
+.sr {
+  gap: var(--space-6);
+}
+
+/* Kopf: Restforderung groß, rechts die zwei Stufen der Freigabe */
+.sr-kopf {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+.sr-kopf__zahl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.sr-kopf__betrag {
+  font-size: 44px;
+  line-height: 48px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.sr-kopf__ctx {
+  color: var(--text-secondary);
+}
+.sr-stufen {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-2);
+}
+.sr-stufe {
+  color: var(--text);
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: 20px auto;
+  grid-template-rows: auto auto;
+  column-gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  min-width: 176px;
+}
+.sr-stufe:hover {
+  background: var(--surface-hover);
+}
+.sr-stufe__nr {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--line-strong);
+  box-sizing: border-box;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.sr-stufe__rolle {
+  font-weight: 500;
+}
+.sr-stufe__stand {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.sr-stufe--fertig .sr-stufe__nr {
+  border-color: var(--pos);
+  background: var(--pos);
+  color: var(--on-accent);
+}
+
+.sr-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* Blatt auf grauem Grund wie ein Original im Betrachter */
+.sr-mappe {
+  background: var(--doc-viewer);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  min-width: 0;
+}
+.sr-blatt {
+  background: var(--doc-paper);
+  color: var(--doc-ink);
+  box-shadow: var(--shadow-page);
+  padding: var(--space-6) var(--space-8);
+  overflow-x: auto;
+}
+.sr-blatt__kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--doc-line);
+  font-size: var(--fs-sm);
+  color: var(--doc-ink-secondary);
+}
+.sr-blatt__kopf b {
+  color: var(--doc-ink);
+  font-weight: 600;
+}
+.sr-marke {
+  flex: none;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--doc-line);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: var(--doc-ink-secondary);
+}
+.sr-kaskade {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+/* Spaltenköpfe nur für Vorleseprogramme */
+.sr-nur-vorlesen th {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.sr-kaskade td {
+  height: 40px;
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--doc-line);
+  vertical-align: middle;
+}
+.sr-kaskade td:first-child {
+  padding-left: 0;
+}
+.sr-kaskade td.r {
+  padding-right: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.sr-satz {
+  color: var(--doc-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* Belege unter der Bezeichnung (Stripe-Rechnung: Unterzeile), Sans statt Mono */
+.sr-belege {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  font-weight: 400;
+}
+.sr-belege__anfang {
+  font-size: var(--fs-sm);
+  line-height: 20px;
+  color: var(--doc-muted);
+}
+.sr-belege .sw-source {
+  max-width: 220px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  background: var(--doc-paper);
+  color: var(--doc-ink-secondary);
+  border-color: var(--doc-line);
+  text-decoration: none;
+}
+.sr-belege .sw-source:hover {
+  border-color: var(--doc-mark-line);
+  color: var(--doc-ink);
+}
+.sr-zeile--start td {
+  font-weight: 600;
+}
+.sr-zeile--summe td {
+  height: 32px;
+  color: var(--doc-ink-secondary);
+  font-size: var(--fs-sm);
+}
+.sr-zeile--rest td {
+  height: 52px;
+  border-top: 2px solid var(--doc-ink);
+  border-bottom: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.sr-zeile--rest td.r {
+  color: var(--doc-mark-line);
+}
+.sr-zeile[data-warn] td {
+  background: var(--doc-risk);
+}
+.sr-pruefung {
+  display: block;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+.sr-pruefung--warn {
+  color: var(--doc-risk-line);
+}
+
+/* Liste 1 im Blatt: aufklappbar, Stand je Posten */
+.sr-zeile--darin td {
+  height: auto;
+  vertical-align: top;
+  padding-top: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--doc-ink-secondary);
+}
+.sr-liste1 summary {
+  cursor: pointer;
+  padding: 0 0 var(--space-1) var(--space-4);
+  color: var(--doc-ink-secondary);
+}
+.sr-liste1 summary:hover {
+  color: var(--doc-ink);
+}
+.sr-liste1 ul {
+  list-style: none;
+  margin: var(--space-1) 0 var(--space-2) var(--space-4);
+  padding: 0;
+}
+.sr-liste1 li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px 96px;
+  gap: var(--space-2);
+  align-items: center;
+  height: 32px;
+  border-top: 1px dashed var(--doc-line);
+}
+.sr-liste1 a {
+  display: flex;
+  min-width: 0;
+  color: var(--doc-ink);
+  text-decoration: none;
+}
+.sr-liste1 a:hover .sr-liste1__titel {
+  text-decoration: underline;
+}
+.sr-liste1 .sw-pos-nr {
+  flex: none;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  color: var(--doc-muted);
+}
+.sr-liste1__titel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sr-liste1__betrag {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Vorprüfung rechts */
+.sr-vorpruefung {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.sr-vorpruefung__kopf {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+.sr-vorpruefung__kopf h2 {
+  margin: 0;
+}
+.sr-risiken {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sr-risiko {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+.sr-risiko:hover {
+  background: var(--surface-hover);
+}
+.sr-risiko__kopf {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+.sr-risiko__kopf b {
+  font-weight: 500;
+}
+.sr-risiko__grund {
+  font-size: var(--fs-sm);
+  color: var(--warn);
+  font-weight: 500;
+}
+.sr-risiko[data-gekuerzt] .sr-risiko__grund {
+  color: var(--text-muted);
+}
+.sr-risiko__abhilfe {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.sr-vorpruefung__fuss {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  background: var(--surface-subtle);
+}
+
+/* Beweispaket: nur beim Drucken */
+.sr-paket {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .sr-raster {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .sr-kopf__betrag {
+    font-size: 32px;
+    line-height: 36px;
+  }
+  .sr-stufen {
+    width: 100%;
+  }
+  .sr-stufen li {
+    flex: 1;
+    min-width: 0;
+  }
+  .sr-stufe {
+    min-width: 0;
+  }
+  .sr-mappe {
+    padding: var(--space-2);
+  }
+  .sr-blatt {
+    padding: var(--space-4);
+  }
+  /* Kaskade gestapelt: Bezeichnung und Betrag oben, Satz und Belege darunter */
+  .sr-kaskade,
+  .sr-kaskade tbody {
+    display: block;
+    min-width: 0;
+  }
+  .sr-kaskade tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-2);
+    row-gap: var(--space-1);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--doc-line);
+  }
+  .sr-kaskade td {
+    display: block;
+    height: auto;
+    padding: 0;
+    border: 0;
+  }
+  .sr-kaskade td.r {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .sr-kaskade td.sr-satz {
+    grid-column: 1 / -1;
+  }
+  .sr-kaskade td:empty {
+    display: none;
+  }
+  .sr-zeile--rest {
+    border-top: 2px solid var(--doc-ink);
+  }
+  .sr-zeile--rest td {
+    border-top: 0;
+  }
+  .sr-zeile[data-warn] {
+    background: var(--doc-risk);
+  }
+  .sr-liste1 ul {
+    margin-left: 0;
+  }
+  .sr-liste1 li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .sr-liste1 li .sw-status {
+    display: none;
+  }
+}
+
+@media print {
+  .sw-sidebar,
+  .sw-mobilkopf,
+  .sw-pagehead,
+  .sr-stufen,
+  .sr-vorpruefung {
+    display: none !important;
+  }
+  .scr,
+  .scr-main,
+  .scr-body {
+    display: block;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+  }
+  .sr-mappe {
+    background: none;
+    padding: 0;
+  }
+  .sr-blatt {
+    box-shadow: none;
+    padding: 0;
+  }
+  .sr-paket {
+    display: block;
+    break-before: page;
+  }
+  .sr-paket__posten {
+    break-inside: avoid;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--doc-line);
+  }
+  .sr-paket h3 {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 var(--space-1);
+    font-size: var(--fs-lg);
+  }
+  .sr-paket p {
+    margin: 0 0 var(--space-1);
+  }
+  .sr-paket ol {
+    margin: 0;
+    padding-left: var(--space-5);
+    font-size: var(--fs-sm);
+  }
+}
