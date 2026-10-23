@@ -16,6 +16,7 @@ import { Kennzahl } from "@/ui/Kennzahl";
 import { Panel } from "@/ui/Panel";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 import { FreigabeStriche, FreigegebenZahl } from "@/ui/Stand";
+import { HINWEIS_ERP } from "@/ui/posten-texte";
 import { WeiterPruefen } from "@/ui/WeiterPruefen";
 
 export const metadata: Metadata = { title: "Übersicht" };
@@ -109,9 +110,30 @@ export default function Dashboard() {
               <Kennzahl
                 label="Angemeldet und offen"
                 wert={betrag(e.summen.offen)}
-                kontext={`${anzahl(e.summen.postenOffen, "Posten", "Posten")} in ${anzahl(e.summen.projekteMitOffen, "Projekt", "Projekten")}`}
+                kontext={
+                  <span className="db-teile">
+                    <span>
+                      <b>{betrag(e.geld.beleg_fehlt.betrag)}</b> Beleg fehlt
+                    </span>
+                    <span>
+                      <b>{betrag(e.geld.angemeldet.betrag)}</b> nicht angeboten
+                    </span>
+                  </span>
+                }
               />
-              <Kennzahl label="Auftragssumme im Abgleich" wert={betrag(e.summen.auftragssummeOffen)} kontext={`${e.summen.offeneProjekte} von ${e.summen.projekte} Projekten`} />
+              <Kennzahl
+                label="Nur außerhalb ERP"
+                wert={betrag(e.ausserhalbErp.betrag)}
+                kontext={
+                  <span className="db-teile">
+                    <span>
+                      {e.ausserhalbErp.anzahl} von {e.ausserhalbErp.vonAnzahl} Posten, verrechenbar und angemeldet
+                    </span>
+                    <span className="sw-muted">Annahme: Datei gleich ERP</span>
+                  </span>
+                }
+                hinweis={HINWEIS_ERP}
+              />
             </div>
           </div>
 

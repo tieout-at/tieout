@@ -28,3 +28,6 @@ export function teileTitel(titel: string): { kennung: string | null; text: strin
   const m = titel.match(/^(\d\d\.\d\d\.\d\d[A-Z]|RB-\d+|Z\d+)\s+(.*)$/);
   return m ? { kennung: m[1], text: m[2] } : { kennung: null, text: titel };
 }
+
+/** Tooltip zu „Nur außerhalb ERP“: die Zahl beruht auf einer Annahme (Demo_Faelle.md, Firmenzahlen). */
+export const HINWEIS_ERP = "Annahme: was als Datei vorliegt, steht auch im ERP";

@@ -13,7 +13,7 @@ import { Ergebniskette, type Glied } from "@/ui/Ergebniskette";
 import { anzahl, betrag, datum, zeitpunkt } from "@/ui/format";
 import { Ico } from "@/ui/Ico";
 import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
-import { teileTitel } from "@/ui/posten-texte";
+import { HINWEIS_ERP, teileTitel } from "@/ui/posten-texte";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 import { FreigabeStriche, FreigegebenZahl, StandZelle } from "@/ui/Stand";
 import { WeiterPruefen } from "@/ui/WeiterPruefen";
@@ -239,7 +239,7 @@ export default async function ProjektUebersicht({ params }: Props) {
                     <Kennzahl label="Jetzt verrechenbar" wert={betrag(e.summen.jetzt)} kontext={anzahl(zahl.jetzt, "Posten", "Posten")} />
                     <Kennzahl label="Angemeldet und offen" wert={betrag(e.summen.offen)} kontext={anzahl(zahl.offen, "Posten", "Posten")} />
                     {sr && (
-                      <Kennzahl label="Nur außerhalb ERP" wert={betrag(e.ausserhalbErp.betrag)} kontext={`${e.ausserhalbErp.anzahl} von ${e.ausserhalbErp.vonAnzahl} Posten`} />
+                      <Kennzahl label="Nur außerhalb ERP" wert={betrag(e.ausserhalbErp.betrag)} kontext={`${e.ausserhalbErp.anzahl} von ${e.ausserhalbErp.vonAnzahl} Posten`} hinweis={HINWEIS_ERP} />
                     )}
                     {e.summen.verloren > 0 && <Kennzahl label="Verloren" wert={betrag(e.summen.verloren)} kontext={anzahl(zahl.verloren, "Posten", "Posten")} />}
                   </Kennzahlen>

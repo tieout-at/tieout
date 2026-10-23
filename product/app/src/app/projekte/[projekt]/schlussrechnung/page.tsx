@@ -96,7 +96,7 @@ export default async function Schlussrechnung({ params }: Props) {
                 <span>
                   <b>Schlussrechnung</b> {d.projekt.name}, {d.projekt.los}
                 </span>
-                <span className="sr-marke">Entwurf der Bauleitung</span>
+                <span className="sr-marke sr-nur-schirm">Entwurf der Bauleitung</span>
               </div>
               <table className="sr-kaskade">
                 <colgroup>
@@ -128,8 +128,9 @@ export default async function Schlussrechnung({ params }: Props) {
                         <Fragment key={z.bezeichnung}>
                           <tr className="sr-zeile">
                             <td>
-                              Entwurf der Bauleitung
-                              {belege}
+                              <span className="sr-nur-schirm">Entwurf der Bauleitung</span>
+                              <span className="sr-nur-druck">Leistungen</span>
+                              <span className="sr-nur-schirm">{belege}</span>
                             </td>
                             <td />
                             <td className="r">{betrag(d.entwurf.summe.wert)}</td>
@@ -138,7 +139,8 @@ export default async function Schlussrechnung({ params }: Props) {
                             <td colSpan={2}>
                               <details className="sr-liste1" open>
                                 <summary>
-                                  plus Liste 1 jetzt verrechenbar, {anzahl(liste1.length, "Posten", "Posten")}
+                                  <span className="sr-nur-schirm">plus Liste 1 jetzt verrechenbar</span>
+                                  <span className="sr-nur-druck">plus weitere Leistungen</span>, {anzahl(liste1.length, "Posten", "Posten")}
                                 </summary>
                                 <ul>
                                   {liste1.map((b) => (
@@ -157,7 +159,9 @@ export default async function Schlussrechnung({ params }: Props) {
                             <td className="r">{betrag(e.summen.jetzt)}</td>
                           </tr>
                           <tr className="sr-zeile sr-zeile--start">
-                            <td>Leistungssumme inkl. Liste 1</td>
+                            <td>
+                              Leistungssumme<span className="sr-nur-schirm"> inkl. Liste 1</span>
+                            </td>
                             <td />
                             <td className="r">{betrag(z.betrag)}</td>
                           </tr>
@@ -168,7 +172,7 @@ export default async function Schlussrechnung({ params }: Props) {
                       <tr key={z.bezeichnung} className={klasse} data-warn={p ? "" : undefined}>
                         <td>
                           {z.bezeichnung}
-                          {p && <span className={p.klasse}>{p.text}</span>}
+                          {p && <span className={`${p.klasse} sr-nur-schirm`}>{p.text}</span>}
                           {z.belege.length > 0 && belege}
                         </td>
                         <td className="sr-satz">{z.satz !== null ? prozentText(z.satz, 2) : ""}</td>
@@ -224,7 +228,7 @@ export default async function Schlussrechnung({ params }: Props) {
         </div>
 
         <section className="sr-paket" aria-label="Beweispaket">
-          <h2 className="section-title">Beweispaket {d.projekt.kurz}, Liste 1</h2>
+          <h2 className="section-title">Beweispaket {d.projekt.kurz}<span className="sr-nur-schirm">, Liste 1</span></h2>
           {liste1.map((b) => (
             <article key={b.schluessel} className="sr-paket__posten">
               <h3>
