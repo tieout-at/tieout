@@ -49,13 +49,13 @@ interface Eintrag {
 }
 
 /** Bildschirme eines Projekts in fester Reihenfolge; dieselbe Liste nutzt die Suche. */
-export function projektNav(p: Pick<NavProjekt, "id" | "abgleich">): Eintrag[] {
+export function projektNav(p: Pick<NavProjekt, "id" | "abgleich" | "schlussrechnung">): Eintrag[] {
   const basis = `/projekte/${p.id}`;
   const keinAbgleich = p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen";
   return [
     { href: `${basis}/`, icon: LayoutGrid, text: "Übersicht" },
     { href: `${basis}/posten/`, icon: ListChecks, text: "Posten", praefix: true, posten: true, folgt: keinAbgleich },
-    { href: `${basis}/schlussrechnung/`, icon: FileText, text: "Schlussrechnung", folgt: "Schlussrechnung folgt in UI-Runde 1, Schritt 3b" },
+    { href: `${basis}/schlussrechnung/`, icon: FileText, text: "Schlussrechnung", folgt: p.schlussrechnung ? undefined : "Schlussrechnung nur für Projekte mit Werten in der Lösungsliste" },
     { href: `${basis}/belege/`, icon: FolderOpen, text: "Belege", praefix: true },
     { href: `${basis}/positionen/`, icon: Table, text: "LV-Positionen", folgt: keinAbgleich },
     { href: `${basis}/zeitachse/`, icon: History, text: "Zeitachse" },
