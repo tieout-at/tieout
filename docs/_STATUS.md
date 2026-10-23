@@ -6,7 +6,7 @@
 ## Where we stand
 
 - **Rebuild from zero (v2), decided 23.10.2026.** UI reference: Attio (app.attio.com) for layout, behaviour and spacing; brand, icons, illustrations and texts are our own (icons from Lucide). Content is rethought from zero along the three steps of the website section 03: **Ihre Daten → Digitaler Zwilling → Ergebnis**.
-- **v1 stays live and frozen** at https://app.tieout.workers.dev. Cloudflare worker `app`, automatic builds switched off on 23.10. so that pushes to `main` do not change it. Live version 4f4d1872 = PR #97 = tag `v1-archiv`. Code of v1: tag `v1-archiv` and branch `v1`.
+- **v1 stays live and frozen** at https://app.tieout.workers.dev. Cloudflare worker `app`, automatic builds (production and preview) switched off on 23.10. so that pushes to `main` do not change it; checked after merging #98. Live version 4f4d1872 = PR #97 = tag `v1-archiv`. Code of v1: tag `v1-archiv` and branch `v1`.
 - **v2 goes online at a second address** (`app-neu`) from step 1; at the switch-over (step 12) the worker `app` gets the new app.
 - **Repository:** one working folder (`tieout`, this repository, public), strategy next to it (`tieout-intern`, private). New structure and clean-up log: `_BEREINIGUNG.md`.
 
@@ -48,6 +48,7 @@ Unless the specification changes them with a go from Maxi S.: company billable n
 
 ## Open points
 
+- Delete the old folder `C:\Users\maxis\dev\schlusswerk-team` once the step 0 chat is closed (go given; it was locked while that chat ran in it).
 - Cloudflare: the Git connection of the worker `app` still shows the old name `schlusswerk/schlusswerk` and asks to re-authenticate. Repair it in step 1, when `app-neu` needs a Git connection (Cloudflare docs: reinstall the GitHub app "Cloudflare Workers and Pages"; check the website first, it deploys by `npm run deploy` and does not depend on it).
 - The agent moved from `product/zuruf/` to `agent/`, code unchanged, 54 tests green. Paths inside `agent/` still name `product/zuruf` and `../app`; `npm run app-server` needs the generated data of the v1 app and only works on the branch `v1`.
 - Demo access for jurors in v2: sample company without sign-in (as in v1) or a "Demo öffnen" button. Decide in step 0b or 10.
