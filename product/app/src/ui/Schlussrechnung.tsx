@@ -10,11 +10,11 @@ import { standAus } from "@/zustand/freigabe";
 import { useVerlauf } from "@/zustand/speicher";
 import { Ico } from "./Ico";
 
-export function DruckKnopf() {
+export function DruckKnopf({ text = "Beweispaket drucken" }: { text?: string }) {
   return (
     <button type="button" className="sw-btn sw-btn--sm" onClick={() => window.print()}>
       <Ico icon={Printer} />
-      Beweispaket drucken
+      {text}
     </button>
   );
 }

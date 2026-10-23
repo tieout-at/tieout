@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import { LG_NAME } from "@/demo/w21/katalog";
 import type { Datensatz, Firmendaten, Kuerzungsgrund } from "@/domain/typen";
-import { abrechnung, gleicherGrund, guHistorie, pruefeFirma, type Abrechnung, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis, type GuHistorie, type Liste } from "@/engine";
+import { ART_TEXT } from "@/ui/posten-texte";
+import { BELEGQUELLE_TEXT, KUERZUNGSGRUND_TEXT, abrechnung, gleicherGrund, guHistorie, pruefeFirma, schlussbesprechung, type Abrechnung, type Schlussbesprechung, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis, type GuHistorie, type Liste } from "@/engine";
 
 let cache: { f: Firmendaten; e: FirmenErgebnis; h: GuHistorie } | null = null;
 
@@ -175,8 +176,55 @@ export function leistungsgruppen(): Record<string, string> {
   return LG_NAME;
 }
 
+/** Schlussbesprechungs-Blatt: Forderung und Untergrenze je Posten (nur Projekte mit Schlussrechnungs-Seite). */
+export function projektBesprechung(id: string): Schlussbesprechung | null {
+  if (!hatSchlussrechnung(id)) return null;
+  const { d, e } = projekt(id);
+  return schlussbesprechung(d, e.befunde);
+}
+
 /** Abrechnung einer gelegten und bezahlten Schlussrechnung (Projekte ohne Abgleich); sonst null. */
 export function projektAbrechnung(id: string): Abrechnung | null {
   const { d, e } = projekt(id);
   return e.abgleich ? null : abrechnung(d);
+}
+
+/** Was die Excel-Datei einer Schlussrechnung braucht, fertig aus dem Rechenkern (der Browser ergänzt nur den Freigabestand). */
+export interface ExcelDaten {
+  projekt: { id: string; kurz: string; name: string; los: string; auftraggeber: string; legenBis: string | null };
+  kaskade: { bezeichnung: string; satz: number | null; pruefung: string | null; betrag: number; belege: string }[];
+  posten: { schluessel: string; liste: Liste; titel: string; art: string; betrag: number | null; rechenweg: string; quellen: string; href: string }[];
+  besprechung: { gruppe: string; schluessel: string; titel: string; forderung: number; untergrenze: number; rechenweg: string }[];
+  vorpruefung: { bezug: string; grund: string; was: string; abhilfe: string; betrag: number; bereitsGekuerzt: boolean }[];
+  belege: { id: string; dateiname: string; art: string; datum: string; href: string }[];
+  /** Summen aus dem Rechenkern, nie in der Datei gerechnet. */
+  summen: { liste1: number; besprechung: { forderung: number; untergrenze: number; spielraum: number }; vorpruefung: number; synthetisch: boolean };
+}
+
+const GRUPPE_TEXT: Record<string, string> = { belegt: "Belegt", beleg_fehlt: "Beleg fehlt", angemeldet: "Angemeldet" };
+
+export function excelDaten(id: string): ExcelDaten | null {
+  if (!hatSchlussrechnung(id)) return null;
+  const { d, e } = projekt(id);
+  const s = schlussbesprechung(d, e.befunde);
+  const ag = laden().f.auftraggeber.find((a) => a.id === d.projekt.auftraggeberId);
+  const basis = `/projekte/${id}`;
+  return {
+    projekt: { id, kurz: d.projekt.kurz, name: d.projekt.name, los: d.projekt.los, auftraggeber: ag?.name ?? "", legenBis: d.projekt.schlussrechnungLegenBis },
+    kaskade: (e.kaskade?.zeilen ?? []).map((z) => ({ bezeichnung: z.bezeichnung, satz: z.satz, pruefung: z.pruefung, betrag: z.betrag, belege: z.belege.map((b) => b.titel).join(", ") })),
+    posten: e.befunde.map((b) => ({
+      schluessel: b.schluessel,
+      liste: b.liste,
+      titel: b.titel,
+      art: ART_TEXT[b.art],
+      betrag: b.betrag,
+      rechenweg: b.rechenweg?.text ?? "",
+      quellen: (e.belegquellen[b.schluessel] ?? []).map((q) => BELEGQUELLE_TEXT[q]).join(", "),
+      href: `${basis}/posten/${postenSlug(b.schluessel)}/`,
+    })),
+    besprechung: s.gruppen.flatMap((g) => g.posten.map((p) => ({ gruppe: GRUPPE_TEXT[g.stand], schluessel: p.schluessel, titel: p.titel, forderung: p.forderung, untergrenze: p.untergrenze, rechenweg: p.rechenweg }))),
+    vorpruefung: (e.vorpruefung?.risiken ?? []).map((r) => ({ bezug: r.bezug, grund: KUERZUNGSGRUND_TEXT[r.grund], was: r.was, abhilfe: r.abhilfe, betrag: r.betrag, bereitsGekuerzt: r.bereitsGekuerzt })),
+    belege: d.dokumente.map((x) => ({ id: x.id, dateiname: x.dateiname, art: x.art, datum: x.datum, href: `${basis}/belege/${x.id}/` })),
+    summen: { liste1: e.summen.jetzt, besprechung: { forderung: s.forderung, untergrenze: s.untergrenze, spielraum: s.spielraum }, vorpruefung: e.vorpruefung?.summe ?? 0, synthetisch: laden().f.synthetisch },
+  };
 }

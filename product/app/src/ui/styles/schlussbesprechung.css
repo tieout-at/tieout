@@ -1,0 +1,232 @@
+/* Schlussbesprechungs-Blatt (Option C): Kopf mit Forderung und Untergrenze, drei Spalten wie das Geld auf dem
+ * Dashboard. Gedruckt nur die Tabelle für den Termin (Option A). */
+.bs {
+  gap: var(--space-6);
+}
+.bs-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.bs-kopf__zahl {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bs-kopf__betrag {
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.bs-kopf__ctx {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.bs-kopf__ctx b {
+  color: var(--accent);
+  font-weight: 600;
+}
+.bs-raster {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+.bs-gruppe {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.bs-gruppe__kopf {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+.bs-gruppe--belegt .bs-gruppe__kopf {
+  background: var(--accent-soft);
+}
+.bs-gruppe__zeile1,
+.bs-gruppe__zeile2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+.bs-gruppe__zeile1 h2 {
+  margin: 0;
+}
+.bs-gruppe__zeile1 > b {
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.bs-gruppe__zeile2 {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.bs-gruppe__zeile2 b {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bs-posten {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.bs-posten__a {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+.bs-posten li:last-child .bs-posten__a {
+  border-bottom: 0;
+}
+.bs-posten__a:hover {
+  background: var(--surface-hover);
+}
+.bs-posten__zeile {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-variant-numeric: tabular-nums;
+}
+.bs-posten__zeile > b {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.bs-posten__titel {
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.bs-posten__titel > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bs-posten__klein {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.bs-posten__klein > span:last-child {
+  white-space: nowrap;
+}
+.bs-posten__risiko {
+  color: var(--warn);
+}
+.bs-fuss {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.bs-fuss a {
+  color: var(--text-secondary);
+}
+.bs-druck {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .bs-raster {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .bs-kopf__betrag {
+    font-size: 32px;
+    line-height: 36px;
+  }
+}
+@media print {
+  .bs-kopf,
+  .bs-raster,
+  .bs-fuss {
+    display: none !important;
+  }
+  .bs-druck {
+    display: block;
+    color: var(--doc-ink);
+    font-size: 11px;
+  }
+  .bs-druck__kopf {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--doc-ink);
+  }
+  .bs-druck__kopf > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .bs-druck__kopf b {
+    font-size: 16px;
+  }
+  .bs-druck__kopf dl {
+    display: flex;
+    gap: var(--space-5);
+    margin: 0;
+    text-align: right;
+  }
+  .bs-druck__kopf dd {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .bs-druck table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--space-3);
+  }
+  .bs-druck th {
+    text-align: left;
+    font-weight: 500;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--doc-ink);
+  }
+  .bs-druck td {
+    padding: 5px 8px 5px 0;
+    border-bottom: 1px solid var(--doc-line);
+  }
+  .bs-druck .r {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .bs-druck__gruppe td {
+    padding-top: 10px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--doc-ink);
+  }
+  .bs-druck__leer {
+    width: 100px;
+    border-bottom: 1px solid var(--doc-ink) !important;
+  }
+}
+.bs-posten__titel .sw-pos-nr {
+  flex: none;
+  white-space: nowrap;
+}
+.bs-gruppe__zeile2 > span:last-child {
+  white-space: nowrap;
+}
+.bs-fuss a {
+  text-decoration: none;
+}
+.bs-fuss a:hover {
+  text-decoration: underline;
+}

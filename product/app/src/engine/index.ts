@@ -9,3 +9,5 @@ export { BELEGQUELLE_TEXT, belegquellen, nurAusserhalbErp } from "./belegquelle"
 export { KUERZUNGSGRUND_TEXT } from "./typen";
 export { guHistorie, gleicherGrund } from "./historie";
 export { abrechnung } from "./abrechnung";
+export { schlussbesprechung } from "./schlussbesprechung";
+export type { BesprechungsGruppe, BesprechungsPosten, Schlussbesprechung } from "./schlussbesprechung";

@@ -9,11 +9,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
-import { firma, hatSchlussrechnung, postenSlug, projekt, schlussrechnungIds, schonBeiAuftraggeber } from "@/daten/demo";
+import { excelDaten, firma, hatSchlussrechnung, postenSlug, projekt, schlussrechnungIds, schonBeiAuftraggeber } from "@/daten/demo";
 import { prozentText } from "@/engine/geld";
 import { KUERZUNGSGRUND_TEXT, type Beleg, type KaskadenZeile } from "@/engine";
 import { anzahl, betrag, datum } from "@/ui/format";
 import { teileTitel } from "@/ui/posten-texte";
+import { ExcelKnopf } from "@/ui/Excel";
 import { GleicherGrund } from "@/ui/GleicherGrund";
 import { DruckKnopf, FreigabeStufen } from "@/ui/Schlussrechnung";
 import { Seitenkopf } from "@/ui/Seitenkopf";
@@ -73,7 +74,14 @@ export default async function Schlussrechnung({ params }: Props) {
 
   return (
     <>
-      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `${basis}/` }]} titel="Schlussrechnung" aktion={<DruckKnopf />} />
+      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `${basis}/` }]} titel="Schlussrechnung"
+        aktion={
+          <span className="sw-row">
+            <ExcelKnopf daten={excelDaten(id)!} />
+            <DruckKnopf />
+          </span>
+        }
+      />
       <main className="scr-body sr">
         <section className="sr-kopf">
           <div className="sr-kopf__zahl">
