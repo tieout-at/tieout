@@ -75,6 +75,8 @@ describe("UI-Fundament", () => {
           const code = zeile.trim();
           if (code.startsWith("//") || code.startsWith("*") || code.startsWith("/*")) return;
           for (const m of code.matchAll(texte)) if (alt.test(m.slice(1).join(" "))) verstoesse.push(`${relative(WURZEL, p)}:${i + 1}`);
+          // JSX text on a line of its own (e.g. a button label between its opening and closing tag).
+          if (p.endsWith(".tsx") && / /.test(code) && /^[A-Za-zÄÖÜäöüß][^<>{}"'`=;(),:]*$/.test(code) && alt.test(code)) verstoesse.push(`${relative(WURZEL, p)}:${i + 1}`);
         });
     expect(verstoesse).toEqual([]);
   });
