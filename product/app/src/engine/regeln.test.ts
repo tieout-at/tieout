@@ -148,14 +148,14 @@ describe("Vorprüfung: Rechenfehler und Positionen außerhalb des LV", () => {
     const d = miniDatensatz();
     d.entwurf!.zeilen.push({ typ: "zusatz", positionNr: f("Z-01"), text: f("Kernbohrung"), menge: f(100), ep: f(18_000), betrag: f(18_000) });
     expect(pruefe(d).vorpruefung!.risiken.map((r) => [r.grund, r.betrag])).toEqual([["ausserhalb_lv_kein_nachtrag", 18_000]]);
-    d.nachtraege.push({ positionNr: f("Z-01"), beauftragt: f(true) });
+    d.nachtraege.push({ positionNr: f("Z-01"), titel: f("Kernbohrungen"), betrag: f(18_000), beauftragt: f(true), dokumentId: "test" });
     expect(pruefe(d).vorpruefung!.risiken).toEqual([]);
   });
 
   it("Kürzung im Korrekturblatt → als bereits gekürzt markiert", () => {
     const d = miniDatensatz();
     d.entwurf!.zeilen.push({ typ: "zusatz", positionNr: f("Z-01"), text: f("Kernbohrung"), menge: f(100), ep: f(18_000), betrag: f(18_000) });
-    d.korrekturblaetter.push({ dokumentId: "test", rechnungNr: f("AR1"), datum: f("2026-04-10"), zeilen: [{ positionNr: f("Z-01"), kuerzung: f(18_000), grund: f("nicht beauftragt") }] });
+    d.korrekturblaetter.push({ dokumentId: "test", rechnungNr: f("AR1"), datum: f("2026-04-10"), zeilen: [{ positionNr: f("Z-01"), kuerzung: f(18_000), grund: f("ausserhalb_lv_kein_nachtrag" as const), text: f("nicht beauftragt") }] });
     const e = pruefe(d);
     expect(e.vorpruefung!.risiken[0].bereitsGekuerzt).toBe(true);
     expect(e.vorpruefung!.korrekturblatt).toEqual({ gekuerzt: 18_000, zeilen: 1, erkannt: 1 });

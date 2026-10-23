@@ -522,8 +522,18 @@ export function erzeugeW21(): Datensatz {
       rechnungNr: f("AR3", qk3("Kopf", 90)),
       datum: f("2026-10-14", qk3("Kopf", 90)),
       zeilen: [
-        { positionNr: f(G3, qk3(`Pos. ${G3}`, 260)), kuerzung: f(3_600, qk3(`Pos. ${G3}`, 260)), grund: f("Rechenfehler", qk3(`Pos. ${G3}`, 260)) },
-        { positionNr: f("Z-01", qk3("Pos. Z-01", 290)), kuerzung: f(216_000, qk3("Pos. Z-01", 290)), grund: f("nicht beauftragt", qk3("Pos. Z-01", 290)) },
+        {
+          positionNr: f(G3, qk3(`Pos. ${G3}`, 260)),
+          kuerzung: f(3_600, qk3(`Pos. ${G3}`, 260)),
+          grund: f("rechenfehler" as const, qk3(`Pos. ${G3}`, 260)),
+          text: f("Rechenfehler", qk3(`Pos. ${G3}`, 260)),
+        },
+        {
+          positionNr: f("Z-01", qk3("Pos. Z-01", 290)),
+          kuerzung: f(216_000, qk3("Pos. Z-01", 290)),
+          grund: f("ausserhalb_lv_kein_nachtrag" as const, qk3("Pos. Z-01", 290)),
+          text: f("nicht beauftragt", qk3("Pos. Z-01", 290)),
+        },
       ],
     },
   ];
@@ -531,12 +541,24 @@ export function erzeugeW21(): Datensatz {
   const zahlungen: Zahlung[] = abschlaege.map((ar, k) => {
     const kuerzung = k === 2 ? 219_600 : 0;
     const basis = ar.summe.wert - kuerzung;
-    const nachNachlass = basis - prozent(basis, 300);
-    const vorEinbehalt = nachNachlass - prozent(nachNachlass, 80) - prozent(nachNachlass, 50);
-    const betrag = vorEinbehalt - prozent(vorEinbehalt, 500);
+    const nachlass = prozent(basis, 300);
+    const nachNachlass = basis - nachlass;
+    const baustrom = prozent(nachNachlass, 80);
+    const umlage = prozent(nachNachlass, 50);
+    const vorEinbehalt = nachNachlass - baustrom - umlage;
+    const deckung = prozent(vorEinbehalt, 500);
+    const betrag = vorEinbehalt - deckung;
     const id = dok(`zahlung-ar${k + 1}`, "zahlung", `Zahlungsavis_AR${k + 1}.pdf`, ZAHL_DATUM[k], 1);
     const qzl = q(id, 1, "Zahlbetrag", [300, 400, 255, 24]);
-    return { dokumentId: id, rechnungNr: f(`AR${k + 1}`, q(id, 1, "Bezug")), datum: f(ZAHL_DATUM[k], q(id, 1, "Datum")), betrag: f(betrag, qzl) };
+    const qa = (stelle: string, y: number) => q(id, 1, stelle, [60, y, 495, 20]);
+    const abzuege: Zahlung["abzuege"] = [
+      ...(kuerzung ? [{ art: "kuerzung" as const, betrag: f(kuerzung, qa("Kürzung laut Korrekturblatt", 220)) }] : []),
+      { art: "nachlass", betrag: f(nachlass, qa("Nachlass 3 %", 250)) },
+      { art: "baustrom_bauwasser", betrag: f(baustrom, qa("Baustrom und Bauwasser 0,8 %", 280)) },
+      { art: "bauschadensumlage", betrag: f(umlage, qa("Bauschadensumlage 0,5 %", 310)) },
+      { art: "deckungsruecklass", betrag: f(deckung, qa("Deckungsrücklass 5 %", 340)) },
+    ];
+    return { dokumentId: id, rechnungNr: f(`AR${k + 1}`, q(id, 1, "Bezug")), datum: f(ZAHL_DATUM[k], q(id, 1, "Datum")), betrag: f(betrag, qzl), abzuege };
   });
 
   // Vertrag, Index, GU-Abzugsschreiben
@@ -761,6 +783,7 @@ export function erzeugeW21(): Datensatz {
     stundenlisten,
     abschlaege,
     entwurf,
+    schlussrechnung: null,
     zahlungen,
     plaene,
     mails,

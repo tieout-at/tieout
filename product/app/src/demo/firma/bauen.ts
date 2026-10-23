@@ -37,6 +37,8 @@ export interface BlattDef {
   bis: string;
   /** Position → Menge in Hundertstel. */
   zeilen: Record<string, number>;
+  /** Vom Auftraggeber gegengezeichnet; fehlt = ja. */
+  gegengezeichnet?: boolean;
 }
 
 export interface RbDef {
@@ -119,7 +121,7 @@ export function baueProjekt(def: ProjektDef): Datensatz {
   });
   const lvNr = new Set(positionen.map((p) => p.nr));
 
-  // Aufmaß (alle Blätter vom Auftraggeber gegengezeichnet)
+  // Aufmaß (vom Auftraggeber gegengezeichnet, außer ausdrücklich nicht)
   const aufmass: Aufmassblatt[] = def.blaetter.map((b) => {
     const id = `ab-${b.nr.slice(3)}`;
     dok(id, "aufmass", `${k}_${b.nr}_Aufmass.pdf`, b.datum);
@@ -135,7 +137,7 @@ export function baueProjekt(def: ProjektDef): Datensatz {
       leistungVon: f(b.von, q(id, 1, "Kopf, Leistungszeitraum")),
       leistungBis: f(b.bis, q(id, 1, "Kopf, Leistungszeitraum")),
       unterschriftAN: f(true, q(id, 1, "Unterschrift Auftragnehmer")),
-      unterschriftAG: f(true, q(id, 1, "Unterschrift Auftraggeber")),
+      unterschriftAG: f(b.gegengezeichnet ?? true, q(id, 1, "Unterschrift Auftraggeber")),
       zeilen,
     };
   });
@@ -195,7 +197,7 @@ export function baueProjekt(def: ProjektDef): Datensatz {
     .map((ar) => {
       const datum = plusTage(ar.datum.wert, ZAHLUNGSZIEL_TAGE);
       const id = dok(`zahlung-${ar.nr.wert.toLowerCase()}`, "zahlung", `${k}_Zahlungsavis_${ar.nr.wert}.pdf`, datum);
-      return { dokumentId: id, rechnungNr: f(ar.nr.wert, q(id, 1, "Bezug")), datum: f(datum, q(id, 1, "Datum")), betrag: f(ar.summe.wert, q(id, 1, "Zahlbetrag")) };
+      return { dokumentId: id, rechnungNr: f(ar.nr.wert, q(id, 1, "Bezug")), datum: f(datum, q(id, 1, "Datum")), betrag: f(ar.summe.wert, q(id, 1, "Zahlbetrag")), abzuege: [] };
     });
 
   // Entwurf der Schlussrechnung: alles wie aufgemessen, außer ausdrücklich abweichenden Mengen
@@ -235,6 +237,7 @@ export function baueProjekt(def: ProjektDef): Datensatz {
     stundenlisten: [],
     abschlaege,
     entwurf,
+    schlussrechnung: null,
     zahlungen,
     plaene: [],
     mails: [],

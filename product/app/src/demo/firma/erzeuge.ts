@@ -4,6 +4,7 @@
 
 import type { Auftraggeber, Datensatz, Firmendaten, Projekt } from "@/domain/typen";
 import { erzeugeW21 } from "@/demo/w21/erzeuge";
+import { ergaenzeSchluss, type SchlussDef } from "./abgeschlossen";
 import { baueProjekt, type PosDef, type ProjektDef } from "./bauen";
 
 export const STICHTAG = "2026-10-22";
@@ -179,7 +180,11 @@ const P6 = ohneAbgleich(
   [{ nr: "RB-04", datum: "2026-07-23", text: "Heizungsanlage nachgeregelt", m: 400, h: 0, material: 0, unterschrieben: true }],
 );
 
-const P7 = ohneAbgleich(
+// P7 und P8: abgeschlossen, mit Schlussrechnung, Korrekturblatt, Nachträgen und Schlusszahlung (GU-Historie).
+// Eingaben aus Demo_Faelle.md, Abschnitt „GC history“; Summen werden in `ergaenzeSchluss` geprüft.
+const WICKELFALZ125 = (lv: number) => pos("26.02.03A", "Wickelfalzrohr DN 125 inkl. Formteile", "m", 3_281, lv);
+
+const P7 = def(
   projekt({
     id: "p7-w10-bpa",
     kurz: "P7",
@@ -190,12 +195,61 @@ const P7 = ohneAbgleich(
     schlussrechnungGelegt: "2025-11-20",
     schlusszahlung: "2026-02-18",
   }),
-  "2024-09-30",
-  102_000_000,
-  [STAHLROHR(160_000), HK_TYP11(24_000), ABFLUSS(70_000), WASCHTISCH(14_400)],
+  {
+    vertragDatum: "2024-09-30",
+    auftragssumme: 102_000_000,
+    positionen: [STAHLROHR(160_000), HK_TYP11(24_000), ABFLUSS(70_000), WASCHTISCH(14_400)],
+    blaetter: [
+      { nr: "AB-01", datum: "2025-01-31", von: "2025-01-07", bis: "2025-01-24", zeilen: { "22.02.01A": 40_000 } },
+      { nr: "AB-02", datum: "2025-02-28", von: "2025-01-27", bis: "2025-02-21", zeilen: { "22.02.01A": 45_000, "24.01.02A": 20_000 } },
+      { nr: "AB-03", datum: "2025-03-31", von: "2025-02-24", bis: "2025-03-28", zeilen: { "22.02.01A": 40_000, "24.01.02A": 25_000 } },
+      { nr: "AB-04", datum: "2025-04-30", von: "2025-03-31", bis: "2025-04-25", zeilen: { "22.02.01A": 35_000, "22.04.10A": 6_000 } },
+      { nr: "AB-05", datum: "2025-05-30", von: "2025-04-28", bis: "2025-05-23", zeilen: { "22.02.01A": 30_000, "22.04.10A": 8_000, "24.01.02A": 20_000 } },
+      { nr: "AB-06", datum: "2025-06-30", von: "2025-05-26", bis: "2025-06-27", zeilen: { "22.04.10A": 6_000, "24.01.02A": 20_000, "24.05.03A": 6_000 } },
+      { nr: "AB-07", datum: "2025-07-31", von: "2025-06-30", bis: "2025-07-25", zeilen: { "22.04.10A": 4_000, "24.05.03A": 5_000 } },
+      { nr: "AB-08", datum: "2025-09-30", von: "2025-08-25", bis: "2025-09-26", zeilen: { "24.05.03A": 3_400 } },
+      // 12 Heizkörper über der LV-Menge, vom GU nicht gegengezeichnet: Kürzung in der Schlussrechnung
+      { nr: "AB-09", datum: "2025-10-31", von: "2025-09-29", bis: "2025-10-24", zeilen: { "22.04.10A": 1_200 }, gegengezeichnet: false },
+    ],
+    regie: [
+      { nr: "RB-01", datum: "2025-02-13", text: "Provisorische Beheizung Rohbau Stiege 1", m: 4_000, h: 4_000, material: 124_000, unterschrieben: true },
+      { nr: "RB-02", datum: "2025-04-09", text: "Bestandsleitung Nachbarhaus umgeschlossen", m: 6_400, h: 6_400, material: 230_000, unterschrieben: true },
+      { nr: "RB-03", datum: "2025-05-21", text: "Druckprobe nach Beschädigung durch Fremdgewerk wiederholt", m: 3_200, h: 0, material: 48_640, unterschrieben: true },
+      { nr: "RB-04", datum: "2025-07-02", text: "Steigleitung Stiege 2 wegen Fremdgewerk umgelegt", m: 4_800, h: 4_800, material: 187_500, unterschrieben: true },
+      { nr: "RB-05", datum: "2025-09-17", text: "Heizungsverteiler Tiefgarage nachgerüstet", m: 5_600, h: 4_000, material: 278_439, unterschrieben: true },
+    ],
+    abschlaege: [],
+    entwurf: null,
+  },
 );
 
-const P8 = ohneAbgleich(
+const P7_SCHLUSS: SchlussDef = {
+  datum: "2025-11-20",
+  summe: 108_299_019,
+  // Gedruckt 59.446,40 € statt 144 × 412,00 = 59.328,00 €
+  gedruckt: { "24.05.03A": 5_944_640 },
+  regie: ["RB-01", "RB-02", "RB-03", "RB-04", "RB-05"],
+  nachtraege: [
+    { nr: "N1", titel: "Zusätzliche Heizkreisverteiler", betrag: 864_000, beauftragt: true, datum: "2025-03-12" },
+    { nr: "N2", titel: "Umlegung Grundleitung", betrag: 312_000, beauftragt: true, datum: "2025-05-07" },
+    { nr: "N3", titel: "Mehrkosten Winterbau", betrag: 248_000, beauftragt: false, datum: "2025-02-20" },
+  ],
+  saetze: [
+    { art: "nachlass", satz: 300, punkt: "5.1", phase: "beide" },
+    { art: "baustrom_bauwasser", satz: 80, punkt: "4.6", phase: "beide" },
+    { art: "haftruecklass", satz: 300, punkt: "9.2", phase: "schluss" },
+  ],
+  ohneVertragspunkt: [{ art: "bauschadensumlage", satz: 50 }],
+  kuerzungen: [
+    { bezug: "22.04.10A", grund: "aufmass_nicht_gegengezeichnet", text: "Aufmaß AB-09 nicht gegengezeichnet" },
+    { bezug: "24.05.03A", grund: "rechenfehler", text: "Rechenfehler" },
+  ],
+  korrekturDatum: "2026-01-22",
+  abschlagszahlungen: 90_500_000,
+  zahlungDatum: "2026-02-18",
+};
+
+const P8 = def(
   projekt({
     id: "p8-hotel-w2",
     kurz: "P8",
@@ -206,13 +260,58 @@ const P8 = ohneAbgleich(
     schlussrechnungGelegt: "2025-06-30",
     schlusszahlung: "2025-09-12",
   }),
-  "2024-03-14",
-  148_000_000,
-  [KUPFERROHR(180_000), HK_TYP22(21_000), WICKELFALZ160(90_000), WASCHTISCH(24_000)],
+  {
+    vertragDatum: "2024-03-14",
+    auftragssumme: 148_000_000,
+    positionen: [KUPFERROHR(180_000), HK_TYP22(21_000), WICKELFALZ160(90_000), WASCHTISCH(24_000), WICKELFALZ125(40_000)],
+    blaetter: [
+      { nr: "AB-01", datum: "2024-06-28", von: "2024-05-06", bis: "2024-06-21", zeilen: { "22.03.06A": 60_000 } },
+      { nr: "AB-02", datum: "2024-09-30", von: "2024-06-24", bis: "2024-09-27", zeilen: { "22.03.06A": 70_000, "26.02.05A": 30_000 } },
+      { nr: "AB-03", datum: "2024-12-20", von: "2024-09-30", bis: "2024-12-13", zeilen: { "22.03.06A": 50_000, "26.02.05A": 30_000, "22.04.12A": 8_000 } },
+      { nr: "AB-04", datum: "2025-02-28", von: "2025-01-07", bis: "2025-02-21", zeilen: { "26.02.05A": 30_000, "22.04.12A": 8_000, "26.02.03A": 20_000, "24.05.03A": 10_000 } },
+      { nr: "AB-05", datum: "2025-04-30", von: "2025-02-24", bis: "2025-04-25", zeilen: { "22.04.12A": 5_000, "26.02.03A": 20_000, "24.05.03A": 8_000 } },
+      { nr: "AB-06", datum: "2025-05-30", von: "2025-04-28", bis: "2025-05-23", zeilen: { "24.05.03A": 6_000 } },
+    ],
+    regie: [
+      { nr: "RB-03", datum: "2024-11-14", text: "Notabsperrung nach Wasserschaden Ebene 1", m: 3_000, h: 3_000, material: 120_450, unterschrieben: true },
+      // Nicht unterschrieben und trotzdem verrechnet: Kürzung in der Schlussrechnung
+      { nr: "RB-09", datum: "2025-05-12", text: "Leitungen wegen Fremdgewerk umgelegt, Ebene 3", m: 2_000, h: 1_600, material: 17_400, unterschrieben: false },
+    ],
+    abschlaege: [],
+    entwurf: null,
+  },
 );
 
+const P8_SCHLUSS: SchlussDef = {
+  datum: "2025-06-30",
+  summe: 150_694_000,
+  // 450 m verrechnet, 400 m aufgemessen
+  menge: { "26.02.03A": 45_000 },
+  regie: ["RB-03", "RB-09"],
+  nachtraege: [
+    { nr: "N1", titel: "Zusätzliche Kühlung Serverraum", betrag: 1_240_000, beauftragt: true, datum: "2024-10-08" },
+    { nr: "N2", titel: "Sanitäre Mehrmengen Wellnessbereich", betrag: 586_000, beauftragt: true, datum: "2025-01-29" },
+  ],
+  saetze: [
+    { art: "nachlass", satz: 200, punkt: "5.1", phase: "beide" },
+    { art: "haftruecklass", satz: 300, punkt: "9.2", phase: "schluss" },
+  ],
+  ohneVertragspunkt: [],
+  kuerzungen: [
+    { bezug: "RB-09", grund: "regie_nicht_unterschrieben", text: "Regiebericht nicht unterschrieben" },
+    { bezug: "26.02.03A", grund: "menge_ohne_aufmass", text: "Menge über Aufmaß" },
+  ],
+  korrekturDatum: "2025-08-21",
+  abschlagszahlungen: 132_000_000,
+  zahlungDatum: "2025-09-12",
+};
+
 export function erzeugeKleineProjekte(): Datensatz[] {
-  return [P2, P3, P4, P5, P6, P7, P8].map(baueProjekt);
+  return [
+    ...[P2, P3, P4, P5, P6].map(baueProjekt),
+    ergaenzeSchluss(baueProjekt(P7), P7_SCHLUSS),
+    ergaenzeSchluss(baueProjekt(P8), P8_SCHLUSS),
+  ];
 }
 
 export function erzeugeFirma(): Firmendaten {

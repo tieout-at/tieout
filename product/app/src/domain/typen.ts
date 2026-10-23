@@ -64,6 +64,8 @@ export type DokumentArt =
   | "abschlag"
   | "zahlung"
   | "sr_entwurf"
+  | "schlussrechnung"
+  | "nachtrag"
   | "indexblatt"
   | "mail"
   | "foto"
@@ -249,11 +251,22 @@ export type RechnungsZeile =
 export interface Rechnung {
   nr: Feld<string>;
   dokumentId: string;
-  art: "abschlag" | "schluss_entwurf";
+  /** „schluss“ = an den Auftraggeber gelegte Schlussrechnung, „schluss_entwurf“ = eigener Entwurf davor. */
+  art: "abschlag" | "schluss_entwurf" | "schluss";
   datum: Feld<Datum>;
   zeilen: RechnungsZeile[];
   /** Summe wie auf dem Dokument gedruckt. */
   summe: Feld<Cent>;
+}
+
+/**
+ * Eine Zeile der Aufschlüsselung auf dem Zahlungsavis: was der Auftraggeber von der Rechnung abzieht.
+ * „kuerzung“ = gestrichene Positionen laut Korrekturblatt, „abschlagszahlungen“ = schon bezahlte Abschläge
+ * (nur bei der Schlusszahlung), sonst ein Satz wie im Vertrag.
+ */
+export interface ZahlungsAbzug {
+  art: AbzugArt | "kuerzung" | "abschlagszahlungen";
+  betrag: Feld<Cent>;
 }
 
 export interface Zahlung {
@@ -261,6 +274,8 @@ export interface Zahlung {
   rechnungNr: Feld<string>;
   datum: Feld<Datum>;
   betrag: Feld<Cent>;
+  /** Aufschlüsselung vom Rechnungsbetrag zum Zahlbetrag; leer, wenn das Avis nur den Zahlbetrag nennt. */
+  abzuege: ZahlungsAbzug[];
 }
 
 // ---------- Pläne, Mails, Fotos ----------
@@ -340,10 +355,27 @@ export interface GuAbzugsschreiben {
   abzuege: GuAbzug[];
 }
 
+/**
+ * Fester Grund einer Kürzung oder eines Abzugs. Derselbe Schlüssel in Vorprüfung, Kaskade und GU-Historie,
+ * damit der Abgleich über den Schlüssel geht, nie über den Text.
+ */
+export type Kuerzungsgrund =
+  | "aufmass_nicht_gegengezeichnet"
+  | "stunden_weichen_ab"
+  | "rechenfehler"
+  | "ausserhalb_lv_kein_nachtrag"
+  | "regie_nicht_unterschrieben"
+  | "menge_ohne_aufmass"
+  | "abzug_ohne_vertragspunkt";
+
 export interface Korrekturzeile {
+  /** LV-Position, Zusatzposition oder Regiebericht, z. B. „22.04.10A“, „Z-01“, „RB-09“. */
   positionNr: Feld<string>;
   kuerzung: Feld<Cent>;
-  grund: Feld<string>;
+  /** Grund als fester Schlüssel, vom Agenten aus dem Wortlaut zugeordnet. */
+  grund: Feld<Kuerzungsgrund>;
+  /** Grund im Wortlaut des Korrekturblatts, z. B. „nicht beauftragt“. */
+  text: Feld<string>;
 }
 
 export interface Korrekturblatt {
@@ -353,9 +385,14 @@ export interface Korrekturblatt {
   zeilen: Korrekturzeile[];
 }
 
+/** Nachtragsangebot an den Auftraggeber und ob er es beauftragt hat. */
 export interface Nachtrag {
+  /** Kennung, zugleich Position in der Rechnung, z. B. „N1“ oder „Z-01“. */
   positionNr: Feld<string>;
+  titel: Feld<string>;
+  betrag: Feld<Cent>;
   beauftragt: Feld<boolean>;
+  dokumentId: string;
 }
 
 // ---------- Zurufe (WhatsApp) ----------
@@ -405,6 +442,8 @@ export interface Datensatz {
   abschlaege: Rechnung[];
   /** Eigener Schlussrechnungs-Entwurf; null, solange das Projekt in Ausführung ist. */
   entwurf: Rechnung | null;
+  /** An den Auftraggeber gelegte Schlussrechnung (art „schluss“); null, solange sie nicht gelegt ist. */
+  schlussrechnung: Rechnung | null;
   zahlungen: Zahlung[];
   plaene: Plan[];
   mails: Mail[];
