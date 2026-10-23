@@ -6,7 +6,7 @@
 import type { AbzugArt, Datensatz, Firmendaten, Kuerzungsgrund } from "@/domain/typen";
 import { rundeHalbAuf } from "./geld";
 import { tageZwischen } from "./firma";
-import type { AuftraggeberHistorie, GuHistorie, HistorieAbzug, HistorieKuerzung } from "./typen";
+import type { AuftraggeberHistorie, Beleg, GuHistorie, HistorieAbzug, HistorieKuerzung } from "./typen";
 
 const ABZUG_ARTEN: AbzugArt[] = ["nachlass", "baustrom_bauwasser", "bauschadensumlage", "deckungsruecklass", "haftruecklass"];
 
@@ -85,12 +85,16 @@ export function guHistorie(f: Firmendaten): GuHistorie {
 }
 
 /**
- * Andere Projekte desselben Auftraggebers, in denen er aus demselben Grund gekürzt oder abgezogen hat
- * (Kurzzeichen, in Reihenfolge der Firma). Leer, wenn es keine gibt.
+ * Andere Projekte desselben Auftraggebers, in denen er aus demselben Grund gekürzt oder abgezogen hat, je Projekt
+ * einmal mit dem Beleg des ersten Treffers (Korrekturblatt oder Zahlungsavis) und dem Anker der Zeile dort
+ * (Position bzw. Art des Abzugs). Leer, wenn es keine gibt.
  */
-export function gleicherGrund(h: GuHistorie, auftraggeberId: string, grund: Kuerzungsgrund, ausserProjektId: string): string[] {
+export function gleicherGrund(h: GuHistorie, auftraggeberId: string, grund: Kuerzungsgrund, ausserProjektId: string): { projektId: string; kurz: string; beleg: Beleg; anker: string }[] {
   const ag = h.auftraggeber.find((x) => x.auftraggeber.id === auftraggeberId);
   if (!ag) return [];
-  const treffer = [...ag.kuerzungen.filter((x) => x.grund === grund), ...ag.abzuege.filter((x) => x.grund === grund)].filter((x) => x.projektId !== ausserProjektId);
-  return [...new Set(treffer.map((x) => x.kurz))];
+  const treffer = [
+    ...ag.kuerzungen.filter((x) => x.grund === grund).map((x) => ({ projektId: x.projektId, kurz: x.kurz, beleg: x.beleg, anker: x.bezug })),
+    ...ag.abzuege.filter((x) => x.grund === grund).map((x) => ({ projektId: x.projektId, kurz: x.kurz, beleg: x.belege[0], anker: x.art })),
+  ].filter((x) => x.projektId !== ausserProjektId);
+  return treffer.filter((x, i) => treffer.findIndex((y) => y.projektId === x.projektId) === i);
 }

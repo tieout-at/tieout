@@ -78,14 +78,23 @@ describe("Schlussrechnung und Schlusszahlung P7, P8", () => {
 
 describe("Gleicher Grund bei diesem Auftraggeber", () => {
   it("W21: Aufmaß nicht gegengezeichnet und Abzug ohne Vertragspunkt schon in P7", () => {
-    expect(gleicherGrund(h, "hochbau-beispiel", "aufmass_nicht_gegengezeichnet", "w21-b-hkls")).toEqual(["P7"]);
-    expect(gleicherGrund(h, "hochbau-beispiel", "abzug_ohne_vertragspunkt", "w21-b-hkls")).toEqual(["P7"]);
+    expect(gleicherGrund(h, "hochbau-beispiel", "aufmass_nicht_gegengezeichnet", "w21-b-hkls").map((x) => x.kurz)).toEqual(["P7"]);
+    expect(gleicherGrund(h, "hochbau-beispiel", "abzug_ohne_vertragspunkt", "w21-b-hkls").map((x) => x.kurz)).toEqual(["P7"]);
   });
 
   it("Gegenprobe: eigenes Projekt zählt nicht, anderer Auftraggeber nicht, fremder Grund nicht", () => {
-    expect(gleicherGrund(h, "hochbau-beispiel", "ausserhalb_lv_kein_nachtrag", "w21-b-hkls")).toEqual([]);
-    expect(gleicherGrund(h, "hochbau-beispiel", "stunden_weichen_ab", "w21-b-hkls")).toEqual([]);
-    expect(gleicherGrund(h, "generalbau-beispiel", "aufmass_nicht_gegengezeichnet", "p3-buero-w3")).toEqual([]);
-    expect(gleicherGrund(h, "unbekannt", "rechenfehler", "w21-b-hkls")).toEqual([]);
+    expect(gleicherGrund(h, "hochbau-beispiel", "ausserhalb_lv_kein_nachtrag", "w21-b-hkls").map((x) => x.kurz)).toEqual([]);
+    expect(gleicherGrund(h, "hochbau-beispiel", "stunden_weichen_ab", "w21-b-hkls").map((x) => x.kurz)).toEqual([]);
+    expect(gleicherGrund(h, "generalbau-beispiel", "aufmass_nicht_gegengezeichnet", "p3-buero-w3").map((x) => x.kurz)).toEqual([]);
+    expect(gleicherGrund(h, "unbekannt", "rechenfehler", "w21-b-hkls").map((x) => x.kurz)).toEqual([]);
+  });
+});
+
+describe("Gleicher Grund: Sprung zum Original", () => {
+  it("W21 G1 führt zum Korrekturblatt von P7, die Bauschadensumlage zum Zahlungsavis von P7", () => {
+    const g1 = gleicherGrund(h, "hochbau-beispiel", "aufmass_nicht_gegengezeichnet", "w21-b-hkls")[0];
+    const umlage = gleicherGrund(h, "hochbau-beispiel", "abzug_ohne_vertragspunkt", "w21-b-hkls")[0];
+    expect([g1.projektId, g1.beleg.quelle.dokumentId, g1.anker]).toEqual(["p7-w10-bpa", "gu-korrektur-sr", "22.04.10A"]);
+    expect([umlage.projektId, umlage.beleg.quelle.dokumentId, umlage.anker]).toEqual(["p7-w10-bpa", "zahlung-sr", "bauschadensumlage"]);
   });
 });

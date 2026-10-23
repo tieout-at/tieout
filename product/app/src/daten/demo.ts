@@ -5,17 +5,39 @@ import "server-only";
 import { notFound } from "next/navigation";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import { LG_NAME } from "@/demo/w21/katalog";
-import type { Datensatz, Firmendaten } from "@/domain/typen";
-import { pruefeFirma, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis, type Liste } from "@/engine";
+import type { Datensatz, Firmendaten, Kuerzungsgrund } from "@/domain/typen";
+import { gleicherGrund, guHistorie, pruefeFirma, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis, type GuHistorie, type Liste } from "@/engine";
 
-let cache: { f: Firmendaten; e: FirmenErgebnis } | null = null;
+let cache: { f: Firmendaten; e: FirmenErgebnis; h: GuHistorie } | null = null;
 
 function laden() {
   if (!cache) {
     const f = erzeugeFirma();
-    cache = { f, e: pruefeFirma(f) };
+    cache = { f, e: pruefeFirma(f), h: guHistorie(f) };
   }
   return cache;
+}
+
+/** GU-Historie der Firma: je Auftraggeber Kürzungen, Abzüge ohne Vertragspunkt, Nachträge, Tage bis zur Schlusszahlung. */
+export function historie(): GuHistorie {
+  return laden().h;
+}
+
+/** Ein anderes Projekt desselben Auftraggebers mit demselben Grund, mit Adresse des Originals dort. */
+export interface SchonBeiAuftraggeber {
+  kurz: string;
+  href: string;
+}
+
+/**
+ * Hat dieser Auftraggeber in einem anderen Projekt schon aus demselben Grund gekürzt oder abgezogen? Abgleich über
+ * den festen Schlüssel des Grunds. Die Adresse führt zum Korrekturblatt oder Zahlungsavis dort.
+ */
+export function schonBeiAuftraggeber(projektId: string, grund: Kuerzungsgrund): SchonBeiAuftraggeber[] {
+  const { f, h } = laden();
+  const d = f.projekte.find((p) => p.projekt.id === projektId);
+  if (!d) return [];
+  return gleicherGrund(h, d.projekt.auftraggeberId, grund, projektId).map((x) => ({ kurz: x.kurz, href: `/projekte/${x.projektId}/belege/${x.beleg.quelle.dokumentId}/#pos-${x.anker}` }));
 }
 
 export function firma(): { daten: Firmendaten; ergebnis: FirmenErgebnis } {
