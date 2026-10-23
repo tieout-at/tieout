@@ -1,7 +1,7 @@
 // Schlussrechnung eines Projekts (UI-Runde 1, Schritt 3b, Option A „Rechnungsblatt“; Vorlage: reebuild R-A
 // Prüfkaskade, Stripe-Rechnung als Blatt, Kuro-Fundstellen als Belegchips).
 // Links das Blatt: Entwurf der Bauleitung plus Liste 1, Kaskade bis zur Restforderung, jede Zeile mit ihrem Beleg.
-// Rechts die Vorprüfung aus GU-Sicht (überschneidet sich mit Liste 1, nie addiert) und der Stand der Freigabe.
+// Rechts die Vorprüfung aus GU-Sicht (steckt teils in Liste 1, nie addiert) und der Stand der Freigabe.
 // Variante (a) des Bauplans: die Kaskade zählt immer die ganze Liste 1, der Stand steht je Posten daneben.
 // Alle Beträge aus dem Rechenkern. Beim Drucken wird daraus das Beweispaket (Posten, Rechenweg, Belege).
 
@@ -16,7 +16,7 @@ import { anzahl, betrag, datum } from "@/ui/format";
 import { teileTitel } from "@/ui/posten-texte";
 import { DruckKnopf, FreigabeStufen } from "@/ui/Schlussrechnung";
 import { Seitenkopf } from "@/ui/Seitenkopf";
-import { StandZelle } from "@/ui/Stand";
+import { FreigegebenZahl, StandZelle } from "@/ui/Stand";
 
 type Props = { params: Promise<{ projekt: string }> };
 
@@ -68,6 +68,7 @@ export default async function Schlussrechnung({ params }: Props) {
   const postenHref = (schluessel: string) => `${basis}/posten/${postenSlug(schluessel)}/`;
   const ag = daten.auftraggeber.find((a) => a.id === d.projekt.auftraggeberId);
   const letzte = k.zeilen.length - 1;
+  const art = new Map(d.dokumente.map((x) => [x.id, x.art]));
 
   return (
     <>
@@ -78,11 +79,14 @@ export default async function Schlussrechnung({ params }: Props) {
             <span className="label">Restforderung</span>
             <span className="sr-kopf__betrag">{betrag(k.restforderung)}</span>
             <span className="sr-kopf__ctx">
-              {d.projekt.schlussrechnungLegenBis && <>legen bis {datum(d.projekt.schlussrechnungLegenBis)}, </>}
+              enthält Liste 1 mit {betrag(e.summen.jetzt)}, davon <FreigegebenZahl projektId={id} posten={liste1} /> Posten freigegeben
+            </span>
+            <span className="sr-kopf__ctx sw-muted">
+              {d.projekt.schlussrechnungLegenBis && <>Legen bis {datum(d.projekt.schlussrechnungLegenBis)} </>}
               an {ag?.name}
             </span>
           </div>
-          <FreigabeStufen projektId={id} posten={liste1.map((b) => ({ schluessel: b.schluessel, liste: b.liste }))} />
+          <FreigabeStufen projektId={id} posten={liste1.map((b) => ({ schluessel: b.schluessel, liste: b.liste }))} href={`${basis}/posten/`} />
         </section>
 
         <div className="sr-raster">
@@ -98,35 +102,43 @@ export default async function Schlussrechnung({ params }: Props) {
                 <colgroup>
                   <col />
                   <col style={{ width: 72 }} />
-                  <col style={{ width: 232 }} />
-                  <col style={{ width: 136 }} />
+                  <col style={{ width: 144 }} />
                 </colgroup>
+                <thead className="sr-nur-vorlesen">
+                  <tr>
+                    <th>Zeile und Beleg</th>
+                    <th>Satz</th>
+                    <th>Betrag</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {k.zeilen.map((z, i) => {
                     const p = z.pruefung ? PRUEFUNG[z.pruefung] : null;
-                    const klasse = i === letzte ? "sr-zeile sr-zeile--rest" : i === 0 ? "sr-zeile sr-zeile--start" : z.art === "summe" ? "sr-zeile sr-zeile--summe" : "sr-zeile";
-                    return (
-                      <Fragment key={z.bezeichnung}>
-                        <tr className={klasse} data-warn={p ? "" : undefined}>
-                          <td>
-                            {z.bezeichnung}
-                            {p && <span className={p.klasse}>{p.text}</span>}
-                          </td>
-                          <td className="sr-satz">{z.satz !== null ? prozentText(z.satz, 2) : ""}</td>
-                          <td className="sr-belege">
-                            {gemeinsamerAnfang(z.belege) && <span className="sr-belege__anfang">{gemeinsamerAnfang(z.belege)}</span>}
-                            {z.belege.map((b) => (
-                              <BelegChip key={`${b.quelle.dokumentId}-${b.titel}`} basis={basis} b={b} ohne={gemeinsamerAnfang(z.belege)} />
-                            ))}
-                          </td>
-                          <td className="r">{betrag(z.betrag)}</td>
-                        </tr>
-                        {i === 0 && (
+                    const belege = (
+                      <span className="sr-belege">
+                        {gemeinsamerAnfang(z.belege) && <span className="sr-belege__anfang">{gemeinsamerAnfang(z.belege)}</span>}
+                        {z.belege.map((b) => (
+                          <BelegChip key={`${b.quelle.dokumentId}-${b.titel}`} basis={basis} b={b} ohne={gemeinsamerAnfang(z.belege)} />
+                        ))}
+                      </span>
+                    );
+                    // Erste Zeile der Kaskade: Entwurf und Liste 1 getrennt, damit jeder Chip zu seiner Zahl führt.
+                    if (i === 0 && d.entwurf)
+                      return (
+                        <Fragment key={z.bezeichnung}>
+                          <tr className="sr-zeile">
+                            <td>
+                              Entwurf der Bauleitung
+                              {belege}
+                            </td>
+                            <td />
+                            <td className="r">{betrag(d.entwurf.summe.wert)}</td>
+                          </tr>
                           <tr className="sr-zeile sr-zeile--darin">
-                            <td colSpan={3}>
-                              <details className="sr-liste1">
+                            <td colSpan={2}>
+                              <details className="sr-liste1" open>
                                 <summary>
-                                  darin Liste 1 jetzt verrechenbar, {anzahl(liste1.length, "Posten", "Posten")}
+                                  plus Liste 1 jetzt verrechenbar, {anzahl(liste1.length, "Posten", "Posten")}
                                 </summary>
                                 <ul>
                                   {liste1.map((b) => (
@@ -144,8 +156,24 @@ export default async function Schlussrechnung({ params }: Props) {
                             </td>
                             <td className="r">{betrag(e.summen.jetzt)}</td>
                           </tr>
-                        )}
-                      </Fragment>
+                          <tr className="sr-zeile sr-zeile--start">
+                            <td>Leistungssumme inkl. Liste 1</td>
+                            <td />
+                            <td className="r">{betrag(z.betrag)}</td>
+                          </tr>
+                        </Fragment>
+                      );
+                    const klasse = i === letzte ? "sr-zeile sr-zeile--rest" : z.art === "summe" ? "sr-zeile sr-zeile--summe" : "sr-zeile";
+                    return (
+                      <tr key={z.bezeichnung} className={klasse} data-warn={p ? "" : undefined}>
+                        <td>
+                          {z.bezeichnung}
+                          {p && <span className={p.klasse}>{p.text}</span>}
+                          {z.belege.length > 0 && belege}
+                        </td>
+                        <td className="sr-satz">{z.satz !== null ? prozentText(z.satz, 2) : ""}</td>
+                        <td className="r">{betrag(z.betrag)}</td>
+                      </tr>
                     );
                   })}
                 </tbody>
@@ -160,12 +188,15 @@ export default async function Schlussrechnung({ params }: Props) {
                   Vorprüfung aus GU-Sicht
                 </h2>
                 <span className="meta sw-muted">
-                  {betrag(v.summe)} in {anzahl(v.risiken.length, "Position", "Positionen")}, überschneidet sich mit Liste 1
+                  {betrag(v.summe)} in {anzahl(v.risiken.length, "Position", "Positionen")}, steckt teils in Liste 1, nicht addieren
                 </span>
               </div>
               <ul className="sr-risiken">
                 {v.risiken.map((r) => {
-                  const ziel = r.befundSchluessel ? postenHref(r.befundSchluessel) : r.belege[0] ? `${basis}/belege/${r.belege[0].quelle.dokumentId}/` : `${basis}/belege/`;
+                  // Schon gekürzt: zum Korrekturblatt des GU; sonst zum Posten oder zum ersten Beleg.
+                  const korrektur = r.bereitsGekuerzt ? r.belege.find((x) => art.get(x.quelle.dokumentId) === "gu_korrektur") : undefined;
+                  const beleg = korrektur ?? r.belege[0];
+                  const ziel = korrektur || !r.befundSchluessel ? (beleg ? `${basis}/belege/${beleg.quelle.dokumentId}/` : `${basis}/belege/`) : postenHref(r.befundSchluessel);
                   return (
                     <li key={r.schluessel}>
                       <Link href={ziel} className="sr-risiko" data-gekuerzt={r.bereitsGekuerzt || undefined}>
@@ -175,7 +206,7 @@ export default async function Schlussrechnung({ params }: Props) {
                         </span>
                         <span className="sr-risiko__grund">
                           {KUERZUNGSGRUND_TEXT[r.grund]}
-                          {r.bereitsGekuerzt && ", schon gekürzt"}
+                          {r.bereitsGekuerzt && ", bereits gekürzt"}
                         </span>
                         <span className="sr-risiko__abhilfe">{r.abhilfe}</span>
                       </Link>

@@ -38,6 +38,8 @@
   gap: var(--space-2);
 }
 .sr-stufe {
+  color: var(--text);
+  text-decoration: none;
   display: grid;
   grid-template-columns: 20px auto;
   grid-template-rows: auto auto;
@@ -47,6 +49,9 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   min-width: 176px;
+}
+.sr-stufe:hover {
+  background: var(--surface-hover);
 }
 .sr-stufe__nr {
   grid-row: span 2;
@@ -126,9 +131,18 @@
   border-collapse: collapse;
   table-layout: fixed;
 }
+/* Spaltenköpfe nur für Vorleseprogramme */
+.sr-nur-vorlesen th {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .sr-kaskade td {
   height: 40px;
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2);
   border-bottom: 1px solid var(--doc-line);
   vertical-align: middle;
 }
@@ -145,22 +159,24 @@
   color: var(--doc-muted);
   font-variant-numeric: tabular-nums;
 }
-.sr-kaskade td.sr-belege {
-  line-height: 0;
+/* Belege unter der Bezeichnung (Stripe-Rechnung: Unterzeile), Sans statt Mono */
+.sr-belege {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
   font-weight: 400;
 }
 .sr-belege__anfang {
-  margin-right: var(--space-1);
   font-size: var(--fs-sm);
   line-height: 20px;
   color: var(--doc-muted);
 }
-.sr-belege > * {
-  vertical-align: middle;
-}
 .sr-belege .sw-source {
-  margin: 1px var(--space-1) 1px 0;
-  max-width: 168px;
+  max-width: 220px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
   background: var(--doc-paper);
   color: var(--doc-ink-secondary);
   border-color: var(--doc-line);
@@ -334,8 +350,11 @@
   .sr-stufen {
     width: 100%;
   }
-  .sr-stufe {
+  .sr-stufen li {
     flex: 1;
+    min-width: 0;
+  }
+  .sr-stufe {
     min-width: 0;
   }
   .sr-mappe {
@@ -368,12 +387,10 @@
     grid-column: 2;
     grid-row: 1;
   }
-  .sr-kaskade td.sr-satz,
-  .sr-kaskade td.sr-belege {
+  .sr-kaskade td.sr-satz {
     grid-column: 1 / -1;
   }
-  .sr-kaskade td.sr-satz:empty,
-  .sr-kaskade td.sr-belege:empty {
+  .sr-kaskade td:empty {
     display: none;
   }
   .sr-zeile--rest {
@@ -419,9 +436,6 @@
   .sr-blatt {
     box-shadow: none;
     padding: 0;
-  }
-  .sr-liste1 ul {
-    display: block;
   }
   .sr-paket {
     display: block;
