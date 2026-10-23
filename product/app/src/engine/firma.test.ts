@@ -106,6 +106,18 @@ describe("Firma: Invarianten", () => {
     }
   });
 
+  it("jeder Rechenschritt außer der Schlusszeile hat Quellen in einem Dokument oder Zuruf desselben Projekts", () => {
+    for (const d of f.projekte) {
+      const ids = new Set([...d.dokumente.map((x) => x.id), ...d.zurufe.map((z) => z.id)]);
+      for (const b of e.ergebnisse[d.projekt.id].befunde)
+        for (const s of (b.rechenweg?.schritte ?? []).filter((x) => !x.summe)) {
+          const name = `${d.projekt.kurz} ${b.schluessel}, ${s.bezeichnung}`;
+          expect(s.quellen?.length, name).toBeGreaterThan(0);
+          for (const q of s.quellen!) expect(ids.has(q.dokumentId), name).toBe(true);
+        }
+    }
+  });
+
   it("Mitarbeiter nur als Rolle: kein Zuruf-Absender mit Namen", () => {
     for (const d of f.projekte) for (const z of d.zurufe) expect(z.absender).toMatch(/^(Monteur|Helfer|Bauleitung|Polier), /);
   });
