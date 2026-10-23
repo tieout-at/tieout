@@ -405,7 +405,7 @@
     line-height: 44px;
   }
   .db-neben {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);
   }
   .db-neben .sw-kpi .kpi {

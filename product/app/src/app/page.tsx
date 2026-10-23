@@ -116,7 +116,7 @@ export default function Dashboard() {
                       <b>{betrag(e.geld.beleg_fehlt.betrag)}</b> Beleg fehlt
                     </span>
                     <span>
-                      <b>{betrag(e.geld.angemeldet.betrag)}</b> ohne Preis
+                      <b>{betrag(e.geld.angemeldet.betrag)}</b> nicht angeboten
                     </span>
                   </span>
                 }
@@ -124,7 +124,14 @@ export default function Dashboard() {
               <Kennzahl
                 label="Nur außerhalb ERP"
                 wert={betrag(e.ausserhalbErp.betrag)}
-                kontext={`${e.ausserhalbErp.anzahl} von ${e.ausserhalbErp.vonAnzahl} Posten`}
+                kontext={
+                  <span className="db-teile">
+                    <span>
+                      {e.ausserhalbErp.anzahl} von {e.ausserhalbErp.vonAnzahl} Posten, verrechenbar und angemeldet
+                    </span>
+                    <span className="sw-muted">Annahme: Datei gleich ERP</span>
+                  </span>
+                }
                 hinweis={HINWEIS_ERP}
               />
             </div>

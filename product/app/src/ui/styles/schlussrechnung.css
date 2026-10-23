@@ -428,8 +428,12 @@
     display: inline;
   }
   .sr-nur-schirm,
+  .sr-kopf,
   .sr-liste1 li .sw-status {
     display: none !important;
+  }
+  .sr-zeile[data-warn] td {
+    background: none;
   }
   .sw-sidebar,
   .sw-mobilkopf,

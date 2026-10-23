@@ -130,7 +130,7 @@ export default async function Schlussrechnung({ params }: Props) {
                             <td>
                               <span className="sr-nur-schirm">Entwurf der Bauleitung</span>
                               <span className="sr-nur-druck">Leistungen</span>
-                              {belege}
+                              <span className="sr-nur-schirm">{belege}</span>
                             </td>
                             <td />
                             <td className="r">{betrag(d.entwurf.summe.wert)}</td>
