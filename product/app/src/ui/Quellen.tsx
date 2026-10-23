@@ -4,8 +4,6 @@
 
 import type { Datensatz, Quelle } from "@/domain/typen";
 
-const MAX = 3;
-
 /** Kurzname eines Belegs für den Chip, z. B. „AB-12“, „LV S. 6“, „Vertrag 6.3“, „Z6“. */
 function kurzname(d: Datensatz, q: Quelle): string {
   const zuruf = d.zurufe.find((z) => z.id === q.dokumentId);
@@ -39,19 +37,19 @@ function kurzname(d: Datensatz, q: Quelle): string {
 
 function anker(q: Quelle): string {
   const nr = q.stelle?.match(/\d\d\.\d\d\.\d\d[A-Z]|Z-\d+/)?.[0];
-  return nr ? `#pos-${nr}` : "";
+  if (nr) return `#pos-${nr}`;
+  const punkt = q.stelle?.match(/Pkt\. ([\d.]+)/)?.[1];
+  return punkt ? `#pkt-${punkt}` : "";
 }
 
 export function Quellen({ d, basis, quellen }: { d: Datensatz; basis: string; quellen: Quelle[] | undefined }) {
   if (!quellen?.length) return null;
   // Gleicher Chip nur einmal (z. B. zwei Stellen im Indexblatt, Vertrag Pkt. 6.3 für Monteur und Helfer)
   const eindeutig = quellen.filter((q, i) => quellen.findIndex((x) => kurzname(d, x) === kurzname(d, q)) === i);
-  const zeigen = eindeutig.length > MAX + 1 ? eindeutig.slice(0, MAX) : eindeutig;
-  const rest = eindeutig.slice(zeigen.length);
   const dateiname = (q: Quelle) => d.dokumente.find((x) => x.id === q.dokumentId)?.dateiname ?? kurzname(d, q);
   return (
     <span className="rw-quellen">
-      {zeigen.map((q) => (
+      {eindeutig.map((q) => (
         <a
           key={`${q.dokumentId}-${q.stelle ?? q.seite}`}
           href={`${basis}/belege/${q.dokumentId}/${anker(q)}`}
@@ -62,11 +60,6 @@ export function Quellen({ d, basis, quellen }: { d: Datensatz; basis: string; qu
           {kurzname(d, q)}
         </a>
       ))}
-      {rest.length > 0 && (
-        <span className="rw-quellen__mehr" title={rest.map((q) => kurzname(d, q)).join(", ")}>
-          +{rest.length}
-        </span>
-      )}
     </span>
   );
 }

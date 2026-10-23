@@ -165,8 +165,3 @@
   border-color: var(--accent);
   color: var(--accent);
 }
-.rw-quellen__mehr {
-  align-self: center;
-  color: var(--text-muted);
-  font-size: var(--fs-xs);
-}

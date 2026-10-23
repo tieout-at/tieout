@@ -327,3 +327,12 @@ tbody[data-zu] > tr:not(.grp) {
   color: var(--text-muted);
   font-weight: 400;
 }
+@media (max-width: 640px) {
+  .tab-positionen th:first-child,
+  .tab-positionen td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--bg);
+  }
+}

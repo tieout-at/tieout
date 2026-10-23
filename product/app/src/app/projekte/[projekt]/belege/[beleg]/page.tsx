@@ -14,7 +14,7 @@ import { menge } from "@/engine/geld";
 import { ART_TEXT, teileTitel } from "@/ui/posten-texte";
 import { AnkerMarke } from "@/ui/AnkerMarke";
 import { Belegseite } from "@/ui/Belegseite";
-import { betrag, datum, zeitpunkt } from "@/ui/format";
+import { betrag, datum, zahl, zeitpunkt } from "@/ui/format";
 import { Seitenkopf } from "@/ui/Seitenkopf";
 
 type Props = { params: Promise<{ projekt: string; beleg: string }> };
@@ -52,11 +52,11 @@ function umbrechbar(name: string) {
 }
 
 /** Korrigiertes Feld lesbar: Bezeichnung aus der Stelle, Wert in seiner Einheit. */
-function korrekturText(d: Datensatz, k: Korrektur): { was: string; wert: string; vorher: string } {
+function korrekturText(d: Datensatz, k: Korrektur): { was: string; wert: string; vorher: string; anker?: string } {
   if (k.feld === "menge") {
     const nr = k.stelle.match(/\d\d\.\d\d\.\d\d[A-Z]/)?.[0] ?? k.stelle;
     const einheit = d.lv.find((p) => p.nr.wert === nr)?.einheit.wert;
-    return { was: `${nr} Menge`, wert: menge(Number(k.wert), einheit), vorher: menge(Number(k.vorher), einheit) };
+    return { was: `${nr} Menge`, wert: menge(Number(k.wert), einheit), vorher: menge(Number(k.vorher), einheit), anker: `#pos-${nr}` };
   }
   const was = (k.stelle.split(", ").at(-1) ?? k.feld).replace(/^EXIF /, "");
   if (k.feld.startsWith("stunden")) return { was, wert: menge(Number(k.wert), "h"), vorher: menge(Number(k.vorher), "h") };
@@ -143,17 +143,17 @@ export default async function BelegSeite({ params }: Props) {
                 <span className="label">Eingelesen</span>
                 <div className="kv">
                   <div>
-                    <span>{felder.gelesen === 1 ? "1 Feld" : `${felder.gelesen} Felder`}</span>
+                    <span>{felder.gelesen === 1 ? "1 Feld" : `${zahl(felder.gelesen)} Felder`}</span>
                     <b>{felder.korrekturen.length === 0 ? "maschinell gelesen" : `davon ${felder.korrekturen.length} korrigiert`}</b>
                   </div>
                   {felder.korrekturen.map((k) => {
                     const t = korrekturText(d, k);
                     return (
                       <div key={`${k.feld}-${k.stelle}`} className="beleg-korrektur">
-                        <span>{t.was}</span>
+                        <span>{t.anker ? <a href={t.anker}>{t.was}</a> : t.was}</span>
                         <b>
                           {t.wert}
-                          <span className="beleg-korrektur__vorher">korrigiert, vorher {t.vorher}</span>
+                          <span className="beleg-korrektur__vorher">von Hand korrigiert, vorher {t.vorher}</span>
                         </b>
                       </div>
                     );

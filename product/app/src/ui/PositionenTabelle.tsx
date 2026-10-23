@@ -178,7 +178,7 @@ function LgZeilen(props: { gruppe: string; titel: string; anzahl: number; zeilen
 function ImOriginal({ o, dok, nr, titel, children }: { o: Originale; dok: string | null; nr: string; titel: string; children: React.ReactNode }) {
   if (!dok) return <>{children}</>;
   return (
-    <a href={`${o.basis}/belege/${dok}/#pos-${nr}`} className="pos-original" title={titel}>
+    <a href={`${o.basis}/belege/${dok}/#pos-${nr}`} className="pos-original" title={titel} tabIndex={-1}>
       {children}
     </a>
   );
@@ -207,7 +207,7 @@ const Zeile = memo(function Zeile({ z, o, naechste }: { z: PositionsReihe; o: Or
       </td>
       <td className={z.aufmassMenge > z.lvMenge ? "r positionen-ueber" : "r"}>
         {z.aufmassMenge > 0 && (
-          <ImOriginal o={o} dok={letztes} nr={z.positionNr} titel={`Aus ${z.aufmassBlaetter.map((x) => o.namen[x]).join(", ")}`}>
+          <ImOriginal o={o} dok={letztes} nr={z.positionNr} titel={z.aufmassBlaetter.length > 1 ? `Summe aus ${z.aufmassBlaetter.map((x) => o.namen[x]).join(", ")}, öffnet ${letztes ? o.namen[letztes] : ""}` : `Aus ${letztes ? o.namen[letztes] : ""}`}>
             {menge(z.aufmassMenge, z.einheit)}
           </ImOriginal>
         )}
