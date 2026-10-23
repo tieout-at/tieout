@@ -12,6 +12,7 @@ import {
   FileText,
   FolderOpen,
   History,
+  House,
   LayoutGrid,
   ListChecks,
   Menu,
@@ -270,12 +271,16 @@ export function Seitenleiste({ firma, untertitel, projekte }: { firma: string; u
             <span className="nav-text">Suchen</span>
             <span className="sw-kbd nav-kbd">Strg K</span>
           </button>
+          <Link href="/" aria-current={pfad === "/" ? "page" : undefined} title="Übersicht">
+            <Ico icon={House} />
+            <span className="nav-text">Übersicht</span>
+          </Link>
         </nav>
         <nav className="nav-gruppe" aria-label="Projekte">
-          <Link href="/" className="nav-gruppe__kopf" aria-current={pfad === "/" ? "page" : undefined}>
+          <div className="nav-gruppe__kopf nav-gruppe__kopf--fest">
             <span className="nav-text">Projekte</span>
             <span className="sw-count">{imAbgleich.length}</span>
-          </Link>
+          </div>
           <div className="sw-nav nav-baum">{imAbgleich.map(zeile)}</div>
         </nav>
         {fertig.length > 0 && (

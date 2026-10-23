@@ -19,6 +19,9 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 .sw-btn:hover { background: var(--surface-hover); }
 .sw-btn--primary { background: var(--action); border-color: var(--action); color: var(--on-action); }
 .sw-btn--primary:hover { background: var(--action-hover); border-color: var(--action-hover); }
+/* Akzentknopf in Ultramarin (Website „Demo buchen“): höchstens einer je Seite, für den nächsten Schritt */
+.sw-btn--accent { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.sw-btn--accent:hover { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
 .sw-btn--ghost { border-color: transparent; background: transparent; color: var(--text-secondary); }
 .sw-btn--ghost:hover { background: var(--surface-hover); color: var(--text); }
 .sw-btn--sm { height: var(--tab-h); padding: 0 var(--space-2); }
