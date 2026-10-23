@@ -1,6 +1,7 @@
 // Lösungsliste v2 (Firma und die 7 weiteren Projekte), abgeschrieben aus product/docs/Demo_Faelle.md.
 // Nur für Tests. Der Rechenkern liest diese Datei nie.
 
+import type { Kuerzungsgrund } from "@/domain/typen";
 import type { Ampel, BefundArt, Liste } from "@/engine/typen";
 
 export interface SollProjekt {
@@ -61,3 +62,89 @@ export const SOLL_FAELLE: SollFall[] = [
 
 /** Hinweis „Mengenänderung über 20 %“: P3-J1 +31,1 % (56 von 180 m). */
 export const SOLL_HINWEISE_KLEIN: Record<string, Record<string, number>> = { P3: { "22.03.06A": 3_111 } };
+
+// GU-Historie, abgeschrieben aus Demo_Faelle.md, Abschnitt „GC history“ (Eingaben P7/P8 mit Go Maxi S. 23.10.2026).
+
+export interface SollKuerzung {
+  kurz: string;
+  rechnung: string;
+  bezug: string;
+  grund: Kuerzungsgrund;
+  betrag: number;
+}
+
+export const SOLL_KUERZUNGEN: Record<string, SollKuerzung[]> = {
+  "hochbau-beispiel": [
+    { kurz: "W21", rechnung: "AR3", bezug: "24.05.02A", grund: "rechenfehler", betrag: 3_600 },
+    { kurz: "W21", rechnung: "AR3", bezug: "Z-01", grund: "ausserhalb_lv_kein_nachtrag", betrag: 216_000 },
+    { kurz: "P7", rechnung: "SR", bezug: "22.04.10A", grund: "aufmass_nicht_gegengezeichnet", betrag: 421_200 },
+    { kurz: "P7", rechnung: "SR", bezug: "24.05.03A", grund: "rechenfehler", betrag: 11_840 },
+  ],
+  "generalbau-beispiel": [
+    { kurz: "P8", rechnung: "SR", bezug: "RB-09", grund: "regie_nicht_unterschrieben", betrag: 231_000 },
+    { kurz: "P8", rechnung: "SR", bezug: "26.02.03A", grund: "menge_ohne_aufmass", betrag: 164_050 },
+  ],
+  "gemeinde-beispielstadt": [],
+  "wohnbau-beispiel": [],
+};
+
+export interface SollHistorie {
+  projekte: number;
+  abgeschlossen: number;
+  kuerzungen: number;
+  kuerzungenZeilen: number;
+  kuerzungenProjekte: number;
+  abzuege: { kurz: string; rechnungen: string[]; betrag: number }[];
+  abzuegeSumme: number;
+  nachtraege: { anzahl: number; beauftragt: number; betrag: number; betragBeauftragt: number; quote: number | null };
+  tage: Record<string, number>;
+}
+
+const OHNE_HISTORIE: SollHistorie = {
+  projekte: 1,
+  abgeschlossen: 0,
+  kuerzungen: 0,
+  kuerzungenZeilen: 0,
+  kuerzungenProjekte: 0,
+  abzuege: [],
+  abzuegeSumme: 0,
+  nachtraege: { anzahl: 0, beauftragt: 0, betrag: 0, betragBeauftragt: 0, quote: null },
+  tage: {},
+};
+
+/** Tabelle „Per client“: Projekte (abgeschlossen), Kürzungen, Abzüge ohne Vertragspunkt, Nachträge, Tage bis zur Schlusszahlung. */
+export const SOLL_HISTORIE: Record<string, SollHistorie> = {
+  "hochbau-beispiel": {
+    projekte: 4,
+    abgeschlossen: 1,
+    kuerzungen: 652_640,
+    kuerzungenZeilen: 4,
+    kuerzungenProjekte: 2,
+    abzuege: [
+      { kurz: "W21", rechnungen: ["AR1", "AR2", "AR3"], betrag: 526_373 },
+      { kurz: "P7", rechnungen: ["SR"], betrag: 523_150 },
+    ],
+    abzuegeSumme: 1_049_523,
+    nachtraege: { anzahl: 3, beauftragt: 2, betrag: 1_424_000, betragBeauftragt: 1_176_000, quote: 8_258 },
+    tage: { P7: 90 },
+  },
+  "generalbau-beispiel": {
+    projekte: 2,
+    abgeschlossen: 1,
+    kuerzungen: 395_050,
+    kuerzungenZeilen: 2,
+    kuerzungenProjekte: 1,
+    abzuege: [],
+    abzuegeSumme: 0,
+    nachtraege: { anzahl: 2, beauftragt: 2, betrag: 1_826_000, betragBeauftragt: 1_826_000, quote: 10_000 },
+    tage: { P8: 74 },
+  },
+  "gemeinde-beispielstadt": OHNE_HISTORIE,
+  "wohnbau-beispiel": OHNE_HISTORIE,
+};
+
+/** Schlussrechnung und Schlusszahlung von P7 und P8 laut Eingabeblock (Cent). */
+export const SOLL_SCHLUSS: Record<string, { summe: number; nachKuerzung: number; nachlass: number; baustrom: number; umlage: number; haft: number; abschlaege: number; zahlung: number }> = {
+  P7: { summe: 108_299_019, nachKuerzung: 107_865_979, nachlass: 3_235_979, baustrom: 837_040, umlage: 523_150, haft: 3_098_094, abschlaege: 90_500_000, zahlung: 9_671_716 },
+  P8: { summe: 150_694_000, nachKuerzung: 150_298_950, nachlass: 3_005_979, baustrom: 0, umlage: 0, haft: 4_418_789, abschlaege: 132_000_000, zahlung: 10_874_182 },
+};

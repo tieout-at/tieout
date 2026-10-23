@@ -67,6 +67,7 @@ export function miniDatensatz(): Datensatz {
     ],
     stundenlisten: [],
     abschlaege: [],
+    schlussrechnung: null,
     entwurf: {
       nr: f("SR"),
       dokumentId: "test",

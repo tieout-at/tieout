@@ -29,6 +29,8 @@ const ART: Record<DokumentArt, string> = {
   abschlag: "Abschlagsrechnung",
   zahlung: "Zahlung",
   sr_entwurf: "Schlussrechnung, Entwurf",
+  schlussrechnung: "Schlussrechnung",
+  nachtrag: "Nachtragsangebot",
   indexblatt: "Indexblatt",
   mail: "Mail",
   foto: "Foto",

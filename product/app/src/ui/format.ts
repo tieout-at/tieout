@@ -31,3 +31,6 @@ export function zahl(n: number): string {
 export function anzahl(n: number, eins: string, mehr: string): string {
   return `${zahl(n)} ${n === 1 ? eins : mehr}`;
 }
+
+/** Rechnungsnummer zum Lesen: „SR“ heißt Schlussrechnung, sonst die Nummer (AR1, AR2, …). */
+export const rechnungName = (nr: string) => (nr === "SR" ? "Schlussrechnung" : nr);

@@ -6,7 +6,7 @@
 import type { Datensatz, Dokument, Quelle, Rechnung, Zuruf } from "@/domain/typen";
 import { menge, prozentText } from "@/engine/geld";
 import type { Beleg } from "@/engine/typen";
-import { betrag, datum, zeitpunkt } from "./format";
+import { betrag, datum, rechnungName, zeitpunkt } from "./format";
 import { meldungAntwort } from "./meldung-text";
 
 function Synth() {
@@ -99,7 +99,7 @@ function ausschnitt<T>(liste: T[], index: number, ganz = false, umfang = 14): { 
 }
 
 function positionAus(stelle: string | undefined): string | null {
-  return stelle?.match(/\d\d\.\d\d\.\d\d[A-Z]|Z-\d+/)?.[0] ?? null;
+  return stelle?.match(/\d\d\.\d\d\.\d\d[A-Z]|Z-\d+|\bN\d+\b/)?.[0] ?? null;
 }
 
 function Titel({ titel, meta }: { titel: React.ReactNode; meta?: React.ReactNode }) {
@@ -135,7 +135,10 @@ function RechnungsSeite({ d, r, beleg, ganz }: { d: Datensatz; r: Rechnung; bele
   const { teil, markiert } = ausschnitt(zeilen, i, ganz);
   return (
     <>
-      <Titel titel={r.art === "abschlag" ? `Abschlagsrechnung ${r.nr.wert}` : "Schlussrechnung, Entwurf des Projektleiters"} meta={`vom ${datum(r.datum.wert)}`} />
+      <Titel
+        titel={r.art === "abschlag" ? `Abschlagsrechnung ${r.nr.wert}` : r.art === "schluss" ? "Schlussrechnung" : "Schlussrechnung, Entwurf des Projektleiters"}
+        meta={`vom ${datum(r.datum.wert)}`}
+      />
       <Tabelle kopf={["Pos.", "Text", "Menge", "Betrag"]} markiert={markiert} zeilen={teil.map((x) => x.z)} ids={ganz ? teil.map((x) => `pos-${x.key}`) : undefined} />
       <p className="doc-sum">
         Summe <Mark an={beleg.quelle.stelle?.startsWith("Summe") ?? false}>{betrag(r.summe.wert)}</Mark>
@@ -338,10 +341,41 @@ function Inhalt({ d, dok, beleg, ganz }: { d: Datensatz; dok: Dokument; beleg: B
       );
     }
     case "abschlag":
-    case "sr_entwurf": {
-      const r = dok.art === "sr_entwurf" ? d.entwurf : d.abschlaege.find((x) => x.dokumentId === dok.id);
+    case "sr_entwurf":
+    case "schlussrechnung": {
+      const r = dok.art === "sr_entwurf" ? d.entwurf : dok.art === "schlussrechnung" ? d.schlussrechnung : d.abschlaege.find((x) => x.dokumentId === dok.id);
       if (!r) break;
       return <RechnungsSeite d={d} r={r} beleg={beleg} ganz={ganz} />;
+    }
+    case "zahlung": {
+      const z = d.zahlungen.find((x) => x.dokumentId === dok.id);
+      if (!z) break;
+      const rechnung = d.schlussrechnung?.nr.wert === z.rechnungNr.wert ? d.schlussrechnung : d.abschlaege.find((r) => r.nr.wert === z.rechnungNr.wert);
+      const zeilen: [string, string, Quelle][] = [
+        ...(rechnung && z.abzuege.length ? [[rechnung.art === "schluss" ? "Schlussrechnung" : `Rechnung ${z.rechnungNr.wert}`, betrag(rechnung.summe.wert), rechnung.summe.quelle] as [string, string, Quelle]] : []),
+        ...z.abzuege.map((a): [string, string, Quelle] => [a.betrag.quelle.stelle ?? a.art, betrag(-a.betrag.wert), a.betrag.quelle]),
+        ["Zahlbetrag", betrag(z.betrag.wert), z.betrag.quelle],
+      ];
+      return (
+        <>
+          <Titel titel={`Zahlungsavis ${rechnungName(z.rechnungNr.wert)}`} meta={`vom ${datum(z.datum.wert)}`} />
+          <Tabelle kopf={["Zeile", "Betrag"]} markiert={zeilen.findIndex(([, , q]) => q.dokumentId === dok.id && trifft(beleg.quelle, q.stelle))} zeilen={zeilen.map(([a, b]) => [a, b])} />
+        </>
+      );
+    }
+    case "nachtrag": {
+      const n = d.nachtraege.find((x) => x.dokumentId === dok.id);
+      if (!n) break;
+      return (
+        <>
+          <Titel titel={`Nachtragsangebot ${n.positionNr.wert}`} meta={`vom ${datum(dok.datum)}`} />
+          <Tabelle kopf={["Gegenstand", "Betrag"]} markiert={trifft(beleg.quelle, n.betrag.quelle.stelle) ? 0 : -1} zeilen={[[n.titel.wert, betrag(n.betrag.wert)]]} />
+          <Unterschriften
+            ag={<Mark an={trifft(beleg.quelle, n.beauftragt.quelle.stelle)}>{n.beauftragt.wert ? "Auftraggeber: beauftragt" : "Auftraggeber: abgelehnt"}</Mark>}
+            risiko={!n.beauftragt.wert}
+          />
+        </>
+      );
     }
     case "vertrag":
       return <VertragsSeite d={d} beleg={beleg} />;
@@ -367,11 +401,11 @@ function Inhalt({ d, dok, beleg, ganz }: { d: Datensatz; dok: Dokument; beleg: B
       if (!kb) break;
       return (
         <>
-          <Titel titel={`Korrekturblatt ${kb.rechnungNr.wert}`} meta={`des Auftraggebers vom ${datum(kb.datum.wert)}`} />
+          <Titel titel={`Korrekturblatt ${rechnungName(kb.rechnungNr.wert)}`} meta={`des Auftraggebers vom ${datum(kb.datum.wert)}`} />
           <Tabelle
             kopf={["Pos.", "Kürzung", "Grund"]}
             markiert={kb.zeilen.findIndex((z) => trifft(beleg.quelle, z.kuerzung.quelle.stelle))}
-            zeilen={kb.zeilen.map((z) => [z.positionNr.wert, betrag(z.kuerzung.wert), z.grund.wert])}
+            zeilen={kb.zeilen.map((z) => [z.positionNr.wert, betrag(z.kuerzung.wert), z.text.wert])}
           />
         </>
       );

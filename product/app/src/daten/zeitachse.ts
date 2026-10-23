@@ -5,7 +5,7 @@
 import type { Datensatz, Dokument, MailKategorie } from "@/domain/typen";
 import type { Ergebnis } from "@/engine";
 import { menge } from "@/engine/geld";
-import { betrag } from "@/ui/format";
+import { betrag, rechnungName } from "@/ui/format";
 
 export type EreignisArt = "zuruf" | "mail" | "regie" | "aufmass" | "plan" | "foto" | "rechnung" | "vertrag";
 
@@ -76,14 +76,21 @@ function ausDokument(d: Datensatz, dok: Dokument): Omit<Ereignis, "befunde"> {
     }
     case "sr_entwurf":
       return { ...basis, art: "rechnung", titel: "Schlussrechnung, Entwurf", text: d.entwurf ? betrag(d.entwurf.summe.wert) : dok.dateiname };
+    case "schlussrechnung":
+      return { ...basis, art: "rechnung", titel: "Schlussrechnung gelegt", text: d.schlussrechnung ? betrag(d.schlussrechnung.summe.wert) : dok.dateiname };
+    case "nachtrag": {
+      const n = d.nachtraege.find((x) => x.dokumentId === dok.id);
+      if (!n) break;
+      return { ...basis, art: "vertrag", titel: `Nachtrag ${n.positionNr.wert} ${n.beauftragt.wert ? "beauftragt" : "abgelehnt"}`, text: `${n.titel.wert}, ${betrag(n.betrag.wert)}` };
+    }
     case "zahlung": {
       const z = d.zahlungen.find((x) => x.dokumentId === dok.id);
       if (!z) break;
-      return { ...basis, art: "rechnung", titel: `Zahlung zu ${z.rechnungNr.wert}`, text: betrag(z.betrag.wert) };
+      return { ...basis, art: "rechnung", titel: `Zahlung zu ${rechnungName(z.rechnungNr.wert)}`, text: betrag(z.betrag.wert) };
     }
     case "gu_korrektur": {
       const k = d.korrekturblaetter.find((x) => x.dokumentId === dok.id);
-      return { ...basis, art: "rechnung", titel: `Korrekturblatt ${k?.rechnungNr.wert ?? ""}`.trim(), text: "Kürzungen des Auftraggebers" };
+      return { ...basis, art: "rechnung", titel: `Korrekturblatt ${rechnungName(k?.rechnungNr.wert ?? "")}`.trim(), text: "Kürzungen des Auftraggebers" };
     }
     case "gu_abzug":
       return { ...basis, art: "rechnung", titel: "Abzugsschreiben des Auftraggebers", text: dok.dateiname };

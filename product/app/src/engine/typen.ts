@@ -1,6 +1,6 @@
 // Ergebnis des Rechenkerns. Alles abgeleitet aus dem Datensatz, nichts eingetippt.
 
-import type { AbzugArt, Auftraggeber, Bp, Cent, Datum, Einheit, ProjektStatus, Pruefstand, Quelle } from "@/domain/typen";
+import type { AbzugArt, Auftraggeber, Bp, Cent, Datum, Einheit, Kuerzungsgrund, ProjektStatus, Pruefstand, Quelle } from "@/domain/typen";
 import type { Belegquelle } from "./belegquelle";
 
 export interface Beleg {
@@ -63,14 +63,8 @@ export interface Befund {
   pruefstand: Pruefstand;
 }
 
-export type Kuerzungsgrund =
-  | "aufmass_nicht_gegengezeichnet"
-  | "stunden_weichen_ab"
-  | "rechenfehler"
-  | "ausserhalb_lv_kein_nachtrag"
-  | "regie_nicht_unterschrieben"
-  | "menge_ohne_aufmass"
-  | "abzug_ohne_vertragspunkt";
+/** Fester Grund einer Kürzung (Datenmodell), hier mit dem Wortlaut für Vorprüfung, Kaskade und GU-Historie. */
+export type { Kuerzungsgrund };
 
 export const KUERZUNGSGRUND_TEXT: Record<Kuerzungsgrund, string> = {
   aufmass_nicht_gegengezeichnet: "Aufmaß nicht gegengezeichnet",
@@ -245,3 +239,59 @@ export interface FirmenErgebnis {
  * aber nie bepreist (Änderung per Mail).
  */
 export type GeldStand = "belegt" | "beleg_fehlt" | "angemeldet";
+
+// ---------- GU-Historie (Firmenebene) ----------
+
+/** Eine Zeile eines Korrekturblatts: was der Auftraggeber gestrichen hat und warum (fester Schlüssel). */
+export interface HistorieKuerzung {
+  projektId: string;
+  kurz: string;
+  /** Rechnung, auf die sich das Korrekturblatt bezieht, z. B. „SR“ oder „AR3“. */
+  rechnung: { nr: string; art: "abschlag" | "schluss"; datum: Datum };
+  /** Position oder Regiebericht. */
+  bezug: string;
+  grund: Kuerzungsgrund;
+  /** Wortlaut auf dem Korrekturblatt. */
+  text: string;
+  betrag: Cent;
+  beleg: Beleg;
+}
+
+/** Ein Satz, den der Auftraggeber von Zahlungen abzieht, obwohl der Vertrag ihn nicht nennt, je Projekt summiert. */
+export interface HistorieAbzug {
+  projektId: string;
+  kurz: string;
+  art: AbzugArt;
+  grund: "abzug_ohne_vertragspunkt";
+  /** Rechnungen, deren Zahlungen den Abzug enthalten, z. B. „AR1“, „AR2“, „AR3“ oder „SR“. */
+  rechnungen: string[];
+  betrag: Cent;
+  /** Je Zahlungsavis die Zeile des Abzugs. */
+  belege: Beleg[];
+}
+
+export interface AuftraggeberHistorie {
+  auftraggeber: Auftraggeber;
+  projekte: number;
+  abgeschlossen: number;
+  kuerzungen: HistorieKuerzung[];
+  kuerzungenSumme: Cent;
+  /** Anzahl der Projekte mit mindestens einer Kürzung. */
+  kuerzungenProjekte: number;
+  abzuege: HistorieAbzug[];
+  abzuegeSumme: Cent;
+  nachtraege: {
+    anzahl: number;
+    beauftragt: number;
+    betrag: Cent;
+    betragBeauftragt: Cent;
+    /** Beauftragter Anteil am angebotenen Betrag in Basispunkten; null ohne Nachträge. */
+    quote: Bp | null;
+  };
+  /** Abgeschlossene Projekte: Tage von der gelegten Schlussrechnung bis zur Schlusszahlung. */
+  schlusszahlung: { projektId: string; kurz: string; gelegt: Datum; bezahlt: Datum; tage: number }[];
+}
+
+export interface GuHistorie {
+  auftraggeber: AuftraggeberHistorie[];
+}
