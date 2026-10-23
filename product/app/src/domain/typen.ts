@@ -285,6 +285,8 @@ export interface Mail {
   an: Feld<string>;
   betreff: Feld<string>;
   kategorie: Feld<MailKategorie>;
+  /** Text der Mail; das Zitat ist ein Ausschnitt daraus. */
+  text: Feld<string> | null;
   /** Wörtliche Kernstelle, z. B. die Anweisung. */
   zitat: Feld<string> | null;
   bezugPositionen: Feld<string[]>;
@@ -296,6 +298,8 @@ export interface Mail {
     kategorie: Feld<string>;
     stunden: Feld<number>;
     material: Feld<Cent>;
+    /** Wie die Mail die Kosten neben dem Lohn nennt, z. B. „Kran“; ohne Angabe „Material“. */
+    sachkosten: Feld<string> | null;
     bepreist: Feld<boolean>;
   } | null;
 }
@@ -303,6 +307,8 @@ export interface Mail {
 export interface Foto {
   dokumentId: string;
   exifDatum: Feld<string>;
+  /** Was das Foto zeigt. */
+  motiv: Feld<string>;
   ort: Feld<string>;
   bezugPositionen: Feld<string[]>;
 }

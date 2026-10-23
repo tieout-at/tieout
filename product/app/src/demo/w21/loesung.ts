@@ -26,7 +26,7 @@ export const SOLL_BEFUNDE: SollBefund[] = [
   { id: "O3", schluessel: "anmeldung:mail-0314-technikraum", art: "aenderung", liste: "offen", betrag: 835_280 },
   { id: "O4", schluessel: "zuruf:Z6", art: "regie_zuruf", liste: "offen", betrag: 68_700 },
   { id: "O5", schluessel: "zuruf:Z5", art: "regie_zuruf", liste: "offen", betrag: 50_000 },
-  { id: "V1", schluessel: "anmeldung:mail-0520-container", art: "pauschale", liste: "verloren", betrag: 118_000 },
+  { id: "V1", schluessel: "vertrag:mail-0520-container", art: "pauschale", liste: "verloren", betrag: 118_000 },
   { id: "A1", schluessel: "hinweis:mail-0702-termin", art: "terminaenderung", liste: "anwalt", betrag: null },
 ];
 
@@ -96,6 +96,6 @@ export const SOLL_KASKADE: { bezeichnung: string; betrag: number; pruefung?: str
 
 export const SOLL_ZAHLUNGEN = [28_413_421, 38_099_814, 32_197_390];
 
-export const SOLL_IMPORT = { dokumente: 165, duplikate: 12, eindeutig: 153, planIndizes: ["C", "D", "E"], korrigierteFelder: 31 };
+export const SOLL_IMPORT = { dokumente: 81, duplikate: 4, eindeutig: 77, planIndizes: ["C", "D", "E"], korrigierteFelder: 25 };
 
 export const SOLL_REGIE = { gesamt: 16, verrechnet: 11, unterschriebenNichtVerrechnet: 3, nichtUnterschrieben: 2, nachGrenze: 0 };
