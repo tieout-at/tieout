@@ -265,14 +265,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* Stand auf dem Papier in Dokumentfarben, sonst im Dunkelmodus hell auf weiß */
+/* Stand auf dem Papier in Dokumentfarben (auch „Freigegeben“: das Wort trägt die Bedeutung), sonst im Dunkelmodus hell auf weiß */
 .sr-blatt .sw-status,
 .sr-blatt .sw-status .sw-ico {
   color: var(--doc-ink-secondary);
-}
-.sr-blatt .sw-status--done,
-.sr-blatt .sw-status--done .sw-ico {
-  color: var(--pos);
 }
 .sr-liste1__betrag {
   text-align: right;
