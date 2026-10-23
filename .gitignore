@@ -1,4 +1,4 @@
-# Private repository tieout-at/intern, cloned locally (never commit its content here)
+# Old layout: the private repository tieout-at/intern used to be cloned into this folder; never commit it
 /intern/
 
 # Secrets
@@ -6,7 +6,7 @@
 .env.*
 !.env.example
 
-# Abhängigkeiten und Builds
+# Dependencies and builds
 node_modules/
 .venv/
 __pycache__/
@@ -16,11 +16,11 @@ build/
 .vercel/
 coverage/
 
-# Echte Kundendaten gehören nie ins Repository (Gate R4)
+# Real customer data never goes into the repository (synthetic data only until legal clearance)
 **/real_data/
 **/kundendaten/
 
-# Große Mediendateien (Videos im Drive ablegen, hier nur Skript und Quellen)
+# Large media files (keep videos outside the repository)
 *.mp4
 *.mov
 *.mkv
@@ -32,5 +32,5 @@ Thumbs.db
 desktop.ini
 *.log
 
-# Lokale Claude-Code-Einstellungen
+# Local Claude Code settings
 .claude/
