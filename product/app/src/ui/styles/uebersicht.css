@@ -215,7 +215,9 @@
 }
 .ue-quellen {
   display: flex;
-  gap: var(--space-1);
+  flex-wrap: wrap;
+  gap: 2px var(--space-1);
+  min-width: 0;
 }
 .ue-quelle {
   height: 20px;
