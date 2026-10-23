@@ -20,7 +20,7 @@ export const LISTEN: { liste: Liste; text: string; ton: Ton }[] = [
   { liste: "jetzt", text: "Jetzt verrechenbar", ton: "pos" },
   { liste: "offen", text: "Angemeldet und offen", ton: "warn" },
   { liste: "verloren", text: "Verloren", ton: "neutral" },
-  { liste: "anwalt", text: "Braucht Anwalt", ton: "law" },
+  { liste: "anwalt", text: "Hinweis, braucht Anwalt", ton: "law" },
 ];
 
 /** „22.04.12B Plattenheizkörper …“ → Kennung „22.04.12B“ (mono, gedämpft) und Text. */
