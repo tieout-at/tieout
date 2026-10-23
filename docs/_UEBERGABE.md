@@ -15,7 +15,7 @@
 4. The yardstick: `website/messages/de.json`, key `solution` (section 02 Problem and section 03 Lösung with the three steps, their groups and items); live at https://tieout-at.pages.dev. Section 02 shows the site timeline (WhatsApp, Stunden, E-Mail, Plan, Foto) against the final invoice with "fehlt" and "verrechnet".
 5. `docs/Demo_Faelle.md`: solution list and all demo amounts.
 6. v1 as reference, not as template: https://app.tieout.workers.dev, code under the tag `v1-archiv` (`product/app/src/engine`, `product/app/src/domain`).
-7. Attio: screen recording `../_vorlagen/Attio.mp4` (318 MB) and Maxi S.'s Attio workspace (logged in in his Edge, readable with Claude in Chrome; link in the plan).
+7. Attio as UI reference: screen recording `../_vorlagen/Attio.mp4` (318 MB) and the Attio workspace (access described in the plan in `../tieout-intern`).
 
 ## What the specification contains
 

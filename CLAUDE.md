@@ -4,7 +4,7 @@ This folder is the public repository github.com/tieout-at/tieout (public because
 
 ## Where things stand
 
-v2 is rebuilt from zero (decided 23.10.2026): UI after Attio (structure, behaviour, measurements; not its brand, icons or texts), content along the three steps of the website section 03 (`website/messages/de.json`, key `solution`): Ihre Daten, Digitaler Zwilling, Ergebnis. v1 stays live and frozen at https://app.tieout.workers.dev (Cloudflare worker `app`, automatic builds off); its code is under the tag `v1-archiv` and the branch `v1`. One chat per step; the steps are in `docs/_STATUS.md`.
+v2 is rebuilt from zero (decided 23.10.2026): UI modelled on Attio's layout, behaviour and spacing (brand, icons and texts are our own), content along the three steps of the website section 03 (`website/messages/de.json`, key `solution`): Ihre Daten, Digitaler Zwilling, Ergebnis. v1 stays live and frozen at https://app.tieout.workers.dev (Cloudflare worker `app`, automatic builds off); its code is under the tag `v1-archiv` and the branch `v1`. One chat per step; the steps are in `docs/_STATUS.md`.
 
 | Path | What |
 |---|---|

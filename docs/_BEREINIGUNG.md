@@ -13,10 +13,10 @@ Step 0 of the v2 rebuild, 23.10.2026, Maxi S. with Claude. Every removal or move
 | `product/README.md` | deleted | overview of the v1 product, replaced by `README.md` and `docs/` | tag `v1-archiv` |
 | `.github/workflows/produkt-app.yml` | deleted | checked `product/app`, which no longer exists on `main`; checks for `app/` and `kern/` come with steps 1 and 2 | tag `v1-archiv` |
 | `product/zuruf/` (94 files) → `agent/` | moved, code unchanged | new structure; typecheck and 54 tests green in the new place | history follows with `git log --follow` |
-| `product/docs/Demo_Faelle.md` → `docs/Demo_Faelle.md` | moved, one sentence changed: a gate name became "measured with real companies" | public docs name no gates; amounts unchanged | tag `v1-archiv` for the old wording |
+| `product/docs/Demo_Faelle.md` → `docs/Demo_Faelle.md` | moved, one sentence changed: a gate name became "measured with real companies" | `docs/` names no gates; amounts unchanged | tag `v1-archiv` for the old wording |
 | `.github/workflows/produkt-zuruf.yml` → `.github/workflows/agent.yml` | moved, paths set to `agent/` | new structure | tag `v1-archiv` |
-| `.gitignore` | entry `/intern/` removed | `intern` is no longer cloned inside this folder | tag `v1-archiv` |
-| `README.md` | rewritten short | v2 under construction, v1 live; removed: tech stack table, architecture diagram, run commands of v1 (outdated for v2, linked to the v1 README under the tag); the five "how it works" steps condensed into the three website steps; promises (problem, twin, final invoice, principles) kept | tag `v1-archiv` |
+| `.gitignore`, `.github/workflows/agent.yml` | comments in English, gate name removed; `/intern/` stays ignored so that old clones with a nested `intern/` cannot commit it | rules: comments in English, no gates in public files | tag `v1-archiv` |
+| `README.md` | rewritten short | v2 under construction, v1 live; removed: tech stack table and architecture diagram (linked to the v1 README under the tag); v1 run commands replaced by one line for the tag; the five "how it works" steps condensed into the three website steps; promises (problem, twin, final invoice, principles) kept | tag `v1-archiv` |
 | `CLAUDE.md` | rewritten short | new map and rules; removed: offers, gates and gate dates (not for a public repository, now only in `tieout-intern`), paths into `product/` | tag `v1-archiv` |
 | `app/README.md`, `kern/README.md`, `docs/_STATUS.md`, `docs/_UEBERGABE.md`, this file | new | new structure | |
 
@@ -33,7 +33,8 @@ Step 0 of the v2 rebuild, 23.10.2026, Maxi S. with Claude. Every removal or move
 | Path | What happened | Reason | Check before |
 |---|---|---|---|
 | `C:\Users\maxis\dev\schlusswerk-team\intern\` → `C:\Users\maxis\dev\tieout-intern` | fresh clone, plus the untracked notes `docs/research_notes/codex-ui-polishing-2026-10-23/` (7 files, kept local and untracked as before) copied over | sibling folder instead of nested | 16 files before, 16 after, content identical (line endings aside) |
-| `C:\Users\maxis\dev\schlusswerk-team\Attio NEUE UI VORGABE KOPIEREN!.mp4` → `C:\Users\maxis\dev\_vorlagen\Attio.mp4` | moved (318.500.928 bytes), not in Git (`*.mp4` ignored) | reference outside the repository | size identical |
+| Attio screen recording in `C:\Users\maxis\dev\schlusswerk-team\` → `C:\Users\maxis\dev\_vorlagen\Attio.mp4` | moved and renamed (318.500.928 bytes), never in Git (`*.mp4` ignored) | reference outside the repository | size identical |
+| `product/app/qa-shots/` in `schlusswerk-team`, `tieout-dashboard`, `tieout-uebersicht` → `C:\Users\maxis\dev\_vorlagen\v1-qa-shots\` | copied (237 screenshots, 35 MB; git-ignored, never on GitHub) | v1 screenshots for the comparison before the switch-over | 161 + 28 + 48 files, no name collisions |
 | `C:\Users\maxis\dev\schlusswerk` | **pending go** | old local repository without remote (1 commit, 22.10.) | 26 of 28 files exist identically in the tieout history; the other 2 are older versions (`CLAUDE.md`, solution list v1) of files that continue under `v1-archiv` |
 | `C:\Users\maxis\dev\tieout-dashboard`, `C:\Users\maxis\dev\tieout-uebersicht` | **pending go** | git worktrees of the old folder (branches `ui/dashboard-geld`, `app/schlussbesprechung`) | no uncommitted changes; both branches merged into `main` and on GitHub |
 | `C:\Users\maxis\dev\schlusswerk-team\.claude\worktrees\distracted-hawking-973182`, `...\festive-payne-3f6c93` | **pending go** | worktrees of finished sessions | no uncommitted changes; branches on GitHub |

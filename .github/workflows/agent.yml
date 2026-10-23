@@ -1,4 +1,4 @@
-# Prüfungen für den WhatsApp-Agenten (agent/): Typen und Tests ohne KI. Läuft nur, wenn sich dort etwas ändert.
+# Checks for the WhatsApp agent (agent/): types and tests without AI. Runs only when something changes there.
 name: Agent
 
 on:

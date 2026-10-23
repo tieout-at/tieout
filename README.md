@@ -19,7 +19,7 @@
 
 ## Status
 
-- **v1 is live** at [app.tieout.workers.dev](https://app.tieout.workers.dev): a synthetic contractor with eight projects, findings with original documents, two-step approval, calculation core tested to the cent. Its code is frozen under the tag [`v1-archiv`](https://github.com/tieout-at/tieout/tree/v1-archiv) (architecture and tech stack in the [v1 README](https://github.com/tieout-at/tieout/blob/v1-archiv/README.md#architecture)).
+- **v1 is live** at [app.tieout.workers.dev](https://app.tieout.workers.dev): a synthetic contractor with eight projects, findings with original documents, two-step approval, calculation core tested to the cent. Its code is frozen under the tag `v1-archiv` ([app code](https://github.com/tieout-at/tieout/tree/v1-archiv/product/app), architecture and tech stack in the [v1 README](https://github.com/tieout-at/tieout/blob/v1-archiv/README.md#architecture)).
 - **v2 is being rebuilt from zero** on `main` since 23 October 2026: same promise, clearer screens. Plan and progress in [`docs/_STATUS.md`](docs/_STATUS.md).
 
 ## The problem
@@ -51,7 +51,7 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 | What | Commands |
 |---|---|
 | Website | `cd website && npm install && npm run dev` (http://localhost:3210) |
-| WhatsApp agent simulator | `cd agent && npm ci && npm run sim` |
+| WhatsApp agent simulator | `cd agent && npm ci && npm run sim` (http://localhost:4321; needs an API key or a Claude login in `agent/.env`, see [`agent/UEBERGABE.md`](agent/UEBERGABE.md)) |
 | v1 app | `git checkout v1-archiv && cd product/app && npm ci && npm run dev` |
 
 Node 22 or newer. Every change goes through a branch and a pull request to `main`. Working rules: [`CLAUDE.md`](CLAUDE.md).
