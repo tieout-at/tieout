@@ -553,10 +553,10 @@ export function erzeugeW21(): Datensatz {
     const qa = (stelle: string, y: number) => q(id, 1, stelle, [60, y, 495, 20]);
     const abzuege: Zahlung["abzuege"] = [
       ...(kuerzung ? [{ art: "kuerzung" as const, betrag: f(kuerzung, qa("Kürzung laut Korrekturblatt", 220)) }] : []),
-      { art: "nachlass", betrag: f(nachlass, qa("Nachlass 3 %", 250)) },
-      { art: "baustrom_bauwasser", betrag: f(baustrom, qa("Baustrom und Bauwasser 0,8 %", 280)) },
-      { art: "bauschadensumlage", betrag: f(umlage, qa("Bauschadensumlage 0,5 %", 310)) },
-      { art: "deckungsruecklass", betrag: f(deckung, qa("Deckungsrücklass 5 %", 340)) },
+      { art: "nachlass", betrag: f(nachlass, qa("Nachlass 3 %", 250)), satz: f(300, qa("Nachlass 3 %", 250)) },
+      { art: "baustrom_bauwasser", betrag: f(baustrom, qa("Baustrom und Bauwasser 0,8 %", 280)), satz: f(80, qa("Baustrom und Bauwasser 0,8 %", 280)) },
+      { art: "bauschadensumlage", betrag: f(umlage, qa("Bauschadensumlage 0,5 %", 310)), satz: f(50, qa("Bauschadensumlage 0,5 %", 310)) },
+      { art: "deckungsruecklass", betrag: f(deckung, qa("Deckungsrücklass 5 %", 340)), satz: f(500, qa("Deckungsrücklass 5 %", 340)) },
     ];
     return { dokumentId: id, rechnungNr: f(`AR${k + 1}`, q(id, 1, "Bezug")), datum: f(ZAHL_DATUM[k], q(id, 1, "Datum")), betrag: f(betrag, qzl), abzuege };
   });
