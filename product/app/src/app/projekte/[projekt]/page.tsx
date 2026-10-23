@@ -44,6 +44,9 @@ export default async function ProjektUebersicht({ params }: Props) {
   // „x von y freigegeben“. Reihenfolge: Posten mit Kürzungsrisiko zuerst, damit „Weiter prüfen“ bei J1 beginnt.
   const entscheiden = zuEntscheiden(id, e);
   const befund = new Map(e.befunde.map((b) => [b.schluessel, b]));
+  // Kürzungsrisiko je Posten mit seinem eigenen Betrag (nicht der Postenbetrag), nur wenn genau ein Risiko am Posten hängt.
+  const risikoBetrag = new Map<string, number[]>();
+  for (const r of e.vorpruefung?.risiken ?? []) if (r.befundSchluessel) risikoBetrag.set(r.befundSchluessel, [...(risikoBetrag.get(r.befundSchluessel) ?? []), r.betrag]);
   const risiko = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
   const anwalt = e.befunde.filter((b) => b.liste === "anwalt");
   const sr = hatSchlussrechnung(id);
@@ -218,7 +221,11 @@ export default async function ProjektUebersicht({ params }: Props) {
                             </span>
                             <span className="ue-posten__stand">
                               <StandZelle projektId={id} schluessel={b.schluessel} liste={b.liste} leerBeiPruefen />
-                              {risiko.has(b.schluessel) && <span className="ue-risiko">Kürzungsrisiko</span>}
+                              {risiko.has(b.schluessel) && (
+                                  <span className="ue-risiko">
+                                    Risiko{risikoBetrag.get(b.schluessel)?.length === 1 && ` ${betrag(risikoBetrag.get(b.schluessel)![0])}`}
+                                  </span>
+                                )}
                             </span>
                             <span className="ue-posten__betrag">{b.betrag !== null && betrag(b.betrag)}</span>
                           </Link>

@@ -177,7 +177,7 @@
 }
 .ue-posten__zeile {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr) 168px 104px 104px;
+  grid-template-columns: 76px minmax(0, 1fr) 160px 128px 104px;
   gap: var(--space-3);
   align-items: center;
   min-height: var(--row-h-2);
@@ -344,7 +344,7 @@
     border-bottom: 1px solid var(--line);
   }
   .ue-posten__zeile {
-    grid-template-columns: 64px minmax(0, 1fr) 104px 96px;
+    grid-template-columns: 64px minmax(0, 1fr) 128px 96px;
   }
   .ue-quellen {
     display: none;
