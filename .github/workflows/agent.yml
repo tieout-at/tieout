@@ -1,0 +1,33 @@
+# Prüfungen für den WhatsApp-Agenten (agent/): Typen und Tests ohne KI. Läuft nur, wenn sich dort etwas ändert.
+name: Agent
+
+on:
+  pull_request:
+    paths: ["agent/**", ".github/workflows/agent.yml"]
+  push:
+    branches: [main]
+    paths: ["agent/**"]
+
+concurrency:
+  group: agent-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: agent/package-lock.json
+      - run: npm ci
+      - name: Typen
+        run: npm run typecheck
+      - name: Tests
+        run: npm test
