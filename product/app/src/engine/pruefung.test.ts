@@ -17,6 +17,7 @@ import {
   SOLL_ZURUF_BELEGE,
 } from "@/demo/w21/loesung";
 import { pruefe } from "./index";
+import { kalenderwoche } from "./vorpruefung";
 
 const d = erzeugeW21();
 const e = pruefe(d);
@@ -60,6 +61,9 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
     expect(e.befunde.find((b) => b.schluessel === "anmeldung:mail-0314-technikraum")?.rechenweg?.text).toBe(
       "Untergrenze aus eigener Kalkulation: 96 h × 56,80 € (Mittellohnpreis) + Material 2.900,00 € = 8.352,80 €",
     );
+    const v1 = e.befunde.find((b) => b.schluessel === "vertrag:mail-0520-container")!;
+    expect(v1.rechenweg?.text).toBe("16 h × 56,80 € (Mittellohnpreis) + Kran 271,20 € = 1.180,00 €; laut Vertrag Pkt. 4.3 in der Pauschale enthalten");
+    expect(v1.rechenweg?.schritte?.map((x) => x.bezeichnung)).toEqual(["Lohn", "Kran"]);
   });
 
   it("O4 und O5: Regie aus Zuruf, Regiesätze des Vertrags, kein Material", () => {
@@ -134,7 +138,7 @@ describe("W21: Prüfkaskade, Zahlungen, Import", () => {
     expect(d.abschlaege.map((a) => a.summe.wert)).toEqual([31_240_000, 41_890_000, 35_620_000]);
   });
 
-  it("Import: 165 Dokumente, 12 Duplikate, Indizes C/D/E, 31 korrigierte Felder", () => {
+  it("Import: 81 Dokumente, 4 Duplikate, Indizes C/D/E, 25 korrigierte Felder", () => {
     const { dokumente, duplikate, eindeutig, planIndizes, korrigierteFelder } = e.import;
     expect({ dokumente, duplikate, eindeutig, planIndizes, korrigierteFelder }).toEqual(SOLL_IMPORT);
   });
@@ -165,6 +169,24 @@ describe("W21: Invarianten", () => {
 
   it("Ledger: Differenz nur bei den vier Mehrmengen", () => {
     expect(e.ledger.filter((z) => z.differenzMenge > 0).map((z) => z.positionNr).sort()).toEqual(["22.04.12B", "22.06.03C", "24.02.05A", "26.03.04A"]);
+  });
+
+  it("jede Mail hat Text, das Zitat steht wörtlich darin", () => {
+    for (const m of d.mails) {
+      expect(m.text?.wert.length, m.dokumentId).toBeGreaterThan(0);
+      if (m.zitat) expect(m.text?.wert, m.dokumentId).toContain(m.zitat.wert);
+    }
+  });
+
+  it("Kalenderwoche im Betreff = ISO-Woche des Mail-Datums", () => {
+    const mitKw = d.mails.filter((m) => /KW \d+/.test(m.betreff.wert));
+    expect(mitKw.length).toBeGreaterThan(0);
+    for (const m of mitKw) expect(Number(m.betreff.wert.match(/KW (\d+)/)![1]), m.betreff.wert).toBe(kalenderwoche(m.datum.wert));
+  });
+
+  it("Fotonummern steigen mit dem Aufnahmedatum", () => {
+    const nummern = [...d.fotos].sort((a, b) => a.exifDatum.wert.localeCompare(b.exifDatum.wert)).map((x) => d.dokumente.find((y) => y.id === x.dokumentId)!.dateiname);
+    expect(nummern).toEqual([...nummern].sort());
   });
 
   it("Generator ist deterministisch", () => {

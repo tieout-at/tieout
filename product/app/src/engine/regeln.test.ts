@@ -13,6 +13,7 @@ const mail = (teil: Partial<Mail>): Mail => ({
   an: f("AN"),
   betreff: f("Betreff"),
   kategorie: f("sonstiges"),
+  text: null,
   zitat: null,
   bezugPositionen: f([]),
   bezugPlanIndex: null,
@@ -112,7 +113,7 @@ describe("Anmeldungen und Hinweise", () => {
   const anmeldung = (kategorie: string, bepreist = false) =>
     mail({
       kategorie: f("anmeldung"),
-      anmeldung: { gegenstand: f("Umbau"), kategorie: f(kategorie), stunden: f(1_000), material: f(10_000), bepreist: f(bepreist) },
+      anmeldung: { gegenstand: f("Umbau"), kategorie: f(kategorie), stunden: f(1_000), material: f(10_000), sachkosten: null, bepreist: f(bepreist) },
     });
 
   it("nie bepreist → offen, Lohn mit Mittellohnpreis", () => {

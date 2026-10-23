@@ -271,23 +271,24 @@ export function anmeldungen(k: Kontext): Befund[] {
       const betrag = lohn + a.material.wert;
       const pauschale = v.pauschalen.find((p) => p.kategorie.wert === a.kategorie.wert);
       const mailBeleg = beleg(`Mail ${tagMonat(m.datum.wert)} (Anmeldung)`, m.zitat ? `„${m.zitat.wert}“` : a.gegenstand.wert, m.zitat?.quelle ?? a.gegenstand.quelle, m.datum.wert);
+      const sachkosten = a.sachkosten?.wert ?? "Material";
       const rechenweg = {
-        text: `${menge(a.stunden.wert)} h × ${euro(v.mittellohnpreis.wert)} (Mittellohnpreis) + Material ${euro(a.material.wert)} = ${euro(betrag)}`,
+        text: `${menge(a.stunden.wert)} h × ${euro(v.mittellohnpreis.wert)} (Mittellohnpreis) + ${sachkosten} ${euro(a.material.wert)} = ${euro(betrag)}`,
         schritte: [
           { bezeichnung: "Lohn", wert: `${menge(a.stunden.wert)} h × ${euro(v.mittellohnpreis.wert)}`, betrag: lohn },
-          { bezeichnung: "Material", wert: euro(a.material.wert), betrag: a.material.wert },
+          { bezeichnung: sachkosten, wert: euro(a.material.wert), betrag: a.material.wert },
         ],
       };
       if (pauschale) {
         return {
-          schluessel: `anmeldung:${m.dokumentId}`,
+          schluessel: `vertrag:${m.dokumentId}`,
           art: "pauschale" as const,
           liste: "verloren" as Liste,
           titel: a.gegenstand.wert,
-          untertitel: `laut Vertrag Pkt. ${pauschale.punkt} pauschal`,
+          untertitel: `laut Vertrag Pkt. ${pauschale.punkt} in der Pauschale enthalten`,
           positionNr: null,
           betrag,
-          rechenweg: { ...rechenweg, text: `${rechenweg.text}; laut Vertrag Pkt. ${pauschale.punkt} pauschal enthalten` },
+          rechenweg: { ...rechenweg, text: `${rechenweg.text}; laut Vertrag Pkt. ${pauschale.punkt} in der Pauschale enthalten` },
           belege: [mailBeleg, beleg(`Vertrag Pkt. ${pauschale.punkt}`, pauschale.text.wert, pauschale.text.quelle, v.datum.wert)],
           pruefstand: "maschinell" as const,
         };

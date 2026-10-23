@@ -67,7 +67,7 @@ function ausDokument(d: Datensatz, dok: Dokument): Omit<Ereignis, "befunde"> {
     }
     case "foto": {
       const f = d.fotos.find((x) => x.dokumentId === dok.id);
-      return { ...basis, zeit: f?.exifDatum.wert ?? dok.datum, art: "foto", titel: f ? `Foto ${f.ort.wert}` : "Foto", text: dok.dateiname };
+      return { ...basis, zeit: f?.exifDatum.wert ?? dok.datum, art: "foto", titel: f?.motiv.wert ?? "Foto", text: f ? `Foto ${f.ort.wert}, ${dok.dateiname}` : dok.dateiname };
     }
     case "abschlag": {
       const r = d.abschlaege.find((x) => x.dokumentId === dok.id);

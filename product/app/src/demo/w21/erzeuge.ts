@@ -546,7 +546,7 @@ export function erzeugeW21(): Datensatz {
       {
         kategorie: f("baustelleneinrichtung", qv(4, "Pkt. 4.3")),
         punkt: "4.3",
-        text: f("Baustelleneinrichtung samt allen Umstellungen während der Bauzeit ist in den Einheitspreisen enthalten.", qv(4, "Pkt. 4.3")),
+        text: f("Baustelleneinrichtung pauschal. Alle Umstellungen der Baustelleneinrichtung während der Bauzeit sind in der Pauschale enthalten.", qv(4, "Pkt. 4.3")),
       },
     ],
   };
@@ -568,16 +568,11 @@ export function erzeugeW21(): Datensatz {
     ],
   };
 
-  // Pläne: 8 Pläne in den Indizes C, D, E
+  // Pläne: H-201 (J1) und L-310 (J7) werden zitiert, H-101 gehört zur Umplanung Technikraum (O3); je Index C, D, E
   const PLAENE: [string, string, string[]][] = [
     ["H-101", "Heizung Keller und Technikraum", ["2026-01-20", "2026-03-18", "2026-06-10"]],
     ["H-201", "Heizung Regelgeschoß Stiege 2", ["2026-02-12", "2026-04-03", "2026-07-15"]],
-    ["H-202", "Heizung Regelgeschoß Stiege 1 und 3", ["2026-02-12", "2026-04-20", "2026-07-15"]],
-    ["S-101", "Sanitär Keller und Grundleitungen", ["2026-01-20", "2026-03-11", "2026-05-27"]],
-    ["S-201", "Sanitär Regelgeschoß", ["2026-02-05", "2026-04-09", "2026-06-24"]],
-    ["L-301", "Lüftung Keller und Technikzentrale", ["2026-01-28", "2026-03-25", "2026-06-02"]],
     ["L-310", "Lüftung Stiege 3", ["2026-02-18", "2026-04-15", "2026-06-22"]],
-    ["M-401", "MSR Anlagenschema", ["2026-02-25", "2026-05-12", "2026-08-19"]],
   ];
   const plaene: Plan[] = [];
   for (const [nr, titel, daten] of PLAENE) {
@@ -600,9 +595,9 @@ export function erzeugeW21(): Datensatz {
     });
   }
 
-  // Mails: 50 Originale + 7 Duplikate
+  // Mails: 16 Originale + 2 Duplikate. Jede Mail hat Text; das Zitat steht wörtlich im Text.
   const mails: Mail[] = [];
-  const mail = (id: string, datum: string, von: string, an: string, betreff: string, kategorie: Mail["kategorie"]["wert"], extra: Partial<Mail> = {}) => {
+  const mail = (id: string, datum: string, von: string, an: string, betreff: string, kategorie: Mail["kategorie"]["wert"], text: string, extra: Partial<Mail> = {}) => {
     dok(id, "mail", `${datum}_${betreff.replace(/[^A-Za-z0-9ÄÖÜäöüß]+/g, "_").slice(0, 40)}.eml`, datum, 1);
     const qm = (stelle: string, box?: [number, number, number, number]) => q(id, 1, stelle, box);
     mails.push({
@@ -612,6 +607,7 @@ export function erzeugeW21(): Datensatz {
       an: f(an, qm("Kopf, An")),
       betreff: f(betreff, qm("Kopf, Betreff")),
       kategorie: f(kategorie, qm("Inhalt")),
+      text: f(text, qm("Inhalt")),
       zitat: null,
       bezugPositionen: f([], qm("Inhalt")),
       bezugPlanIndex: null,
@@ -622,95 +618,110 @@ export function erzeugeW21(): Datensatz {
   const GU = "Bauleitung Hochbau Beispiel GmbH";
   const AN = "Bauleitung Haustechnik Beispiel GmbH";
   const qz1 = (id: string, box: [number, number, number, number]) => q(id, 1, "Absatz 2", box);
-  mail("mail-0407-heizkoerper", "2026-04-07", GU, AN, "W21-B Stiege 2 Planindex D Heizung", "anweisung", {
+  mail("mail-0407-heizkoerper", "2026-04-07", GU, AN, "W21-B Stiege 2 Planindex D Heizung", "anweisung",
+    "Mit Plan H-201 Index D sind die Räume in Top 7 bis 13 geteilt, je Top kommen zwei Heizkörper dazu. Bitte die zusätzlichen Heizkörper gleich mitmachen, damit wir beim Estrich nicht warten müssen.", {
     zitat: f("Bitte die zusätzlichen Heizkörper gleich mitmachen, damit wir beim Estrich nicht warten müssen.", qz1("mail-0407-heizkoerper", [60, 330, 470, 40])),
     bezugPositionen: f([J1], q("mail-0407-heizkoerper", 1, "Absatz 1")),
     bezugPlanIndex: f("H-201 D", q("mail-0407-heizkoerper", 1, "Anhang")),
   });
-  mail("mail-0314-technikraum", "2026-03-14", AN, GU, "Anmeldung Mehrkosten Umplanung Technikraum", "anmeldung", {
+  mail("mail-0314-technikraum", "2026-03-14", AN, GU, "Anmeldung Mehrkosten Umplanung Technikraum", "anmeldung",
+    "Der Technikraum im Keller wurde umgeplant, die Verteiler kommen an die Nordwand. Wir melden Mehrkosten für die Umplanung des Technikraums (Verteiler versetzt) an. Aufwand laut unserer Kalkulation rund 96 Stunden, Material rund 2.900 Euro. Ein Nachtragsangebot folgt.", {
     zitat: f("Wir melden Mehrkosten für die Umplanung des Technikraums (Verteiler versetzt) an. Aufwand laut unserer Kalkulation rund 96 Stunden, Material rund 2.900 Euro.", qz1("mail-0314-technikraum", [60, 300, 470, 60])),
     anmeldung: {
       gegenstand: f("Umplanung Technikraum Keller", q("mail-0314-technikraum", 1, "Betreff")),
       kategorie: f("planaenderung", q("mail-0314-technikraum", 1, "Absatz 1")),
       stunden: f(9_600, q("mail-0314-technikraum", 1, "Absatz 2")),
       material: f(290_000, q("mail-0314-technikraum", 1, "Absatz 2")),
+      sachkosten: null,
       bepreist: f(false, q("mail-0314-technikraum", 1, "Absatz 3")),
     },
   });
-  mail("mail-0520-container", "2026-05-20", AN, GU, "Mehraufwand Container versetzt", "anmeldung", {
+  mail("mail-0520-container", "2026-05-20", AN, GU, "Mehraufwand Container versetzt", "anmeldung",
+    "Der Container musste wegen der Kranstellung zweimal versetzt werden. Aufwand rund 16 Stunden plus Kran. Wir bitten um Bestätigung.", {
     zitat: f("Der Container musste wegen der Kranstellung zweimal versetzt werden. Aufwand rund 16 Stunden plus Kran.", qz1("mail-0520-container", [60, 300, 470, 40])),
     anmeldung: {
       gegenstand: f("Container der Baustelleneinrichtung zweimal versetzt", q("mail-0520-container", 1, "Betreff")),
       kategorie: f("baustelleneinrichtung", q("mail-0520-container", 1, "Absatz 1")),
       stunden: f(1_600, q("mail-0520-container", 1, "Absatz 2")),
       material: f(27_120, q("mail-0520-container", 1, "Absatz 2")),
+      sachkosten: f("Kran", q("mail-0520-container", 1, "Absatz 2")),
       bepreist: f(false, q("mail-0520-container", 1, "Absatz 3")),
     },
   });
-  mail("mail-0702-termin", "2026-07-02", GU, AN, "Terminplan Stiege 2", "terminaenderung", {
+  mail("mail-0702-termin", "2026-07-02", GU, AN, "Terminplan Stiege 2", "terminaenderung",
+    "Bitte die Fertigstellung Stiege 2 um drei Wochen vorziehen. Den angepassten Terminplan schicken wir bis Ende der Woche.", {
     zitat: f("Bitte die Fertigstellung Stiege 2 um drei Wochen vorziehen.", qz1("mail-0702-termin", [60, 300, 470, 24])),
   });
   // Gegenproben: Anweisung zu einer voll verrechneten Position, bereits bepreiste Anmeldung
-  mail("mail-0610-vorwand", "2026-06-10", GU, AN, "Vorwandelemente Stiege 1", "anweisung", {
+  mail("mail-0610-vorwand", "2026-06-10", GU, AN, "Vorwandelemente Stiege 1", "anweisung",
+    "Bitte die WC-Elemente in Stiege 1 vorziehen. Der Trockenbau beginnt dort am 22.06.", {
     zitat: f("Bitte die WC-Elemente in Stiege 1 vorziehen.", qz1("mail-0610-vorwand", [60, 300, 470, 24])),
     bezugPositionen: f(["24.04.01A"], q("mail-0610-vorwand", 1, "Absatz 1")),
   });
-  mail("mail-0901-zaehler", "2026-09-01", AN, GU, "Nachtragsangebot Zählerumbau", "anmeldung", {
+  mail("mail-0901-zaehler", "2026-09-01", AN, GU, "Nachtragsangebot Zählerumbau", "anmeldung",
+    "Anbei unser Nachtragsangebot für den Zählerumbau Stiege 3. Aufwand 12 Stunden, Material 480 Euro, Preise laut Anhang.", {
     anmeldung: {
       gegenstand: f("Zählerumbau Stiege 3", q("mail-0901-zaehler", 1, "Betreff")),
       kategorie: f("planaenderung", q("mail-0901-zaehler", 1, "Absatz 1")),
       stunden: f(1_200, q("mail-0901-zaehler", 1, "Absatz 2")),
       material: f(48_000, q("mail-0901-zaehler", 1, "Absatz 2")),
+      sachkosten: null,
       bepreist: f(true, q("mail-0901-zaehler", 1, "Anhang Nachtragsangebot")),
     },
   });
-  const BETREFFE = [
-    "Protokoll Baubesprechung",
-    "Terminabstimmung Montage",
-    "Lieferavis Material",
-    "Rückfrage Schlitzplan",
-    "Abstimmung Brandschutz",
-    "Zutritt Baustelle Wochenende",
-    "Plan zur Freigabe",
-    "Bemusterung Sanitärobjekte",
-    "Kranzeiten",
-    "Abnahmetermin Druckprobe",
+  // Alltag auf der Baustelle: kein Befund zitiert diese Mails. Kalenderwochen nach ISO 8601 (12.01.2026 = KW 3).
+  const ALLTAG: [string, boolean, string, string][] = [
+    ["2026-01-14", true, "Protokoll Baubesprechung KW 3", "Anbei das Protokoll der Baubesprechung vom 13.01. Die nächste Besprechung ist am 27.01. um 9 Uhr im Baubüro."],
+    ["2026-02-04", false, "Lieferavis Heizkörper Stiege 1", "Die Heizkörper für Stiege 1 kommen am 10.02. ab 7 Uhr. Bitte den Kran dafür eine Stunde einplanen."],
+    ["2026-02-24", true, "Rückfrage Schlitzplan Stiege 2", "Im Schlitzplan Stiege 2 fehlen die Durchbrüche für die Steigleitungen. Bitte bis Freitag ergänzen."],
+    ["2026-03-19", true, "Begehung Brandschutz Schächte KW 12", "Der Brandschutzplaner kommt am 20.03. auf die Baustelle. Bitte einen Monteur für die Begehung der Schächte einteilen."],
+    ["2026-04-15", false, "Bemusterung Sanitärobjekte", "Die Musterobjekte stehen ab 20.04. im Baubüro. Wir bitten um Freigabe bis Ende April."],
+    ["2026-05-06", true, "Zutritt Baustelle Samstag KW 19", "Am Samstag, 09.05., ist die Baustelle von 7 bis 14 Uhr offen. Bitte bis Freitag melden, wie viele Monteure kommen."],
+    ["2026-06-17", true, "Kranzeiten KW 25", "Der Kran steht diese Woche nur vormittags zur Verfügung. Lieferungen bitte bis 11 Uhr einplanen."],
+    ["2026-07-08", false, "Termin Druckprobe Heizung Stiege 1", "Die Druckprobe Heizung Stiege 1 ist am 14.07. um 8 Uhr. Wir bitten um Teilnahme der Bauleitung."],
+    ["2026-08-26", true, "Protokoll Baubesprechung KW 35", "Anbei das Protokoll der Baubesprechung vom 25.08. Offen für die Haustechnik sind die Restmontage Stiege 3 und die Inbetriebnahme der Lüftung."],
+    ["2026-09-23", true, "Inbetriebnahme Lüftung", "Die Inbetriebnahme der Lüftung ist am 06.10. geplant. Bitte das Protokoll der Einregulierung vorher schicken."],
   ];
-  for (let i = 0; i < 44; i++) {
-    const tag = new Date(Date.UTC(2026, 0, 12) + i * 6.5 * 86_400_000).toISOString().slice(0, 10);
-    mail(`mail-${String(i + 1).padStart(2, "0")}`, tag, i % 3 ? GU : AN, i % 3 ? AN : GU, `${BETREFFE[i % BETREFFE.length]} KW ${2 + Math.floor(i * 0.93)}`, "sonstiges");
+  ALLTAG.forEach(([tag, vomGu, betreff, text], i) => mail(`mail-${String(i + 1).padStart(2, "0")}`, tag, vomGu ? GU : AN, vomGu ? AN : GU, betreff, "sonstiges", text));
+  mails.filter((m) => m.kategorie.wert === "sonstiges").slice(0, 2).forEach((m) => (m.datum = korrigiert(m.datum)));
+  // Weitergeleitete Protokolle: gleicher Inhalt, zählt nur einmal
+  for (const id of ["mail-01", "mail-09"]) {
+    const original = dokumente.find((d) => d.id === id)!;
+    dok(`${id}-kopie`, "mail", original.dateiname.replace(".eml", "_weitergeleitet.eml"), original.datum, 1, original.inhaltHash);
   }
-  mails.filter((m) => m.kategorie.wert === "sonstiges").slice(0, 5).forEach((m) => (m.datum = korrigiert(m.datum)));
-  mails.slice(6, 13).forEach((m) => {
-    const original = dokumente.find((d) => d.id === m.dokumentId)!;
-    dok(`${m.dokumentId}-kopie`, "mail", original.dateiname.replace(".eml", "_weitergeleitet.eml"), original.datum, 1, original.inhaltHash);
-  });
 
-  // Fotos: 35 Originale + 5 Duplikate
-  const fotos: Foto[] = [];
-  for (let i = 0; i < 35; i++) {
-    const nummer = 2280 + i * 3 + (i > 3 ? 2 : 0);
-    const name = i === 3 ? "IMG_2291.jpg" : `IMG_${nummer}.jpg`;
-    const id = i === 3 ? "foto-img-2291" : `foto-${String(i + 1).padStart(2, "0")}`;
-    const datum = i === 3 ? "2026-05-14" : new Date(Date.UTC(2026, 1, 2) + i * 6 * 86_400_000).toISOString().slice(0, 10);
-    dok(id, "foto", name, datum, 1);
+  // Fotos: 8 Originale + 2 Duplikate, Nummern steigen mit dem Aufnahmedatum. Nur IMG_2291 belegt einen Befund (J1).
+  const FOTOS: { nummer: number; zeit: string; motiv: string; ort: string }[] = [
+    { nummer: 2104, zeit: "2026-02-19T10:15", motiv: "Grundleitungen vor dem Verfüllen", ort: "Keller, Stiege 1" },
+    { nummer: 2187, zeit: "2026-03-12T08:40", motiv: "Verteiler im Technikraum vor der Umplanung", ort: "Keller, Technikraum" },
+    { nummer: 2291, zeit: "2026-05-14T09:42", motiv: "Zusätzliche Heizkörper nach Plan D montiert", ort: "Stiege 2, Top 9, Zimmer 2" },
+    { nummer: 2306, zeit: "2026-05-20T13:05", motiv: "Container der Baustelleneinrichtung nach dem Versetzen", ort: "Bauplatz B, Zufahrt" },
+    { nummer: 2348, zeit: "2026-06-03T09:20", motiv: "Steigleitung an der Kollisionsstelle mit der Lüftung", ort: "Stiege 2, Schacht" },
+    { nummer: 2419, zeit: "2026-07-21T08:10", motiv: "Notabsperrung nach Wasserschaden", ort: "Keller, Stiege 1" },
+    { nummer: 2477, zeit: "2026-08-27T11:30", motiv: "Wickelfalzrohr DN 200 im Gang montiert", ort: "Stiege 3, Gang" },
+    { nummer: 2532, zeit: "2026-09-16T14:50", motiv: "Heizkörper fertig montiert", ort: "Stiege 1, Top 3" },
+  ];
+  const fotos: Foto[] = FOTOS.map((x) => {
+    const id = `foto-img-${x.nummer}`;
+    dok(id, "foto", `IMG_${x.nummer}.jpg`, x.zeit.slice(0, 10), 1);
     const qf = (stelle: string) => q(id, 1, stelle);
-    const foto: Foto = {
+    return {
       dokumentId: id,
-      exifDatum: f(i === 3 ? "2026-05-14T09:42" : `${datum}T${String(8 + (i % 8)).padStart(2, "0")}:15`, qf("EXIF Aufnahmedatum")),
-      ort: f(i === 3 ? "Stiege 2, Top 9, Zimmer 2" : `Stiege ${(i % 3) + 1}`, qf("Zuordnung")),
-      bezugPositionen: f(i === 3 ? [J1] : [], qf("Zuordnung")),
+      exifDatum: f(x.zeit, qf("EXIF Aufnahmedatum")),
+      motiv: f(x.motiv, qf("Zuordnung")),
+      ort: f(x.ort, qf("Zuordnung")),
+      bezugPositionen: f(x.nummer === 2291 ? [J1] : [], qf("Zuordnung")),
     };
-    if (i >= 31) foto.exifDatum = korrigiert(foto.exifDatum);
-    fotos.push(foto);
-  }
-  fotos.slice(10, 15).forEach((ft) => {
-    const original = dokumente.find((d) => d.id === ft.dokumentId)!;
-    dok(`${ft.dokumentId}-kopie`, "foto", original.dateiname.replace(".jpg", " (1).jpg"), original.datum, 1, original.inhaltHash);
   });
+  // Weitergeleitet ohne EXIF: Aufnahmedatum von Hand nachgetragen
+  fotos[0].exifDatum = korrigiert(fotos[0].exifDatum);
+  for (const id of ["foto-img-2306", "foto-img-2419"]) {
+    const original = dokumente.find((d) => d.id === id)!;
+    dok(`${id}-kopie`, "foto", original.dateiname.replace(".jpg", " (1).jpg"), original.datum, 1, original.inhaltHash);
+  }
 
-  if (korrekturen !== 31) throw new Error(`${korrekturen} korrigierte Felder statt 31`);
-  if (dokumente.length !== 165) throw new Error(`${dokumente.length} Dokumente statt 165`);
+  if (korrekturen !== 25) throw new Error(`${korrekturen} korrigierte Felder statt 25`);
+  if (dokumente.length !== 81) throw new Error(`${dokumente.length} Dokumente statt 81`);
 
   return {
     projekt: {
@@ -745,7 +756,7 @@ export function erzeugeW21(): Datensatz {
 }
 
 // ---------- Zurufe (WhatsApp, Demo_Faelle.md v2) ----------
-// Eigene Belege neben den 165 Ordner-Dokumenten. Z1 bis Z4 stützen vorhandene Posten und nennen bewusst keine
+// Eigene Belege neben den 81 Ordner-Dokumenten. Z1 bis Z4 stützen vorhandene Posten und nennen bewusst keine
 // Stunden (G2 bleibt unverändert); Z5 und Z6 haben keinen Regiebericht und werden neue Posten in Liste 2.
 
 interface ZurufDef {
