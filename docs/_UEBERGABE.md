@@ -22,7 +22,7 @@ The empty app in the Attio layout: created, design tokens written down as `docs/
 3. **Sidebar** (E2): business switcher ("Kronfeld Haustechnik", marked "Beispieldaten"), "Suche" (Strg K), "Start", "Aufgaben", "Berichte", "Abläufe"; sections "Ihre Daten" (Belege, E-Mails, WhatsApp-Meldungen), "Digitaler Zwilling" (Betrieb, Auftraggeber, Projekte), "Ergebnis" (Funde, Schlussrechnungen); bottom "Erste Schritte", "Mitglieder einladen", "Beispieldaten".
 4. **Header** (title, help) and **Strg K** search over the navigation points.
 5. **Empty states** for every navigation point, in the Attio pattern, with our words; the project page shell with the step bar "Ihre Daten → Digitaler Zwilling → Ergebnis" and its tabs, empty. Names in placeholders come from `Demo_Faelle.md` (Wohnpark Mooshaim, Hornfeld Bau); no amounts.
-6. **Online at `app-neu`:** new Cloudflare worker; repair the Git connection first (open point in `_STATUS.md`). The worker `app` (jury link, v1) stays untouched.
+6. **Online at `app-neu`:** new Cloudflare worker; repair the Git connection first (open point in `_STATUS.md`). The worker `app` (public link, v1) stays untouched.
 
 ## Done when
 
