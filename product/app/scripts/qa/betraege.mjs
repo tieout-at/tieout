@@ -8,7 +8,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { erzeugeFirma } from "../../src/demo/firma/erzeuge";
-import { abrechnung, guHistorie, pruefeFirma } from "../../src/engine";
+import { abrechnung, guHistorie, pruefe, pruefeFirma, schlussbesprechung } from "../../src/engine";
 
 // Headline amounts of the solution list per page. Extend this when a new screen is built.
 // Every amount must also be a headline amount in Demo_Faelle.md (bold or in a section heading).
@@ -16,6 +16,7 @@ const ERWARTET = [
   { seite: "/", betraege: ["34.268,10", "11.532,30", "3.179,50", "8.352,80", "20.975,90"] },
   { seite: "/projekte/w21-b-hkls/", betraege: ["27.410,00", "11.282,30", "1.180,00", "8.767,50"] },
   { seite: "/projekte/w21-b-hkls/schlussrechnung/", betraege: ["170.060,89", "8.767,50"] },
+  { seite: "/projekte/w21-b-hkls/schlussbesprechung/", betraege: ["38.692,30", "38.359,30", "27.201,80", "2.804,70", "333,00"] },
 ];
 
 // Integer leaves whose key names a quantity, count, rate or coordinate, not cents. Everything else in the engine
@@ -81,6 +82,8 @@ sammle(pruefeFirma(firma), [], kern);
 // GU-Historie (Firmenebene) und Abrechnung der Projekte mit gelegter und bezahlter Schlussrechnung (P7, P8)
 sammle(guHistorie(firma), [], kern);
 for (const d of firma.projekte) sammle(abrechnung(d), [], kern);
+// Schlussbesprechungs-Blatt (Untergrenzen je Posten)
+for (const d of firma.projekte) sammle(schlussbesprechung(d, pruefe(d).befunde), [], kern);
 const daten = new Set();
 sammle(firma, [], daten);
 const erlaubt = new Set([...kern, ...daten]);

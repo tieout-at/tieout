@@ -115,6 +115,35 @@ Payments (calculation rule per AR, percentages each applied to the subtotal, com
 | AR3 | 356.200,00 | 2.196,00 | 10.620,12 | 2.747,07 | 1.716,92 | 16.945,99 | 321.973,90 |
 | Total | | | | | | | **987.106,25** |
 
+## Final meeting sheet (Schlussbesprechungs-Blatt), W21: claim and floor per item
+
+Approved by Maxi S. 23.10.2026 (synthetic). The floor (Untergrenze) is the lowest amount per item below which the company gives up its own costs. **Rule:** daywork and daywork from a WhatsApp message = hours × average wage price 56,80 € (K3) + material, as for O3 (fitter and helper hours alike); additional quantities and the price adjustment = contract price (unit price per LV, contract item 7.2), no floor below it; O3 is already a lower bound from the own calculation. Grouped like the dashboard: belegt (list 1), Beleg fehlt (list 2, daywork not signed or only from a WhatsApp message), angemeldet (list 2, notified, never priced). Not on the sheet: A1 (needs a lawyer) and V1 (lost, contract item 4.3).
+
+| Group | Item | Claim | Floor calculation | Floor |
+|---|---|---|---|---|
+| belegt | J1 | 6.384,00 € | contract price | 6.384,00 € |
+| belegt | J2 | 1.311,40 € | 18 h × 56,80 € + material 186,40 € | 1.208,80 € |
+| belegt | J3 | 2.974,80 € | 40 h × 56,80 € + material 642,80 € | 2.914,80 € |
+| belegt | J4 | 596,20 € | 8 h × 56,80 € + material 96,20 € | 550,60 € |
+| belegt | J5 | 3.164,80 € | contract price | 3.164,80 € |
+| belegt | J6 | 2.364,00 € | contract price | 2.364,00 € |
+| belegt | J7 | 3.366,80 € | contract price | 3.366,80 € |
+| belegt | J8 | 7.248,00 € | contract price | 7.248,00 € |
+| Beleg fehlt | O1 | 1.021,50 € | 16 h × 56,80 € + material 84,50 € | 993,30 € |
+| Beleg fehlt | O2 | 721,00 € | 8 h × 56,80 € + material 221,00 € | 675,40 € |
+| Beleg fehlt | O4 | 687,00 € | 12 h × 56,80 € | 681,60 € |
+| Beleg fehlt | O5 | 500,00 € | 8 h × 56,80 € | 454,40 € |
+| angemeldet | O3 | 8.352,80 € | lower bound from own calculation | 8.352,80 € |
+
+| Group | Items | Claim | Floor |
+|---|---|---|---|
+| belegt | 8 | 27.410,00 € | **27.201,80 €** |
+| Beleg fehlt | 4 | 2.929,50 € | **2.804,70 €** |
+| angemeldet | 1 | 8.352,80 € | 8.352,80 € |
+| **Total** | 13 | **38.692,30 €** | **38.359,30 €** |
+
+Room between claim and floor: **333,00 €**. Check: 6.384,00 + 1.208,80 + 2.914,80 + 550,60 + 3.164,80 + 2.364,00 + 3.366,80 + 7.248,00 = 27.201,80; 993,30 + 675,40 + 681,60 + 454,40 = 2.804,70; 27.201,80 + 2.804,70 + 8.352,80 = 38.359,30; 38.692,30 − 38.359,30 = 333,00 €. O4 and O5 floors equal the alternative named in list 2 (681,60 / 454,40 €). (Annahme: own cost without overhead and profit as the floor; question for the insider.)
+
 ## Evidence source per item (W21, for coding sheet and lead hypothesis)
 
 Source of the evidence according to Dossier v3, 15.5. "Evidence" here means proof of the **work performed**, not of the price (daywork rates and unit prices always come from contract and LV). "Only outside ERP" means: no proof of work from LV, measurement, invoice or contract (assumption above under "Company").

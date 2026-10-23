@@ -14,6 +14,7 @@
 @import "../ui/styles/schlussrechnung.css";
 @import "../ui/styles/uebersicht.css";
 @import "../ui/styles/historie.css";
+@import "../ui/styles/schlussbesprechung.css";
 
 /* Schriften selbst ausgeliefert (next/font), Namen aus den Tokens bleiben als Rückfall */
 :root {

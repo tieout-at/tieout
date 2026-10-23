@@ -99,3 +99,31 @@ export const SOLL_ZAHLUNGEN = [28_413_421, 38_099_814, 32_197_390];
 export const SOLL_IMPORT = { dokumente: 81, duplikate: 4, eindeutig: 77, planIndizes: ["C", "D", "E"], korrigierteFelder: 25 };
 
 export const SOLL_REGIE = { gesamt: 16, verrechnet: 11, unterschriebenNichtVerrechnet: 3, nichtUnterschrieben: 2, nachGrenze: 0 };
+
+/** Schlussbesprechungs-Blatt W21: Untergrenze je Posten (Demo_Faelle.md, Go Maxi S. 23.10.2026). */
+export const SOLL_UNTERGRENZEN: Record<string, number> = {
+  "mehrmenge:22.04.12B": 638_400,
+  "regie:RB-07": 120_880,
+  "regie:RB-11": 291_480,
+  "regie:RB-14": 55_060,
+  "mehrmenge:24.02.05A": 316_480,
+  "mehrmenge:22.06.03C": 236_400,
+  "mehrmenge:26.03.04A": 336_680,
+  preisumrechnung: 724_800,
+  "regie:RB-12": 99_330,
+  "regie:RB-15": 67_540,
+  "zuruf:Z6": 68_160,
+  "zuruf:Z5": 45_440,
+  "anmeldung:mail-0314-technikraum": 835_280,
+};
+
+export const SOLL_BESPRECHUNG = {
+  gruppen: [
+    { stand: "belegt", anzahl: 8, forderung: 2_741_000, untergrenze: 2_720_180 },
+    { stand: "beleg_fehlt", anzahl: 4, forderung: 292_950, untergrenze: 280_470 },
+    { stand: "angemeldet", anzahl: 1, forderung: 835_280, untergrenze: 835_280 },
+  ],
+  forderung: 3_869_230,
+  untergrenze: 3_835_930,
+  spielraum: 33_300,
+};
