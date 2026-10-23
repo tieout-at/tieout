@@ -2,7 +2,7 @@
 
 **As of:** Friday, 23 October 2026, night, after step 0c. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** `docs/SPEZIFIKATION.md` with decisions E1 to E16 (section 10) and solution list v3 in `docs/Demo_Faelle.md` are accepted (23.10.2026). If the website pull request of step 0c (`website-demo-v3`) is still open, leave it alone; it goes live only with Maxi S.'s go.
+**Precondition:** `docs/SPEZIFIKATION.md` with decisions E1 to E16 (section 10) and solution list v3 in `docs/Demo_Faelle.md` are accepted (23.10.2026). The website stays as Maxi D. built it; the app's demo data do not need to match it.
 
 ## Goal
 

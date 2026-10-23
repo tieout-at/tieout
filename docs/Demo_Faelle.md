@@ -1,6 +1,6 @@
 # Demo dataset: built-in cases (solution list v3)
 
-**As of:** 23.10.2026, **v3**, step 0c. Replaces v2 (Wien 21, 8 projects, 14 finds and 1 note in the main project). Built along `SPEZIFIKATION.md` section 7.1: short names, 5 projects, at most 8 finds and 1 Rechtsfrage in the main project, realistic amounts, the same story as the website. **Everything is synthetic and fictitious.**
+**As of:** 23.10.2026, **v3**, step 0c. Replaces v2 (Wien 21, 8 projects, 14 finds and 1 note in the main project). Built along `SPEZIFIKATION.md` section 7.1: short names, 5 projects, at most 8 finds and 1 Rechtsfrage in the main project, realistic amounts, and six events of the kinds the website timeline shows. **Everything is synthetic and fictitious.**
 **Use:** this list is the yardstick for the generator and for `kern/` (step 2): the core must find exactly these cases, with exactly these amounts, and nothing else.
 **Check:** every amount is recomputed in integer cents by `docs/demo_faelle_check.mjs` (run `node docs/demo_faelle_check.mjs` from the repository root); the script also fails if this file contains a euro amount it does not compute. Independent check on 23.10.2026 by a separate reviewer with its own calculation: no arithmetic error (182 of 182); its notes are worked in (see "Changes compared to v2"). Not yet reviewed by someone from construction: assumptions are marked **(Annahme)**.
 **Demo date (Demo-Stichtag):** Thursday, 22.10.2026. The demo always calculates with this "today", so status colours stay the same.
@@ -65,11 +65,11 @@ Rules: "Zwei Mann" is 1 Monteur and 1 Helfer (Annahme). W1 to W3 name no hours, 
 
 **For the build:** WhatsApp-Meldungen are objects of their own in the project (channel WhatsApp), not part of the 77 Belege. "Every piece of evidence points to an existing Beleg" applies to Belege **or** WhatsApp-Meldungen. W4 is no Regiebericht and does not count in the Regie statistics (stays 15, 12, 2, 1).
 
-### The six events of the website timeline
+### Six events of the kinds the website shows
 
-The website's section 02 shows six events, four not invoiced, two invoiced. P1 carries all six (HKLS instead of electrical):
+The website's section 02 shows six kinds of events, four not invoiced, two invoiced. P1 has one of each kind, in HKLS. The website keeps its own example (section "Website"); the two do not need to match.
 
-| KW | Type (website) | Event in P1 | Amount | In the Schlussrechnung |
+| KW | Kind (as on the website) | Event in P1 | Amount | In the Schlussrechnung |
 |---|---|---|---|---|
 | 11 | Stunden | Regiebericht 3 of 12.03.2026, Baustellenwasser umgelegt, 8 h Monteur, signed: 8 h × 64,80 € = 518,40 € + material 84,00 € + 15 % (12,60 €) = 96,60 € | 615,00 € | verrechnet (Abschlagsrechnung 1) |
 | 15 | E-Mail | Bauleitung Hornfeld Bau, 07.04.2026: "Wohnungstyp C: je ein Heizkörper zusätzlich laut Plan D, bitte gleich mitmachen." | 6.648,60 € | fehlt, gefunden as F1 |
@@ -374,34 +374,9 @@ Check P4: 684.212,40 − 2.655,20 = 681.557,20; × 3 % = 20.446,72; 681.557,20 �
 
 In P1 the Vorprüfung shows G1 "Aufmaß nicht gegengezeichnet" (6.648,60 €), and the Rechnungsabschluss shows the Bauschadensumlage as "Abzug ohne Vertragspunkt" (3.719,63 €). Hornfeld Bau already did both in P4. Matched by the key of the reason, not by the text. Note in the app, neutral: "Gleicher Grund bei diesem Auftraggeber schon im Wohnhof Erlenhain."
 
-## Website (prepared; changed only with a go)
+## Website
 
-The website (`website/messages/de.json` and `en.json`) takes P1 as its example project (rule 5 of section 7.1). The website shows whole euros ("1.290 €", `website/STRUKTUR.md`); the app shows cents.
-
-- **Timeline** (section 02): title "Wohnpark Mooshaim · Beispiel"; the six events of the table "The six events of the website timeline" above, with their KW, type, amount and state; "4 von 6 Änderungen nicht verrechnet". The text for "Mit tieout" ("Alle 6 Änderungen belegt und verrechnet") no longer fits, because F6 and F7 are "in Klärung"; it changes to "Alle 4 fehlenden Änderungen gefunden". The timeline's total is what is missing today (F1 + F5 + F6 + F7 = 9.801,39 €), not "zusätzlich verrechenbar"; the website adds the rounded amounts it shows (6.649 + 2.033 + 644 + 476 = 9.802 €).
-- **Ebene 2 table** (section 03): columns "Beauftragt", "Erbracht", "Verrechnet", "Offen" (E10), footer "Zusätzlich verrechenbar" (E1). It rotates through the three open projects; each row is one find (short label, at most 14 characters), so that the rows add up to the footer. "In Klärung" is not in the table. Rows with nothing open are website only and synthetic.
-
-| Project | Row | Beauftragt | Erbracht | Verrechnet | Offen | From |
-|---|---|---|---|---|---|---|
-| Wohnpark Mooshaim | Heizkörper | 86 | 100 | 86 | 6.648,60 € | F1 with its accessories |
-| | Trinkwasser | 640 m | 808 m | 640 m | 3.326,40 € | F4 |
-| | Brandschutz | 120 | 142 | 120 | 2.032,80 € | F5 |
-| | Regieberichte | – | 36 h | 0 h | 2.612,35 € | F2 + F3 (1.787,49 + 824,86) |
-| | footer | | | | 14.620,15 € | |
-| Bürohaus Kiefernau | Heizungsrohr | 880 m | 760 m | 610 m | 3.240,00 € | P2-F3 |
-| | Teeküche | – | 10 h | 0 h | 809,13 € | P2-F1 |
-| | Estrichwasser | – | 8 h | 0 h | 803,60 € | P2-F2 |
-| | Lüftungsgerät | 2 | 2 | 2 | nothing open | website only |
-| | footer | | | | 4.852,73 € | |
-| Volksschule Ahornbrunn | Fußbodenheizung | 420 m² | 468 m² | 420 m² | 1.852,80 € | P3-F2 |
-| | Provisorium | – | 20 h | 0 h | 1.307,28 € | P3-F1 |
-| | Heizkörper | 38 | 38 | 38 | nothing open | website only |
-| | footer | | | | 3.160,08 € | |
-
-- **Project tiles** (Ebene 1): the five places Mooshaim, Kiefernau, Ahornbrunn, Erlenhain, Eibenau instead of six places that exist; the open three come first, in the order of the table.
-- **Result card**: "zusätzlich verrechenbar" of the project shown in the table.
-- **Words** (E1, E7, E10): "erbracht" instead of "gebaut", "Beauftragt" instead of "LV", "Zusätzlich verrechenbar" instead of "Offen verrechenbar", WhatsApp "Meldungen" instead of "Zurufe".
-- **Not changed:** the three hero cards (electrical examples with their own photos; the eyebrow says "Für Elektro- und HKLS-Betriebe").
+The website keeps its own example (Wien 21, electrical, 5.546 €, by Maxi D.): decided by Maxi S. on 23.10.2026 after a side by side comparison. The website is consistent in itself (hero cards, timeline and Ebene 2 table tell one story) and easier to read for a lay audience; the app's demo data do not need to match it. Two word proposals for Maxi D., his decision: "Erbracht" instead of "Gebaut" (customer test 1), and one money word for the same amount in the Ebene 2 table and the result card ("zusätzlich verrechenbar"; the table says "Offen verrechenbar").
 
 ## WhatsApp scene (mock, demo script 0:20)
 
@@ -438,7 +413,7 @@ The agent names no amount and does not say whether something is billable; the am
 - "Zusätzlich verrechenbar" 14.620,15 € (1,96 %) instead of 27.410,00 € (2,2 %). The Preisumrechnung (v2: 7.248,00 €) is gone: P1 has Festpreise, because the customer test called a forgotten Preisumrechnung implausible. "Pauschale laut Vertrag" (v2: V1) is gone to stay at 8 finds.
 - Realistic amounts: radiators with Thermostatkopf, Anschlussarmatur and Anbindeleitung; Regiesätze checked against the official rates 2026; moving a radiator two men for four hours instead of six; Regiematerial at Einstandspreis plus the surcharge of the Vertrag.
 - New figures: "davon mit Kürzungsrisiko" (E13), "Restforderung laut Vertrag" (E14). Untergrenze with the Mittellohnkosten; Spielraum 1.969,94 € instead of 333,00 €. The Nachtrag (F8) is priced on the Preisbasis of the Vertrag instead of as a lower bound.
-- The six events of the website timeline are in P1. P2 shows the "Lauf je Abschlagsrechnung": a WhatsApp-Meldung becomes a signed Regiebericht eight days after the message, two days after Abschlagsrechnung 2.
+- P1 has one event of each kind the website timeline shows; the website keeps its own example (decided 23.10.2026). P2 shows the "Lauf je Abschlagsrechnung": a WhatsApp-Meldung becomes a signed Regiebericht eight days after the message, two days after Abschlagsrechnung 2.
 - The rule for ongoing projects uses the work date, not the document date.
 - "Nur außerhalb ERP" is reported per money word, never on the sum of "zusätzlich verrechenbar" and "in Klärung".
 - Every amount recomputed by `docs/demo_faelle_check.mjs`, which also audits this file and the amounts in `SPEZIFIKATION.md`, and checks that every date is a working day.

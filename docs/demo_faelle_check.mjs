@@ -93,9 +93,6 @@ const P1belegt = add("P1 zusätzlich verrechenbar", F1 + F2.total + F3.total + F
 const P1missing = add("P1 Beleg fehlt", F6.total + F7.total);
 const P1klaerung = add("P1 in Klärung", P1missing + F8);
 
-// Website table: the two forgotten Regieberichte in one row
-add("website row Regieberichte (F2 + F3)", F2.total + F3.total);
-add("website timeline, missing today (F1 + F5 + F6 + F7)", F1 + F5 + F6.total + F7.total);
 
 // Website events that were invoiced (no find)
 const RB3 = regie("Regiebericht 3", HORNFELD, 8, 0, 8400);
