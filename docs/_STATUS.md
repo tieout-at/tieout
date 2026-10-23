@@ -1,6 +1,6 @@
 # Status
 
-**As of:** Friday, 23 October 2026, evening. Step 0 (Neuordnung) done, next: step 0b.
+**As of:** Friday, 23 October 2026, night. Step 0b (Inhalt neu): specification and first customer test done, waiting for acceptance and the decisions E1 to E16 by Maxi S. Next: step 1 (Hülle).
 **Maintenance:** every chat ends by updating this file and `_UEBERGABE.md`. Team status, gates and strategy: `../tieout-intern/_STATUS.md`.
 
 ## Where we stand
@@ -15,8 +15,8 @@
 | No. | Step | Result | Check-in | Status |
 |---|---|---|---|---|
 | 0 | Neuordnung | tag and branch v1, worker `app` frozen, new folder and structure, `intern` as `tieout-intern`, old folders removed | jury link still shows v1, structure and log accepted | done 23.10. |
-| 0b | Inhalt neu | `SPEZIFIKATION.md` from zero along Ihre Daten, Zwilling, Ergebnis: objects, screens, Abschluss-Lauf, vocabulary, demo case; every Attio element measured against the three steps; decision what to port from the v1 core; first customer test | specification and customer test accepted | next |
-| 1 | Hülle | app created, tokens as `DESIGN.md`, sidebar, header, Strg K, all navigation points with empty states as in Attio; online at `app-neu` | screenshot next to Attio | open |
+| 0b | Inhalt neu | `SPEZIFIKATION.md` from zero along Ihre Daten, Zwilling, Ergebnis: objects, screens, Abschluss-Lauf, vocabulary, demo case; every Attio element measured against the three steps; decision what to port from the v1 core; first customer test | specification and customer test accepted | draft and customer test 1 done 23.10. (`SPEZIFIKATION.md`), acceptance open |
+| 1 | Hülle | app created, tokens as `DESIGN.md`, sidebar with the sections "Ihre Daten", "Digitaler Zwilling", "Ergebnis" (specification 4.1), header, Strg K, all navigation points with empty states as in Attio; online at `app-neu` | screenshot next to Attio | next |
 | 2 | Kern | calculation per specification (ported or new), tests against the solution list, amount audit | tests green, amounts unchanged or changed with a go | open |
 | 3 | Tabellen | view bar, table, sort, filter, columns, footer; projects and Posten with sample data | tables | open |
 | 4 | Datensätze | project and Auftraggeber: attributes, highlights, tabs, activity, history | project Wien 21 | open |
@@ -37,7 +37,7 @@ Three roles, each a fresh agent without our prior knowledge, given only README, 
 
 | When | Task | Passed when |
 |---|---|---|
-| after 0b | read the specification, say whether they would buy and what is unclear | all three understand the three steps and name the benefit in one sentence |
+| after 0b | read the specification, say whether they would buy and what is unclear | all three understand the three steps and name the benefit in one sentence. **Passed 23.10.**, findings in `SPEZIFIKATION.md` section 12, full report with price verdicts in `../tieout-intern/docs/kundentests/` |
 | after 5 | find the radiator Posten, explain the amount, name the gap, decide | all three in under three minutes without help |
 | after 8 | play Wien 21 from folder to invoice, print the evidence package | all three "genutzt", at least two "würde zahlen" |
 | before the switch-over | full run and comparison with v1 | no verdict worse than v1 |
@@ -51,4 +51,7 @@ Unless the specification changes them with a go from Maxi S.: company billable n
 - Delete the old folder `C:\Users\maxis\dev\schlusswerk-team` once the step 0 chat is closed (go given; it was locked while that chat ran in it).
 - Cloudflare: the Git connection of the worker `app` still shows the old name `schlusswerk/schlusswerk` and asks to re-authenticate. Repair it in step 1, when `app-neu` needs a Git connection (Cloudflare docs: reinstall the GitHub app "Cloudflare Workers and Pages"; check the website first, it deploys by `npm run deploy` and does not depend on it).
 - The agent moved from `product/zuruf/` to `agent/`, code unchanged, 54 tests green. Paths inside `agent/` still name `product/zuruf` and `../app`; `npm run app-server` needs the generated data of the v1 app and only works on the branch `v1`.
-- Demo access for jurors in v2: sample company without sign-in (as in v1) or a "Demo öffnen" button. Decide in step 0b or 10.
+- Demo access for jurors in v2: proposal E8 in `SPEZIFIKATION.md` (sample company without sign-in, marked "Beispieldaten"); go open.
+- Decisions E1 to E16 in `SPEZIFIKATION.md` section 10 (money words, navigation, "gebaut", "Posten", new figures for E13 and E14, run during construction). E13 and E14 add amounts to `Demo_Faelle.md` and need a go first.
+- Questions for the construction insider: `SPEZIFIKATION.md` section 9 (15 questions, among them the floor rule with the Mittellohnpreis).
+- Website (open with the website owner): example project is electrical (5.546 €) while the demo is HKLS (27.410,00 €); website words "Zurufe", "gebaut", "offen verrechenbar" differ from the app (E1, E7, E10).

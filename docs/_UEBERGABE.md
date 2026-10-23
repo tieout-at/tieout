@@ -1,52 +1,36 @@
-# Handover: step 0b, Inhalt neu
+# Handover: step 1, Hülle
 
-**As of:** Friday, 23 October 2026, late evening, after step 0. Written by Claude for Maxi S.
+**As of:** Friday, 23 October 2026, night, after step 0b. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
+**Precondition:** `docs/SPEZIFIKATION.md` accepted and the decisions E1 to E16 (section 10) answered by Maxi S. If a decision is still open when this chat starts, ask first; E2 (sidebar sections) and E12 ("Posten" or "Fund") change what this step builds.
 
 ## Goal
 
-`docs/SPEZIFIKATION.md`, written from zero: what v2 shows and calculates, built strictly along the three steps of the website section 03, **Ihre Daten → Digitaler Zwilling → Ergebnis**, with these words and in this order. Then a first customer test on the specification with three subagents. No app code in this step, no change to amounts.
+The empty app in the Attio layout: created, design tokens written down as `docs/DESIGN.md`, sidebar, header, search (Strg K) and every navigation point with an empty state, online at `app-neu.tieout.workers.dev`. No calculation and no amounts in this step; the screens stay empty until step 2 (Kern) and step 3 (Tabellen).
 
 ## Read first
 
 1. `CLAUDE.md`, `docs/_STATUS.md`, this file.
-2. `../tieout-intern/docs/Plan_Neustart.md`: Attio inventory and measurements, the Attio to tieout translation table, the customer tests (with the price points for "würde zahlen").
-3. `../tieout-intern/docs/dossier-v3.md`, sections 0, 3, 12 and 15.
-4. The yardstick: `website/messages/de.json`, key `solution` (section 02 Problem and section 03 Lösung with the three steps, their groups and items); live at https://tieout-at.pages.dev. Section 02 shows the site timeline (WhatsApp, Stunden, E-Mail, Plan, Foto) against the final invoice with "fehlt" and "verrechnet".
-5. `docs/Demo_Faelle.md`: solution list and all demo amounts.
-6. v1 as reference, not as template: https://app.tieout.workers.dev, code under the tag `v1-archiv` (`product/app/src/engine`, `product/app/src/domain`).
-7. Attio as UI reference: screen recording `../_vorlagen/Attio.mp4` (318 MB) and the Attio workspace (access described in the plan in `../tieout-intern`).
+2. `docs/SPEZIFIKATION.md`: section 4 (screens, navigation, every Attio element with its verdict), section 6 (vocabulary), section 10 (decisions).
+3. `../tieout-intern/docs/Plan_Neustart.md`, sections "Gemessene Vorlage" (Attio measurements) and "Technik" (stack).
+4. Attio as reference: the workspace (access in the plan) and the screen recording `../_vorlagen/Attio.mp4`. Brand, icons, illustrations and texts are our own (Lucide icons, German words from the vocabulary).
 
-## What the specification contains
+## What to build
 
-1. **Ihre Daten.** Systeme (ERP-Rechnungen, AVA-Preise), Dokumente (Pläne mit Index, Leistungsverzeichnis, Aufmaß, Stundenzettel), Kommunikation (E-Mail-Anweisungen, WhatsApp-Meldungen, Fotos, Sprachnachrichten). For each: which object it becomes, how it comes in (stage 0: a project folder is imported), what the user sees of it.
-2. **Digitaler Zwilling.** Ebene 1 Betrieb (Auftraggeber, Verträge, Preisbasis, Projekte) and Ebene 2 Projekt (Leistungen je Position: beauftragt, gebaut, verrechnet, offen). Objects with their fields, source, review state and history, described in words, not code.
-3. **Ergebnis.** The Schlussrechnung: vergessene Stunden gefunden, Mehrmengen erkannt, Planänderungen eingerechnet, vorab geprüft wie vom Auftraggeber, zu jeder Position ein Beleg, zusätzlich verrechenbar. Plus the outputs of dossier v3 section 3.6 that survive the challenge.
-4. **Screens.** One line per Attio element of the translation table: what it contributes to Daten, Zwilling or Ergebnis. Nothing contributed: out (for example Sequences). Missing: added (position table beauftragt, gebaut, verrechnet, offen; timeline; Schlussrechnung with fehlt and verrechnet). Never less understandable than the website.
-5. **Abschluss-Lauf.** Ordner lesen → Abgleich → Vorprüfung → Entwurf → Ausgaben, each with input, output and who confirms.
-6. **Vocabulary.** One table: German UI word, meaning, words we never use instead. Known gap: `docs/Demo_Faelle.md` still calls the amount on the final meeting sheet "claim" (section "Final meeting sheet"); replace it with the agreed German term, wording only, amounts unchanged.
-7. **Demo case Wien 21.** Which screen shows which amount from `Demo_Faelle.md`; the three-minute click path.
-8. **v1 calculation core.** Per module of `product/app/src/engine` (tag `v1-archiv`): port, rewrite or drop, with the reason. The amounts in `_STATUS.md` stay unless Maxi S. gives a go.
-9. **Open questions for the construction insider,** marked as such (no `PLATZHALTER` in this public file).
-
-Mocks are optional (low fidelity, for example one board per screen) and only if Maxi S. wants them; the first customer test runs on the text.
-
-## First customer test
-
-Three fresh subagents, started separately, without our context. Each gets only `README.md`, `docs/SPEZIFIKATION.md` and the task: "Lies die Spezifikation. Würdest du das kaufen? Was ist unverständlich?"
-
-- **Abrechnerin:** writes the final invoice, 20 years of experience, distrusts software.
-- **Geschäftsführer:** pays, wants to see the benefit in five minutes.
-- **Bauleiter:** knows the site, checks whether the Posten are right and whether he can explain them to his fitters.
-
-Verdicts with evidence (what was read, where they got stuck): **verstanden** (in their own words: what tieout does, what the amount is), **würde zahlen** (price points from the plan in `../tieout-intern`), **Gamechanger oder nicht** (what is missing, concretely). "Genutzt" starts with the clickable app after step 5. **Passed when** all three understand the three steps and name the benefit in one sentence. The main chat re-checks every finding against the specification before acting on it. The full report with price verdicts goes to `../tieout-intern/docs/kundentests/`; findings without prices go into a section "Kundentest" in `SPEZIFIKATION.md`.
+1. **App in `app/`:** Next.js (static export), React, TypeScript, Tailwind, shadcn with Base UI, Lucide, Inter self-hosted; check current versions before installing. Typecheck, lint, tests and build as npm scripts; CI per pull request.
+2. **`docs/DESIGN.md` and tokens:** the measured Attio values (type, colours, sidebar 275 px, header 48 px, buttons 28 px, tables, record page, right panel) as Tailwind tokens; light only.
+3. **Sidebar:** business switcher ("Haustechnik Beispiel GmbH (fiktiv)"), "Suche" (Strg K), "Start", "Aufgaben", "Berichte"; sections "Ihre Daten" (Belege, E-Mails, WhatsApp-Meldungen), "Digitaler Zwilling" (Betrieb, Auftraggeber, Projekte), "Ergebnis" (Posten or the word decided in E12, Schlussrechnungen); bottom "Erste Schritte", "Mitglieder einladen", "Beispieldaten".
+4. **Header** (title, help) and **Strg K** search over the navigation points.
+5. **Empty states** for every navigation point, in the Attio pattern, with our words; the project page shell with the step bar "Ihre Daten → Digitaler Zwilling → Ergebnis" and its tabs, empty.
+6. **Online at `app-neu`:** new Cloudflare worker; repair the Git connection first (open point in `_STATUS.md`). The worker `app` (jury link, v1) stays untouched.
 
 ## Done when
 
-- `docs/SPEZIFIKATION.md` covers points 1 to 9 and was accepted by Maxi S.
-- Customer test run, passed, findings worked in or listed as open.
-- `_STATUS.md` updated, this file rewritten for step 1 (Hülle), pull request merged with Maxi S.'s go.
+- Typecheck, lint, tests, build green; CI green on the pull request.
+- Browser light at 1440 px and 390 px; screenshot of each screen next to the matching Attio screen, shown to Maxi S.
+- `app-neu` shows the shell; `app.tieout.workers.dev` still shows v1.
+- `_STATUS.md` updated, this file rewritten for step 2 (Kern), pull request merged with Maxi S.'s go.
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 0b, Inhalt neu. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 0b: `docs/SPEZIFIKATION.md` von null entlang der drei Stufen der Website-Sektion 03 (Ihre Daten, Digitaler Zwilling, Ergebnis), jedes Attio-Element daran gemessen, Entscheidung zum alten Rechenkern, danach der erste Kundentest mit drei Subagenten (Abrechnerin, Geschäftsführer, Bauleiter). Widersprich mir, wo der Inhalt schwach ist. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor dem Push. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 1, Hülle. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 1: die leere App im Attio-Aufbau, Tokens als `docs/DESIGN.md`, Seitenleiste mit den drei Abschnitten aus der Spezifikation, Kopfzeile, Strg K, alle Navigationspunkte mit Leerzuständen, online unter `app-neu`. Zeig mir jeden Bildschirm neben dem passenden Attio-Bildschirm. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor dem Push und vor allem in Cloudflare. Deutsch, einfach, Ergebnis zuerst.
