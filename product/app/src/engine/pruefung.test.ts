@@ -1,7 +1,8 @@
 // Ende-zu-Ende: Rechenkern auf dem synthetischen Datensatz W21 gegen die Lösungsliste (Demo_Faelle.md v2).
 
 import { describe, expect, it } from "vitest";
-import { erzeugeW21 } from "@/demo/w21/erzeuge";
+import type { Datensatz, Feld } from "@/domain/typen";
+import { erzeugeW21, fehlgelesen } from "@/demo/w21/erzeuge";
 import {
   SOLL_AUSSERHALB_ERP,
   SOLL_BEFUNDE,
@@ -133,6 +134,32 @@ describe("W21: Prüfkaskade, Zahlungen, Import", () => {
     expect(e.kaskade!.restforderung).toBe(17_006_089);
   });
 
+  it("Kaskade: jede Zeile mit Quelle hat Belege in vorhandenen Dokumenten, Zwischensummen keine", () => {
+    const ids = new Set(d.dokumente.map((x) => x.id));
+    for (const z of e.kaskade!.zeilen) {
+      if (z.quelle === null) {
+        expect(z.belege, z.bezeichnung).toEqual([]);
+        continue;
+      }
+      expect(z.belege.length, z.bezeichnung).toBeGreaterThan(0);
+      for (const b of z.belege) expect(ids.has(b.quelle.dokumentId), `${z.bezeichnung}: ${b.quelle.dokumentId}`).toBe(true);
+    }
+  });
+
+  it("Kaskade: Belege zeigen auf Entwurf, Vertragspunkt, GU-Abzugsschreiben und Zahlungsavisos", () => {
+    const stellen = Object.fromEntries(
+      e.kaskade!.zeilen.filter((z) => z.quelle).map((z) => [z.bezeichnung, z.belege.map((b) => `${b.quelle.dokumentId} S. ${b.quelle.seite} ${b.quelle.stelle}`)]),
+    );
+    expect(stellen).toEqual({
+      "Leistungssumme laut Entwurf inkl. Liste 1": ["sr-entwurf S. 22 Summe Leistung"],
+      Nachlass: ["vertrag S. 5 Pkt. 5.1"],
+      "Baustrom und Bauwasser": ["vertrag S. 4 Pkt. 4.6", "gu-abzug S. 1 Absatz 1"],
+      Bauschadensumlage: ["gu-abzug S. 1 Absatz 2"],
+      "Haftrücklass": ["vertrag S. 9 Pkt. 9.2"],
+      "Zahlungen auf AR1, AR2, AR3": ["zahlung-ar1 S. 1 Zahlbetrag", "zahlung-ar2 S. 1 Zahlbetrag", "zahlung-ar3 S. 1 Zahlbetrag"],
+    });
+  });
+
   it("Zahlungen je AR nach der Rechenregel", () => {
     expect(d.zahlungen.map((z) => z.betrag.wert)).toEqual(SOLL_ZAHLUNGEN);
     expect(d.abschlaege.map((a) => a.summe.wert)).toEqual([31_240_000, 41_890_000, 35_620_000]);
@@ -191,5 +218,44 @@ describe("W21: Invarianten", () => {
 
   it("Generator ist deterministisch", () => {
     expect(JSON.stringify(erzeugeW21())).toBe(JSON.stringify(d));
+  });
+});
+
+describe("W21: Korrekturen beim Einlesen behalten den alten Wert", () => {
+  const mitVorher = (wert: unknown): Feld<unknown>[] => {
+    if (Array.isArray(wert)) return wert.flatMap(mitVorher);
+    if (!wert || typeof wert !== "object") return [];
+    const o = wert as Record<string, unknown>;
+    const selbst = "quelle" in o && "wert" in o && "vorher" in o ? [o as unknown as Feld<unknown>] : [];
+    return [...selbst, ...Object.values(o).flatMap(mitVorher)];
+  };
+
+  it("genau die 25 korrigierten Felder tragen „vorher“, jeweils anders als der Wert", () => {
+    const felder = mitVorher(d);
+    expect(felder.length).toBe(25);
+    for (const x of felder) {
+      expect(x.korrigiert).toBe(true);
+      expect(x.vorher).not.toEqual(x.wert);
+    }
+  });
+
+  it("12 Aufmaßmengen, 10 Regiestunden, 2 Mail-Daten, 1 Fotodatum", () => {
+    expect({
+      aufmass: mitVorher(d.aufmass).length,
+      regie: mitVorher(d.regie.map((r) => r.stundenMonteur)).length,
+      mails: mitVorher(d.mails.map((m) => m.datum)).length,
+      fotos: mitVorher(d.fotos.map((x) => x.exifDatum)).length,
+    }).toEqual({ aufmass: 12, regie: 10, mails: 2, fotos: 1 });
+  });
+
+  it("Lesefehler ist eine reine Funktion des richtigen Werts", () => {
+    expect([fehlgelesen(1_600), fehlgelesen(81_250), fehlgelesen(50)]).toEqual([1_500, 81_750, 850]);
+    expect([fehlgelesen("2026-01-14"), fehlgelesen("2026-02-19T10:15")]).toEqual(["2025-01-14", "2025-02-19T10:15"]);
+  });
+
+  it("der Rechenkern liest „vorher“ nie: gleiches Ergebnis mit und ohne", () => {
+    const ohne = JSON.parse(JSON.stringify(d, (k, v) => (k === "vorher" ? undefined : v))) as Datensatz;
+    expect(mitVorher(ohne).length).toBe(0);
+    expect(pruefe(ohne)).toEqual(e);
   });
 });
