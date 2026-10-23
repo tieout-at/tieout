@@ -13,6 +13,11 @@ function beleg(titel: string, text: string, quelle: Quelle, datum?: string): Bel
   return datum ? { titel, text, quelle, datum } : { titel, text, quelle };
 }
 
+/** Quellen eines Rechenschritts; ohne Quelle (nur gerechnet) fehlt das Feld. */
+function quellen(...q: Quelle[]): { quellen?: Quelle[] } {
+  return q.length > 0 ? { quellen: q } : {};
+}
+
 function nachDatum(belege: Beleg[]): Beleg[] {
   return [...belege].sort((a, b) => (a.datum ?? "").localeCompare(b.datum ?? ""));
 }
@@ -44,6 +49,7 @@ export function mehrmengen(k: Kontext): Befund[] {
     const ausPlanaenderung = plaene.some((x) => x.v.typ === "aenderung");
     const ueberLv = aufmass > p.menge.wert;
     const verrechnetLabel = k.d.entwurf ? "Verrechnet" : "In Abschlagsrechnungen";
+    const aufmassVorGrenze = (k.aufmass.get(nr) ?? []).filter(({ blatt }) => vorGrenze(k, blatt.datum.wert));
 
     const belege: Beleg[] = [
       ...plaene.map(({ plan, v }) =>
@@ -56,11 +62,9 @@ export function mehrmengen(k: Kontext): Befund[] {
         .filter((f) => f.bezugPositionen.wert.includes(nr))
         .map((f) => beleg(`Foto ${k.d.dokumente.find((x) => x.id === f.dokumentId)?.dateiname ?? f.dokumentId}`, f.ort.wert, f.exifDatum.quelle, f.exifDatum.wert.slice(0, 10))),
       ...k.d.zurufe.filter((z) => z.bezugPositionen.wert.includes(nr)).map(zurufBeleg),
-      ...(k.aufmass.get(nr) ?? [])
-        .filter(({ blatt }) => vorGrenze(k, blatt.datum.wert))
-        .map(({ blatt, zeile }) =>
-          beleg(`Aufmaßblatt ${blatt.nr}`, `${menge(zeile.menge.wert, einheit)} aufgemessen`, zeile.menge.quelle, blatt.datum.wert),
-        ),
+      ...aufmassVorGrenze.map(({ blatt, zeile }) =>
+        beleg(`Aufmaßblatt ${blatt.nr}`, `${menge(zeile.menge.wert, einheit)} aufgemessen`, zeile.menge.quelle, blatt.datum.wert),
+      ),
       ...(k.d.entwurf
         ? []
         : verrechneteZeilen(k, nr).map(({ rechnung, zeile }) =>
@@ -87,10 +91,18 @@ export function mehrmengen(k: Kontext): Befund[] {
       rechenweg: {
         text: `(${menge(aufmass)} − ${menge(verrechnet)}) ${einheit} × ${euro(ep)} = ${euro(betrag)}`,
         schritte: [
-          { bezeichnung: "LV-Menge", wert: menge(p.menge.wert, einheit) },
-          { bezeichnung: k.grenze ? `Aufmaß bis ${datumText(k.grenze)}` : "Aufmaß", wert: menge(aufmass, einheit) },
-          { bezeichnung: verrechnetLabel, wert: menge(verrechnet, einheit) },
-          { bezeichnung: "Einheitspreis laut LV", wert: euro(ep) },
+          { bezeichnung: "LV-Menge", wert: menge(p.menge.wert, einheit), ...quellen(p.menge.quelle) },
+          {
+            bezeichnung: k.grenze ? `Aufmaß bis ${datumText(k.grenze)}` : "Aufmaß",
+            wert: menge(aufmass, einheit),
+            ...quellen(...aufmassVorGrenze.map(({ zeile }) => zeile.menge.quelle)),
+          },
+          {
+            bezeichnung: verrechnetLabel,
+            wert: menge(verrechnet, einheit),
+            ...quellen(...verrechneteZeilen(k, nr).map(({ zeile }) => zeile.menge.quelle)),
+          },
+          { bezeichnung: "Einheitspreis laut LV", wert: euro(ep), ...quellen(p.ep.quelle) },
           { bezeichnung: ueberLv ? "Mehrmenge" : "Nicht verrechnet", wert: `${menge(differenz, einheit)} × ${euro(ep)}`, betrag, summe: true },
         ],
         plausibilitaet,
@@ -125,11 +137,25 @@ export function regie(k: Kontext): Befund[] {
         rechenweg: {
           text: `${teile.join(" + ")} = ${euro(betrag)}`,
           schritte: [
-            { bezeichnung: "Monteur", wert: `${menge(rb.stundenMonteur.wert)} h × ${euro(v.regiesatzMonteur.wert)}`, betrag: m },
+            {
+              bezeichnung: "Monteur",
+              wert: `${menge(rb.stundenMonteur.wert)} h × ${euro(v.regiesatzMonteur.wert)}`,
+              betrag: m,
+              ...quellen(rb.stundenMonteur.quelle, v.regiesatzMonteur.quelle),
+            },
             ...(rb.stundenHelfer.wert > 0
-              ? [{ bezeichnung: "Helfer", wert: `${menge(rb.stundenHelfer.wert)} h × ${euro(v.regiesatzHelfer.wert)}`, betrag: h }]
+              ? [
+                  {
+                    bezeichnung: "Helfer",
+                    wert: `${menge(rb.stundenHelfer.wert)} h × ${euro(v.regiesatzHelfer.wert)}`,
+                    betrag: h,
+                    ...quellen(rb.stundenHelfer.quelle, v.regiesatzHelfer.quelle),
+                  },
+                ]
               : []),
-            ...(rb.material.wert > 0 ? [{ bezeichnung: "Material", wert: euro(rb.material.wert), betrag: rb.material.wert }] : []),
+            ...(rb.material.wert > 0
+              ? [{ bezeichnung: "Material", wert: euro(rb.material.wert), betrag: rb.material.wert, ...quellen(rb.material.quelle) }]
+              : []),
           ],
         },
         belege: nachDatum([
@@ -187,10 +213,24 @@ export function zurufRegie(k: Kontext): Befund[] {
           text: `${teile.join(" + ")} = ${euro(betrag)}`,
           schritte: [
             ...(z.stundenMonteur.wert > 0
-              ? [{ bezeichnung: "Monteur", wert: `${menge(z.stundenMonteur.wert)} h × ${euro(v.regiesatzMonteur.wert)}`, betrag: m }]
+              ? [
+                  {
+                    bezeichnung: "Monteur",
+                    wert: `${menge(z.stundenMonteur.wert)} h × ${euro(v.regiesatzMonteur.wert)}`,
+                    betrag: m,
+                    ...quellen(z.stundenMonteur.quelle, v.regiesatzMonteur.quelle),
+                  },
+                ]
               : []),
             ...(z.stundenHelfer.wert > 0
-              ? [{ bezeichnung: "Helfer", wert: `${menge(z.stundenHelfer.wert)} h × ${euro(v.regiesatzHelfer.wert)}`, betrag: h }]
+              ? [
+                  {
+                    bezeichnung: "Helfer",
+                    wert: `${menge(z.stundenHelfer.wert)} h × ${euro(v.regiesatzHelfer.wert)}`,
+                    betrag: h,
+                    ...quellen(z.stundenHelfer.quelle, v.regiesatzHelfer.quelle),
+                  },
+                ]
               : []),
           ],
         },
@@ -240,11 +280,22 @@ export function preisumrechnung(k: Kontext): Befund[] {
       rechenweg: {
         text: `${euro(lohn)} × ${prozentText(aenderung)} = ${euro(betrag)}`,
         schritte: [
-          { bezeichnung: `Leistung ab ${datumText(stichtag)} (${blaetter.length} Aufmaßblätter)`, wert: euro(leistung), betrag: leistung },
-          { bezeichnung: `Lohnanteil ${prozentText(pg.lohnanteil.wert, 0)} laut Vertrag Pkt. ${pg.punkt}`, wert: euro(lohn), betrag: lohn },
+          {
+            bezeichnung: `Leistung ab ${datumText(stichtag)} (${blaetter.length} Aufmaßblätter)`,
+            wert: euro(leistung),
+            betrag: leistung,
+            ...quellen(...blaetter.map((b) => b.leistungVon.quelle)),
+          },
+          {
+            bezeichnung: `Lohnanteil ${prozentText(pg.lohnanteil.wert, 0)} laut Vertrag Pkt. ${pg.punkt}`,
+            wert: euro(lohn),
+            betrag: lohn,
+            ...quellen(pg.lohnanteil.quelle),
+          },
           {
             bezeichnung: `${ix.name.wert}: ${menge(ix.basis.wert)} → ${menge(ix.aktuell.wert)}`,
             wert: prozentText(aenderung),
+            ...quellen(ix.basis.quelle, ix.aktuell.quelle),
           },
           { bezeichnung: "Preisumrechnung", wert: `${euro(lohn)} × ${prozentText(aenderung)}`, betrag, summe: true },
         ],
@@ -275,8 +326,13 @@ export function anmeldungen(k: Kontext): Befund[] {
       const rechenweg = {
         text: `${menge(a.stunden.wert)} h × ${euro(v.mittellohnpreis.wert)} (Mittellohnpreis) + ${sachkosten} ${euro(a.material.wert)} = ${euro(betrag)}`,
         schritte: [
-          { bezeichnung: "Lohn", wert: `${menge(a.stunden.wert)} h × ${euro(v.mittellohnpreis.wert)}`, betrag: lohn },
-          { bezeichnung: sachkosten, wert: euro(a.material.wert), betrag: a.material.wert },
+          {
+            bezeichnung: "Lohn",
+            wert: `${menge(a.stunden.wert)} h × ${euro(v.mittellohnpreis.wert)}`,
+            betrag: lohn,
+            ...quellen(a.stunden.quelle, v.mittellohnpreis.quelle),
+          },
+          { bezeichnung: sachkosten, wert: euro(a.material.wert), betrag: a.material.wert, ...quellen(a.material.quelle) },
         ],
       };
       if (pauschale) {

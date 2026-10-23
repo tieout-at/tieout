@@ -85,6 +85,43 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
     expect(e.ausserhalbErp).toEqual(SOLL_AUSSERHALB_ERP);
   });
 
+  it("Rechenwege: jeder Schritt mit Wert aus einem Dokument hat Quellen in vorhandenen Dokumenten, Schlusszeilen keine", () => {
+    const ids = new Set([...d.dokumente.map((x) => x.id), ...d.zurufe.map((z) => z.id)]);
+    for (const b of e.befunde.filter((x) => x.rechenweg)) {
+      for (const s of b.rechenweg!.schritte) {
+        const name = `${b.schluessel}, ${s.bezeichnung}`;
+        if (s.summe) {
+          expect(s.quellen, name).toBeUndefined();
+          continue;
+        }
+        expect(s.quellen?.length, name).toBeGreaterThan(0);
+        for (const q of s.quellen!) expect(ids.has(q.dokumentId), `${name}: ${q.dokumentId}`).toBe(true);
+      }
+    }
+  });
+
+  it("Rechenwege J1 bis J8, O1, O2: Quellen zeigen auf LV, Aufmaß, Entwurf, Regiebericht, Vertrag, Indexblatt", () => {
+    const dokumente = (schluessel: string) =>
+      Object.fromEntries(
+        e.befunde.find((b) => b.schluessel === schluessel)!.rechenweg!.schritte.filter((s) => !s.summe).map((s) => [s.bezeichnung, s.quellen!.map((q) => q.dokumentId)]),
+      );
+    const mehrmenge = (aufmass: string[]) => ({ "LV-Menge": ["lv"], Aufmaß: aufmass, Verrechnet: ["sr-entwurf"], "Einheitspreis laut LV": ["lv"] });
+    expect(dokumente("mehrmenge:22.04.12B")).toEqual(mehrmenge(["ab-12"]));
+    expect(dokumente("mehrmenge:24.02.05A")).toEqual(mehrmenge(["ab-04", "ab-09"]));
+    expect(dokumente("mehrmenge:22.06.03C")).toEqual(mehrmenge(["ab-10"]));
+    expect(dokumente("mehrmenge:26.03.04A")).toEqual(mehrmenge(["ab-13"]));
+    expect(dokumente("regie:RB-07")).toEqual({ Monteur: ["rb-07", "vertrag"], Material: ["rb-07"] });
+    expect(dokumente("regie:RB-11")).toEqual({ Monteur: ["rb-11", "vertrag"], Helfer: ["rb-11", "vertrag"], Material: ["rb-11"] });
+    expect(dokumente("regie:RB-14")).toEqual({ Monteur: ["rb-14", "vertrag"], Material: ["rb-14"] });
+    expect(dokumente("regie:RB-12")).toEqual({ Monteur: ["rb-12", "vertrag"], Helfer: ["rb-12", "vertrag"], Material: ["rb-12"] });
+    expect(dokumente("regie:RB-15")).toEqual({ Monteur: ["rb-15", "vertrag"], Material: ["rb-15"] });
+    const j8 = Object.values(dokumente("preisumrechnung"));
+    expect(j8[0]).toEqual(d.aufmass.filter((b) => b.leistungVon.wert >= "2026-05-01").map((b) => b.dokumentId));
+    expect(j8.slice(1)).toEqual([["vertrag"], ["indexblatt", "indexblatt"]]);
+    const vertragsstelle = e.befunde.find((b) => b.schluessel === "regie:RB-07")!.rechenweg!.schritte[0].quellen![1];
+    expect(vertragsstelle).toEqual({ dokumentId: "vertrag", seite: 6, stelle: "Pkt. 6.3" });
+  });
+
   it("A1: Hinweis ohne Betrag und ohne Wort „Forcierung“", () => {
     const a1 = e.befunde.find((b) => b.liste === "anwalt")!;
     expect(a1.betrag).toBeNull();
