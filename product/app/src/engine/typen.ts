@@ -128,6 +128,11 @@ export interface KaskadenZeile {
   pruefung: "laut_vertrag" | "abweichung" | "abzug_ohne_vertragspunkt" | null;
   vertragspunkt: string | null;
   betrag: Cent;
+  /**
+   * Dokumente hinter der Zeile, jeweils mit Seite und Stelle: Entwurf (Leistungssumme), Vertragspunkt und
+   * GU-Abzugsschreiben (Sätze), Zahlungsavisos (Zahlungen). Leer bei Zwischensummen, die nur gerechnet sind.
+   */
+  belege: Beleg[];
 }
 
 export interface ImportStand {

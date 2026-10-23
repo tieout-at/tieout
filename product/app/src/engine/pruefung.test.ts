@@ -133,6 +133,32 @@ describe("W21: Prüfkaskade, Zahlungen, Import", () => {
     expect(e.kaskade!.restforderung).toBe(17_006_089);
   });
 
+  it("Kaskade: jede Zeile mit Quelle hat Belege in vorhandenen Dokumenten, Zwischensummen keine", () => {
+    const ids = new Set(d.dokumente.map((x) => x.id));
+    for (const z of e.kaskade!.zeilen) {
+      if (z.quelle === null) {
+        expect(z.belege, z.bezeichnung).toEqual([]);
+        continue;
+      }
+      expect(z.belege.length, z.bezeichnung).toBeGreaterThan(0);
+      for (const b of z.belege) expect(ids.has(b.quelle.dokumentId), `${z.bezeichnung}: ${b.quelle.dokumentId}`).toBe(true);
+    }
+  });
+
+  it("Kaskade: Belege zeigen auf Entwurf, Vertragspunkt, GU-Abzugsschreiben und Zahlungsavisos", () => {
+    const stellen = Object.fromEntries(
+      e.kaskade!.zeilen.filter((z) => z.quelle).map((z) => [z.bezeichnung, z.belege.map((b) => `${b.quelle.dokumentId} S. ${b.quelle.seite} ${b.quelle.stelle}`)]),
+    );
+    expect(stellen).toEqual({
+      "Leistungssumme laut Entwurf inkl. Liste 1": ["sr-entwurf S. 22 Summe Leistung"],
+      Nachlass: ["vertrag S. 5 Pkt. 5.1"],
+      "Baustrom und Bauwasser": ["vertrag S. 4 Pkt. 4.6", "gu-abzug S. 1 Absatz 1"],
+      Bauschadensumlage: ["gu-abzug S. 1 Absatz 2"],
+      "Haftrücklass": ["vertrag S. 9 Pkt. 9.2"],
+      "Zahlungen auf AR1, AR2, AR3": ["zahlung-ar1 S. 1 Zahlbetrag", "zahlung-ar2 S. 1 Zahlbetrag", "zahlung-ar3 S. 1 Zahlbetrag"],
+    });
+  });
+
   it("Zahlungen je AR nach der Rechenregel", () => {
     expect(d.zahlungen.map((z) => z.betrag.wert)).toEqual(SOLL_ZAHLUNGEN);
     expect(d.abschlaege.map((a) => a.summe.wert)).toEqual([31_240_000, 41_890_000, 35_620_000]);
