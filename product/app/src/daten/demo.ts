@@ -31,13 +31,15 @@ export interface SchonBeiAuftraggeber {
 
 /**
  * Hat dieser Auftraggeber in einem anderen Projekt schon aus demselben Grund gekürzt oder abgezogen? Abgleich über
- * den festen Schlüssel des Grunds. Die Adresse führt zum Korrekturblatt oder Zahlungsavis dort.
+ * den festen Schlüssel des Grunds, nur Treffer vor der eigenen Schlussrechnung (sonst vor dem Stichtag), damit
+ * „schon“ zeitlich stimmt. Die Adresse führt zum Korrekturblatt oder Zahlungsavis dort.
  */
 export function schonBeiAuftraggeber(projektId: string, grund: Kuerzungsgrund): SchonBeiAuftraggeber[] {
   const { f, h } = laden();
   const d = f.projekte.find((p) => p.projekt.id === projektId);
   if (!d) return [];
-  return gleicherGrund(h, d.projekt.auftraggeberId, grund, projektId).map((x) => ({ kurz: x.kurz, href: `/projekte/${x.projektId}/belege/${x.beleg.quelle.dokumentId}/#pos-${x.anker}` }));
+  const vor = d.schlussrechnung?.datum.wert ?? f.stichtag;
+  return gleicherGrund(h, d.projekt.auftraggeberId, grund, projektId, vor).map((x) => ({ kurz: x.kurz, href: `/projekte/${x.projektId}/belege/${x.beleg.quelle.dokumentId}/#pos-${x.anker}` }));
 }
 
 export function firma(): { daten: Firmendaten; ergebnis: FirmenErgebnis } {

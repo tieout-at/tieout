@@ -63,7 +63,12 @@ export default async function ProjektUebersicht({ params }: Props) {
   // Ohne Abgleich (Schlussrechnung gelegt oder abgeschlossen): Abrechnung aus Rechnung, Korrekturblatt und Avis.
   const abr = projektAbrechnung(id);
   const zahlungsavis = d.zahlungen.find((z) => z.rechnungNr.wert === abr?.rechnung.nr)?.dokumentId ?? "";
-  const bisher = e.abgleich ? null : historie().auftraggeber.find((h) => h.auftraggeber.id === p.auftraggeberId && h.kuerzungen.length + h.abzuege.length + h.nachtraege.anzahl > 0);
+  // „Bisher“ nur, wenn der Auftraggeber auch in anderen Projekten etwas gekürzt, abgezogen oder bezahlt hat.
+  const bisher = e.abgleich
+    ? null
+    : historie().auftraggeber.find(
+        (h) => h.auftraggeber.id === p.auftraggeberId && [...h.kuerzungen, ...h.abzuege, ...h.schlusszahlung].some((x) => x.projektId !== id),
+      );
 
   // Letzte WhatsApp-Meldung und der Posten, den sie belegt oder ausgelöst hat.
   const meldung = [...d.zurufe].sort((a, b) => b.zeitpunkt.localeCompare(a.zeitpunkt))[0];
@@ -191,7 +196,7 @@ export default async function ProjektUebersicht({ params }: Props) {
                   titel: "Gekürzt",
                   wert: betrag(abr.gekuerzt),
                   zeile: anzahl(abr.kuerzungen.length, "Position laut Korrekturblatt", "Positionen laut Korrekturblatt"),
-                  href: `${basis}/belege/${abr.kuerzungen[0]?.beleg.quelle.dokumentId ?? ""}/`,
+                  href: `${basis}/belege/${zahlungsavis}/#pos-kuerzung`,
                   stand: "erledigt",
                 },
                 { titel: "Einbehalten", wert: betrag(abr.einbehalten), zeile: "Haftrücklass", href: `${basis}/belege/${zahlungsavis}/#pos-haftruecklass`, stand: "erledigt" },

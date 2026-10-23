@@ -98,3 +98,12 @@ describe("Gleicher Grund: Sprung zum Original", () => {
     expect([umlage.projektId, umlage.beleg.quelle.dokumentId, umlage.anker]).toEqual(["p7-w10-bpa", "zahlung-sr", "bauschadensumlage"]);
   });
 });
+
+describe("Gleicher Grund: zeitlich richtig", () => {
+  it("P7 kam vor W21: von P7 aus gibt es mit Stichtag der eigenen Schlussrechnung kein „schon in W21“", () => {
+    expect(gleicherGrund(h, "hochbau-beispiel", "abzug_ohne_vertragspunkt", "p7-w10-bpa").map((x) => x.kurz)).toEqual(["W21"]);
+    expect(gleicherGrund(h, "hochbau-beispiel", "abzug_ohne_vertragspunkt", "p7-w10-bpa", "2025-11-20")).toEqual([]);
+    expect(gleicherGrund(h, "hochbau-beispiel", "rechenfehler", "p7-w10-bpa", "2025-11-20")).toEqual([]);
+    expect(gleicherGrund(h, "hochbau-beispiel", "abzug_ohne_vertragspunkt", "w21-b-hkls", "2026-10-22").map((x) => x.kurz)).toEqual(["P7"]);
+  });
+});

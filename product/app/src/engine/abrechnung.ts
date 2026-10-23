@@ -19,7 +19,7 @@ const NAME: Record<AbzugArt, string> = {
 const STUFEN: { arten: AbzugArt[]; summe: string }[] = [
   { arten: ["nachlass"], summe: "Summe nach Nachlass" },
   { arten: ["baustrom_bauwasser", "bauschadensumlage"], summe: "Betrag vor Einbehalten" },
-  { arten: ["deckungsruecklass", "haftruecklass"], summe: "Schlussrechnungsbetrag vor Abzug der Abschläge" },
+  { arten: ["deckungsruecklass", "haftruecklass"], summe: "Schlussrechnungsbetrag vor Abzug der Zahlungen" },
 ];
 
 const ABZUG_ARTEN = new Set<string>(STUFEN.flatMap((s) => s.arten));
