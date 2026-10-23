@@ -122,6 +122,10 @@
   line-height: 18px;
   color: var(--text-muted);
 }
+.ek-warn {
+  color: var(--warn);
+  font-weight: 500;
+}
 .ek-glied__zeile .ab-striche {
   max-width: none;
 }
@@ -173,7 +177,7 @@
 }
 .ue-posten__zeile {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr) 176px 112px 104px;
+  grid-template-columns: 76px minmax(0, 1fr) 168px 104px 104px;
   gap: var(--space-3);
   align-items: center;
   min-height: var(--row-h-2);
@@ -340,19 +344,34 @@
     border-bottom: 1px solid var(--line);
   }
   .ue-posten__zeile {
-    grid-template-columns: 64px minmax(0, 1fr) 96px;
+    grid-template-columns: 64px minmax(0, 1fr) 104px 96px;
   }
-  .ue-quellen,
-  .ue-posten__stand {
+  .ue-quellen {
     display: none;
   }
 }
+/* Zweite „Weiter prüfen“ nur am Handy, wo der Seitenkopf keine Aktion zeigt */
+.ue-handy-knopf {
+  display: none;
+}
 @media (max-width: 640px) {
+  .ue-handy-knopf {
+    display: inline-flex;
+    justify-content: center;
+    height: 44px;
+  }
   .ue-posten__zeile {
     grid-template-columns: minmax(0, 1fr) auto;
   }
-  .ue-posten__nr {
+  .ue-posten__nr,
+  .ue-posten__stand {
     display: none;
+  }
+  .ue-naechste .sw-kpis {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+    animation: none;
   }
   .ek-glied__a {
     padding: var(--space-3);
