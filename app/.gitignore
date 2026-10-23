@@ -1,0 +1,7 @@
+node_modules/
+.next/
+out/
+.wrangler/
+qa-shots/
+next-env.d.ts
+*.tsbuildinfo

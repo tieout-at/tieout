@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * Design tokens of the app. Sizes, spacing and behaviour are measured on app.attio.com (23.10.2026),
+ * colours are tieout's own (brand/README.md). Every value is explained in docs/DESIGN.md.
+ */
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Type: Attio uses weight 500 for all UI text and tightens the larger sizes. */
+  --text-2xs: 11px;
+  --text-2xs--line-height: 11px;
+  --text-2xs--letter-spacing: 0.02em;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-sm--letter-spacing: -0.005em;
+  --text-base: 16px;
+  --text-base--line-height: 20px;
+  --text-base--letter-spacing: -0.01em;
+  --text-lg: 18px;
+  --text-lg--line-height: 24px;
+  --text-lg--letter-spacing: -0.02em;
+  --text-xl: 20px;
+  --text-xl--line-height: 24px;
+  --text-xl--letter-spacing: -0.02em;
+
+  /* Colours: ink and ultramarine from the brand; greys and alphas as measured in Attio. */
+  --color-fg: #0a1020;
+  --color-fg-secondary: rgb(10 16 32 / 0.63);
+  --color-fg-help: rgb(10 16 32 / 0.55);
+  --color-fg-muted: rgb(10 16 32 / 0.5);
+  --color-fg-faint: rgb(10 16 32 / 0.3);
+  --color-surface: #ffffff;
+  --color-sidebar: #fbfbfb;
+  --color-line: #eeeff1;
+  --color-fill-hover: rgb(0 0 0 / 0.04);
+  --color-fill-subtle: rgb(0 0 0 / 0.02);
+  --color-fill-selected: #f6f7f7;
+  --color-count: #505155;
+  --color-accent: #1d3bff;
+  --color-accent-hover: #1630e0;
+  --color-accent-soft: rgb(29 59 255 / 0.08);
+  --color-grid: #e8ecf2;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-item: 9px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-button: inset 0 0 0 1px rgb(0 0 0 / 0), 0 0 2px 0 rgb(28 40 64 / 0.18), 0 1px 3px 0 rgb(0 0 0 / 0.04);
+  --shadow-primary: inset 0 0 0 1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(29 59 255 / 0.12), 0 3px 6px -2px rgb(29 59 255 / 0.08);
+  --shadow-ring: inset 0 0 0 1px #eeeff1;
+  --shadow-kbd: inset 0 0 0 1px rgb(0 0 0 / 0.06);
+  --shadow-popup: 0 0 0 1px rgb(0 0 0 / 0.07), 0 4px 8px -2px rgb(16 24 40 / 0.06), 0 12px 32px -8px rgb(16 24 40 / 0.14);
+  --shadow-line-bottom: inset 0 -1px 0 0 #eeeff1;
+}
+
+:root {
+  --sidebar-width: 275px;
+  --header-height: 48px;
+}
+
+/* Base UI state variants (taken from shadcn/tailwind.css, only the ones the app uses) */
+@custom-variant data-open {
+  &:where([data-state="open"]),
+  &:where([data-open]:not([data-open="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-closed {
+  &:where([data-state="closed"]),
+  &:where([data-closed]:not([data-closed="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-selected {
+  &:where([data-selected="true"]) {
+    @slot;
+  }
+}
+@custom-variant data-highlighted {
+  &:where([data-highlighted]) {
+    @slot;
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-surface);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    letter-spacing: var(--text-sm--letter-spacing);
+    font-weight: 500;
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+  button {
+    cursor: pointer;
+  }
+}
