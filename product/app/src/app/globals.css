@@ -12,6 +12,7 @@
 @import "../ui/styles/konto.css";
 @import "../ui/styles/dashboard.css";
 @import "../ui/styles/schlussrechnung.css";
+@import "../ui/styles/uebersicht.css";
 
 /* Schriften selbst ausgeliefert (next/font), Namen aus den Tokens bleiben als Rückfall */
 :root {

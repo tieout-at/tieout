@@ -1,18 +1,21 @@
-// Projekt-Übersicht (Vorlage: reebuild R-C, Linear-Projektseite): Titel und Fakten, Ablauf mit vier Schritten,
-// Kennzahlen, die Posten zum Entscheiden und rechts eine ruhige Eigenschaftenliste. Eine Primäraktion („Weiter prüfen“).
+// Projekt-Übersicht (UI-Runde 1, Schritt 3, Option A „Ergebniskette“; Vorlage: Linear-Projektseite, reebuild R-C,
+// Stripe-Zahlungsfortschritt für die Kette). Oben Titel und Fakten, darunter vier Ergebnisse statt Maschinenraum:
+// gefunden, abgesichert, freigegeben, Schlussrechnung. Darunter die nächsten Posten (die ganze Liste steht auf
+// „Posten“) und rechts die letzte WhatsApp-Meldung. Eine Primäraktion („Weiter prüfen“, beginnt bei J1).
 // Alle Zahlen und Beträge aus dem Rechenkern.
 
+import { Camera } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { postenSlug, firma, projekt, projektIds, zuEntscheiden } from "@/daten/demo";
-import type { Ergebnis } from "@/engine";
-import { PostenTabelle } from "@/ui/PostenTabelle";
-import { anzahl, betrag, datum } from "@/ui/format";
+import { firma, hatSchlussrechnung, postenSlug, projekt, projektIds, zuEntscheiden } from "@/daten/demo";
+import { BELEGQUELLE_TEXT } from "@/engine";
+import { Ergebniskette, type Glied } from "@/ui/Ergebniskette";
+import { anzahl, betrag, datum, zeitpunkt } from "@/ui/format";
+import { Ico } from "@/ui/Ico";
 import { Kennzahl, Kennzahlen } from "@/ui/Kennzahl";
-import { Panel } from "@/ui/Panel";
-import { Schrittleiste } from "@/ui/Schrittleiste";
+import { teileTitel } from "@/ui/posten-texte";
 import { Seitenkopf } from "@/ui/Seitenkopf";
-import { FreigabeStriche, FreigegebenZahl } from "@/ui/Stand";
+import { FreigabeStriche, FreigegebenZahl, StandZelle } from "@/ui/Stand";
 import { WeiterPruefen } from "@/ui/WeiterPruefen";
 
 type Props = { params: Promise<{ projekt: string }> };
@@ -27,19 +30,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `${d.projekt.kurz} ${d.projekt.name}` };
 }
 
-function posten(e: Ergebnis, liste: "jetzt" | "offen"): string {
-  return anzahl(e.befunde.filter((b) => b.liste === liste).length, "Posten", "Posten");
-}
-
-/** Eine Zeile der Eigenschaftenliste (Linear-Projekt rechts): Wort links, Zahl rechts. */
-function Eigenschaft({ text, wert }: { text: string; wert: React.ReactNode }) {
-  return (
-    <div className="ab-prop">
-      <span>{text}</span>
-      <b>{wert}</b>
-    </div>
-  );
-}
+/** So viele Posten zeigt die Übersicht; alle stehen auf der Seite „Posten“. */
+const NAECHSTE = 5;
 
 export default async function ProjektUebersicht({ params }: Props) {
   const id = (await params).projekt;
@@ -48,28 +40,69 @@ export default async function ProjektUebersicht({ params }: Props) {
   const p = d.projekt;
   const ag = daten.auftraggeber.find((a) => a.id === p.auftraggeberId);
   const basis = `/projekte/${id}`;
-  const href = (schluessel: string) => `${basis}/posten/${postenSlug(schluessel)}/`;
   // „Braucht Anwalt“ geht an die Kanzlei und ist damit schon entschieden: zählt weder bei „Zu entscheiden“ noch bei
-  // „x von y freigegeben“, steht in der Tabelle als eigene Gruppe mit eigenem Zähler.
-  // Reihenfolge: Posten mit Kürzungsrisiko zuerst, damit „Weiter prüfen“ bei J1 beginnt (daten/demo.ts).
+  // „x von y freigegeben“. Reihenfolge: Posten mit Kürzungsrisiko zuerst, damit „Weiter prüfen“ bei J1 beginnt.
   const entscheiden = zuEntscheiden(id, e);
-  const risiken = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
-  const zurufe = d.zurufe.length;
-  const zurufIds = new Set(d.zurufe.map((z) => z.id));
-  const zurufePosten = e.befunde.filter((b) => b.art === "regie_zuruf").length;
-  const zurufeAlsBeleg = new Set(
-    e.befunde.filter((b) => b.art !== "regie_zuruf").flatMap((b) => b.belege.map((x) => x.quelle.dokumentId).filter((x) => zurufIds.has(x))),
-  ).size;
-  const einlesenZeile = [zurufe ? anzahl(zurufe, "WhatsApp-Meldung", "WhatsApp-Meldungen") : "", e.import.duplikate ? anzahl(e.import.duplikate, "Duplikat", "Duplikate") : ""].filter(Boolean).join(", ");
+  const befund = new Map(e.befunde.map((b) => [b.schluessel, b]));
+  const risiko = new Set((e.vorpruefung?.risiken ?? []).map((r) => r.befundSchluessel).filter((s): s is string => s !== null));
+  const anwalt = e.befunde.filter((b) => b.liste === "anwalt");
+  const sr = hatSchlussrechnung(id);
+  const v = e.vorpruefung;
+
+  // Letzte WhatsApp-Meldung und der Posten, den sie belegt oder ausgelöst hat.
+  const meldung = [...d.zurufe].sort((a, b) => b.zeitpunkt.localeCompare(a.zeitpunkt))[0];
+  const meldungPosten = meldung
+    ? (e.befunde.find((b) => b.art === "regie_zuruf" && b.belege.some((x) => x.quelle.dokumentId === meldung.id)) ??
+      e.befunde.find((b) => b.belege.some((x) => x.quelle.dokumentId === meldung.id)))
+    : undefined;
+
+  const glieder: Glied[] = e.abgleich
+    ? [
+        {
+          titel: "Gefunden",
+          wert: anzahl(entscheiden.length, "Posten", "Posten"),
+          zeile: `jetzt ${betrag(e.summen.jetzt)}, angemeldet ${betrag(e.summen.offen)}`,
+          href: `${basis}/posten/`,
+          stand: "erledigt",
+        },
+        v
+          ? {
+              titel: "Abgesichert",
+              wert: betrag(v.summe),
+              zeile: `Kürzungsrisiko in ${anzahl(v.risiken.length, "Position", "Positionen")}`,
+              href: sr ? `${basis}/schlussrechnung/` : `${basis}/posten/`,
+              stand: "erledigt",
+            }
+          : {
+              titel: "Belegt",
+              wert: anzahl(e.import.eindeutig, "Beleg", "Belege"),
+              zeile: d.zurufe.length ? `davon ${anzahl(d.zurufe.length, "WhatsApp-Meldung", "WhatsApp-Meldungen")}` : "jede Zahl mit Original",
+              href: `${basis}/belege/`,
+              stand: "erledigt",
+            },
+        {
+          titel: "Freigegeben",
+          wert: <FreigegebenZahl projektId={id} posten={entscheiden} />,
+          zeile: <FreigabeStriche projektId={id} posten={entscheiden} />,
+          href: `${basis}/posten/`,
+          stand: "jetzt",
+        },
+        sr && e.kaskade
+          ? { titel: "Schlussrechnung", wert: betrag(e.kaskade.restforderung), zeile: "Restforderung laut Entwurf", href: `${basis}/schlussrechnung/`, stand: "offen" }
+          : p.schlussrechnungLegenBis
+            ? { titel: "Schlussrechnung", wert: datum(p.schlussrechnungLegenBis), zeile: "legen bis", href: `${basis}/posten/`, stand: "offen" }
+            : { titel: "Letzte AR", wert: e.grenze ? datum(e.grenze) : "", zeile: "Posten gehen in die nächste AR", href: `${basis}/positionen/`, stand: "offen" },
+      ]
+    : [];
 
   return (
     <>
       <Seitenkopf
         pfad={[{ text: daten.firma.name, href: "/" }, { text: p.kurz }]}
         titel="Übersicht"
-        aktion={e.abgleich ? <WeiterPruefen projektId={id} posten={entscheiden} /> : undefined}
+        aktion={e.abgleich ? <WeiterPruefen projektId={id} posten={entscheiden} className="sw-btn sw-btn--accent sw-btn--sm" /> : undefined}
       />
-      <main className="scr-body ab-uebersicht">
+      <main className="scr-body ab-uebersicht ue">
         <div className="ptitle">
           <h2 className="page-title">
             <span className="sw-pos-nr">{p.kurz}</span>
@@ -78,7 +111,7 @@ export default async function ProjektUebersicht({ params }: Props) {
           <div className="sw-row meta sw-muted facts">
             {p.schlussrechnungLegenBis && (
               <span>
-                Schlussrechnung legen bis <b>{datum(p.schlussrechnungLegenBis)}</b>
+                Schlussrechnung legen bis <b className={e.abgleich ? "ue-frist" : undefined}>{datum(p.schlussrechnungLegenBis)}</b>
               </span>
             )}
             {!p.schlussrechnungLegenBis && e.abgleich && e.grenze && (
@@ -109,64 +142,98 @@ export default async function ProjektUebersicht({ params }: Props) {
 
         {e.abgleich && (
           <>
-            <Schrittleiste
-              schritte={[
-                { titel: "Einlesen", zahl: e.import.dokumente, einheit: e.import.dokumente === 1 ? "Dokument" : "Dokumente", zeile: einlesenZeile, erledigt: true, href: `${basis}/belege` },
-                {
-                  titel: "Datensätze",
-                  zahl: e.import.eindeutig,
-                  einheit: "eindeutig",
-                  zeile: anzahl(e.import.korrigierteFelder, "Feld korrigiert", "Felder korrigiert"),
-                  erledigt: true,
-                  href: `${basis}/belege`,
-                  hinweis: "Ein Datensatz je Dokument ohne Duplikate, jedes Feld mit Quelle",
-                },
-                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(entscheiden.length, "Posten", "Posten"), erledigt: true, href: `${basis}/positionen` },
-                {
-                  titel: "Prüfen und Freigeben",
-                  zahl: <FreigegebenZahl projektId={id} posten={entscheiden} />,
-                  einheit: "freigegeben",
-                  zeile: <FreigabeStriche projektId={id} posten={entscheiden} />,
-                  erledigt: false,
-                  href: `${basis}/posten`,
-                },
-              ]}
-            />
-            <Kennzahlen>
-              <Kennzahl label="Jetzt verrechenbar" wert={betrag(e.summen.jetzt)} kontext={posten(e, "jetzt")} />
-              <Kennzahl label="Angemeldet und offen" wert={betrag(e.summen.offen)} kontext={posten(e, "offen")} />
-              {e.vorpruefung && e.vorpruefung.risiken.length > 0 && (
-                <Kennzahl
-                  label="Kürzungsrisiko aus GU-Sicht"
-                  wert={betrag(e.vorpruefung.summe)}
-                  kontext={`${anzahl(e.vorpruefung.risiken.length, "Position", "Positionen")}, bereits gekürzt ${betrag(e.vorpruefung.bereitsGekuerzt.betrag)}`}
-                />
-              )}
-            </Kennzahlen>
-            <div className="cols">
-              <Panel titel="Zu entscheiden" rechts={<span className="sw-count">{entscheiden.length}</span>}>
-                <PostenTabelle projektId={id} befunde={e.befunde} summen={e.summen} risiken={risiken} href={(b) => href(b.schluessel)} />
-              </Panel>
-              <aside className="ab-props">
-                <section className="ab-props__gruppe">
-                  <h3 className="ab-props__kopf">
-                    Regieberichte <span className="sw-count">{e.regie.gesamt}</span>
-                  </h3>
-                  <Eigenschaft text="Verrechnet" wert={e.regie.verrechnet} />
-                  <Eigenschaft text="Unterschrieben, offen" wert={e.regie.unterschriebenNichtVerrechnet} />
-                  <Eigenschaft text="Nicht unterschrieben" wert={e.regie.nichtUnterschrieben} />
-                  {e.regie.nachGrenze > 0 && <Eigenschaft text="Nach der letzten AR" wert={e.regie.nachGrenze} />}
-                </section>
-                {zurufe > 0 && (
-                  <section className="ab-props__gruppe">
-                    <h3 className="ab-props__kopf">
-                      <Link href={`${basis}/zeitachse`}>WhatsApp-Meldungen</Link> <span className="sw-count">{zurufe}</span>
-                    </h3>
-                    <Eigenschaft text="Als Beleg" wert={zurufeAlsBeleg} />
-                    <Eigenschaft text="Ohne Regiebericht" wert={zurufePosten} />
-                  </section>
+            <Ergebniskette glieder={glieder} />
+            <div className={meldung ? "ue-raster" : "ue-raster ue-raster--voll"}>
+              <section className="ue-naechste" aria-labelledby="ue-naechste-titel">
+                <div className="ue-abschnitt">
+                  <h2 id="ue-naechste-titel" className="section-title">
+                    Als Nächstes prüfen
+                  </h2>
+                  <Link href={`${basis}/posten/`} className="ue-alle">
+                    Alle {anzahl(entscheiden.length, "Posten", "Posten")}
+                    {anwalt.length > 0 && ` und ${anzahl(anwalt.length, "Hinweis", "Hinweise")}`}
+                  </Link>
+                </div>
+                {entscheiden.length === 0 ? (
+                  <p className="ue-leer">Keine Posten.</p>
+                ) : (
+                  <ol className="ue-posten">
+                    {entscheiden.slice(0, NAECHSTE).map((x) => {
+                      const b = befund.get(x.schluessel)!;
+                      const t = teileTitel(b.titel);
+                      return (
+                        <li key={x.schluessel}>
+                          <Link href={x.href} className="ue-posten__zeile">
+                            <span className="ue-posten__nr">{t.kennung ?? ""}</span>
+                            <span className="ue-posten__titel">
+                              <b title={t.text}>{t.text}</b>
+                              <span>{b.untertitel}</span>
+                            </span>
+                            <span className="ue-quellen" aria-label="Belegquellen">
+                              {(e.belegquellen[b.schluessel] ?? []).map((q) => (
+                                <span key={q} className={q === "whatsapp" ? "ue-quelle ue-quelle--wa" : "ue-quelle"}>
+                                  {BELEGQUELLE_TEXT[q]}
+                                </span>
+                              ))}
+                            </span>
+                            <span className="ue-posten__stand">
+                              <StandZelle projektId={id} schluessel={b.schluessel} liste={b.liste} leerBeiPruefen />
+                              {risiko.has(b.schluessel) && <span className="ue-risiko">Kürzungsrisiko</span>}
+                            </span>
+                            <span className="ue-posten__betrag">{b.betrag !== null && betrag(b.betrag)}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ol>
                 )}
-              </aside>
+                <Kennzahlen>
+                  <Kennzahl label="Jetzt verrechenbar" wert={betrag(e.summen.jetzt)} kontext={anzahl(e.befunde.filter((b) => b.liste === "jetzt").length, "Posten", "Posten")} />
+                  <Kennzahl label="Angemeldet und offen" wert={betrag(e.summen.offen)} kontext={anzahl(e.befunde.filter((b) => b.liste === "offen").length, "Posten", "Posten")} />
+                  {sr && (
+                    <Kennzahl
+                      label="Nur außerhalb ERP"
+                      wert={betrag(e.ausserhalbErp.betrag)}
+                      kontext={`${e.ausserhalbErp.anzahl} von ${e.ausserhalbErp.vonAnzahl} Posten`}
+                    />
+                  )}
+                  {e.summen.verloren > 0 && <Kennzahl label="Verloren" wert={betrag(e.summen.verloren)} kontext={anzahl(e.befunde.filter((b) => b.liste === "verloren").length, "Posten", "Posten")} />}
+                </Kennzahlen>
+              </section>
+
+              {meldung && (
+                <aside className="ue-meldung" aria-labelledby="ue-meldung-titel">
+                  <div className="ue-abschnitt">
+                    <h2 id="ue-meldung-titel" className="section-title">
+                      Letzte WhatsApp-Meldung
+                    </h2>
+                    <Link href={`${basis}/zeitachse/`} className="ue-alle">
+                      {anzahl(d.zurufe.length, "Meldung", "Meldungen")}
+                    </Link>
+                  </div>
+                  <div className="ue-meldung__karte">
+                    <span className="ue-meldung__wer">
+                      {zeitpunkt(meldung.zeitpunkt)}, {meldung.absender}
+                    </span>
+                    <Link href={`${basis}/belege/${meldung.id}/`} className="ue-meldung__blase">
+                      {meldung.foto && (
+                        <span className="ue-meldung__foto">
+                          <Ico icon={Camera} />
+                          Foto angehängt
+                        </span>
+                      )}
+                      <span>{meldung.transkript.wert}</span>
+                    </Link>
+                    <span className="ue-meldung__ja">Bestätigt vom Absender</span>
+                    {meldungPosten && (
+                      <Link href={`${basis}/posten/${postenSlug(meldungPosten.schluessel)}/`} className="ue-meldung__posten">
+                        <span>{meldungPosten.art === "regie_zuruf" ? "Neuer Posten ohne Regiebericht" : "Beleg für den Posten"}</span>
+                        {meldungPosten.betrag !== null && <b>{betrag(meldungPosten.betrag)}</b>}
+                      </Link>
+                    )}
+                  </div>
+                </aside>
+              )}
             </div>
           </>
         )}

@@ -1,0 +1,369 @@
+/* Projekt-Übersicht (UI-Runde 1, Schritt 3, Option A „Ergebniskette“, src/app/projekte/[projekt]/page.tsx).
+ * Ergebniskette (Ergebniskette.tsx), nächste Posten mit Belegquellen, letzte WhatsApp-Meldung.
+ * Vorlagen: Stripe-Zahlungsfortschritt, Linear-Projektseite, Messenger-Blase neutral. Nur Werte aus tokens.css. */
+
+.ue {
+  gap: var(--space-6);
+}
+.ue .facts b.ue-frist {
+  color: var(--neg);
+}
+
+/* Ergebniskette: vier Glieder in einem Rahmen, Strich unten zeigt den Stand */
+.ek {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.ek-glied {
+  position: relative;
+  min-width: 0;
+  border-right: 1px solid var(--line);
+}
+.ek-glied:last-child {
+  border-right: 0;
+}
+.ek-glied::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: transparent;
+}
+.ek-glied--erledigt::after {
+  background: var(--accent);
+}
+.ek-glied--jetzt {
+  background: var(--accent-soft);
+}
+.ek-glied--jetzt::after {
+  right: 50%;
+  background: var(--accent);
+  animation: ek-laufen 2.4s ease-in-out infinite alternate;
+}
+@keyframes ek-laufen {
+  from {
+    right: 85%;
+  }
+  to {
+    right: 45%;
+  }
+}
+.ek-glied__a {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  color: var(--text);
+  text-decoration: none;
+}
+.ek-glied__a:hover {
+  background: var(--surface-hover);
+}
+.ek-glied--jetzt .ek-glied__a:hover {
+  background: transparent;
+}
+.ek-glied__kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ek-glied--offen .ek-glied__kopf {
+  color: var(--text-muted);
+}
+.ek-glied__nr {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  border: 1.5px solid currentColor;
+  font-size: 10px;
+  letter-spacing: normal;
+}
+.ek-glied--erledigt .ek-glied__nr {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.ek-glied__nr .sw-ico {
+  width: 11px;
+  height: 11px;
+}
+.ek-glied__wert {
+  margin-top: var(--space-1);
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ek-glied__zeile {
+  display: flex;
+  align-items: center;
+  min-height: 18px;
+  font-size: var(--fs-sm);
+  line-height: 18px;
+  color: var(--text-muted);
+}
+.ek-glied__zeile .ab-striche {
+  max-width: none;
+}
+
+/* Unterhalb: nächste Posten links, letzte WhatsApp-Meldung rechts */
+.ue-raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--space-6);
+  align-items: start;
+}
+.ue-raster--voll {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ue-naechste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+.ue-abschnitt {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line-strong);
+}
+.ue-abschnitt h2 {
+  margin: 0;
+}
+.ue-alle {
+  font-size: var(--fs-sm);
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ue-alle:hover {
+  text-decoration: underline;
+}
+.ue-leer {
+  margin: 0;
+  color: var(--text-muted);
+}
+.ue-posten {
+  list-style: none;
+  margin: calc(var(--space-5) * -1 + var(--space-1)) 0 0;
+  padding: 0;
+}
+.ue-posten__zeile {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 176px 112px 104px;
+  gap: var(--space-3);
+  align-items: center;
+  min-height: var(--row-h-2);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+.ue-posten__zeile:hover {
+  background: var(--surface-hover);
+}
+.ue-posten__nr {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ue-posten__titel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.ue-posten__titel b,
+.ue-posten__titel span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ue-posten__titel b {
+  font-weight: 500;
+}
+.ue-posten__titel span {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.ue-quellen {
+  display: flex;
+  gap: var(--space-1);
+}
+.ue-quelle {
+  height: 20px;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  line-height: 18px;
+  color: var(--text-secondary);
+  box-sizing: border-box;
+}
+.ue-quelle--wa {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.ue-posten__stand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.ue-risiko {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--warn);
+}
+.ue-posten__betrag {
+  text-align: right;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Kennzahlen unter der Liste in einer Reihe, kleiner als auf der Firmenübersicht */
+.ue-naechste .sw-kpis {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-4);
+}
+.ue-naechste .sw-kpi {
+  padding: 0;
+}
+.ue-naechste .sw-kpi .kpi {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+/* Letzte WhatsApp-Meldung: neutrale Blase auf Papiergrund, darunter der Posten */
+.ue-meldung {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ue-meldung__karte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface-subtle);
+  border: 1px solid var(--line);
+}
+.ue-meldung__wer {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.ue-meldung__blase {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  line-height: 20px;
+  text-decoration: none;
+}
+.ue-meldung__blase:hover {
+  border-color: var(--line-strong);
+}
+.ue-meldung__foto {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 32px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+.ue-meldung__ja {
+  align-self: flex-end;
+  font-size: var(--fs-sm);
+  color: var(--pos);
+  font-weight: 500;
+}
+.ue-meldung__posten {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  color: var(--text);
+  text-decoration: none;
+}
+.ue-meldung__posten b {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .ue-raster {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .ek {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ek-glied:nth-child(2) {
+    border-right: 0;
+  }
+  .ek-glied:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+  .ue-posten__zeile {
+    grid-template-columns: 64px minmax(0, 1fr) 96px;
+  }
+  .ue-quellen,
+  .ue-posten__stand {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .ue-posten__zeile {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .ue-posten__nr {
+    display: none;
+  }
+  .ek-glied__a {
+    padding: var(--space-3);
+  }
+  .ek-glied__wert {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ek-glied--jetzt::after {
+    animation: none;
+  }
+}
