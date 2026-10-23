@@ -60,6 +60,24 @@ const q = (dokumentId: string, seite: number, stelle?: string, bbox?: [number, n
 const f = <T,>(wert: T, quelle: Quelle): Feld<T> => ({ wert, quelle });
 const zeileBox = (zeile: number, zeilenJeSeite: number): [number, number, number, number] => [40, 150 + (zeile % zeilenJeSeite) * 26, 515, 22];
 
+/** Ziffern, die beim Lesen von Handschrift verwechselt werden (jede Ziffer auf eine andere). */
+const VERWECHSLUNG = [8, 7, 7, 8, 9, 6, 5, 1, 3, 4];
+
+/**
+ * Synthetischer Lesefehler vor der Korrektur von Hand, als reine Funktion des richtigen Werts (kein Zufall,
+ * sonst verschieben sich die späteren Zufallswerte und der Datensatz ändert sich).
+ * Zahl (Menge oder Stunden in Hundertstel): letzte ganze Ziffer verwechselt, z. B. 16 h → 15 h.
+ * Datum „JJJJ-MM-TT…“: Jahr um eins zu früh, wie es am Jahresanfang oft geschrieben wird.
+ */
+export function fehlgelesen<T extends number | string>(wert: T): T {
+  if (typeof wert === "number") {
+    const ziffer = Math.floor(wert / 100) % 10;
+    return (wert + (VERWECHSLUNG[ziffer] - ziffer) * 100) as T;
+  }
+  if (/^\d{4}-\d{2}-\d{2}/.test(wert)) return `${Number(wert.slice(0, 4)) - 1}${wert.slice(4)}` as T;
+  throw new Error(`Kein Lesefehler für „${wert}“ festgelegt`);
+}
+
 /** Rundet eine Menge (Hundertstel) auf die übliche Genauigkeit der Einheit ab. */
 function abrunden(menge: number, einheit: Einheit): number {
   const schritt = einheit === "Stk" ? 100 : einheit === "psch" ? 1 : 10;
@@ -328,9 +346,9 @@ export function erzeugeW21(): Datensatz {
     return id;
   };
   let korrekturen = 0;
-  const korrigiert = <T,>(feld: Feld<T>): Feld<T> => {
+  const korrigiert = <T extends number | string>(feld: Feld<T>): Feld<T> => {
     korrekturen++;
-    return { ...feld, pruefstand: "bestaetigt", korrigiert: true };
+    return { ...feld, pruefstand: "bestaetigt", korrigiert: true, vorher: fehlgelesen(feld.wert) };
   };
 
   dok("vertrag", "vertrag", "Bauvertrag_HKLS_W21-B.pdf", "2025-11-14", 18);
