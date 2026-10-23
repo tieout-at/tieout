@@ -28,6 +28,11 @@ export interface Feld<T> {
   pruefstand?: Pruefstand;
   /** Wert wurde beim Einlesen von Hand korrigiert. */
   korrigiert?: boolean;
+  /**
+   * Maschinell gelesener Wert vor der Korrektur (nur bei korrigiert = true). Der Zwilling überschreibt nichts:
+   * der alte Wert bleibt sichtbar. Der Rechenkern liest ihn nie.
+   */
+  vorher?: T;
 }
 
 /** Ein Schritt der zweistufigen Freigabe: wer und wann. */
