@@ -34,10 +34,10 @@ export const SOLL_SUMMEN = { jetzt: 2_741_000, offen: 1_128_230, verloren: 118_0
 
 /** Zurufe als zusätzliche Belege vorhandener Posten (Z1 bis Z4). */
 export const SOLL_ZURUF_BELEGE: Record<string, string> = {
-  "mehrmenge:22.04.12B": "Zuruf Z1",
-  "regie:RB-11": "Zuruf Z2",
-  "regie:RB-12": "Zuruf Z3",
-  "regie:RB-14": "Zuruf Z4",
+  "mehrmenge:22.04.12B": "WhatsApp-Meldung Z1",
+  "regie:RB-11": "WhatsApp-Meldung Z2",
+  "regie:RB-12": "WhatsApp-Meldung Z3",
+  "regie:RB-14": "WhatsApp-Meldung Z4",
 };
 
 /** Quelle des Belegs je Posten (Tabelle „Belegquelle je Posten“). */

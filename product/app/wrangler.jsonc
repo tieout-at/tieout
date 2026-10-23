@@ -9,7 +9,7 @@
   "name": "app",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
-  // Für das Claude-SDK des Zuruf-Agenten (product/zuruf, Route /api/zuruf/…). Schalter: Variable ZURUF_ECHT=an
+  // Für das Claude-SDK des WhatsApp-Agenten (product/whatsapp, Route /api/zuruf/…). Schalter: Variable ZURUF_ECHT=an
   // (Standard aus, online erst mit Go Maxi S.), Schlüssel als Secret ANTHROPIC_API_KEY.
   "compatibility_flags": ["nodejs_compat"],
   "assets": {

@@ -18,7 +18,7 @@ function nachDatum(belege: Beleg[]): Beleg[] {
 }
 
 function zurufBeleg(z: Zuruf): Beleg {
-  return beleg(`Zuruf ${z.nr}`, `„${z.transkript.wert}“`, z.transkript.quelle, z.zeitpunkt.slice(0, 10));
+  return beleg(`WhatsApp-Meldung ${z.nr}`, `„${z.transkript.wert}“`, z.transkript.quelle, z.zeitpunkt.slice(0, 10));
 }
 
 /**

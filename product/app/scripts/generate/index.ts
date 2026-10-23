@@ -3,17 +3,17 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { erzeugeFirma } from "../../src/demo/firma/erzeuge";
 import { pruefeFirma } from "../../src/engine";
-import { zurufFirma } from "../../src/zuruf/firma";
+import { agentFirma } from "../../src/whatsapp/firma";
 
 const firma = erzeugeFirma();
 const ziel = join(process.cwd(), "data", "generated");
 mkdirSync(ziel, { recursive: true });
 writeFileSync(join(ziel, "firma.json"), JSON.stringify(firma));
 writeFileSync(join(ziel, "w21.json"), JSON.stringify(firma.projekte[0]));
-// Projektliste für den Zuruf-Agenten (Worker und lokaler Server in product/zuruf lesen sie hier).
-writeFileSync(join(ziel, "zuruf-firma.json"), JSON.stringify(zurufFirma(firma), null, 2));
+// Projektliste für den WhatsApp-Agenten (Worker und lokaler Server in product/whatsapp lesen sie hier).
+writeFileSync(join(ziel, "agent-firma.json"), JSON.stringify(agentFirma(firma), null, 2));
 const e = pruefeFirma(firma);
 for (const p of e.projekte) {
-  console.log(`${p.kurz.padEnd(4)} ${String(p.befunde).padStart(2)} Befunde  jetzt ${p.jetzt === null ? "–" : p.jetzt / 100} €  offen ${p.offen === null ? "–" : p.offen / 100} €  ${p.ampel}`);
+  console.log(`${p.kurz.padEnd(4)} ${String(p.befunde).padStart(2)} Posten  jetzt ${p.jetzt === null ? "–" : p.jetzt / 100} €  offen ${p.offen === null ? "–" : p.offen / 100} €  ${p.ampel}`);
 }
 console.log(`Firma: jetzt verrechenbar ${e.summen.jetzt / 100} €, angemeldet und offen ${e.summen.offen / 100} €`);

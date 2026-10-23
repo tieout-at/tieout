@@ -46,7 +46,7 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
       "Plan H-201, Index C",
       "Plan H-201, Index D",
       "Mail Bauleitung Hochbau Beispiel GmbH",
-      "Zuruf Z1",
+      "WhatsApp-Meldung Z1",
       "Foto IMG_2291.jpg",
       "Aufmaßblatt AB-12",
     ]);
@@ -77,7 +77,7 @@ describe("W21: Befunde gegen die Lösungsliste", () => {
     for (const [schluessel, titel] of Object.entries(SOLL_ZURUF_BELEGE)) {
       expect(e.befunde.find((b) => b.schluessel === schluessel)?.belege.map((b) => b.titel), schluessel).toContain(titel);
     }
-    expect(e.befunde.flatMap((b) => b.belege).filter((b) => b.titel.startsWith("Zuruf")).length).toBe(6);
+    expect(e.befunde.flatMap((b) => b.belege).filter((b) => b.titel.startsWith("WhatsApp-Meldung")).length).toBe(6);
   });
 
   it("Quelle des Belegs je Posten und Anteil nur außerhalb ERP", () => {

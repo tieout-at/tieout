@@ -7,7 +7,7 @@
 
 import { useSyncExternalStore } from "react";
 import type { Eintrag } from "./freigabe";
-import { zurufeWiederherstellen, zurufeZuruecksetzen } from "./zurufe";
+import { meldungenWiederherstellen, meldungenZuruecksetzen } from "./meldungen";
 
 const PRAEFIX = "sw-freigabe-v1:";
 const LEER: readonly Eintrag[] = [];
@@ -104,10 +104,10 @@ export function allesZuruecksetzen(): Zuruecksetzstand {
   }
   const vorher = new Map([...ids].map((id) => [id, lesen(id)] as const));
   ids.forEach((id) => schreiben(id, LEER));
-  return { freigaben: vorher, zurufe: zurufeZuruecksetzen() };
+  return { freigaben: vorher, zurufe: meldungenZuruecksetzen() };
 }
 
 export function wiederherstellen(stand: Zuruecksetzstand) {
   stand.freigaben.forEach((verlauf, id) => schreiben(id, verlauf));
-  zurufeWiederherstellen(stand.zurufe);
+  meldungenWiederherstellen(stand.zurufe);
 }

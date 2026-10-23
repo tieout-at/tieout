@@ -5,12 +5,13 @@
 
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Firma } from "../../zuruf/src/firma.ts";
-import { zurufAnfrage, type Zaehler, type ZurufUmgebung } from "../../zuruf/worker/route.ts";
-import zurufFirma from "../data/generated/zuruf-firma.json";
+import type { Firma } from "../../whatsapp/src/firma.ts";
+import { zurufAnfrage, type Zaehler, type ZurufUmgebung } from "../../whatsapp/worker/route.ts";
+import agentFirma from "../data/generated/agent-firma.json";
 import { ANMELDESEITE, ANMELDUNG_AN, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../src/anmeldung/konfig";
+import { neueAdresse } from "../src/umleitung";
 
-/** Dazu ZURUF_ECHT und ANTHROPIC_API_KEY für den Zuruf-Agenten (Secrets, zur Laufzeit gelesen; ohne sie: vorgespielt). */
+/** Dazu ZURUF_ECHT und ANTHROPIC_API_KEY für den WhatsApp-Agenten (Secrets, zur Laufzeit gelesen; ohne sie: vorgespielt). */
 interface Env extends ZurufUmgebung {
   ASSETS: { fetch(anfrage: Request): Promise<Response> };
   /** Geheimer Schlüssel (Cloudflare-Secret), nur für Mitglieder und Einladungen. */
@@ -22,7 +23,10 @@ const OFFEN = [/^\/anmelden(\/|$)/, /^\/_next\/static\//, /^\/favicon\.ico$/, /^
 const worker = {
   async fetch(anfrage: Request, env: Env): Promise<Response> {
     const url = new URL(anfrage.url);
-    // Zuruf-Agent ohne Login (App per Link): hier, vor den Assets. Mit Login erst nach der Sitzungsprüfung in `schnittstelle`.
+    // Old addresses from before the rename (befunde, ordner, ledger, zuruf): permanent redirect, before the sign-in check.
+    const neu = neueAdresse(url.pathname);
+    if (neu) return Response.redirect(`${url.origin}${neu}${url.search}`, 301);
+    // WhatsApp-Agent ohne Login (App per Link): hier, vor den Assets. Mit Login erst nach der Sitzungsprüfung in `schnittstelle`.
     if (!ANMELDUNG_AN) {
       const z = await zuruf(anfrage, env);
       if (z) return z;
@@ -63,13 +67,13 @@ const worker = {
 export default worker;
 
 /**
- * Zuruf-Agent (product/zuruf) für /api/zuruf/…, sonst null. Echt nur mit ZURUF_ECHT=an, Schlüssel und Zähler in
+ * WhatsApp-Agent (product/whatsapp) für /api/zuruf/…, sonst null. Echt nur mit ZURUF_ECHT=an, Schlüssel und Zähler in
  * Supabase; sonst meldet der Status „nicht verfügbar“ und die App spielt die Szene vor, ohne KI-Aufruf.
  * Schutz ohne Login: Schalter, 40 KI-Aufrufe pro Tag, 20 US-Dollar pro Monat, Monatslimit in der Anthropic-Konsole.
  */
 function zuruf(anfrage: Request, env: Env): Promise<Response | null> {
   const admin = env.SUPABASE_SECRET_KEY ? adminClient(env.SUPABASE_SECRET_KEY) : null;
-  return zurufAnfrage(anfrage, env, zurufFirma as Firma, admin ? supabaseZaehler(admin) : null);
+  return zurufAnfrage(anfrage, env, agentFirma as Firma, admin ? supabaseZaehler(admin) : null);
 }
 
 function adminClient(schluessel: string): SupabaseClient {
@@ -113,7 +117,7 @@ async function schnittstelle(anfrage: Request, url: URL, env: Env): Promise<Resp
 }
 
 /**
- * KI-Aufrufe und Kosten in Supabase (product/zuruf/worker/supabase.sql: zuruf_stand, zuruf_buche).
+ * KI-Aufrufe und Kosten in Supabase (product/whatsapp/worker/supabase.sql: zuruf_stand, zuruf_buche).
  * Fehlt die Tabelle oder geht etwas schief, gelten die Grenzen als erreicht: dann spielt die App die Szene vor.
  */
 function supabaseZaehler(admin: SupabaseClient): Zaehler {

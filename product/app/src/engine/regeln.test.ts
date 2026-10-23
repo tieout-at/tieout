@@ -200,7 +200,7 @@ describe("Zurufe", () => {
     d.zurufe.push(zuruf({ bezugPositionen: f(["22.01.02A"]) }));
     const e = pruefe(d);
     expect(e.befunde.map((b) => b.schluessel)).toEqual(["mehrmenge:22.01.02A"]);
-    expect(e.befunde[0].belege.map((b) => b.titel)).toContain("Zuruf Z1");
+    expect(e.befunde[0].belege.map((b) => b.titel)).toContain("WhatsApp-Meldung Z1");
   });
 
   it("Zuruf mit Verweis auf einen fehlenden Regiebericht wird eigener Posten, nicht verschluckt", () => {
@@ -220,7 +220,7 @@ describe("Zurufe", () => {
     const d = miniDatensatz();
     d.entwurf!.zeilen = d.entwurf!.zeilen.filter((z) => z.typ !== "regie");
     d.zurufe.push(zuruf({ bezugRegie: f("RB-01") }));
-    expect(pruefe(d).befunde[0].belege.map((b) => b.titel)).toEqual(["Regiebericht RB-01", "Zuruf Z1"]);
+    expect(pruefe(d).befunde[0].belege.map((b) => b.titel)).toEqual(["Regiebericht RB-01", "WhatsApp-Meldung Z1"]);
   });
 });
 

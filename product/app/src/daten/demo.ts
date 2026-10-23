@@ -34,14 +34,17 @@ export function projektIds(): { projekt: string }[] {
   return laden().f.projekte.map((p) => ({ projekt: p.projekt.id }));
 }
 
-/** Befund-Schlüssel wie „mehrmenge:22.04.12B“ als lesbarer URL-Teil „mehrmenge-22-04-12B“. */
-export function befundSlug(schluessel: string): string {
-  return schluessel.replace(/[:.]/g, "-");
+/**
+ * Schlüssel eines Postens wie „mehrmenge:22.04.12B“ als lesbarer URL-Teil „mehrmenge-22-04-12B“. Der Rechenkern
+ * sagt weiter „zuruf:Z6“ (Freigaben im Browser hängen am Schlüssel), die Adresse heißt „whatsapp-Z6“.
+ */
+export function postenSlug(schluessel: string): string {
+  return schluessel.replace(/^zuruf:/, "whatsapp:").replace(/[:.]/g, "-");
 }
 
-export function befund(projektId: string, slug: string): { d: Datensatz; e: Ergebnis; b: Befund } {
+export function einPosten(projektId: string, slug: string): { d: Datensatz; e: Ergebnis; b: Befund } {
   const { d, e } = projekt(projektId);
-  const b = e.befunde.find((x) => befundSlug(x.schluessel) === slug);
+  const b = e.befunde.find((x) => postenSlug(x.schluessel) === slug);
   if (!b) notFound();
   return { d, e, b };
 }
@@ -98,7 +101,7 @@ export function navDaten(): { firma: string; untertitel: string; projekte: NavPr
         gebaeude: gebaeudeAus(d.projekt.name),
         geschosse: 3 + ([...id].reduce((s, c) => s + c.charCodeAt(0), 0) % 4),
         entscheiden: x.befunde.filter((b) => b.liste !== "anwalt").map((b) => ({ schluessel: b.schluessel, liste: b.liste })),
-        posten: x.befunde.map((b) => ({ titel: b.titel, href: `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/` })),
+        posten: x.befunde.map((b) => ({ titel: b.titel, href: `/projekte/${id}/posten/${postenSlug(b.schluessel)}/` })),
       };
     }),
   };
