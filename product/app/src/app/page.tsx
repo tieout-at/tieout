@@ -3,12 +3,15 @@
 // In fünf Sekunden: wie viel jetzt verrechenbar ist, wo es liegt, was als Nächstes dran ist.
 // Alle Beträge aus dem Rechenkern; „jetzt verrechenbar“ und „angemeldet und offen“ stehen nie zusammengezählt.
 
+import { ShieldAlert } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Fragment } from "react";
 import { firma, navDaten, zuEntscheiden } from "@/daten/demo";
 import type { Ampel, ProjektZeile } from "@/engine";
 import { Bauglyphe } from "@/ui/Bauglyphe";
 import { anzahl, betrag, datum } from "@/ui/format";
+import { Ico } from "@/ui/Ico";
 import { Kennzahl } from "@/ui/Kennzahl";
 import { Panel } from "@/ui/Panel";
 import { Seitenkopf } from "@/ui/Seitenkopf";
@@ -34,6 +37,25 @@ function Blatt({ iso, dringend }: { iso: string; dringend?: boolean }) {
       <span>{MONAT[Number(iso.slice(5, 7)) - 1]}</span>
       <b>{Number(iso.slice(8, 10))}</b>
     </span>
+  );
+}
+
+/** Kürzungsrisiko aus GU-Sicht als eigener Schritt direkt unter der Schlussrechnung des Projekts (ohne eigene Frist). */
+function RisikoSchritt({ p, anzahlRisiken, summe }: { p: ProjektZeile; anzahlRisiken: number; summe: number }) {
+  return (
+    <li className="db-schritt">
+      <span className="db-blatt db-blatt--symbol" aria-hidden="true">
+        <Ico icon={ShieldAlert} />
+      </span>
+      <span className="db-schritt__text">
+        <Link href={`/projekte/${p.projektId}/posten/`} className="db-schritt__link">
+          Kürzungsrisiko {p.kurz} vorbeugen
+        </Link>
+        <span className="meta sw-muted">
+          {betrag(summe)} in {anzahl(anzahlRisiken, "Position", "Positionen")}
+        </span>
+      </span>
+    </li>
   );
 }
 
@@ -83,67 +105,51 @@ export default function Dashboard() {
                 </li>
               ))}
             </ul>
+            <div className="db-neben">
+              <Kennzahl
+                label="Angemeldet und offen"
+                wert={betrag(e.summen.offen)}
+                kontext={`${anzahl(e.summen.postenOffen, "Posten", "Posten")} in ${anzahl(e.summen.projekteMitOffen, "Projekt", "Projekten")}`}
+              />
+              <Kennzahl label="Auftragssumme im Abgleich" wert={betrag(e.summen.auftragssummeOffen)} kontext={`${e.summen.offeneProjekte} von ${e.summen.projekte} Projekten`} />
+            </div>
           </div>
 
           <Panel titel="Als Nächstes" className="db-naechstes">
             <ol className="db-schritte">
-              {fristen.map((p, i) => (
-                <li key={p.projektId} className="db-schritt">
-                  <Blatt iso={p.datum!.wert} dringend={p.ampel === "rot"} />
-                  <span className="db-schritt__text">
-                    <Link href={`/projekte/${p.projektId}/`} className="db-schritt__link">
-                      Schlussrechnung {p.kurz} legen
-                    </Link>
-                    <span className="meta sw-muted">
-                      <FreigegebenZahl projektId={p.projektId} posten={entscheiden.get(p.projektId) ?? []} /> Posten freigegeben
-                    </span>
-                  </span>
-                  <WeiterPruefen
-                    projektId={p.projektId}
-                    posten={entscheiden.get(p.projektId) ?? []}
-                    text="Prüfen"
-                    className={i === 0 ? "sw-btn sw-btn--accent sw-btn--sm db-schritt__knopf" : "sw-btn sw-btn--sm db-schritt__knopf"}
-                  />
-                </li>
-              ))}
-              {risiken.map((p) => {
-                const v = e.ergebnisse[p.projektId].vorpruefung!;
+              {fristen.map((p, i) => {
+                const v = e.ergebnisse[p.projektId].vorpruefung;
                 return (
-                  <li key={`risiko-${p.projektId}`} className="db-schritt">
-                    {p.datum?.art === "legen_bis" ? <Blatt iso={p.datum.wert} /> : <span className="db-blatt" aria-hidden="true" />}
-                    <span className="db-schritt__text">
-                      <Link href={`/projekte/${p.projektId}/posten/`} className="db-schritt__link">
-                        Kürzungsrisiko {p.kurz} vorbeugen
-                      </Link>
-                      <span className="meta sw-muted">
-                        {anzahl(v.risiken.length, "Position", "Positionen")}, {betrag(v.summe)}
+                  <Fragment key={p.projektId}>
+                    <li className="db-schritt">
+                      <Blatt iso={p.datum!.wert} dringend={p.ampel === "rot"} />
+                      <span className="db-schritt__text">
+                        <Link href={`/projekte/${p.projektId}/`} className="db-schritt__link">
+                          Schlussrechnung {p.kurz} legen
+                        </Link>
+                        <span className="meta sw-muted">
+                          <FreigegebenZahl projektId={p.projektId} posten={entscheiden.get(p.projektId) ?? []} /> im Projekt freigegeben
+                        </span>
                       </span>
-                    </span>
-                  </li>
+                      <WeiterPruefen
+                        projektId={p.projektId}
+                        posten={entscheiden.get(p.projektId) ?? []}
+                        text="Prüfen"
+                        className={i === 0 ? "sw-btn sw-btn--accent sw-btn--sm db-schritt__knopf" : "sw-btn sw-btn--sm db-schritt__knopf"}
+                      />
+                    </li>
+                    {v && v.risiken.length > 0 && <RisikoSchritt p={p} anzahlRisiken={v.risiken.length} summe={v.summe} />}
+                  </Fragment>
                 );
               })}
+              {risiken
+                .filter((p) => !fristen.includes(p))
+                .map((p) => {
+                  const v = e.ergebnisse[p.projektId].vorpruefung!;
+                  return <RisikoSchritt key={p.projektId} p={p} anzahlRisiken={v.risiken.length} summe={v.summe} />;
+                })}
             </ol>
           </Panel>
-        </section>
-
-        <section className="db-neben">
-          <Kennzahl
-            label="Angemeldet und offen"
-            wert={betrag(e.summen.offen)}
-            kontext={`${anzahl(e.summen.postenOffen, "Posten", "Posten")} in ${anzahl(e.summen.projekteMitOffen, "Projekt", "Projekten")}`}
-          />
-          {risiken.map((p) => {
-            const v = e.ergebnisse[p.projektId].vorpruefung!;
-            return (
-              <Kennzahl
-                key={p.projektId}
-                label={`Kürzungsrisiko ${p.kurz}`}
-                wert={betrag(v.summe)}
-                kontext={`${anzahl(v.risiken.length, "Position", "Positionen")}, bereits gekürzt ${betrag(v.bereitsGekuerzt.betrag)}`}
-              />
-            );
-          })}
-          <Kennzahl label="Auftrag im Abgleich" wert={betrag(e.summen.auftragssummeOffen)} kontext={`${e.summen.offeneProjekte} von ${e.summen.projekte} Projekten`} />
         </section>
 
         <section className="db-projekte" aria-labelledby="db-projekte-titel">
@@ -166,9 +172,8 @@ export default function Dashboard() {
                     <span className="sw-pos-nr">{p.kurz}</span>
                     {p.auftraggeber.name}
                   </span>
-                  <span className="db-karte__betrag" title="Jetzt verrechenbar">
-                    {betrag(p.jetzt ?? 0)}
-                  </span>
+                  <span className="db-karte__label">Jetzt verrechenbar</span>
+                  <span className="db-karte__betrag">{betrag(p.jetzt ?? 0)}</span>
                   <span className="db-karte__zeile" title="Angemeldet und offen">
                     <span>Angemeldet</span>
                     <b>{betrag(p.offen ?? 0)}</b>

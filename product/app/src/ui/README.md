@@ -21,11 +21,11 @@ Since 22.10.2026 the app is the source of the UI foundation. Rules, terms and th
 | WhatsApp scene (mock) | `WhatsAppSzene.tsx` | Messenger chat, neutral without a third-party brand; paper colors like evidence (Belege) |
 | LV-Positionen | `PositionenTabelle.tsx` | reebuild R-B, Linear "Group by", Attio search above the table. Row 36 px, header 32 px without fill, fixed columns (`.tab-liste`); on the phone the right edge fades out while more columns follow (`.tw`, `.positionen-rahmen`, controlled by scrolling); column „Nächste AR“ (next interim invoice) shows the quantity from the calculation core, no marker per row |
 | Evidence matrix and document list (Belege) | `Belege.tsx` | Hebbia Matrix, Harvey Review Table, Kuro K-B. Single line, an empty cell means no evidence (no word), a row with an item (Posten) opens it via click, Enter, j/k |
-| **Dashboard** (24.10., UI round 1 step 2, option A): one big number „Jetzt verrechenbar“ on the plan grid with a bar per project (ultramarine in four steps, grows on load), „Als Nächstes“ by deadline (calendar sheet, accent button to the first open item, items with deduction risk first via `zuEntscheiden` in `daten/demo.ts`), side figures, project cards with building glyph, traffic light word, both lists and approval strokes, closed projects as quiet rows | `../app/page.tsx`, `styles/dashboard.css` | Stripe overview (one number), Linear „My issues“ (next steps), Attio cards, website plan grid |
+| **Dashboard** (23.10., UI round 1 step 2, option A): one big number „Jetzt verrechenbar“ on the plan grid with a bar per project (ultramarine in four steps, grows on load), „Als Nächstes“ by deadline (calendar sheet, accent button to the first open item, items with deduction risk first via `zuEntscheiden` in `daten/demo.ts`), side figures, project cards with building glyph, traffic light word, both lists and approval strokes, closed projects as quiet rows | `../app/page.tsx`, `styles/dashboard.css` | Stripe overview (one number), Linear „My issues“ (next steps), Attio cards, website plan grid |
 
 ## Project list with traffic light
 
-Since 24.10. the start page is the dashboard (cards instead of this table); the traffic light words and rules below still apply to the cards.
+Since 23.10. the start page is the dashboard (cards instead of this table); the traffic light words and rules below still apply to the cards.
 
 
 - One row per project, single line (36 px): short code (muted, fixed width) and name, client (Auftraggeber) as a separate muted column, traffic light as a word, date, contract, the two lists separately.

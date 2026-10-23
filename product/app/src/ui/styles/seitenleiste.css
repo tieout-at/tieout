@@ -237,7 +237,7 @@
   margin-left: auto;
 }
 
-/* Gruppen „Projekte“ (fester Kopf, seit dem Dashboard 24.10. kein Link mehr) und „Abgeschlossen“ (klappt auf) */
+/* Gruppen „Projekte“ (fester Kopf, seit dem Dashboard 23.10. kein Link mehr) und „Abgeschlossen“ (klappt auf) */
 .nav-gruppe {
   display: flex;
   flex-direction: column;

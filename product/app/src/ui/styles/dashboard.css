@@ -10,7 +10,7 @@
 /* Kopf: große Zahl links, „Als Nächstes“ rechts */
 .db-kopf {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
+  grid-template-columns: minmax(0, 1fr) 420px;
   gap: var(--space-6);
   align-items: stretch;
 }
@@ -67,13 +67,13 @@
   background: var(--accent);
 }
 .db [data-stufe="1"] {
-  opacity: 0.68;
+  opacity: 0.72;
 }
 .db [data-stufe="2"] {
-  opacity: 0.44;
+  opacity: 0.5;
 }
 .db [data-stufe="3"] {
-  opacity: 0.26;
+  opacity: 0.34;
 }
 @keyframes db-wachsen {
   from {
@@ -194,6 +194,10 @@
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
+.db-blatt--symbol {
+  border-style: dashed;
+  color: var(--warn);
+}
 .db-blatt--dringend {
   border-color: var(--neg);
   color: var(--neg);
@@ -202,14 +206,20 @@
   color: var(--neg);
 }
 
-/* Nebenzahlen in einer Reihe */
+/* Nebenzahlen unten in der großen Fläche, durch eine Linie getrennt */
 .db-neben {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-6);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-top: auto;
+  padding-top: var(--space-5);
 }
 .db-neben .sw-kpi {
   padding: 0;
+}
+.db-neben .sw-kpi .kpi {
+  font-size: 20px;
+  line-height: 28px;
 }
 
 /* Projekte als Karten (Attio), das dringende trägt den Akzent */
@@ -270,9 +280,10 @@
 }
 .db-karte__name {
   font-weight: 600;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .db-karte__ag {
   font-size: var(--fs-sm);
@@ -285,9 +296,13 @@
   font-size: var(--fs-sm);
 }
 /* Betrag und Fuß stehen in allen Karten auf gleicher Höhe */
-.db-karte__betrag {
+.db-karte__label {
   margin-top: auto;
   padding-top: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.db-karte__betrag {
   font-size: 22px;
   line-height: 28px;
   font-weight: 600;
