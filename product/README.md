@@ -1,6 +1,6 @@
 # Product
 
-**Name: tieout** (lowercase, no period, as on website v7 of 22.10.2026; previously Tieout). Internally, the repository, package and Worker keep the name `schlusswerk` for now.
+**Name: tieout** (lowercase, no period, as on website v7 of 22.10.2026; previously Tieout). Internally, the npm packages keep the name `schlusswerk` for now; the Worker is called `app`.
 
 The twin: data model company → project → objects (with source, history, status), ingestion, ledger, closing run (Abschluss-Lauf), outputs. Stages and the demo script are in `docs/dossier-v3.md`, section 15 (private repository tieout-at/intern).
 
@@ -8,7 +8,7 @@ Principles: The AI delivers facts with a source, the human confirms, the calcula
 
 **Work in progress.** Responsible so far: Maxi S. In the product files, "Maxi" means Maxi S.
 
-## Status (22.10.2026, late)
+## Status
 
 | Part | Status |
 |---|---|
@@ -28,7 +28,7 @@ Principles: The AI delivers facts with a source, the human confirms, the calcula
 | Rename (UI round 1, step 1a, 24.10.) | Terms decided by Maxi S. 23.10. now also in routes, file names and docs: Befunde → Posten, Ordner → Belege, Ledger → LV-Positionen, Zuruf → WhatsApp-Meldung (the agent: WhatsApp-Agent). Folder `product/zuruf` is now `product/whatsapp`. Old links redirect with 301. The calculation core and the data model keep their names (`Befund`, `Zuruf`, `ledger`), see `app/CLAUDE.md`. Back control and Esc on item and evidence pages |
 | UI foundation | In the app (`app/src/ui`, rules in `app/src/ui/README.md`), **the app is the source**; the Artifact remains reference v2. White background, no boxes, little text. Gate 2 (acceptance) by Maxi S. on the running app open. `fundament.test.ts` blocks free colors, styles, separator dots, forbidden words |
 | Checks | GitHub Actions on every PR: types, lint, tests, build. Protecting main requires a paid GitHub plan (open). Screenshots: `app/scripts/qa/screens.mjs` |
-| Online | https://app.tieout.workers.dev, protected by email code, rebuilt on every merge to main (since 22.10.). See "Online (Cloudflare)" |
+| Online | https://app.tieout.workers.dev, open without sign-in since 23.10. (branch previews stay protected), rebuilt on every merge to main (since 22.10.). See "Online (Cloudflare)" |
 
 Next goals: v0.9 Sat 31.10. (#glaubandich), v1.0 calendar week 45, stage 0 freeze Sun 6.12.
 
@@ -68,7 +68,7 @@ Then open http://localhost:3000. `npm run build` writes the finished pages as fi
 
 ## Online (Cloudflare)
 
-The demo runs on Cloudflare as a Worker with static files (Workers Builds, free plan) and is protected by Cloudflare Access: whoever opens the address enters their email address and receives a code. Only approved addresses get in.
+The demo runs on Cloudflare as a Worker with static files (Workers Builds, free plan) The address is open without sign-in since 23.10. (it is in the submission email to the jury). Branch previews are protected by Cloudflare Access: whoever opens a preview address enters their email address and receives a code. Only approved addresses get in.
 
 | What | Where |
 |---|---|

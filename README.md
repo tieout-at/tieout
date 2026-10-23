@@ -39,7 +39,7 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 |---|---|---|
 | Product app | the twin of a synthetic contractor with eight projects, findings with original documents, approval flow, calculation core tested to the cent | [app.tieout.workers.dev](https://app.tieout.workers.dev) |
 | WhatsApp agent | fitters report work from the site by text, voice note or photo; the agent asks back and files a structured entry with its source | `product/whatsapp/` |
-| Website | product story in German and English, interactive twin animation, demo booking | [tieout.at](https://tieout.at) |
+| Website | product story in German and English, interactive twin animation, demo booking | [tieout-at.pages.dev](https://tieout-at.pages.dev) |
 
 ## How it works
 
