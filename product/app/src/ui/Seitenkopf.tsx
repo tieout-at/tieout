@@ -1,5 +1,5 @@
-// Seitenkopf (Vorlage: Linear-Kopfzeile, Attio 44–48 px): Pfad und Titel links, „Synthetisch“ und höchstens eine
-// Primäraktion rechts. Was es noch nicht gibt, steht nicht da.
+// Seitenkopf (Vorlage: Linear-Kopfzeile, Attio 44–48 px): Pfad und Titel links, höchstens eine Primäraktion rechts.
+// Was es noch nicht gibt, steht nicht da. Die Kennzeichnung „Beispieldaten“ steht seit 23.10. unten in der Seitenleiste.
 
 import Link from "next/link";
 import { Fragment } from "react";
@@ -26,9 +26,6 @@ export function Seitenkopf({ pfad, titel, aktion }: { pfad: Pfadteil[]; titel: s
         <h1>{titel}</h1>
       </div>
       <div className="sw-pagehead__actions">
-        <span className="sw-synth" title="Synthetischer Datensatz: Firmen und Beträge erfunden, keine echten Funde">
-          Synthetisch
-        </span>
         {aktion}
       </div>
     </header>

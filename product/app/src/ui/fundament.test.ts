@@ -62,11 +62,16 @@ describe("UI-Fundament", () => {
     expect(verstoesse).toEqual([]);
   });
 
-  it("jede Seite hat den Seitenkopf (mit „Synthetisch“)", () => {
+  it("jede Seite hat den Seitenkopf", () => {
     // Ausnahme: die Anmeldeseite zeigt keine Daten und steht ohne Rahmen.
     const seiten = OBERFLAECHE.filter((p) => /(page|not-found)\.tsx$/.test(p) && !/anmelden/.test(p));
     expect(seiten.length).toBeGreaterThan(0);
     expect(seiten.filter((p) => !readFileSync(p, "utf8").includes("<Seitenkopf")).map((p) => relative(WURZEL, p))).toEqual([]);
+  });
+
+  it("die Seitenleiste kennzeichnet die Beispieldaten (steht auf jeder Seite)", () => {
+    const leiste = readFileSync(join(WURZEL, "ui", "Seitenleiste.tsx"), "utf8");
+    expect(leiste).toContain(">Beispieldaten<");
   });
 
   it("alles Deaktivierte nennt den Grund im Tooltip", () => {

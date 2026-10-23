@@ -120,7 +120,7 @@ export default async function ProjektUebersicht({ params }: Props) {
                   href: `${basis}/ordner`,
                   hinweis: "Ein Datensatz je Dokument ohne Duplikate, jedes Feld mit Quelle",
                 },
-                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(e.befunde.length, "Befund", "Befunde"), erledigt: true, href: `${basis}/ledger` },
+                { titel: "Abgleich", zahl: e.ledger.length, einheit: e.ledger.length === 1 ? "LV-Position" : "LV-Positionen", zeile: anzahl(e.befunde.length, "Posten", "Posten"), erledigt: true, href: `${basis}/ledger` },
                 {
                   titel: "Prüfen und Freigeben",
                   zahl: <FreigegebenZahl projektId={id} posten={entscheiden} />,

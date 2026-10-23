@@ -8,7 +8,7 @@ Since 22.10.2026 the app is the source of the UI foundation. Rules, terms and th
 | Settings (23.10.): sections with rows, label on the left, value on the right, lines instead of boxes; profile and members only with sign-in | `Einstellungen.tsx`, `konto.css` | Linear "Settings", Attio "Workspace settings" |
 | Sign-in page (23.10., switched off): paper with plan grid, square buttons in ultramarine like the website, one narrow column | `Anmelden.tsx`, `konto.css` | Website tieout, Linear sign-in |
 | Frame (23.10.): sidebar and content, sign-in page without frame | `Rahmen.tsx` | Linear, Attio |
-| Sidebar: company at the top, projects as a tree without a traffic-light dot (traffic-light word in the tooltip), active project expanded | `Seitenleiste.tsx` | Linear (workspace at the top, "Your teams" as a tree, active entry as an area, counter on the right), Attio (group label) |
+| Sidebar (24.10.): company as a workspace tile with menu, search (Ctrl K), projects in two groups with a building glyph each, expandable, one counter (open items), "Beispieldaten" in the footer; collapsed rail with glyphs; drawer on the phone | `Seitenleiste.tsx`, `Bauglyphe.tsx`, `Suche.tsx`, `styles/seitenleiste.css` | Linear (workspace at the top, "Your teams" as a tree, Cmd K), Attio (group label), website blueprint grid and ultramarine |
 | Page header | `Seitenkopf.tsx` | Linear header, Attio |
 | Key figure | `Kennzahl.tsx` | reebuild project overview R-C, Stripe overview. Since 23.10. without lines and dividers, spacing only; on the phone horizontally scrollable with an edge fade |
 | Panel | `Panel.tsx` | Linear, Attio (border instead of shadow) |

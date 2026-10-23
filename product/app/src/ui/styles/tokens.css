@@ -47,6 +47,7 @@
   --doc-figure-soft: #e3e5e9;
   --shadow-overlay: 0 8px 24px rgba(16,17,18,0.12), 0 0 0 1px rgba(16,17,18,0.06);
   --shadow-page: 0 1px 3px rgba(16,17,18,0.16);
+  --scrim: rgba(16,17,18,0.32);
 }
 [data-theme="dark"] {
   color-scheme: dark;
@@ -92,6 +93,7 @@
   --doc-figure-soft: #e3e5e9;
   --shadow-overlay: 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
   --shadow-page: 0 1px 3px rgba(0,0,0,0.6);
+  --scrim: rgba(0,0,0,0.55);
 }
 /* Anmeldeseite wie die Website (website/app/globals.css), in beiden Themen gleich: Papier, Planraster, Tinte, Ultramarin */
 :root {
@@ -104,6 +106,9 @@
   --web-grid-major: #d5dce6;
   --web-grid-minor: #e8ecf2;
   --web-neg: #b42318;
+  /* Firmenkachel und Bauglyphe in der Seitenleiste: Ultramarin mit hellem Raster, in beiden Themen gleich */
+  --on-brand: #ffffff;
+  --brand-raster: rgba(255,255,255,0.16);
 }
 :root {
   --space-1: 4px;
@@ -130,7 +135,9 @@
   --fs-sm: 12px;
   --fs-md: 13px;
   --fs-lg: 14px;
-  --sidebar-w: 232px;
+  --sidebar-w: 256px; /* 23.10. UI-Runde 1: breiter für Firma und Projektnamen (vorher 232) */
+  --rail-w: 56px;
+  --glyph: 20px;
   --font-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
   /* nur für die Wortmarke Tieout (Schrift der Website) */

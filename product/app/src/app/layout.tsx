@@ -27,7 +27,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: THEMA_SKRIPT }} />
       </head>
       <body>
-        <Rahmen seitenleiste={<Seitenleiste firma={nav.firma} untertitel={nav.untertitel} auftraggeber={nav.auftraggeber} projekte={nav.projekte} />}>
+        <Rahmen seitenleiste={<Seitenleiste firma={nav.firma} untertitel={nav.untertitel} projekte={nav.projekte} />}>
           {children}
         </Rahmen>
         <ToastBereich />
