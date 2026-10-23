@@ -173,7 +173,7 @@ export default async function BefundSeite({ params }: Props) {
         pfad={[
           { text: daten.firma.name, href: "/" },
           { text: d.projekt.kurz, href: `/projekte/${id}/` },
-          { text: "Befunde", href: `/projekte/${id}/befunde` },
+          { text: "Posten", href: `/projekte/${id}/befunde/` },
         ]}
         titel={t.kennung ?? ART_TEXT[b.art]}
       />

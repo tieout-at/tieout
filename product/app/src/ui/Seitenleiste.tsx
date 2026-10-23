@@ -1,104 +1,220 @@
 "use client";
 
-// Seitenleiste (Vorlage: Attio-Navigation hell, Linear: aktiver Eintrag als Fläche, Zähler rechts).
-// Oben die Firma wie ein Arbeitsbereich (Linear, Attio), darunter alle Projekte ohne Farbpunkt (die Ampel steht als
-// Wort in der Projektliste, hier nur im Tooltip); das aktive Projekt
-// ist aufgeklappt und zeigt seine Bildschirme eingerückt (Linear „Your teams“). Reihenfolge = Ablauf.
-// Nur was gebaut ist, steht in der Navigation (Linear, Attio); Einträge mit `folgt` werden ausgeblendet.
+// Seitenleiste (UI-Runde 1, Option C „Bauglyphe“, Entscheidung Maxi S. 23.10.; Vorlage: Linear „Your teams“, Attio-Navigation).
+// Oben Marke und Firma als Arbeitsbereich, darunter Suche (Strg K), dann die Projekte in zwei Gruppen: im Abgleich
+// und abgeschlossen. Jedes Projekt trägt seine Bauglyphe und klappt seine Bildschirme auf. Nur ein Zähler: offene Posten.
+// Eingeklappt bleibt eine schmale Leiste mit den Glyphen; am Handy wird die Leiste eine Schublade.
+// Nur was gebaut ist, steht in der Navigation; Einträge mit `folgt` werden ausgeblendet.
 
 import {
-  BookUser,
-  ClipboardList,
-  Download,
+  ChevronRight,
+  ChevronsUpDown,
+  FileText,
   FolderOpen,
   History,
-  LayoutDashboard,
-  LayoutList,
+  LayoutGrid,
   ListChecks,
+  Menu,
+  Moon,
   PanelLeft,
+  Search,
   Settings,
-  ShieldCheck,
   Table,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import type { NavProjekt } from "@/daten/demo";
-import { zahl } from "./format";
+import { anzeigename, initialen, useNutzer } from "@/anmeldung/client";
+import { standAus } from "@/zustand/freigabe";
+import { useVerlauf } from "@/zustand/speicher";
+import { Bauglyphe } from "./Bauglyphe";
 import { Ico } from "./Ico";
 import { LogoMark, Wortmarke } from "./Logo";
-import { navWechseln, useNavZu } from "./thema";
-import { anzeigename, initialen, useNutzer } from "@/anmeldung/client";
-import { useEffect } from "react";
+import { Suche } from "./Suche";
+import { navWechseln, themaWechseln, useNavZu } from "./thema";
 
 interface Eintrag {
   href: string;
   icon: LucideIcon;
   text: string;
-  zaehler?: number;
   /** Noch nicht gebaut: wird nicht angezeigt (Grund als Notiz für Entwickler). */
   folgt?: string;
   /** Aktiv auch auf Unterseiten. */
   praefix?: boolean;
+  posten?: boolean;
 }
 
-function NavLink({ e, pfad }: { e: Eintrag; pfad: string }) {
-  const aktiv = e.praefix ? pfad === e.href || pfad.startsWith(`${e.href}/`) : pfad === e.href;
-  const inhalt = (
-    <>
-      <Ico icon={e.icon} />
-      <span className="nav-text">{e.text}</span>
-      {e.zaehler !== undefined && <span className="sw-count">{zahl(e.zaehler)}</span>}
-    </>
-  );
-  return (
-    <Link href={e.href} aria-current={aktiv ? "page" : undefined} title={e.text}>
-      {inhalt}
-    </Link>
-  );
-}
-
-// Wörter der Ampel wie in der Firmenübersicht (ui/README.md); hier nur im Tooltip.
-const AMPEL_WORT: Record<NavProjekt["ampel"], string> = {
-  rot: "Bald legen",
-  gelb: "Beträge offen",
-  gruen: "Nichts offen",
-  grau: "Kein Abgleich",
-};
-
-function projektNav(p: NavProjekt): Eintrag[] {
+/** Bildschirme eines Projekts in fester Reihenfolge; dieselbe Liste nutzt die Suche. */
+export function projektNav(p: Pick<NavProjekt, "id" | "abgleich">): Eintrag[] {
   const basis = `/projekte/${p.id}`;
+  const keinAbgleich = p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen";
   return [
-    { href: basis, icon: LayoutDashboard, text: "Übersicht" },
-    { href: `${basis}/ordner`, icon: FolderOpen, text: "Ordner", zaehler: p.dokumente, praefix: true },
-    { href: `${basis}/ledger`, icon: Table, text: "Ledger", zaehler: p.ledger, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
-    { href: `${basis}/zeitachse`, icon: History, text: "Zeitachse" },
-    { href: `${basis}/befunde`, icon: ListChecks, text: "Befunde", zaehler: p.befunde, praefix: true, folgt: p.abgleich ? undefined : "Kein Abgleich: Schlussrechnung gelegt oder abgeschlossen" },
-    { href: `${basis}/vorpruefung`, icon: ShieldCheck, text: "Vorprüfung aus GU-Sicht", zaehler: p.risiken, folgt: "Vorprüfung folgt in v1.0" },
-    { href: `${basis}/schlussbesprechung`, icon: ClipboardList, text: "Schlussbesprechung", folgt: "Schlussbesprechungs-Blatt folgt in v1.0" },
-    { href: `${basis}/export`, icon: Download, text: "Export", folgt: "Export folgt in v1.0" },
-  ];
+    { href: `${basis}/`, icon: LayoutGrid, text: "Übersicht" },
+    { href: `${basis}/befunde/`, icon: ListChecks, text: "Posten", praefix: true, posten: true, folgt: keinAbgleich },
+    { href: `${basis}/schlussrechnung/`, icon: FileText, text: "Schlussrechnung", folgt: "Schlussrechnung folgt in UI-Runde 1, Schritt 3b" },
+    { href: `${basis}/ordner/`, icon: FolderOpen, text: "Belege", praefix: true },
+    { href: `${basis}/ledger/`, icon: Table, text: "LV-Positionen", folgt: keinAbgleich },
+    { href: `${basis}/zeitachse/`, icon: History, text: "Zeitachse" },
+  ].filter((e) => !e.folgt);
 }
 
-export function Seitenleiste({
-  firma,
-  untertitel,
-  auftraggeber,
-  projekte,
-}: {
-  firma: string;
-  untertitel: string;
-  auftraggeber: number;
-  projekte: NavProjekt[];
-}) {
-  const pfad = usePathname();
+function istAktiv(e: Eintrag, pfad: string): boolean {
+  const ziel = e.href.replace(/\/$/, "");
+  const hier = pfad.replace(/\/$/, "");
+  return e.praefix ? hier === ziel || hier.startsWith(`${ziel}/`) : hier === ziel;
+}
 
+/** Offene Posten: weder freigegeben noch verworfen (Stand aus dem Browser, wie „x von y freigegeben“). */
+function OffenePosten({ p }: { p: NavProjekt }) {
+  const verlauf = useVerlauf(p.id);
+  const offen = p.entscheiden.filter((x) => {
+    const s = standAus(verlauf, x.schluessel, x.liste);
+    return s !== "freigegeben" && s !== "verworfen";
+  }).length;
+  if (offen === 0) return null;
+  return (
+    <span className="nav-pille" title={`${offen} Posten offen`}>
+      {offen}
+    </span>
+  );
+}
+
+const FRIST = new Intl.DateTimeFormat("de-AT", { day: "2-digit", month: "2-digit" });
+function fristText(iso: string): string {
+  return FRIST.format(new Date(`${iso}T12:00:00`));
+}
+
+function ProjektZeile({ p, pfad, offen, umschalten }: { p: NavProjekt; pfad: string; offen: boolean; umschalten: () => void }) {
+  const hier = pfad.startsWith(`/projekte/${p.id}/`) || pfad === `/projekte/${p.id}`;
+  return (
+    <div className="nav-projekt" data-hier={hier || undefined} data-offen={offen || undefined}>
+      <div className="nav-projekt__zeile">
+        <Link href={`/projekte/${p.id}/`} className="nav-projekt__kopf" title={p.name}>
+          <Bauglyphe art={p.gebaeude} geschosse={p.geschosse} ruhig={!p.abgleich} dringend={!!p.frist} />
+          <span className="nav-text">{p.name}</span>
+          {p.frist && (
+            <span className="nav-frist" title={`Schlussrechnung legen bis ${fristText(p.frist)}`}>
+              {fristText(p.frist)}
+            </span>
+          )}
+        </Link>
+        <button type="button" className="nav-projekt__pfeil" onClick={umschalten} aria-expanded={offen} aria-label={`${p.name} ${offen ? "zuklappen" : "aufklappen"}`}>
+          <Ico icon={ChevronRight} />
+        </button>
+      </div>
+      {offen && (
+        <div className="nav-sub">
+          {projektNav(p).map((e) => (
+            <Link key={e.href} href={e.href} aria-current={istAktiv(e, pfad) ? "page" : undefined} title={e.text}>
+              <Ico icon={e.icon} />
+              <span className="nav-text">{e.text}</span>
+              {e.posten && <OffenePosten p={p} />}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FirmaMenue({ firma, untertitel }: { firma: string; untertitel: string }) {
+  const [auf, setAuf] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!auf) return;
+    const weg = (ev: MouseEvent | KeyboardEvent) => {
+      if (ev instanceof KeyboardEvent ? ev.key === "Escape" : !ref.current?.contains(ev.target as Node)) setAuf(false);
+    };
+    document.addEventListener("mousedown", weg);
+    document.addEventListener("keydown", weg);
+    return () => {
+      document.removeEventListener("mousedown", weg);
+      document.removeEventListener("keydown", weg);
+    };
+  }, [auf]);
+  const kuerzel = firma
+    .split(/\s+/)
+    .filter((w) => /^[A-ZÄÖÜ]/.test(w) && !/^(GmbH|AG|KG|OG)$/.test(w))
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("");
+  return (
+    <div className="nav-firma" ref={ref}>
+      <button type="button" className="nav-firma__knopf" onClick={() => setAuf(!auf)} aria-expanded={auf} aria-haspopup="menu" title={firma}>
+        <span className="nav-firma__kachel" aria-hidden="true">
+          {kuerzel}
+        </span>
+        <span className="nav-firma__text">
+          <b>{firma}</b>
+          <span>{untertitel}</span>
+        </span>
+        <Ico icon={ChevronsUpDown} />
+      </button>
+      {auf && (
+        <div className="nav-menue" role="menu">
+          <Link href="/einstellungen/" role="menuitem" onClick={() => setAuf(false)}>
+            <Ico icon={Settings} />
+            Einstellungen
+          </Link>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              themaWechseln();
+              setAuf(false);
+            }}
+          >
+            <Ico icon={Moon} />
+            Hell oder dunkel
+          </button>
+          <p className="nav-menue__hinweis">Beispieldaten: Firmen, Projekte und Beträge sind erfunden.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function Seitenleiste({ firma, untertitel, projekte }: { firma: string; untertitel: string; projekte: NavProjekt[] }) {
+  const pfad = usePathname();
   const zu = useNavZu();
   const nutzer = useNutzer();
+  const projektId = pfad.match(/^\/projekte\/([^/]+)/)?.[1];
+  const imAbgleich = projekte.filter((p) => p.abgleich);
+  const fertig = projekte.filter((p) => !p.abgleich);
 
-  // Kurztaste „[“ klappt die Seitenleiste ein und aus (Linear); nicht mit Cmd oder in Eingabefeldern.
+  // Aufgeklappt ist immer das Projekt, in dem man steht; weitere klappt man selbst auf.
+  const [offen, setOffen] = useState<Set<string>>(() => new Set(projektId ? [projektId] : []));
+  const [fertigOffen, setFertigOffen] = useState(() => fertig.some((p) => p.id === projektId));
+  const [suche, setSuche] = useState(false);
+  const [schublade, setSchublade] = useState(false);
+
+  // Beim Wechsel in ein anderes Projekt klappt es auf; am Handy schließt die Schublade nach jedem Seitenwechsel.
+  // (Zustand während des Renderns anpassen statt im Effekt, React-Empfehlung.)
+  const [letzterPfad, setLetzterPfad] = useState(pfad);
+  if (pfad !== letzterPfad) {
+    setLetzterPfad(pfad);
+    setSchublade(false);
+    if (projektId && !offen.has(projektId)) setOffen(new Set(offen).add(projektId));
+    if (projektId && fertig.some((p) => p.id === projektId)) setFertigOffen(true);
+  }
+  useEffect(() => {
+    const d = document.documentElement;
+    if (schublade) d.dataset.schublade = "auf";
+    else delete d.dataset.schublade;
+  }, [schublade]);
+
+  // Kurztasten: „[“ klappt die Seitenleiste ein und aus (Linear), Strg K oder Cmd K öffnet die Suche.
   useEffect(() => {
     const taste = (ev: KeyboardEvent) => {
+      if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && ev.key.toLowerCase() === "k") {
+        ev.preventDefault();
+        setSuche(true);
+        return;
+      }
+      if (ev.key === "Escape") setSchublade(false);
       // „[“ liegt auf österreichischen Tastaturen auf AltGr+8 (Chromium meldet das als Strg+Alt).
       if (ev.key !== "[" || ev.metaKey || ev.repeat) return;
       if ((ev.ctrlKey || ev.altKey) && !ev.getModifierState("AltGraph") && !(ev.ctrlKey && ev.altKey)) return;
@@ -109,70 +225,83 @@ export function Seitenleiste({
     return () => window.removeEventListener("keydown", taste);
   }, []);
 
-  // Auf dem Handy liegt die Navigation waagrecht: den aktiven Eintrag ins Bild holen.
-  useEffect(() => {
-    if (window.innerWidth > 900) return;
-    document.querySelector(".sw-sidebar [aria-current=\"page\"]")?.scrollIntoView({ inline: "center", block: "nearest" });
-  }, [pfad]);
-  const projektId = pfad.match(/^\/projekte\/([^/]+)/)?.[1];
-  const p = projekte.find((x) => x.id === projektId);
+  const umschalten = (id: string) =>
+    setOffen((alt) => {
+      const neu = new Set(alt);
+      if (neu.has(id)) neu.delete(id);
+      else neu.add(id);
+      return neu;
+    });
 
-  const firmaNav: Eintrag[] = [
-    { href: "/", icon: LayoutList, text: "Projekte", zaehler: projekte.length },
-    { href: "/auftraggeber", icon: BookUser, text: "Auftraggeber", zaehler: auftraggeber, folgt: "Auftraggeber mit Historie folgen in v1.0" },
-  ];
+  const zeile = (p: NavProjekt) => <ProjektZeile key={p.id} p={p} pfad={pfad} offen={offen.has(p.id)} umschalten={() => umschalten(p.id)} />;
 
   return (
-    <aside className="sw-sidebar">
-      <div className="brand-row">
-        <Link href="/" className="sw-brand" aria-label="tieout" title="tieout">
+    <>
+      <div className="sw-mobilkopf">
+        <button type="button" className="nav-toggle" onClick={() => setSchublade(true)} aria-label="Navigation öffnen">
+          <Ico icon={Menu} />
+        </button>
+        <Link href="/" className="sw-brand" aria-label="tieout">
           <LogoMark />
           <Wortmarke />
         </Link>
-        <button type="button" className="nav-toggle" onClick={navWechseln} title="Seitenleiste ein- oder ausklappen ( [ )" aria-label="Seitenleiste ein- oder ausklappen" aria-expanded={!zu}>
-          <Ico icon={PanelLeft} />
+        <button type="button" className="nav-toggle" onClick={() => setSuche(true)} aria-label="Suchen">
+          <Ico icon={Search} />
         </button>
       </div>
-      <div className="nav-firma" title={`${firma}, ${untertitel}`}>
-        <span className="brand-mark" aria-hidden="true">
-          {firma.charAt(0)}
-        </span>
-        <span className="brand-name">{firma}</span>
-      </div>
-      <nav className="sw-nav" aria-label="Firma">
-        {firmaNav.filter((e) => !e.folgt).map((e) => (
-          <NavLink key={e.href} e={e} pfad={pfad} />
-        ))}
-      </nav>
-      <div className="nav-group">
-        <span className="label">Projekte</span>
-        <nav className="sw-nav nav-baum" aria-label="Projekte">
-          {projekte.map((x) => {
-            const offen = x.id === p?.id;
-            return (
-              <div key={x.id} className="nav-projekt" data-offen={offen || undefined}>
-                <Link href={`/projekte/${x.id}/`} className="nav-projekt__kopf" title={`${x.kurz} ${x.name}, ${AMPEL_WORT[x.ampel]}`}>
-                  <span className="nav-text">{x.name}</span>
-                </Link>
-                {offen && (
-                  <div className="nav-sub">
-                    {projektNav(x).filter((e) => !e.folgt).map((e) => (
-                      <NavLink key={e.href} e={e} pfad={pfad} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+      <div className="sw-schleier" onClick={() => setSchublade(false)} aria-hidden="true" />
+      <aside className="sw-sidebar" aria-label="Navigation">
+        <div className="brand-row">
+          <Link href="/" className="sw-brand" aria-label="tieout" title="tieout">
+            <LogoMark />
+            <Wortmarke />
+          </Link>
+          <button type="button" className="nav-toggle nav-toggle--breit" onClick={navWechseln} title="Seitenleiste ein- oder ausklappen ( [ )" aria-label="Seitenleiste ein- oder ausklappen" aria-expanded={!zu}>
+            <Ico icon={PanelLeft} />
+          </button>
+          <button type="button" className="nav-toggle nav-toggle--handy" onClick={() => setSchublade(false)} aria-label="Navigation schließen">
+            <Ico icon={X} />
+          </button>
+        </div>
+        <FirmaMenue firma={firma} untertitel={untertitel} />
+        <nav className="sw-nav" aria-label="Allgemein">
+          <button type="button" className="nav-suche" onClick={() => setSuche(true)} title="Suchen (Strg K)">
+            <Ico icon={Search} />
+            <span className="nav-text">Suchen</span>
+            <span className="sw-kbd nav-kbd">Strg K</span>
+          </button>
         </nav>
-      </div>
-      <div className="nav-fill" />
-      <nav className="sw-nav" aria-label="Konto">
-        <Link href="/einstellungen/" aria-current={pfad.startsWith("/einstellungen") ? "page" : undefined} title="Einstellungen" className={nutzer ? "nav-profil" : undefined}>
-          {nutzer ? <span className="avatar">{initialen(anzeigename(nutzer))}</span> : <Ico icon={Settings} />}
-          <span className="nav-text">{nutzer ? anzeigename(nutzer) : "Einstellungen"}</span>
-        </Link>
-      </nav>
-    </aside>
+        <nav className="nav-gruppe" aria-label="Projekte">
+          <Link href="/" className="nav-gruppe__kopf" aria-current={pfad === "/" ? "page" : undefined}>
+            <span className="nav-text">Projekte</span>
+            <span className="sw-count">{imAbgleich.length}</span>
+          </Link>
+          <div className="sw-nav nav-baum">{imAbgleich.map(zeile)}</div>
+        </nav>
+        {fertig.length > 0 && (
+          <nav className="nav-gruppe" aria-label="Abgeschlossen">
+            <button type="button" className="nav-gruppe__kopf" onClick={() => setFertigOffen(!fertigOffen)} aria-expanded={fertigOffen}>
+              <Ico icon={ChevronRight} />
+              <span className="nav-text">Abgeschlossen</span>
+              <span className="sw-count">{fertig.length}</span>
+            </button>
+            <div className="sw-nav nav-baum" data-zu={!fertigOffen || undefined}>
+              {fertig.map(zeile)}
+            </div>
+          </nav>
+        )}
+        <div className="nav-fill" />
+        <div className="nav-fuss">
+          <span className="nav-beispiel" title="Synthetischer Datensatz: Firmen, Projekte und Beträge sind erfunden, keine echten Funde">
+            <span className="nav-beispiel__raute" aria-hidden="true" />
+            <span className="nav-text">Beispieldaten</span>
+          </span>
+          <Link href="/einstellungen/" className="nav-fuss__knopf" aria-current={pfad.startsWith("/einstellungen") ? "page" : undefined} title={nutzer ? anzeigename(nutzer) : "Einstellungen"} aria-label="Einstellungen">
+            {nutzer ? <span className="avatar">{initialen(anzeigename(nutzer))}</span> : <Ico icon={Settings} />}
+          </Link>
+        </div>
+      </aside>
+      {suche && <Suche projekte={projekte} projektId={projektId} schliessen={() => setSuche(false)} />}
+    </>
   );
 }

@@ -103,7 +103,7 @@ export default async function BelegSeite({ params }: Props) {
         pfad={[
           { text: daten.firma.name, href: "/" },
           { text: d.projekt.kurz, href: `/projekte/${id}/` },
-          { text: "Ordner", href: `/projekte/${id}/ordner` },
+          { text: "Belege", href: `/projekte/${id}/ordner/` },
         ]}
         titel={zuruf ? `Zuruf ${zuruf.nr}` : ART[dok!.art]}
       />

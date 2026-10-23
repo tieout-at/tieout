@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { erzeugeFirma } from "@/demo/firma/erzeuge";
 import { LG_NAME } from "@/demo/w21/katalog";
 import type { Datensatz, Firmendaten } from "@/domain/typen";
-import { pruefeFirma, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis } from "@/engine";
+import { pruefeFirma, type Ampel, type Befund, type Ergebnis, type FirmenErgebnis, type Liste } from "@/engine";
 
 let cache: { f: Firmendaten; e: FirmenErgebnis } | null = null;
 
@@ -46,40 +46,59 @@ export function befund(projektId: string, slug: string): { d: Datensatz; e: Erge
   return { d, e, b };
 }
 
-/** Zähler und Stammdaten für die Seitenleiste (klein, geht an den Browser). */
+/** Gebäudeart für die Bauglyphe in der Seitenleiste. */
+export type Gebaeude = "wohnhaus" | "buero" | "schule" | "pflege" | "reihenhaus" | "hotel";
+
+/** Heute aus dem Projektnamen; später ein Feld im Projekt. */
+function gebaeudeAus(name: string): Gebaeude {
+  if (/^Bürogebäude/.test(name)) return "buero";
+  if (/schule/i.test(name)) return "schule";
+  if (/^Pflege/.test(name)) return "pflege";
+  if (/^Reihenhaus/.test(name)) return "reihenhaus";
+  if (/^Hotel/.test(name)) return "hotel";
+  return "wohnhaus";
+}
+
+/** Stammdaten für die Seitenleiste und die Suche (klein, geht an den Browser). */
 export interface NavProjekt {
   id: string;
   kurz: string;
   name: string;
-  los: string;
   abgleich: boolean;
-  /** Ampel aus dem Rechenkern (Firmenübersicht), in der Seitenleiste als Punkt. */
+  /** Ampel aus dem Rechenkern (Firmenübersicht); „rot“ zeigt die Frist in der Seitenleiste. */
   ampel: Ampel;
-  befunde: number;
-  ledger: number;
-  dokumente: number;
-  risiken: number;
+  /** Frist „Schlussrechnung legen bis“ (ISO), nur wenn sie drängt. */
+  frist: string | null;
+  gebaeude: Gebaeude;
+  /** Geschoße für die Glyphe eines Wohnhauses (fest aus der Kennung, 3 bis 6). */
+  geschosse: number;
+  /** Posten, über die zu entscheiden ist (ohne „Braucht Anwalt“), wie auf der Projektübersicht. */
+  entscheiden: { schluessel: string; liste: Liste }[];
+  /** Für die Suche: Titel und Adresse jedes Postens. */
+  posten: { titel: string; href: string }[];
 }
 
-export function navDaten(): { firma: string; untertitel: string; projekte: NavProjekt[]; auftraggeber: number } {
+export function navDaten(): { firma: string; untertitel: string; projekte: NavProjekt[] } {
   const { f, e } = laden();
   return {
     firma: f.firma.name,
-    untertitel: `${f.firma.gewerk}, ${f.firma.sitz}`,
-    auftraggeber: f.auftraggeber.length,
+    untertitel: `${f.projekte.length} Projekte`,
     projekte: f.projekte.map((d) => {
       const x = e.ergebnisse[d.projekt.id];
+      const zeile = e.projekte.find((z) => z.projektId === d.projekt.id);
+      const ampel = zeile?.ampel ?? "grau";
+      const id = d.projekt.id;
       return {
-        id: d.projekt.id,
+        id,
         kurz: d.projekt.kurz,
         name: d.projekt.name,
-        los: d.projekt.los,
         abgleich: x.abgleich,
-        ampel: e.projekte.find((z) => z.projektId === d.projekt.id)?.ampel ?? "grau",
-        befunde: x.befunde.length,
-        ledger: x.ledger.length,
-        dokumente: d.dokumente.length,
-        risiken: x.vorpruefung?.risiken.length ?? 0,
+        ampel,
+        frist: ampel === "rot" && zeile?.datum?.art === "legen_bis" ? zeile.datum.wert : null,
+        gebaeude: gebaeudeAus(d.projekt.name),
+        geschosse: 3 + ([...id].reduce((s, c) => s + c.charCodeAt(0), 0) % 4),
+        entscheiden: x.befunde.filter((b) => b.liste !== "anwalt").map((b) => ({ schluessel: b.schluessel, liste: b.liste })),
+        posten: x.befunde.map((b) => ({ titel: b.titel, href: `/projekte/${id}/befunde/${befundSlug(b.schluessel)}/` })),
       };
     }),
   };

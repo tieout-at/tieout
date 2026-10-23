@@ -15,7 +15,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { d } = projekt((await params).projekt);
-  return { title: `${d.projekt.kurz} Ordner` };
+  return { title: `${d.projekt.kurz} Belege` };
 }
 
 export default async function OrdnerSeite({ params }: Props) {
@@ -25,7 +25,7 @@ export default async function OrdnerSeite({ params }: Props) {
   const basis = `/projekte/${id}`;
   return (
     <>
-      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: basis }]} titel="Ordner" />
+      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: basis }]} titel="Belege" />
       <main className="scr-body">
         <Ordner matrix={belegmatrix(d, e, (s) => `${basis}/befunde/${befundSlug(s)}/`)} dokumente={dokumentliste(d)} basis={basis} />
       </main>

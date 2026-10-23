@@ -15,7 +15,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { d } = projekt((await params).projekt);
-  return { title: `${d.projekt.kurz} Ledger` };
+  return { title: `${d.projekt.kurz} LV-Positionen` };
 }
 
 export default async function Ledger({ params }: Props) {
@@ -41,7 +41,7 @@ export default async function Ledger({ params }: Props) {
   });
   return (
     <>
-      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}/` }]} titel="Ledger" />
+      <Seitenkopf pfad={[{ text: daten.firma.name, href: "/" }, { text: d.projekt.kurz, href: `/projekte/${id}/` }]} titel="LV-Positionen" />
       <main className="scr-body">
         <LedgerTabelle zeilen={zeilen} gruppen={leistungsgruppen()} />
       </main>
