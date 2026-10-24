@@ -52,6 +52,16 @@
   --color-state-orange: #f2762e;
   --color-state-green: #2f9e66;
   --color-state-grey: rgb(10 16 32 / 0.3);
+  /* Übersicht (Digitaler Zwilling): a cell of the Abgleich, and the 1 px contour that lifts every coloured cell to
+     at least 3:1 against white; the fill stays the state colour, so lines and cells share one yellow. */
+  --color-cell: #e6e9ef;
+  --color-cell-edge: rgb(10 16 32 / 0.28);
+  --color-state-green-edge: #1f7a4f;
+  --color-state-yellow-edge: #a87a00;
+  --color-state-orange-edge: #c0521a;
+  /* The light that travels along a traced line. */
+  --color-sweep: #a9b6ff;
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
   /* Table lines and the checkbox ring, as measured in Attio's tables. */
   --color-check: rgb(0 0 0 / 0.09);
   --color-row-hover: #fafafa;
@@ -99,6 +109,36 @@
 @custom-variant data-highlighted {
   &:where([data-highlighted]) {
     @slot;
+  }
+}
+
+/* Übersicht: a card of a trace flies in from its tick; the entrance draws ticks, lines, cells, then the money. */
+@keyframes zw-card-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx, -40px), var(--dy, 0)) scale(0.96);
+  }
+}
+@keyframes zw-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes zw-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes zw-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes zw-draw {
+  from {
+    stroke-dashoffset: 1;
   }
 }
 

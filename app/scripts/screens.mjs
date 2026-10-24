@@ -73,6 +73,28 @@ const SCREENS = [
       await page.getByRole("dialog").waitFor();
     },
   },
+  { name: "uebersicht", path: "/uebersicht/" },
+  {
+    // the trace of F1: hover on wide screens, the sheet on phones
+    name: "uebersicht-spur",
+    path: "/uebersicht/",
+    act: async (page) => {
+      const row = page.locator('[data-target="fund:F1"]').first();
+      if ((page.viewportSize()?.width ?? 0) < 768) await row.click();
+      else await row.hover();
+    },
+  },
+  {
+    // the money block "zusätzlich verrechenbar" with every finding it holds
+    name: "uebersicht-geld",
+    path: "/uebersicht/",
+    act: async (page) => {
+      const block = page.locator('[data-target="block:zusaetzlich"]').first();
+      if ((page.viewportSize()?.width ?? 0) < 768) await block.click();
+      else await block.hover();
+    },
+  },
+  { name: "uebersicht-kiefernau", path: "/uebersicht/buerohaus-kiefernau/" },
   { name: "schlussrechnungen", path: "/schlussrechnungen/" },
   { name: "nicht-gefunden", path: "/gibt-es-nicht/", expect404: true },
   {
