@@ -24,3 +24,5 @@ v1 runs at https://app.tieout.workers.dev; its code is under the tag [`v1-archiv
 | `src/lib/example.ts` | names of the sample company from `docs/Demo_Faelle.md`, no amounts |
 | `src/lib/search.ts` | abbreviations ("RB 11" becomes "Regiebericht 11") and matching |
 | `wrangler.jsonc` | Cloudflare worker `app-neu`, static files from `out/` |
+
+`@emnapi/core` and `@emnapi/runtime` are pinned only so that a lock file written on Windows passes `npm ci` on Linux (CI and Cloudflare): npm leaves out the packages bundled in Tailwind's WebAssembly fallback.
