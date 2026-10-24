@@ -1,46 +1,45 @@
-# Handover: step 2, Kern
+# Handover: step 3, Tabellen
 
-**As of:** Saturday, 24 October 2026, morning, after step 1. Written by Claude for Maxi S.
+**As of:** Saturday, 24 October 2026, afternoon, after step 2. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** pull request #103 (step 1, Hülle) is merged with Maxi S.'s go, and https://app-neu.tieout.workers.dev shows the shell built from `main`. If #103 is still open, merge it first with his go.
+**Precondition:** the pull request of step 2 (branch `schritt-2-kern`, the core in `kern/`) is merged with Maxi S.'s go and CI `Kern` is green on `main`. If it is still open, merge it first with his go.
 
 ## Goal
 
-The calculation core in `kern/`: data model and rules of SPEZIFIKATION.md, tested to the cent against solution list v3 (`docs/Demo_Faelle.md`). No new screens in this step; the app keeps its empty states until step 3 (Tabellen) reads from `kern/`. No amount changes without a go from Maxi S.
+The tables of the app in the Attio layout (view bar, table, sort, filter, columns, footer) with real data from `kern/`: "Projekte" and "Funde" first, then the other lists the sidebar has ("Belege", "E-Mails", "WhatsApp-Meldungen", "Auftraggeber") as far as the step allows. Every amount on screen comes from `kern/`; no amount is typed into `app/`. No amount changes without a go from Maxi S.
 
 ## Read first
 
-1. `CLAUDE.md`, `docs/_STATUS.md` (section "Amounts that must not change"), this file.
-2. `docs/SPEZIFIKATION.md`: sections 2 (objects, Ebene 1 and 2), 3 (Ergebnis, Fund, Rechnungsabschluss), 5.1 (run steps), 8 (port, rewrite or drop, with the order).
-3. `docs/Demo_Faelle.md` v3; `node docs/demo_faelle_check.mjs` recomputes it.
-4. The v1 core under the tag `v1-archiv`: `product/app/src/engine` (15 files, 7 test files), `product/app/src/domain/typen.ts`, `product/app/src/demo` (read with `git show v1-archiv:<path>`).
+1. `CLAUDE.md`, `docs/_STATUS.md`, this file.
+2. `kern/README.md`: what is where, the entry points, the import decision, the assumptions.
+3. `docs/DESIGN.md` (measured Attio values) and `docs/SPEZIFIKATION.md` 4.2 (view bar, sort, filter, add column, footer counter, "Add calculation" only as fixed sums from `kern/`, never "zusätzlich verrechenbar" plus "in Klärung"; table checkboxes, never a bulk release).
+4. `docs/SPEZIFIKATION.md` 7.2: which screen shows which amount.
 
 ## What to build
 
-1. **`kern/` as its own TypeScript package** with Vitest, typecheck and lint, and a CI workflow `Kern` per pull request. Decide at the start how `app/` will import it in step 3 (path alias with transpiling, or an npm workspace) and write the decision down.
-2. **Port in the order of section 8**, each part with its tests before the next: money (`geld.ts`, unchanged), data model (rewrite: Beleg, Position, Fund, WhatsApp-Meldung, Verlauf; every field with source, review state and history), rules, position table, Vorprüfung, Rechnungsabschluss, business level.
-3. **Sample data:** the synthetic company Kronfeld Haustechnik with the five projects of solution list v3 as input data of `kern/` (port the mechanics of the v1 demo generator, rewrite the data).
-4. **Tests take their expected values from `Demo_Faelle.md`**, never from the check script. Every amount listed in `_STATUS.md` under "Amounts that must not change" must come out of `kern/` to the cent.
+1. **Import `kern/` into `app/`** as decided in `kern/README.md`: `"@tieout/kern": "file:../kern"`, `transpilePackages`, `turbopack.root` at the repository root. Check `npm ci` on Linux in CI (the Windows lock file missed packages in step 1), a local static build, and a Cloudflare preview build of the branch before relying on it. CI workflow `App` must also run on `kern/**`. Fallback if the build cannot read outside `app/`: an npm workspace at the repository root.
+2. **Word check:** `app/scripts/check-words.mjs` now fails on any amount in the built pages. Keep it on the source (`app/src` must not contain a typed amount) and drop it for the built pages, as planned in step 1.
+3. **"Projekte":** one row per project from `pruefeFirma(beispielFirma())`: name, Auftraggeber, stage, date ("Schlussrechnung legen bis", last Abschlagsrechnung, final payment), "zusätzlich verrechenbar", "in Klärung", status colour as a tag; footer counter and the two fixed sums apart.
+4. **"Funde":** one row per find over the open projects: number, project, Art, Belegstand, Betrag, Entscheidung, Kürzungsrisiko from the Vorprüfung; filter by Belegstand and project; sort by amount; footer "8 Funde" style counter.
+5. Whatever else the step allows in the same pattern ("Belege" from `ordnerLesen`, "Auftraggeber" from `historie`), without detail pages (step 4).
+6. Screens at 1440 px and 390 px next to the Attio references (`npm run screens`, `node scripts/compare.mjs`), shown to Maxi S.
+
+## Good to know from step 2
+
+- **Entry points:** `pruefeFirma(firmendaten, entscheidungen)` gives `projekte` (rows with status colour), `ergebnisse[projektId]` (per project: `ordner`, `abgleich` with `funde` and `hinweise`, `positionen` with ready cell texts, `vorpruefung`, `rechnungsabschluss`, `schlussbesprechung`, `belegquellen`, `ausserhalbErp`), `summen`, `geld`, `davonMitKuerzungsrisiko`, `historie`, `gleicherGrund`, `abrechnungen`. `beispielFirma()` comes from `@tieout/kern/beispiel`. Everything is synchronous and fast enough to run at build time for the static export.
+- **Keys and numbers:** a find has a stable key (`plan:H-201:D`, `regie:9`, `meldung:W4`, `mehrmenge:24.02.05A`, `anmeldung:mail-0316`) and a number `F1` … per project in the order of the result. Decisions are an append-only list; at business level their key carries the project id (`p1/regie:9`). Vorprüfung risks are `G1` … with keys `vp:<reason>:<bezug>`.
+- **Money words:** every type has German label maps (`FUND_ART_TEXT`, `BELEGSTAND_TEXT`, `ENTSCHEIDUNG_TEXT`, `KUERZUNGSGRUND_TEXT`, `ABZUG_TEXT`, `PROJEKTSTUFE_TEXT`, `BELEGQUELLE_TEXT`); use them instead of new words. `euro()` and `menge()` format amounts and quantities.
+- **Every number leads to its original:** each find carries `nachweise` with `quelle` (Beleg id, page, place) and each calculation step `quellen`; the original viewer comes in step 5, but the table rows can already carry the link target.
+- **Verlauf of a find:** `zumStichtag(datensatz, tag)` replays the twin on an earlier day; Bürohaus Kiefernau on 30.09.2026 shows P2-F1 as "Stunden ohne Regiebericht", 595,00 €, "Beleg fehlt".
+- **Assumptions** of the solution list are listed in `kern/README.md`; they stay until the construction insider answers (`SPEZIFIKATION.md` section 9).
+- **Windows:** no Python on this machine; use Node for scripts. Heredocs with quotes inside can break in the shell tool; write files with the editor tool.
 
 ## Done when
 
-- Typecheck, lint and tests of `kern/` green; CI green on the pull request; `node docs/demo_faelle_check.mjs` green.
-- Every listed amount recomputed by `kern/`; no amount changed, or changed with a go from Maxi S.
-- `_STATUS.md` updated, this file rewritten for step 3 (Tabellen), pull request merged with his go.
-
-## Already known for step 2
-
-- New in v3 against the v1 core: a find may cover several positions (F1), Regie material carries the surcharge of the Vertrag, the rule for ongoing projects uses the work date, "davon mit Kürzungsrisiko" (E13), "Restforderung laut Vertrag" (E14), the Untergrenze uses the Mittellohnkosten, "nur außerhalb ERP" per money word.
-- Amounts are integer cents, rates basis points, rounding commercial and per line, everything net (SPEZIFIKATION.md 2.1).
-
-## From step 1, good to know
-
-- **App map:** design rules and every measured value in `docs/DESIGN.md`; navigation in `app/src/lib/navigation.ts`; the sample names in `app/src/lib/example.ts` (no amounts; step 3 replaces them with data from `kern/`).
-- **Word check:** `app/scripts/check-words.mjs` runs after every app build and fails on any amount in the pages and in `app/src`. That is right until step 3; when the app starts showing amounts from `kern/`, keep the check on source strings (no typed amounts) and drop it for the built pages.
-- **Cloudflare:** worker `app-neu`, production branch `main`, a preview per branch. The preview addresses only work after a production deploy that carries `"preview_urls": true` (the merge of #103 does that). Worker `app` (v1) untouched, builds off.
-- **Windows pitfalls measured in step 1:** a lock file written on Windows missed two packages that Linux needs (`@emnapi/core`, `@emnapi/runtime`, now pinned in `app/`); check `npm ci` in CI after every dependency change. The static export on Windows writes prefetch files in folders, `app/scripts/flatten-prefetch.mjs` fixes that locally (on Linux nothing to do). The local static server (`serve`) can crash with "too many open files" under the screenshot script; restart it.
-- **Screens:** `npm run screens` in `app/` photographs every screen with the local Edge in five widths; `node scripts/compare.mjs` puts them next to the Attio references in `app/qa-shots/` (local only, never committed).
+- Typecheck, lint, tests and build of `app/` and `kern/` green; CI green on the pull request; `node docs/demo_faelle_check.mjs` green.
+- The tables show the amounts of `docs/SPEZIFIKATION.md` 7.2 from `kern/`, screenshots next to Attio at 1440 px and 390 px shown to Maxi S.
+- `_STATUS.md` updated, this file rewritten for step 4 (Datensätze), pull request merged with his go.
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 2, Kern. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 2: den Rechenkern in `kern/` nach Spezifikation Abschnitt 8, Teil für Teil mit Tests gegen die Lösungsliste v3, bis jeder Betrag aus `_STATUS.md` auf den Cent aus `kern/` kommt. Kein Betrag ändert sich ohne mein Go. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor dem Push und vor dem Merge. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 3, Tabellen. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 3: `kern/` in die App einbinden und die Tabellen im Attio-Layout bauen, zuerst „Projekte“ und „Funde“, mit den Beträgen aus `kern/`. Kein Betrag ändert sich ohne mein Go. Sag mir vor jedem Teil in zwei Sätzen, was passiert, zeig mir die Screens neben Attio und hol dir mein Go vor dem Push und vor dem Merge. Deutsch, einfach, Ergebnis zuerst.
