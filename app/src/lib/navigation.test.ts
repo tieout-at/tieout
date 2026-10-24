@@ -8,7 +8,7 @@ describe("navigation", () => {
     expect(SECTIONS.map((s) => s.title)).toEqual(["Ihre Daten", "Digitaler Zwilling", "Ergebnis"]);
     expect(SECTIONS.map((s) => s.destinations.map((d) => d.title))).toEqual([
       ["Belege", "E-Mails", "WhatsApp-Meldungen"],
-      ["Betrieb", "Auftraggeber", "Projekte"],
+      ["Übersicht", "Betrieb", "Auftraggeber", "Projekte"],
       ["Funde", "Schlussrechnungen"],
     ]);
   });
