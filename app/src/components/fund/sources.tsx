@@ -48,7 +48,7 @@ export function CalcPath({ calc, active, onOpen }: { calc: FindRecord["calc"]; a
             </div>
             <p className="text-xs text-fg-secondary tabular-nums">
               <span className="text-fg">{s.formula}</span>
-              {s.derivation && <span>, Menge aus {s.derivation}</span>}
+              {s.derivation && <span> · {s.derivation}</span>}
             </p>
             {s.sources.length > 0 && (
               <div className="mt-0.5 flex flex-wrap gap-1">
@@ -64,7 +64,11 @@ export function CalcPath({ calc, active, onOpen }: { calc: FindRecord["calc"]; a
           <span className="shrink-0 font-semibold whitespace-nowrap tabular-nums">{calc.total.amount}</span>
         </li>
       </ol>
-      {calc.check && <p className="mt-2 px-1 text-xs text-fg-secondary tabular-nums">Gegenprobe mit der Preisbasis, nicht Teil des Betrags: {calc.check}</p>}
+      {calc.check && (
+        <p className="mt-2 px-1 text-xs text-fg-secondary tabular-nums">
+          Gegenprobe mit der Preisbasis (Formblatt K7), nicht Teil des Betrags: {calc.check.replace(/^K7 /, "")}
+        </p>
+      )}
     </section>
   );
 }
@@ -134,13 +138,13 @@ export function WeakSpot({ record, active, onOpen }: { record: FindRecord; activ
       <div className="flex flex-col gap-2 rounded-lg bg-surface px-3 py-2.5 shadow-ring">
         {r && (
           <>
-            <p className="flex items-baseline gap-2">
+            <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <ShieldAlert className="size-4 shrink-0 translate-y-0.5 self-start text-state-red" aria-hidden />
-              <span className="min-w-0 flex-1">
+              <span className="min-w-0 flex-1 max-sm:basis-[calc(100%-24px)]">
                 <span className="font-medium">{r.reason}</span>
                 <span className="text-fg-secondary">: {r.detail}</span>
               </span>
-              <span className="shrink-0 text-xs whitespace-nowrap text-fg-secondary tabular-nums">
+              <span className="shrink-0 text-xs whitespace-nowrap text-fg-secondary tabular-nums max-sm:basis-full max-sm:pl-6">
                 {r.number}, {r.alreadyCut ? "schon gekürzt" : "droht"} {r.amount}
               </span>
             </p>

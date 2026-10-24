@@ -80,12 +80,17 @@ function readOn(werte: GelesenerWert[], page: number): OriginalPage["read"] {
     .map((w) => ({ place: w.stelle, label: LABEL[w.schluessel] ?? null, text: w.text, review: PRUEFSTAND_TEXT[w.pruefstand], before: w.vorher }));
 }
 
-/** One page of a Beleg or WhatsApp-Meldung as the viewer shows it; null if the twin knows no such Beleg. */
-export function originalPage(d: Datensatz, belegId: string, page: number): OriginalPage | null {
+/**
+ * One page of a Beleg or WhatsApp-Meldung as the viewer shows it; null if the twin knows no such Beleg. `pointed` holds
+ * the places sources point to (`belegId:seite|stelle`): a value the layout does not show is listed under it only then.
+ */
+export function originalPage(d: Datensatz, belegId: string, page: number, pointed: ReadonlySet<string> = new Set()): OriginalPage | null {
   const o = layoutPage(d, belegId, page);
   if (!o || o.layout === "werte") return o;
   const shown = new Set([...o.head.map((h) => h.place), ...(o.table?.rows.map((r) => r.place) ?? []), ...o.body.map((b) => b.place), ...(o.sign ? [o.sign.place] : [])]);
-  const extra = o.read.filter((r) => !shown.has(r.place)).map((r) => ({ label: r.label ?? placeText(r.place), value: r.text, place: r.place }));
+  // a value inside a shown part ("Pos. 22.04.12B, Einheitspreis" in the line of 22.04.12B) is shown with it
+  const inShown = (place: string) => [...shown].some((x) => place === x || place.startsWith(`${x},`));
+  const extra = o.read.filter((r) => !inShown(r.place) && pointed.has(`${o.key}|${r.place}`)).map((r) => ({ label: r.label ?? placeText(r.place), value: r.text, place: r.place }));
   return { ...o, extra };
 }
 
@@ -201,7 +206,6 @@ function layoutPage(d: Datensatz, belegId: string, page: number): OriginalPage |
         // one cloud per text: the twin reads the same note once per position it touches
         body: [...new Map(p.vermerke.map((v) => [v.text.wert, v])).values()].map((v) => ({
           place: v.text.quelle.stelle ?? "",
-          label: p.vermerke.filter((x) => x.text.wert === v.text.wert).map((x) => x.positionNr.wert).join(", "),
           text: v.text.wert,
         })),
       };

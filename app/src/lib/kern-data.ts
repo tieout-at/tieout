@@ -21,6 +21,7 @@ import {
   prozentText,
   pruefeFirma,
   type Belegstand,
+  type Entscheidungsstand,
   type FirmenErgebnis,
   type Firmendaten,
   type ProjektZeile,
@@ -62,6 +63,9 @@ export type FindRow = Row & {
   belegstand: { state: Belegstand; text: string } | null;
   amount: Amount;
   decision: string;
+  decisionState: Entscheidungsstand;
+  /** Keys the same work had before; their decisions carry over. */
+  earlierIds: string[];
   /** The Vorprüfung line that lies in this find. */
   risk: { number: string; reason: string; amount: Amount; alreadyCut: boolean } | null;
   sources: string[];
@@ -172,6 +176,8 @@ export function findRows(): FindRow[] {
         belegstand: f.belegstand ? { state: f.belegstand, text: BELEGSTAND_TEXT[f.belegstand] } : null,
         amount: amount(f.betrag),
         decision: ENTSCHEIDUNG_TEXT[f.entscheidung],
+        decisionState: f.entscheidung,
+        earlierIds: f.fruehereSchluessel.map((k) => `${p.projektId}/${k}`),
         risk: risk ? { number: risk.nr, reason: KUERZUNGSGRUND_TEXT[risk.grund], amount: amount(risk.betrag), alreadyCut: risk.zustand === "schon_gekuerzt" } : null,
         sources: (e.belegquellen[f.schluessel] ?? []).map((s) => BELEGQUELLE_TEXT[s]),
         workDate: dated(f.arbeitsdatum),

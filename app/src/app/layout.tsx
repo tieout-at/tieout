@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 
 import { AppShell } from "@/components/shell/app-shell";
+import { findSearchEntries } from "@/lib/finds";
 import "./globals.css";
 
 // Inter, served from our own files (no request to Google).
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" className={inter.variable}>
       <body>
-        <AppShell>{children}</AppShell>
+        <AppShell finds={findSearchEntries()}>{children}</AppShell>
       </body>
     </html>
   );

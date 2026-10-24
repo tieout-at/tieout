@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { currentState, localTime, nextStep, type Decision } from "./decisions";
+import { ENTSCHEIDUNG_TEXT } from "@tieout/kern";
+
+import { currentState, DECISION_TEXT, localTime, nextStep, type Decision } from "./decisions";
 
 const d = (zeit: string, stand: Decision["stand"], key = "p1/plan:H-201:D"): Decision => ({ fundSchluessel: key, zeit, wer: "Abrechnung", stand });
 
@@ -21,6 +23,10 @@ describe("decisions on a find (append only)", () => {
     expect(nextStep("geprueft")).toMatchObject({ stand: "freigegeben", wer: "Geschäftsführung" });
     expect(nextStep("freigegeben")).toBeNull();
     expect(nextStep("nicht_verrechnen")?.stand).toBe("geprueft");
+  });
+
+  it("uses the words of the core", () => {
+    expect(DECISION_TEXT).toEqual(ENTSCHEIDUNG_TEXT);
   });
 
   it("writes local time to the minute", () => {

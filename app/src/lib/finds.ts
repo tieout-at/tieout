@@ -46,7 +46,7 @@ export type CalcStep = {
   title: string;
   /** "14 Stk × 286,40 €". */
   formula: string;
-  /** Where the quantity comes from: "100 Stk aufgemessen, 86 Stk verrechnet". */
+  /** Where the quantity comes from: "14 Stk = 100 Stk aufgemessen − 86 Stk verrechnet". */
   derivation: string | null;
   amount: string;
   sources: SourceRef[];
@@ -90,6 +90,8 @@ export type FindRecord = {
   originals: Record<string, OriginalPage>;
   /** The page the viewer opens with: the original of the first number of the Rechenweg. */
   first: SourceRef | null;
+  /** "Schlussrechnung legen bis 30.10.2026" for the task form; null when no Schlussrechnung is due. */
+  deadline: string | null;
   /** Position in the project's list of finds, for the arrows in the head (Attio: "11 of 22"). */
   nav: { index: number; count: number; prev: string | null; next: string | null };
 };
@@ -131,11 +133,39 @@ function steps(d: Datensatz, f: Fund): CalcStep[] {
         id: `schritt-${i}`,
         title: s.bezeichnung,
         formula: s.wert,
-        derivation: pos ? `${menge(pos.aufmassMenge, einheit)} aufgemessen, ${menge(pos.verrechnetMenge, einheit)} verrechnet` : null,
+        derivation: pos ? `${menge(pos.differenz, einheit)} = ${menge(pos.aufmassMenge, einheit)} aufgemessen − ${menge(pos.verrechnetMenge, einheit)} verrechnet` : null,
         amount: s.betrag === undefined ? "" : euro(s.betrag),
         sources: (s.quellen ?? []).map((q) => sourceRef(d, q)),
       };
     });
+}
+
+/**
+ * Name and facts of the head. A find from a plan change is named by what changed ("Wohnungstyp C: Wohnküche geteilt,
+ * 1 Heizkörper mehr"), the plan index goes into the facts; every other find by its title up to the first colon.
+ */
+function nameAndFacts(f: Fund): { name: string; facts: string[] } {
+  const at = f.titel.indexOf(": ");
+  if (at < 0) return { name: f.titel, facts: [f.untertitel, FUND_ART_TEXT[f.art]] };
+  const [before, after] = [f.titel.slice(0, at), f.titel.slice(at + 2)];
+  return f.art === "mehrmenge_plan" ? { name: after, facts: [before, FUND_ART_TEXT[f.art]] } : { name: before, facts: [after, FUND_ART_TEXT[f.art]] };
+}
+
+function largest(f: Fund, steps: CalcStep[]): CalcStep | undefined {
+  const amounts = f.rechenweg.schritte.filter((s) => !s.summe).map((s) => s.betrag ?? 0);
+  const at = amounts.indexOf(Math.max(...amounts));
+  return steps[at] ?? steps[0];
+}
+
+/** Every find as an entry of the search (Strg K): title, project, amount, and the words of its positions. */
+export function findSearchEntries(): { id: string; title: string; hint: string; href: string; keywords: string[] }[] {
+  return allFinds().map(({ f, p, slug }) => ({
+    id: `fund-${slug}`,
+    title: `${f.nr} ${f.titel}`,
+    hint: `${p.name} · ${euro(f.betrag)}`,
+    href: `/funde/${slug}/`,
+    keywords: [p.name, FUND_ART_TEXT[f.art], f.untertitel, ...f.positionen.flatMap((x) => [x.positionNr, x.kurztext])],
+  }));
 }
 
 /** The find page of one find; throws for an unknown slug (the pages are generated from `findSlugs()`). */
@@ -161,19 +191,30 @@ export function findRecord(slug: string): FindRecord {
   const count = [files ? `${files} ${files === 1 ? "Beleg" : "Belege"}` : "", fromMessages ? `${fromMessages} ${fromMessages === 1 ? "WhatsApp-Meldung" : "WhatsApp-Meldungen"}` : ""].filter(Boolean).join(", ");
 
   const highlights: Highlight[] = [
-    { id: "betrag", title: "Betrag", value: euro(f.betrag), lines: [money ?? "zählt erst nach einer Entscheidung", f.positionen.length ? `${f.positionen.length} ${f.positionen.length === 1 ? "Position" : "Positionen"}` : FUND_ART_TEXT[f.art]] },
+    {
+      id: "betrag",
+      title: "Betrag",
+      value: euro(f.betrag),
+      lines: [
+        [money ?? "zählt erst nach einer Entscheidung", f.positionen.length ? `${f.positionen.length} ${f.positionen.length === 1 ? "Position" : "Positionen"}` : ""].filter(Boolean).join(", "),
+        "netto, vor Nachlass",
+      ],
+    },
     {
       id: "belegstand",
       title: "Belegstand",
       value: f.belegstand ? BELEGSTAND_TEXT[f.belegstand] : "keiner",
-      lines: [count],
+      lines: risk?.zustand === "droht" ? [count, "mit Kürzungsrisiko"] : [count],
       status: f.belegstand === "belegt" ? "gruen" : f.belegstand === "beleg_fehlt" ? "gelb" : f.belegstand ? "orange" : undefined,
     },
     {
       id: "risiko",
       title: "Kürzungsrisiko",
-      value: risk ? KUERZUNGSGRUND_TEXT[risk.grund] : "keines",
-      lines: risk ? [risk.zustand === "droht" ? `droht für ${euro(risk.betrag)}` : `schon gekürzt ${euro(risk.betrag)}`] : ["die Vorprüfung meldet hier nichts"],
+      // a find in Klärung is not in the Entwurf yet, so the Vorprüfung has not looked at it
+      value: risk ? KUERZUNGSGRUND_TEXT[risk.grund] : f.belegstand === "belegt" ? "keines" : "noch nicht geprüft",
+      lines: risk
+        ? [`Vorprüfung ${risk.nr}, ${risk.zustand === "droht" ? `droht für ${euro(risk.betrag)}` : `schon gekürzt ${euro(risk.betrag)}`}`]
+        : [f.belegstand === "belegt" ? "die Vorprüfung meldet hier nichts" : "erst mit Beleg in der Vorprüfung"],
       status: risk ? "rot" : undefined,
       href: risk ? "#kuerzungsrisiko" : undefined,
     },
@@ -194,6 +235,8 @@ export function findRecord(slug: string): FindRecord {
   ].sort((x, y) => y.time.localeCompare(x.time));
 
   const refs = [...calcSteps.flatMap((s) => s.sources), ...evidence.map((x) => x.source), ...(risk?.nachweise ?? []).map((n) => sourceRef(d, n.quelle))];
+  // the places sources point to, so that a page lists a value its layout does not show only when it is marked
+  const pointed = new Set(refs.map((r) => `${r.page}|${r.place ?? ""}`));
   const originals: Record<string, OriginalPage> = {};
   for (const r of refs) {
     const [belegId, page] = [r.page.slice(0, r.page.lastIndexOf(":")), Number(r.page.slice(r.page.lastIndexOf(":") + 1))];
@@ -201,7 +244,7 @@ export function findRecord(slug: string): FindRecord {
     // short Belege are there page by page; a long one (the Leistungsverzeichnis) only with the pages the find points to
     const pages = beleg && beleg.seiten <= 4 ? Array.from({ length: beleg.seiten }, (_, i) => i + 1) : [page];
     for (const n of pages) {
-      const o = originals[`${belegId}:${n}`] ?? originalPage(d, belegId, n);
+      const o = originals[`${belegId}:${n}`] ?? originalPage(d, belegId, n, pointed);
       if (o) originals[o.key] = o;
     }
   }
@@ -213,8 +256,7 @@ export function findRecord(slug: string): FindRecord {
     earlierKeys: f.fruehereSchluessel.map((k) => `${p.projektId}/${k}`),
     number: f.nr,
     title: f.titel,
-    name: f.titel.includes(": ") ? f.titel.slice(0, f.titel.indexOf(": ")) : f.titel,
-    facts: [f.titel.includes(": ") ? f.titel.slice(f.titel.indexOf(": ") + 2) : f.untertitel, FUND_ART_TEXT[f.art]],
+    ...nameAndFacts(f),
     project: { name: p.name, href: `/projekte/${projectSlug(p.name)}/` },
     client: { name: ag.name, href: `/auftraggeber/${clientSlug(ag.kurzname)}/` },
     amount: euro(f.betrag),
@@ -225,7 +267,7 @@ export function findRecord(slug: string): FindRecord {
     evidence: { work: evidence.filter((x, i) => f.nachweise[i].rolle === "leistung"), price: evidence.filter((x, i) => f.nachweise[i].rolle === "preis") },
     risk: risk
       ? {
-          number: risk.nr,
+          number: `Vorprüfung ${risk.nr}`,
           reason: KUERZUNGSGRUND_TEXT[risk.grund],
           detail: risk.detail,
           remedy: risk.abhilfe,
@@ -242,7 +284,9 @@ export function findRecord(slug: string): FindRecord {
     decisionText: ENTSCHEIDUNG_TEXT,
     taskText: risk?.abhilfe ?? f.abhilfe ?? "",
     originals,
-    first: calcSteps[0]?.sources[0] ?? evidence[0]?.source ?? null,
+    // the original of the largest number of the Rechenweg (for F1 the radiators), else the first Beleg
+    first: largest(f, calcSteps)?.sources[0] ?? evidence[0]?.source ?? null,
+    deadline: p.datum?.art === "legen_bis" ? `Schlussrechnung legen bis ${datumText(p.datum.wert)}` : null,
     nav: { index: index + 1, count: inProject.length, prev: inProject[index - 1]?.slug ?? null, next: inProject[index + 1]?.slug ?? null },
   };
 }

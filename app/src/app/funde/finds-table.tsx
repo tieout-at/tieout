@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { CalendarDays, Construction, FileCheck, FolderInput, Gavel, ShieldAlert, Shapes, SearchCheck, Text, Wallet } from "lucide-react";
 
 import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
+import { currentState, DECISION_TEXT, readDecisions, type Decision } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import type { Calculation, View } from "@/lib/table";
 
@@ -28,6 +30,14 @@ export function FindsTable({
   /** On a project page: the project column is hidden and the view is remembered per project. */
   project?: string;
 }) {
+  // decisions recorded in this browser replace the core's state after the first paint (stage 0, until the backend)
+  const [decisions, setDecisions] = useState<Decision[]>([]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of a browser-only value
+    setDecisions(readDecisions());
+  }, []);
+  const shown = decisions.length ? rows.map((r) => ({ ...r, decision: DECISION_TEXT[currentState(decisions, [r.id, ...r.earlierIds], r.decisionState)] })) : rows;
+
   const columns: Column<FindRow>[] = [
     {
       id: "find",
@@ -163,5 +173,5 @@ export function FindsTable({
     },
   ];
 
-  return <DataTable name={project ? `funde.${project}` : "funde"} rows={rows} columns={columns} views={views} noun={{ one: "Fund", many: "Funde", dative: "Funden" }} />;
+  return <DataTable name={project ? `funde.${project}` : "funde"} rows={shown} columns={columns} views={views} noun={{ one: "Fund", many: "Funde", dative: "Funden" }} />;
 }

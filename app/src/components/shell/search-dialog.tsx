@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowDown, ArrowUp, Building2, Construction, CornerDownLeft, type LucideIcon } from "lucide-react";
+import { useMemo } from "react";
+import { ArrowDown, ArrowUp, Building2, Construction, CornerDownLeft, SearchCheck, type LucideIcon } from "lucide-react";
 
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -16,6 +17,9 @@ import { useShell } from "./shell-state";
 type Entry = { id: string; title: string; href: string; icon: LucideIcon; keywords: string[]; hint?: string };
 type Group = { heading: string; entries: Entry[] };
 
+/** A find as the search knows it (from `findSearchEntries()` in `lib/finds.ts`, computed at build time). */
+export type SearchFind = { id: string; title: string; hint: string; href: string; keywords: string[] };
+
 // Words a project tab answers to, so "LV" finds Positionen and "RB 11" finds Belege.
 const TAB_KEYWORDS: Record<string, string[]> = {
   zeitstrahl: ["Baustelle", "WhatsApp", "fehlt", "verrechnet"],
@@ -26,7 +30,7 @@ const TAB_KEYWORDS: Record<string, string[]> = {
   schlussrechnung: ["Änderungsliste", "Rechnungsabschluss", "Restforderung", "Beweispaket"],
 };
 
-function buildGroups(): Group[] {
+function buildGroups(finds: SearchFind[]): Group[] {
   const pages: Group = {
     heading: "Seiten",
     entries: ALL.map((d) => ({ id: d.id, title: d.title, href: d.href, icon: d.icon, keywords: d.keywords ?? [] })),
@@ -55,25 +59,26 @@ function buildGroups(): Group[] {
       keywords: [BUSINESS.name, "Betrieb"],
     })),
   };
-  return [pages, ...projects, business];
+  const found: Group = { heading: "Funde", entries: finds.map((f) => ({ ...f, icon: SearchCheck })) };
+  return [pages, found, ...projects, business];
 }
 
-const GROUPS = buildGroups();
-const BY_ID = new Map(GROUPS.flatMap((g) => g.entries).map((e) => [e.id, e]));
 
-export function SearchDialog() {
+export function SearchDialog({ finds }: { finds: SearchFind[] }) {
   const { searchOpen, setSearchOpen } = useShell();
   return (
     <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
       <DialogContent aria-describedby={undefined}>
         <DialogTitle className="sr-only">Suche</DialogTitle>
-        {searchOpen && <SearchPanel onDone={() => setSearchOpen(false)} />}
+        {searchOpen && <SearchPanel finds={finds} onDone={() => setSearchOpen(false)} />}
       </DialogContent>
     </Dialog>
   );
 }
 
-function SearchPanel({ onDone }: { onDone: () => void }) {
+function SearchPanel({ finds, onDone }: { finds: SearchFind[]; onDone: () => void }) {
+  const GROUPS = useMemo(() => buildGroups(finds), [finds]);
+  const BY_ID = useMemo(() => new Map(GROUPS.flatMap((g) => g.entries).map((e) => [e.id, e])), [GROUPS]);
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(GROUPS[0].entries[0].id);
@@ -93,7 +98,7 @@ function SearchPanel({ onDone }: { onDone: () => void }) {
       onValueChange={setSelected}
       filter={(_value, search, keywords) => score(search, keywords ?? [])}
     >
-      <CommandInput value={query} onValueChange={setQuery} placeholder="Seiten, Projekte, Belege suchen …" autoFocus />
+      <CommandInput value={query} onValueChange={setQuery} placeholder="Seiten, Projekte, Funde suchen …" autoFocus />
       {expansions.length > 0 && (
         <p className="px-4 pt-3 text-xs text-fg-secondary">
           {expansions.map((e) => (

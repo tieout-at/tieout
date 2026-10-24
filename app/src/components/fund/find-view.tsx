@@ -44,6 +44,7 @@ export function FindView({ record }: { record: FindRecord }) {
 
   const keys = useMemo(() => [record.key, ...record.earlierKeys], [record]);
   const mine = decisions.filter((d) => keys.includes(d.fundSchluessel));
+  const myTasks = tasks.filter((t) => keys.includes(t.fundSchluessel));
   const state = currentState(decisions, keys, record.decision);
   const last = mine.toSorted((a, b) => a.zeit.localeCompare(b.zeit)).at(-1);
 
@@ -64,9 +65,7 @@ export function FindView({ record }: { record: FindRecord }) {
       text: `setzte die Entscheidung auf ${record.decisionText[d.stand]}${d.grund ? `: ${d.grund}` : ""}`,
       kind: "entscheidung" as const,
     })),
-    ...tasks
-      .filter((t) => keys.includes(t.fundSchluessel))
-      .map((t) => ({
+    ...myTasks.map((t) => ({
         id: t.id,
         time: t.zeit,
         timeText: zeitText(t.zeit),
@@ -86,10 +85,10 @@ export function FindView({ record }: { record: FindRecord }) {
     // shrink-0: the row grows with its content, so the original can stick to the top while the page scrolls
     <div className="flex min-h-full shrink-0">
       <div className="flex min-w-0 flex-1 flex-col">
-        <RecordHead icon={SearchCheck} badge={record.number} title={record.name} facts={record.facts}>
-          <span className="ml-auto flex shrink-0 items-center gap-1.5 pl-2 text-xs text-fg-secondary tabular-nums">
-            <span className="max-sm:hidden">
-              {record.nav.index} von {record.nav.count} in {record.project.name}
+        <RecordHead icon={SearchCheck} badge={record.number} title={record.name} facts={record.facts} wrap>
+          <span className="ml-auto flex shrink-0 items-center gap-1.5 pl-2 text-xs text-fg-secondary tabular-nums max-sm:hidden">
+            <span className="whitespace-nowrap">
+              {record.nav.index} von {record.nav.count}
             </span>
             {[
               { slug: record.nav.prev, label: "Voriger Fund", Icon: ChevronUp },
@@ -111,8 +110,14 @@ export function FindView({ record }: { record: FindRecord }) {
           state={state}
           amount={record.amount}
           taskText={record.taskText}
+          deadline={record.deadline}
+          open={[
+            ...(record.risk && !record.risk.alreadyCut ? [`Kürzungsrisiko ${record.risk.reason}, ${record.risk.amount}`] : []),
+            ...(record.remedy ? [record.remedy] : []),
+            ...myTasks.map((t) => `Aufgabe für ${t.zustaendig}: ${t.text}`),
+          ]}
           onDecide={(stand, wer, grund) => setDecisions(appendDecision({ fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }))}
-          onTask={(t) => setTasks(appendTask({ id: `aufgabe-${Date.now()}`, fundSchluessel: record.key, zeit: localTime(), wer: "Abrechnung", ...t }))}
+          onTask={(t) => setTasks(appendTask({ id: `aufgabe-${Date.now()}`, fundSchluessel: record.key, fund: `${record.number} ${record.project.name}`, href: `/funde/${record.slug}/`, zeit: localTime(), wer: "Abrechnung", ...t }))}
         />
         <div className="flex flex-col gap-6 px-6 pt-1 pb-10 max-md:px-4">
           <Highlights items={[...record.highlights, decisionCard]} title="Auf einen Blick" columns={4} />

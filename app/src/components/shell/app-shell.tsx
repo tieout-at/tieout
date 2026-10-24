@@ -3,22 +3,22 @@
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { SearchDialog } from "./search-dialog";
+import { SearchDialog, type SearchFind } from "./search-dialog";
 import { ShellProvider, useShell } from "./shell-state";
 import { Sidebar } from "./sidebar";
 
 /** Frame of every page: sidebar left (275 px), page right; below 768 px the sidebar opens as a panel. */
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({ children, finds }: { children: React.ReactNode; finds: SearchFind[] }) {
   return (
     <ShellProvider>
       <TooltipProvider>
-        <Frame>{children}</Frame>
+        <Frame finds={finds}>{children}</Frame>
       </TooltipProvider>
     </ShellProvider>
   );
 }
 
-function Frame({ children }: { children: React.ReactNode }) {
+function Frame({ children, finds }: { children: React.ReactNode; finds: SearchFind[] }) {
   const { collapsed, mobileOpen, setMobileOpen } = useShell();
   return (
     <>
@@ -34,7 +34,7 @@ function Frame({ children }: { children: React.ReactNode }) {
           <Sidebar inSheet />
         </SheetContent>
       </Sheet>
-      <SearchDialog />
+      <SearchDialog finds={finds} />
     </>
   );
 }

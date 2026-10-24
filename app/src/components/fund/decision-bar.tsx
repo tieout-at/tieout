@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Ban, Check, ListTodo } from "lucide-react";
 import { useState } from "react";
 
@@ -21,12 +22,17 @@ export function DecisionBar({
   state,
   amount,
   taskText,
+  deadline,
+  open,
   onDecide,
   onTask,
 }: {
   state: DecisionState;
   amount: string;
   taskText: string;
+  deadline: string | null;
+  /** What is still open on the find, shown before it is released: the risk and the tasks. */
+  open: string[];
   onDecide: (stand: Decision["stand"], wer: string, grund?: string) => void;
   onTask: (t: Pick<Task, "text" | "zustaendig" | "bis">) => void;
 }) {
@@ -35,7 +41,9 @@ export function DecisionBar({
   const [openNo, setOpenNo] = useState(false);
   const [openTask, setOpenTask] = useState(false);
   const [reason, setReason] = useState("");
-  const [task, setTask] = useState({ text: taskText, zustaendig: "Abrechnung", bis: "" });
+  // the Abhilfe is site work (joint Aufmaß, a signature) in most finds, so the Bauleitung is proposed
+  const [task, setTask] = useState({ text: taskText, zustaendig: "Bauleitung", bis: "" });
+  const [made, setMade] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col gap-1.5 px-6 pb-4 max-md:px-4">
@@ -54,8 +62,18 @@ export function DecisionBar({
                   : next.label === "Prüfen"
                     ? "Danach gibt die Geschäftsführung frei."
                     : "Der Fund zählt wieder und geht zur Freigabe."}{" "}
-                Vermerkt als {next.wer}.
+                Vermerkt als {next.wer}; bis die Anmeldung kommt, unterscheidet die App noch keine Personen.
               </p>
+              {next.label === "Freigeben" && open.length > 0 && (
+                <ul className="mt-2 flex flex-col gap-1 rounded-md bg-fill-subtle px-2 py-1.5 text-xs shadow-ring">
+                  {open.map((o) => (
+                    <li key={o}>
+                      <span className="text-fg-secondary">Noch offen: </span>
+                      {o}
+                    </li>
+                  ))}
+                </ul>
+              )}
               <div className="mt-3 flex justify-end gap-2">
                 <Button onClick={() => setOpenNext(false)}>Abbrechen</Button>
                 <Button
@@ -117,6 +135,7 @@ export function DecisionBar({
                 e.preventDefault();
                 if (!task.text.trim()) return;
                 onTask({ text: task.text.trim(), zustaendig: task.zustaendig, bis: task.bis || null });
+                setMade(`Aufgabe für ${task.zustaendig} angelegt.`);
                 setOpenTask(false);
               }}
               className="flex flex-col gap-2"
@@ -140,6 +159,7 @@ export function DecisionBar({
                   <input type="date" value={task.bis} onChange={(e) => setTask({ ...task, bis: e.target.value })} className={field} />
                 </label>
               </div>
+              {deadline && <p className="text-xs text-fg-muted">{deadline}</p>}
               <div className="flex justify-end gap-2">
                 <Button type="button" onClick={() => setOpenTask(false)}>
                   Abbrechen
@@ -152,7 +172,16 @@ export function DecisionBar({
           </PopoverContent>
         </Popover>
       </div>
-      <p className="text-xs text-fg-muted">Entscheidungen und Aufgaben bleiben vorerst in diesem Browser, bis die Anmeldung kommt.</p>
+      {made ? (
+        <p role="status" className="text-xs text-fg">
+          {made}{" "}
+          <Link href="/aufgaben/" className="rounded-xs text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+            Aufgaben öffnen
+          </Link>
+        </p>
+      ) : (
+        <p className="text-xs text-fg-muted">Entscheidungen und Aufgaben bleiben vorerst in diesem Browser, bis die Anmeldung kommt.</p>
+      )}
     </div>
   );
 }

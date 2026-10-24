@@ -16,7 +16,27 @@ export type Decision = {
   grund?: string;
 };
 
-export type Task = { id: string; fundSchluessel: string; zeit: string; wer: string; text: string; zustaendig: string; bis: string | null };
+export type Task = {
+  id: string;
+  fundSchluessel: string;
+  /** "F1 Wohnpark Mooshaim" and the find page, so the list of tasks can name and open the find. */
+  fund: string;
+  href: string;
+  zeit: string;
+  wer: string;
+  text: string;
+  zustaendig: string;
+  bis: string | null;
+};
+
+/** The words of the core for each state (`ENTSCHEIDUNG_TEXT` in kern/; a test keeps both equal). */
+export const DECISION_TEXT: Record<DecisionState, string> = {
+  gefunden: "Gefunden",
+  geprueft: "Geprüft",
+  freigegeben: "Freigegeben",
+  in_schlussrechnung: "In der Schlussrechnung",
+  nicht_verrechnen: "Nicht verrechnen",
+};
 
 const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1" } as const;
 
