@@ -62,7 +62,7 @@ export function DecisionBar({
                   : next.label === "Prüfen"
                     ? "Danach gibt die Geschäftsführung frei."
                     : "Der Fund zählt wieder und geht zur Freigabe."}{" "}
-                Vermerkt als {next.wer}; bis die Anmeldung kommt, unterscheidet die App noch keine Personen.
+                Vermerkt als {next.wer}, bis zur Anmeldung nur in diesem Browser.
               </p>
               {next.label === "Freigeben" && open.length > 0 && (
                 <ul className="mt-2 flex flex-col gap-1 rounded-md bg-fill-subtle px-2 py-1.5 text-xs shadow-ring">
@@ -111,7 +111,7 @@ export function DecisionBar({
                   Grund
                   <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} required placeholder="Zum Beispiel: schon mit einem Nachtrag verrechnet" className={field} />
                 </label>
-                <p className="text-xs text-fg-muted">Der Fund zählt dann in keiner Summe. Vermerkt als Abrechnung.</p>
+                <p className="text-xs text-fg-muted">Vermerkt als Abrechnung, bis zur Anmeldung nur in diesem Browser.</p>
                 <div className="flex justify-end gap-2">
                   <Button type="button" onClick={() => setOpenNo(false)}>
                     Abbrechen
@@ -159,7 +159,7 @@ export function DecisionBar({
                   <input type="date" value={task.bis} onChange={(e) => setTask({ ...task, bis: e.target.value })} className={field} />
                 </label>
               </div>
-              {deadline && <p className="text-xs text-fg-muted">{deadline}</p>}
+              <p className="text-xs text-fg-muted">{deadline ? `${deadline}. ` : ""}Bis zur Anmeldung nur in diesem Browser.</p>
               <div className="flex justify-end gap-2">
                 <Button type="button" onClick={() => setOpenTask(false)}>
                   Abbrechen
@@ -172,15 +172,13 @@ export function DecisionBar({
           </PopoverContent>
         </Popover>
       </div>
-      {made ? (
+      {made && (
         <p role="status" className="text-xs text-fg">
           {made}{" "}
           <Link href="/aufgaben/" className="rounded-xs text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
             Aufgaben öffnen
           </Link>
         </p>
-      ) : (
-        <p className="text-xs text-fg-muted">Entscheidungen und Aufgaben bleiben vorerst in diesem Browser, bis die Anmeldung kommt.</p>
       )}
     </div>
   );

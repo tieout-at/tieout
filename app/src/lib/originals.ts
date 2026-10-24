@@ -149,6 +149,9 @@ function layoutPage(d: Datensatz, belegId: string, page: number): OriginalPage |
       const a = d.aufmass.find((x) => x.belegId === belegId)!;
       const rows = a.zeilen.filter((z) => z.menge.quelle.seite === page);
       const onPage = (q: { seite: number }) => q.seite === page;
+      // the place every line shares is written once in the head, not under each line
+      const places = [...new Set(rows.map((z) => z.ort.wert))];
+      const shared = places.length === 1 ? places[0] : null;
       return {
         ...base,
         layout: "liste",
@@ -157,6 +160,7 @@ function layoutPage(d: Datensatz, belegId: string, page: number): OriginalPage |
           ...(onPage(a.leistungVon.quelle)
             ? [{ label: "Leistungszeitraum", value: `${datumText(a.leistungVon.wert)} bis ${datumText(a.leistungBis.wert)}`, place: a.leistungVon.quelle.stelle ?? "Kopf" }]
             : []),
+          ...(shared ? [{ label: "Ort", value: shared, place: "Kopf, Ort" }] : []),
         ],
         table: rows.length
           ? {
@@ -165,7 +169,7 @@ function layoutPage(d: Datensatz, belegId: string, page: number): OriginalPage |
               rows: rows.map((z) => ({
                 place: z.menge.quelle.stelle ?? "",
                 cells: [`${z.positionNr.wert} ${lvText.get(z.positionNr.wert) ?? ""}`.trim(), menge(z.menge.wert, einheit.get(z.positionNr.wert))],
-                note: z.ort.wert,
+                note: shared ? undefined : z.ort.wert,
               })),
             }
           : null,

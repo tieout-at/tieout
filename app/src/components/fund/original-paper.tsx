@@ -31,7 +31,6 @@ export function OriginalPaper({ page, mark }: { page: OriginalPage; mark: string
       <article className="rounded-md bg-surface px-4 pt-3.5 pb-4 shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_1px_3px_0_rgb(0_0_0/0.05)]" aria-label={`${page.title}, Seite ${page.page}`}>
         <header className="mb-3 flex flex-col gap-0.5 pb-3 shadow-line-bottom">
           {page.file && <span className="truncate text-2xs tracking-normal text-fg-muted normal-case">{page.file}</span>}
-          <span className="text-sm font-semibold">{page.title}</span>
           <span className="text-xs text-fg-secondary">
             {page.kind}
             {page.date ? ` vom ${page.date}` : ""}
@@ -151,7 +150,7 @@ export function OriginalPaper({ page, mark }: { page: OriginalPage; mark: string
       </article>
       <p className="flex items-start gap-1.5 px-1 text-xs text-fg-muted">
         <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-        Beispieldaten: die Seite ist aus den gelesenen Werten nachgebildet, kein Scan.
+        Beispieldaten: aus den gelesenen Werten nachgebildet, kein Scan.
       </p>
     </div>
   );

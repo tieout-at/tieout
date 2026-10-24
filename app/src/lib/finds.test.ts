@@ -29,9 +29,10 @@ describe("find page F1, Wohnpark Mooshaim", () => {
   });
 
   it("6 Belege and 1 WhatsApp-Meldung, the Leistungsverzeichnis as the proof of price", () => {
-    expect(f1.highlights.find((h) => h.id === "belegstand")).toMatchObject({ value: "belegt", lines: ["6 Belege, 1 WhatsApp-Meldung", "mit Kürzungsrisiko"] });
-    expect(f1.highlights.find((h) => h.id === "betrag")!.lines).toEqual(["zusätzlich verrechenbar, 4 Positionen", "netto, vor Nachlass"]);
-    expect(f1.name).toBe("Wohnungstyp C: Wohnküche geteilt, 1 Heizkörper mehr");
+    expect(f1.highlights.find((h) => h.id === "belegstand")).toMatchObject({ value: "belegt", lines: ["6 Belege, 1 WhatsApp-Meldung"] });
+    expect(f1.highlights.find((h) => h.id === "betrag")!.lines).toEqual(["zusätzlich verrechenbar", "netto, vor Nachlass"]);
+    expect(f1.highlights.find((h) => h.id === "risiko")!.lines).toEqual(["droht für 6.648,60 €"]);
+    expect(f1.name).toBe("14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr");
     expect(f1.facts).toEqual(["Plan H-201 Index C → D", "Mehrmenge aus Planänderung"]);
     expect(f1.evidence.price.map((x) => x.title)).toEqual(["Leistungsverzeichnis"]);
     expect(f1.evidence.work.map((x) => x.title)).toContain("Aufmaßblatt 12");

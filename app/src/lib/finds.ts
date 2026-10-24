@@ -39,6 +39,8 @@ export type SourceRef = {
   label: string;
   /** "Seite 1, Position 22.04.12B". */
   detail: string;
+  /** Text of the chip: "Aufmaßblatt 12", "Leistungsverzeichnis, Seite 9" (the page only for a long Beleg). */
+  short: string;
 };
 
 export type CalcStep = {
@@ -104,7 +106,9 @@ const detailText = (q: Quelle) => `Seite ${q.seite}${q.stelle ? `, ${placeText(q
 function sourceRef(d: Datensatz, q: Quelle): SourceRef {
   // a WhatsApp-Meldung has no pages: it is named by its part ("Transkript", "Stunden")
   const message = d.meldungen.some((m) => m.id === q.belegId);
-  return { page: `${q.belegId}:${q.seite}`, place: q.stelle ?? null, label: belegTitel(d, q.belegId), detail: message && q.stelle ? q.stelle : detailText(q) };
+  const label = belegTitel(d, q.belegId);
+  const long = (d.belege.find((b) => b.id === q.belegId)?.seiten ?? 1) > 4;
+  return { page: `${q.belegId}:${q.seite}`, place: q.stelle ?? null, label, detail: message && q.stelle ? q.stelle : detailText(q), short: long ? `${label}, Seite ${q.seite}` : label };
 }
 
 /** Every find of the open projects with its project, in the order of the core. */
@@ -141,8 +145,8 @@ function steps(d: Datensatz, f: Fund): CalcStep[] {
 }
 
 /**
- * Name and facts of the head. A find from a plan change is named by what changed ("Wohnungstyp C: Wohnküche geteilt,
- * 1 Heizkörper mehr"), the plan index goes into the facts; every other find by its title up to the first colon.
+ * Name and facts of the head. A find from a plan change is named by what changed ("14 Wohnungen Typ C: Wohnküche
+ * geteilt, je 1 Heizkörper mehr"), the plan index goes into the facts; every other find by its title up to the first colon.
  */
 function nameAndFacts(f: Fund): { name: string; facts: string[] } {
   const at = f.titel.indexOf(": ");
@@ -195,16 +199,13 @@ export function findRecord(slug: string): FindRecord {
       id: "betrag",
       title: "Betrag",
       value: euro(f.betrag),
-      lines: [
-        [money ?? "zählt erst nach einer Entscheidung", f.positionen.length ? `${f.positionen.length} ${f.positionen.length === 1 ? "Position" : "Positionen"}` : ""].filter(Boolean).join(", "),
-        "netto, vor Nachlass",
-      ],
+      lines: [money ?? "zählt erst nach einer Entscheidung", "netto, vor Nachlass"],
     },
     {
       id: "belegstand",
       title: "Belegstand",
       value: f.belegstand ? BELEGSTAND_TEXT[f.belegstand] : "keiner",
-      lines: risk?.zustand === "droht" ? [count, "mit Kürzungsrisiko"] : [count],
+      lines: [count],
       status: f.belegstand === "belegt" ? "gruen" : f.belegstand === "beleg_fehlt" ? "gelb" : f.belegstand ? "orange" : undefined,
     },
     {
@@ -213,7 +214,7 @@ export function findRecord(slug: string): FindRecord {
       // a find in Klärung is not in the Entwurf yet, so the Vorprüfung has not looked at it
       value: risk ? KUERZUNGSGRUND_TEXT[risk.grund] : f.belegstand === "belegt" ? "keines" : "noch nicht geprüft",
       lines: risk
-        ? [`Vorprüfung ${risk.nr}, ${risk.zustand === "droht" ? `droht für ${euro(risk.betrag)}` : `schon gekürzt ${euro(risk.betrag)}`}`]
+        ? [risk.zustand === "droht" ? `droht für ${euro(risk.betrag)}` : `schon gekürzt ${euro(risk.betrag)}`]
         : [f.belegstand === "belegt" ? "die Vorprüfung meldet hier nichts" : "erst mit Beleg in der Vorprüfung"],
       status: risk ? "rot" : undefined,
       href: risk ? "#kuerzungsrisiko" : undefined,

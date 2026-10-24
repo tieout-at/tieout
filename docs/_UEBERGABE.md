@@ -25,10 +25,10 @@ The finds as a board and the lists that make them workable (`SPEZIFIKATION.md` 4
 
 ## Good to know from step 5
 
-- **Find page:** `/funde/<projekt>-f1/`, built for all 14 finds from `findRecord()`; the name of a plan find is what changed ("Wohnungstyp C: Wohnküche geteilt, 1 Heizkörper mehr"), others the title up to the first colon. `findSearchEntries()` feeds Strg K.
+- **Find page:** `/funde/<projekt>-f1/`, built for all 14 finds from `findRecord()`; the name of a plan find is what changed ("14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr"), others the title up to the first colon. `findSearchEntries()` feeds Strg K.
 - **Decisions and tasks:** append only in `localStorage` (`tieout.entscheidungen.v1`, `tieout.aufgaben.v1`), shape of the core's `Entscheidung` with the business key (`p1/plan:H-201:D`). The list "Funde" and the page "Aufgaben" read them after the first paint. The sums of `kern/` do not count a browser decision; that needs the backend (step 10) or the core in the browser.
 - **Originals:** `lib/originals.ts` draws a page from `kern/` `gelesen()`; `markOf()` finds the marked part; a page lists a value outside its layout only where a source points. Every source of every find has a visible mark (test).
-- **Open from customer test 2, needs Maxi S.:** the quantity 14 of F1 is not derived anywhere (how many flats of Wohnungstyp C, which Tops); adding it to the sample data needs his go. A reason per correction of a field (proposal for `kern/`, step 10).
+- **Open from customer test 2:** a reason per correction of a field (proposal for `kern/`, step 10). Maxi S. asked to keep pages simple: each fact once, details folded or left out (24.10.2026).
 - **Screens:** `npm run build`, start `.claude/launch.json` "app-build" (since step 5 `app/scripts/serve-out.mjs` on port 3103; `serve` died under load with EMFILE; a rebuild needs no restart), `node scripts/screens.mjs http://localhost:3103 qa-shots [name-prefix]`, `node scripts/compare.mjs`. Attio reference of the side panel: `qa-shots/attio/record-panel.jpg` (local only).
 - **Customer tests:** fresh agents need only the README, the address and Playwright with Edge (`file:///C:/Users/maxis/dev/tieout/app/node_modules/playwright-core/index.mjs`, `channel: "msedge"`, a persistent profile so that decisions survive between scripts).
 - **Word check:** "Zeile" also fails inside a string in `app/src` (use a regular expression for place names); write patch scripts with the editor tool, shell heredocs break on apostrophes.

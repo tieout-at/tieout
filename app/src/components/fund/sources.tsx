@@ -25,9 +25,7 @@ export function SourceChip({ source, active, onOpen }: { source: SourceRef; acti
         on ? "bg-accent-soft text-accent shadow-[inset_0_0_0_1px_rgb(29_59_255/0.25)]" : "bg-fill-subtle text-fg-secondary hover:bg-fill-hover hover:text-fg",
       )}
     >
-      <span className="truncate">
-        {source.label}, {source.detail.split(",")[0]}
-      </span>
+      <span className="truncate">{source.short}</span>
     </button>
   );
 }
@@ -65,9 +63,10 @@ export function CalcPath({ calc, active, onOpen }: { calc: FindRecord["calc"]; a
         </li>
       </ol>
       {calc.check && (
-        <p className="mt-2 px-1 text-xs text-fg-secondary tabular-nums">
-          Gegenprobe mit der Preisbasis (Formblatt K7), nicht Teil des Betrags: {calc.check.replace(/^K7 /, "")}
-        </p>
+        <details className="mt-2 px-1 text-xs text-fg-secondary">
+          <summary className="w-fit cursor-pointer rounded-xs outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent max-md:py-3">Gegenprobe mit der Preisbasis</summary>
+          <p className="mt-1 tabular-nums">Formblatt K7, nicht Teil des Betrags: {calc.check.replace(/^K7 /, "")}</p>
+        </details>
       )}
     </section>
   );
@@ -100,7 +99,7 @@ function EvidenceRows({ title, items, active, onOpen }: { title: string; items: 
                   <span className="flex items-baseline gap-2">
                     <span className="min-w-0 flex-1 truncate">{x.title}</span>
                   </span>
-                  <span className="line-clamp-2 text-xs text-fg-secondary">{x.text}</span>
+                  <span className="truncate text-xs text-fg-secondary">{x.text}</span>
                 </span>
               </button>
             </li>
@@ -138,15 +137,9 @@ export function WeakSpot({ record, active, onOpen }: { record: FindRecord; activ
       <div className="flex flex-col gap-2 rounded-lg bg-surface px-3 py-2.5 shadow-ring">
         {r && (
           <>
-            <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <ShieldAlert className="size-4 shrink-0 translate-y-0.5 self-start text-state-red" aria-hidden />
-              <span className="min-w-0 flex-1 max-sm:basis-[calc(100%-24px)]">
-                <span className="font-medium">{r.reason}</span>
-                <span className="text-fg-secondary">: {r.detail}</span>
-              </span>
-              <span className="shrink-0 text-xs whitespace-nowrap text-fg-secondary tabular-nums max-sm:basis-full max-sm:pl-6">
-                {r.number}, {r.alreadyCut ? "schon gekürzt" : "droht"} {r.amount}
-              </span>
+            <p className="flex items-start gap-2">
+              <ShieldAlert className="mt-0.5 size-4 shrink-0 text-state-red" aria-hidden />
+              <span>{r.detail}.</span>
             </p>
             <p className="pl-6">
               <span className="text-fg-secondary">Abhilfe: </span>

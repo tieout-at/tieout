@@ -42,7 +42,7 @@ The groups and items are the website's; rows marked "more than the website" are 
 |---|---|---|---|---|
 | Systeme | ERP: Rechnungen | "Abschlagsrechnung" with lines per position; "Zahlung" with each deduction | ERP export (PDF or Excel), "Zahlungsavis" as PDF | Abschlagsrechnung 1 to 3 with amounts; per payment the deductions and the paid amount |
 | Systeme | AVA: Preise | "Position" with Einheitspreis and quantity; "Preisbasis" (K7 per position, Mittellohnpreis) | ÖNORM A 2063 export or PDF Leistungsverzeichnis; K7 sheets | the position table (Ebene 2); the Preisbasis on the business page (Ebene 1) |
-| Dokumente | Pläne mit Index | "Plan" with its index chain and what changed per index | PDF per index | "Plan H-201: Index C → D", with the note "Wohnungstyp C: Wohnküche geteilt, 1 Heizkörper mehr" |
+| Dokumente | Pläne mit Index | "Plan" with its index chain and what changed per index | PDF per index | "Plan H-201: Index C → D", with the note "14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr" |
 | Dokumente | Leistungsverzeichnis (PDF) | "Position" (same object as AVA prices; whichever is in the folder) | PDF | position number, short text, unit, Einheitspreis, beauftragt |
 | Dokumente | Aufmaß (Excel) | "Aufmaßblatt" with lines per position, countersigned or not | Excel or PDF | "Aufmaßblatt 12", date, quantities, "gegengezeichnet: nein" |
 | Dokumente | Stundenzettel (Scan) | "Regiebericht" (signed by the Auftraggeber or not) and "Stundenzettel" (internal hours per crew and week) | scan | "Regiebericht 9", date, hours fitter and helper, material, "unterschrieben: ja" |
