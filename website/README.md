@@ -41,5 +41,6 @@ Change copy only in `messages/`, never in the code. New placeholders are always 
 ## Hosting
 
 - Cloudflare Pages, project `tieout-at`; `npm run deploy` updates the live site.
-- Domain **tieout.at** via Cloudflare DNS (`tieout.at` and `www.tieout.at` as custom domains of the project). The old address `endpoint-preview.pages.dev` redirects with 301.
+- Live at **tieout.at**, **www.tieout.at** and **tieout-at.pages.dev**: three addresses, one project, one deployment, so they always show the same site. Keep `tieout-at.pages.dev` working; it is the address in the hackathon submission.
+- Domain registered at easyname (customer portal CloudPit), nameservers point to Cloudflare; DNS is managed in the Cloudflare zone `tieout.at` (free plan).
 - The site sets `noindex` until imprint and privacy policy are final.
