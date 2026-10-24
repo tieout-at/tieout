@@ -119,8 +119,8 @@ function SearchPanel({ finds, onDone }: { finds: SearchFind[]; onDone: () => voi
                   <span className="flex size-6 shrink-0 items-center justify-center rounded-sm text-fg-secondary shadow-ring">
                     <Icon className="size-3.5" aria-hidden />
                   </span>
-                  <span className="truncate">{entry.title}</span>
-                  {entry.hint && <span className="truncate text-xs text-fg-muted">{entry.hint}</span>}
+                  <span className="min-w-0 truncate max-md:line-clamp-3 max-md:whitespace-normal">{entry.title}</span>
+                  {entry.hint && <span className="truncate text-xs text-fg-muted max-md:hidden">{entry.hint}</span>}
                 </CommandItem>
               );
             })}
@@ -128,13 +128,13 @@ function SearchPanel({ finds, onDone }: { finds: SearchFind[]; onDone: () => voi
         ))}
       </CommandList>
       <div className="flex h-11 items-center gap-2 bg-white/90 pr-2 pl-3 shadow-[inset_0_1px_0_0_#eeeff1] max-md:h-14">
-        <Kbd className="size-5 px-0" aria-hidden>
+        <Kbd className="size-5 px-0 max-md:hidden" aria-hidden>
           <ArrowUp className="size-3" />
         </Kbd>
-        <Kbd className="size-5 px-0" aria-hidden>
+        <Kbd className="size-5 px-0 max-md:hidden" aria-hidden>
           <ArrowDown className="size-3" />
         </Kbd>
-        <span className="flex-1 text-xs text-fg-secondary">Auswählen</span>
+        <span className="flex-1 text-xs text-fg-secondary max-md:invisible">Auswählen</span>
         <Button variant="primary" onClick={() => open(selected)} className="pr-1.5 pl-2">
           Öffnen
           <CornerDownLeft className="size-3.5" aria-hidden />

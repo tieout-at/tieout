@@ -11,6 +11,7 @@ v1 runs at https://app.tieout.workers.dev; its code is under the tag [`v1-archiv
 | `npm run dev` | local at http://localhost:3100 |
 | `npm run check` | typecheck, lint, tests, build (the same as CI) |
 | `npm run build` | static export to `out/`, then `scripts/flatten-prefetch.mjs` and the word check `scripts/check-words.mjs` |
+| `node scripts/serve-out.mjs 3103` | serves `out/` for screenshots and customer tests (`serve` ran out of file handles on Windows) |
 | `npm run screens` | screenshots of every screen with the local Edge into `qa-shots/` (needs the app on port 3100); `node scripts/screens.mjs <url> qa-shots fundseite` takes only the screens whose name starts with `fundseite` |
 
 ## Map

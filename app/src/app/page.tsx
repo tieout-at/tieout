@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Construction } from "lucide-react";
 
-import { SectionEmpty } from "@/components/shell/empty-state";
 import { Page } from "@/components/shell/page";
 import { PROJECTS, projectHref } from "@/lib/example";
+import { TaskPreview } from "./aufgaben/task-list";
 import { Greeting, Today } from "./start-client";
 
 // Start (decision E3): money and "Als Nächstes" come with the core in step 7. The deadlines are dates from the
@@ -48,7 +48,7 @@ export default function StartPage() {
               Alle anzeigen
             </Link>
           </div>
-          <SectionEmpty title="Keine offenen Aufgaben" text="Aus jeder Lücke wird eine Aufgabe mit Frist." />
+          <TaskPreview />
         </section>
       </div>
     </Page>

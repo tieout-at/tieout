@@ -70,7 +70,7 @@ export function FindView({ record }: { record: FindRecord }) {
         time: t.zeit,
         timeText: zeitText(t.zeit),
         who: t.wer,
-        text: `legte eine Aufgabe für ${t.zustaendig} an: ${t.text}${t.bis ? `, bis ${t.bis.slice(8, 10)}.${t.bis.slice(5, 7)}.${t.bis.slice(0, 4)}` : ""}`,
+        text: `legte eine Aufgabe für ${t.zustaendig} an: ${t.text.replace(/\.$/, "")}${t.bis ? `, bis ${t.bis.slice(8, 10)}.${t.bis.slice(5, 7)}.${t.bis.slice(0, 4)}` : ""}`,
         kind: "aufgabe" as const,
       })),
     ...record.activity,

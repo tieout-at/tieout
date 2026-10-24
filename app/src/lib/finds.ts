@@ -161,10 +161,10 @@ function largest(f: Fund, steps: CalcStep[]): CalcStep | undefined {
 export function findSearchEntries(): { id: string; title: string; hint: string; href: string; keywords: string[] }[] {
   return allFinds().map(({ f, p, slug }) => ({
     id: `fund-${slug}`,
-    title: `${f.nr} ${f.titel}`,
+    title: `${f.nr} ${nameAndFacts(f).name}`,
     hint: `${p.name} · ${euro(f.betrag)}`,
     href: `/funde/${slug}/`,
-    keywords: [p.name, FUND_ART_TEXT[f.art], f.untertitel, ...f.positionen.flatMap((x) => [x.positionNr, x.kurztext])],
+    keywords: [f.titel, p.name, FUND_ART_TEXT[f.art], f.untertitel, ...f.positionen.flatMap((x) => [x.positionNr, x.kurztext])],
   }));
 }
 
