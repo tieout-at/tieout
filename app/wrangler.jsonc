@@ -1,0 +1,17 @@
+// Cloudflare: worker "app-neu", online at https://app-neu.tieout.workers.dev from step 1 until the switch-over (step 12),
+// when the worker "app" (https://app.tieout.workers.dev, v1, frozen) gets this app.
+// Static files only, no script: the build output `out/`. Cloudflare builds on every push (Workers Builds, root directory
+// `app`, build command `npm run build`): `main` goes online, every other branch gets its own preview address.
+{
+  "name": "app-neu",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "workers_dev": true,
+  "preview_urls": true,
+  // Needed by `wrangler preview` (one preview per branch). Empty: the preview takes the assets from above.
+  "previews": {}
+}
