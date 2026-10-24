@@ -46,6 +46,17 @@
   --color-accent-soft: rgb(29 59 255 / 0.08);
   --color-grid: #e8ecf2;
 
+  /* State colours, only as the dot of a tag (status colour of a project, Belegstand of a find). */
+  --color-state-red: #e5484d;
+  --color-state-yellow: #f0b429;
+  --color-state-orange: #f2762e;
+  --color-state-green: #2f9e66;
+  --color-state-grey: rgb(10 16 32 / 0.3);
+  /* Table lines and the checkbox ring, as measured in Attio's tables. */
+  --color-check: rgb(0 0 0 / 0.09);
+  --color-row-hover: #fafafa;
+  --color-row-selected: #f5f7ff;
+
   /* Radii */
   --radius-xs: 4px;
   --radius-sm: 6px;

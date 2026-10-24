@@ -21,9 +21,11 @@ const PAIRS = [
   ["whatsapp-meldungen", "calls", "WhatsApp-Meldungen ↔ Calls"],
   ["betrieb", "record", "Betrieb ↔ Datensatz (Company)"],
   ["auftraggeber", "deals", "Auftraggeber ↔ leere Datensatzliste (Deals)"],
-  ["projekte", "deals", "Projekte ↔ leere Datensatzliste (Deals)"],
+  ["projekte", "companies", "Projekte ↔ Companies (Tabelle)"],
+  ["projekte-sortierung", "companies", "Projekte, Sortierung offen ↔ Companies"],
   ["projekt", "record", "Projekt Wohnpark Mooshaim ↔ Datensatz (Company)"],
-  ["funde", "deals", "Funde ↔ Deals"],
+  ["funde", "companies", "Funde ↔ Companies (Tabelle)"],
+  ["funde-filter", "companies", "Funde, Filter Belegstand ↔ Companies"],
   ["schlussrechnungen", "notes", "Schlussrechnungen ↔ Notes (Leerzustand)"],
   ["suche", "search", "Suche (Strg K) ↔ Search (Ctrl K)"],
   ["betrieb-menue", "workspace-menu", "Betriebs-Menü ↔ Workspace-Menü"],
@@ -52,7 +54,7 @@ for (const [i, [ours, theirs, caption]] of PAIRS.entries()) {
     img{width:100%;display:block;border:1px solid #d5dce6;border-radius:6px;background:#fff}
   </style><h1>${caption}</h1><div class="row">
     <figure><figcaption>Attio (Vorlage)</figcaption><img src="${pathToFileURL(a)}"></figure>
-    <figure><figcaption>tieout (Schritt 1)</figcaption><img src="${pathToFileURL(b)}"></figure>
+    <figure><figcaption>tieout</figcaption><img src="${pathToFileURL(b)}"></figure>
   </div>`;
   const file = join(dir, "vergleich", "_seite.html");
   writeFileSync(file, html);
@@ -70,6 +72,6 @@ writeFileSync(
     body{margin:0 auto;max-width:2400px;padding:16px;font:500 15px/20px Inter,Segoe UI,sans-serif;color:#0a1020;background:#f4f6f9}
     h2{font-size:16px;margin:24px 0 8px}.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     img{width:100%;border:1px solid #d5dce6;border-radius:6px;background:#fff}
-  </style><h1>Links Attio (Vorlage), rechts tieout (Schritt 1)</h1>${index.join("")}`,
+  </style><h1>Links Attio (Vorlage), rechts tieout</h1>${index.join("")}`,
 );
 console.log(`compare: ${made} picture(s) in ${join(dir, "vergleich")}`);

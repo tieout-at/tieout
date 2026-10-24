@@ -1,6 +1,6 @@
 # tieout v2: design
 
-**As of:** 24 October 2026, step 1 (Hülle). Written by Claude for Maxi S.
+**As of:** 24 October 2026, step 3 (Tabellen). Written by Claude for Maxi S.
 **Rule:** layout, behaviour, sizes and spacing follow Attio (app.attio.com); brand, colours, icons, illustrations and words are tieout's own. The tokens live in `app/src/app/globals.css` (`@theme`); this file explains each value and where it comes from. Light only; a dark theme is not planned before the switch-over.
 
 **Sources:** *measured* means read from the computed styles of app.attio.com in Maxi S.'s workspace (23.10.2026, `../tieout-intern/docs/Plan_Neustart.md` "Gemessene Vorlage", and again on 23.10.2026 at night for this file); *brand* means `brand/README.md` and `website/app/globals.css`; *ours* means decided in this step, with the reason.
@@ -60,6 +60,10 @@ Ink and ultramarine come from the brand; the greys are Attio's alphas, applied t
 | Record head | object chip 28 px, name 18/24/600, one line of facts below; padding 20 24 16 | measured name, our padding |
 | Tabs | 28 px, radius 8, padding 4 8; the open tab on `sidebar` with a 1 px `line` ring | measured |
 | Step bar (project page) | from 1024 px three columns 1 : 1 : 1.35 with 16 px gap, below that one step per row; per step: number in a 20 px chip, step name, a line to the next step; run steps as 24 px chips; the step's tabs below | ours, built from the measured chips and tabs |
+| Table: bars | view bar and sort and filter bar each 48 px, padding 10 12, gap 8; view switcher and "Ansicht" as secondary buttons; "Sortiert nach" white with `shadow-button`; "Filter" quiet (`fill-subtle`, `fg-muted`); active filters as chips with a cross; a line below the second bar | measured ("Companies", 24.10.2026) |
+| Table: grid | header 40 px, rows 36 px (44 px below 768 px), cells padding 0 12, 1 px `line` right and below, text 14/500; first column 250 px and fixed (132 px below 768 px, so the amounts stay in view); checkbox 16 px, radius 6, ring black at 9 %; numbers right aligned with tabular figures, headers always left; a "+" after the last header adds a column | measured; phone width ours |
+| Table: footer | 36 px, line above, fixed to the bottom of the table; counter right aligned in the first column ("14 Funde", "3 von 14 Funden"); per column a sum chosen as in Attio's "Add calculation", but only fixed sums from `kern/`: label 12 px secondary, amount 14 px; when a filter cuts a group apart it says "keine feste Summe" | measured layout, rule from SPEZIFIKATION.md 4.2 |
+| Tags | 24 px, radius 6, `fill-subtle` with ring, padding 0 6; the colour is only an 8 px dot: red, yellow, orange, green, grey (`state-*` tokens) | measured pill, our dot |
 
 ## Icons and pictures
 

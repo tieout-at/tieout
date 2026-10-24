@@ -21,7 +21,9 @@ v1 runs at https://app.tieout.workers.dev; its code is under the tag [`v1-archiv
 | `src/components/shell/` | sidebar, header, search (Strg K), empty states, record head, step bar |
 | `src/components/ui/` | buttons, menus, popovers, dialogs (shadcn on Base UI, restyled to the tokens) |
 | `src/lib/navigation.ts` | every page of the sidebar in one place; sidebar, header and search read from it |
-| `src/lib/example.ts` | names of the sample company from `docs/Demo_Faelle.md`, no amounts |
+| `src/lib/example.ts` | names of the sample company from `docs/Demo_Faelle.md`, no amounts; a test checks them against `kern/` |
+| `src/lib/kern-data.ts` | rows and fixed sums of the tables, computed from `kern/` (`@tieout/kern`, linked as `file:../kern`) while the pages are built |
+| `src/lib/table.ts` | sort, filter and which fixed sum fits the visible rows (tested); `src/components/table/` draws the table |
 | `src/lib/search.ts` | abbreviations ("RB 11" becomes "Regiebericht 11") and matching |
 | `wrangler.jsonc` | Cloudflare worker `app-neu`, static files from `out/` |
 

@@ -1,8 +1,9 @@
 // After `next build`: fails on words the app must never show (CLAUDE.md rules 1, 2 and 5, vocabulary in
-// SPEZIFIKATION.md section 6), on amounts (they come from kern/ from step 2 on, never typed into the app) and on open
-// placeholders. Checks two places, because neither catches everything alone:
+// SPEZIFIKATION.md section 6) and on open placeholders. Checks two places, because neither catches everything alone:
 //   1. every exported page: visible text and the attributes people read (aria-label, title, placeholder, alt, meta);
 //   2. every string and JSX text in src/: text that only appears after a click (search, menus, popovers).
+// Amounts are checked in src/ only: the pages show the amounts kern/ computes at build time (step 3), but no amount
+// may be typed into the app itself.
 // Quoted originals (the text of a real Beleg, from step 5 on) will need an exception; add it when they exist.
 // Usage: node scripts/check-words.mjs [out-dir] [src-dir]
 
@@ -30,7 +31,8 @@ const FORBIDDEN = [
   [/\bZuruf/, "WhatsApp-Meldung"],
   [/\bjetzt verrechenbar/i, "zusätzlich verrechenbar"],
   [/\boffen verrechenbar/i, "zusätzlich verrechenbar"],
-  [/\bangemeldet\b/, "in Klärung"],
+  // the Art "Änderung angemeldet" and the fact "angemeldet mit E-Mail vom …" are words of kern/ (SPEZIFIKATION.md 3.2)
+  [/(?<!Änderung )\bangemeldet\b(?! mit )/, "in Klärung"],
   [/\bverloren\b/, "Nicht verrechnen, Pauschale laut Vertrag"],
   [/\bverfristet/, "Rechtsfrage (no legal verdict)"],
   [/\bpräkludiert/, "Rechtsfrage (no legal verdict)"],
@@ -67,9 +69,10 @@ const FORBIDDEN = [
   [/\b(?:LV|AG|EP|HKLS)\b/, "the full word"],
   [/\b(?:AR|RB|AB)[ -]?\d/, "Abschlagsrechnung 3, Regiebericht 11, Aufmaßblatt 12"],
   [/\s[–—]\s/, "no dash as punctuation"],
-  [/\d{1,3}(?:\.\d{3})*,\d{2}\s?€|€\s?\d/, "no amount before kern/ delivers it"],
   [/PLATZHALTER/, "a real value"],
 ];
+
+const AMOUNT = [/\d{1,3}(?:\.\d{3})*,\d{2}\s?€|€\s?\d/, "no amount typed into the app; amounts come from kern/"];
 
 function files(dir, keep) {
   return readdirSync(dir).flatMap((name) => {
@@ -104,8 +107,8 @@ function sourceText(code) {
 }
 
 const problems = [];
-function check(where, text) {
-  for (const [pattern, instead] of FORBIDDEN) {
+function check(where, text, rules = FORBIDDEN) {
+  for (const [pattern, instead] of rules) {
     const hit = text.match(pattern);
     if (hit) problems.push(`${where}: "${hit[0].trim()}" (say: ${instead})`);
   }
@@ -114,7 +117,7 @@ function check(where, text) {
 const pages = files(out, (n) => n.endsWith(".html"));
 for (const file of pages) check(file, pageText(readFileSync(file, "utf8")));
 const sources = files(src, (n) => /\.tsx?$/.test(n) && !/\.test\.tsx?$/.test(n));
-for (const file of sources) check(file, sourceText(readFileSync(file, "utf8")));
+for (const file of sources) check(file, sourceText(readFileSync(file, "utf8")), [...FORBIDDEN, AMOUNT]);
 
 if (problems.length) {
   console.error(`check-words: ${problems.length} problem(s)\n  ${problems.join("\n  ")}`);

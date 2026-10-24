@@ -21,7 +21,7 @@ export default function StartPage() {
             <Today />
           </div>
           <ul className="flex flex-col">
-            {PROJECTS.map((p) => (
+            {PROJECTS.filter((p) => p.finalInvoiceBy).map((p) => (
               <li key={p.slug}>
                 <Link
                   href={projectHref(p)}

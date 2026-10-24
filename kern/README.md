@@ -39,9 +39,9 @@ Identifiers follow the German vocabulary of the specification (section 6), as th
 - **The sample data** set inputs only (contract sum, Entwurf, Abschlagsrechnungen, Regieberichte, Aufmaßblätter, e-mails, photos, plans, messages). To write the Zahlungsavisos it plays the Auftraggeber with the same settlement rule the core uses (`abrechnen`); the payments are then checked against the amounts of the list.
 - No decimal numbers in `kern/` (a lint rule enforces it).
 
-## How `app/` imports the core (decided in step 2, to be built and checked in step 3)
+## How `app/` imports the core (decided in step 2, built in step 3)
 
-`app/package.json` gets `"@tieout/kern": "file:../kern"` (npm links the folder; `kern/` has no runtime dependencies and exports its TypeScript source), `next.config.ts` gets `transpilePackages: ["@tieout/kern"]` and `turbopack.root` set to the repository root, so that the build may read files outside `app/`. The Cloudflare build clones the whole repository and builds in `/app`, so `../kern` is there. The CI workflow `App` then also runs on changes in `kern/`. Not yet tried: step 3 checks it with `npm ci` on Linux and a Cloudflare preview build before relying on it; the fallback is an npm workspace at the repository root.
+`app/package.json` gets `"@tieout/kern": "file:../kern"` (npm links the folder; `kern/` has no runtime dependencies and exports its TypeScript source), `next.config.ts` gets `transpilePackages: ["@tieout/kern"]` and `turbopack.root` set to the repository root, so that the build may read files outside `app/`. The Cloudflare build clones the whole repository and builds in `/app`, so `../kern` is there. The CI workflow `App` also runs on changes in `kern/` and in the solution list. Built and checked locally in step 3 (static build, word check, tests); `npm ci` on Linux and the Cloudflare preview build are checked on the pull request. Fallback if a build cannot read outside `app/`: an npm workspace at the repository root.
 
 ## Assumptions carried from the solution list
 

@@ -1,6 +1,6 @@
 /**
  * Names of the sample company, taken from docs/Demo_Faelle.md (solution list v3). No amounts here: amounts only come
- * from `kern/` (step 2) and the solution list.
+ * from `kern/` (`lib/kern-data.ts`). The names stay here so that client components (search, sidebar) need not load the core.
  */
 
 export const BUSINESS = {
@@ -54,15 +54,34 @@ export const STEPS: Step[] = [
 export const PROJECT_TABS: ProjectTab[] = STEPS.flatMap((s) => s.tabs);
 
 export type Project = {
+  /** Id of the project in `kern/` ("p1" …). */
+  id: string;
   slug: string;
   name: string;
   client: string;
-  /** "Schlussrechnung legen bis", a plain date (never a countdown). */
-  finalInvoiceBy: string;
+  /** "Schlussrechnung legen bis", a plain date (never a countdown); only for a project whose Schlussrechnung is due. */
+  finalInvoiceBy?: string;
 };
 
+/** "Bürohaus Kiefernau" becomes "buerohaus-kiefernau". */
+export function projectSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** The five projects of the sample company; `example.test.ts` checks them against `kern/`, so both tell one truth. */
 export const PROJECTS: Project[] = [
-  { slug: "wohnpark-mooshaim", name: "Wohnpark Mooshaim", client: "Hornfeld Bau", finalInvoiceBy: "30.10.2026" },
+  { id: "p1", slug: "wohnpark-mooshaim", name: "Wohnpark Mooshaim", client: "Hornfeld Bau", finalInvoiceBy: "30.10.2026" },
+  { id: "p2", slug: "buerohaus-kiefernau", name: "Bürohaus Kiefernau", client: "Hornfeld Bau" },
+  { id: "p3", slug: "volksschule-ahornbrunn", name: "Volksschule Ahornbrunn", client: "Marktgemeinde Ahornbrunn" },
+  { id: "p4", slug: "wohnhof-erlenhain", name: "Wohnhof Erlenhain", client: "Hornfeld Bau" },
+  { id: "p5", slug: "pflegeheim-eibenau", name: "Pflegeheim Eibenau", client: "Pfeilberg Bau" },
 ];
 
 export function projectHref(project: Project, tab = ""): string {

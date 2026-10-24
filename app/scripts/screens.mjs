@@ -31,9 +31,43 @@ const SCREENS = [
   { name: "betrieb-mitglieder", path: "/betrieb/mitglieder/" },
   { name: "auftraggeber", path: "/auftraggeber/" },
   { name: "projekte", path: "/projekte/" },
+  { name: "projekt-kiefernau", path: "/projekte/buerohaus-kiefernau/" },
   { name: "projekt", path: "/projekte/wohnpark-mooshaim/" },
   { name: "projekt-positionen", path: "/projekte/wohnpark-mooshaim/positionen/" },
   { name: "funde", path: "/funde/" },
+  {
+    name: "funde-filter",
+    path: "/funde/",
+    act: async (page) => {
+      await page.getByRole("button", { name: "Filter", exact: true }).click();
+      await page.getByRole("dialog").getByRole("button", { name: "Belegstand" }).click();
+      await page.getByRole("menuitemcheckbox", { name: /Beleg fehlt/ }).click();
+    },
+  },
+  {
+    name: "funde-in-klaerung",
+    path: "/funde/",
+    act: async (page) => {
+      await page.getByRole("button", { name: "Alle Funde" }).click();
+      await page.getByRole("menuitem", { name: "In Klärung" }).click();
+    },
+  },
+  {
+    name: "projekte-sortierung",
+    path: "/projekte/",
+    act: async (page) => {
+      await page.getByRole("button", { name: /Sortiert nach/ }).click();
+      await page.getByRole("dialog").waitFor();
+    },
+  },
+  {
+    name: "projekte-spalte",
+    path: "/projekte/",
+    act: async (page) => {
+      await page.getByRole("button", { name: "Spalte hinzufügen" }).click();
+      await page.getByRole("dialog").waitFor();
+    },
+  },
   { name: "schlussrechnungen", path: "/schlussrechnungen/" },
   { name: "nicht-gefunden", path: "/gibt-es-nicht/", expect404: true },
   {
@@ -123,7 +157,7 @@ try {
         const main = document.querySelector("main");
         const edge = main ? main.getBoundingClientRect().right : window.innerWidth;
         for (const el of document.querySelectorAll("main *")) {
-          if (el.closest("[class*='overflow-x-auto']")) continue;
+          if (el.closest("[class*='overflow-x-auto'], [class*='overflow-auto']")) continue;
           const sticksOut = el.getBoundingClientRect().right - edge;
           if (sticksOut > 1 && el.getBoundingClientRect().width > 0) {
             found.push(`${el.tagName.toLowerCase()} "${(el.textContent ?? "").trim().slice(0, 24)}" by ${Math.round(sticksOut)} px`);
