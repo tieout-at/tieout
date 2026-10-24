@@ -78,6 +78,11 @@ export function projectSlug(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
+/** Address of a find page: "wohnpark-mooshaim-f1" (numbers start at F1 in every project). */
+export function findSlug(projectName: string, nr: string): string {
+  return `${projectSlug(projectName)}-${nr.toLowerCase()}`;
+}
+
 /** The five projects of the sample company; `example.test.ts` checks them against `kern/`, so both tell one truth. */
 export const PROJECTS: Project[] = [
   { id: "p1", slug: "wohnpark-mooshaim", name: "Wohnpark Mooshaim", client: "Hornfeld Bau", finalInvoiceBy: "30.10.2026" },

@@ -306,6 +306,7 @@ function tickSentence(row: TickRow, belege: Map<string, TwinBeleg>): string {
 
 export type FindDetail = {
   nr: string;
+  href: string;
   label: string;
   title: string;
   amount: string;
@@ -330,6 +331,7 @@ export function findDetail(model: Model, nr: string): FindDetail | null {
   const cells = f.cells.map((c) => (c.area === "grid" ? model.grid[c.index] : model.ohne[c.index]));
   return {
     nr,
+    href: f.find.href,
     label: f.find.label,
     title: f.find.title,
     amount: f.find.amount.text,

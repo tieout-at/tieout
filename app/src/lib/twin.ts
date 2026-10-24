@@ -22,7 +22,7 @@ import {
   type Positionszeile,
 } from "@tieout/kern";
 
-import { projectSlug } from "./example";
+import { findSlug, projectSlug } from "./example";
 import { business, clientSlug, firm, projectRows, type StatusColour } from "./kern-data";
 
 /**
@@ -88,6 +88,8 @@ export type TwinCell = {
 
 export type TwinFind = {
   number: string;
+  /** The find page. */
+  href: string;
   /** Short name for the row ("Plan H-201 Index C → D", "Regiebericht 9", "Mehrschichtverbundrohr"). */
   label: string;
   kind: string;
@@ -256,6 +258,7 @@ export function twinView(projektId: string): TwinView | null {
     abgleich: { positions, withoutPosition, counts },
     finds: e.abgleich.funde.map((f) => ({
       number: f.nr,
+      href: `/funde/${findSlug(p.name, f.nr)}/`,
       label: findLabel(f),
       kind: FUND_ART_TEXT[f.art],
       title: f.titel,

@@ -1,0 +1,79 @@
+import { describe, expect, it } from "vitest";
+
+import { findRecord, findSlugs } from "./finds";
+import { findRows } from "./kern-data";
+import { markOf } from "./originals";
+
+// Expected values from docs/Demo_Faelle.md and SPEZIFIKATION.md 7.2 (Fund F1: 4 positions, 6.648,60 €; K7 check).
+describe("find page F1, Wohnpark Mooshaim", () => {
+  const f1 = findRecord("wohnpark-mooshaim-f1");
+
+  it("one page per find of the open projects, each reached from its row in Funde", () => {
+    const rows = findRows();
+    expect(findSlugs()).toHaveLength(rows.length);
+    expect(rows.map((r) => r.href)).toEqual(findSlugs().map((s) => `/funde/${s}/`));
+  });
+
+  it("Rechenweg over 4 positions to 6.648,60 €, every step with its Aufmaßblatt and its Einheitspreis", () => {
+    expect(f1.amount).toBe("6.648,60 €");
+    expect(f1.calc.total.amount).toBe("6.648,60 €");
+    expect(f1.calc.steps.map((s) => s.amount)).toEqual(["1.751,40 €", "4.009,60 €", "347,20 €", "540,40 €"]);
+    const radiator = f1.calc.steps.find((s) => s.title.startsWith("22.04.12B"))!;
+    expect(radiator.formula).toBe("14 Stk × 286,40 €");
+    expect(radiator.derivation).toBe("100 Stk aufgemessen, 86 Stk verrechnet");
+    expect(radiator.sources.map((s) => s.label)).toEqual(["Aufmaßblatt 12", "Leistungsverzeichnis"]);
+    expect(radiator.sources[1].detail).toBe("Seite 9, Position 22.04.12B, Einheitspreis");
+    expect(f1.calc.check).toBe("K7 22.04.12B: 1,10 h × 58,60 € = 64,46 € Lohn + 221,94 € Sonstiges = 286,40 €");
+  });
+
+  it("6 Belege and 1 WhatsApp-Meldung, the Leistungsverzeichnis as the proof of price", () => {
+    expect(f1.highlights.find((h) => h.id === "belegstand")).toMatchObject({ value: "belegt", lines: ["6 Belege, 1 WhatsApp-Meldung"] });
+    expect(f1.evidence.price.map((x) => x.title)).toEqual(["Leistungsverzeichnis"]);
+    expect(f1.evidence.work.map((x) => x.title)).toContain("Aufmaßblatt 12");
+    expect(f1.evidence.work).toHaveLength(6);
+  });
+
+  it("names the weak spot: G1, Aufmaß nicht gegengezeichnet, with the Abhilfe and the same reason at Hornfeld Bau", () => {
+    expect(f1.risk).toMatchObject({ number: "G1", reason: "Aufmaß nicht gegengezeichnet", amount: "6.648,60 €", alreadyCut: false });
+    expect(f1.risk!.remedy).toBe("Plan H-201 Index D und die E-Mail vom 07.04. beilegen, gemeinsames Aufmaß vereinbaren");
+    expect(f1.risk!.sameReason).toContain("Wohnhof Erlenhain");
+    expect(f1.risk!.sources[0]).toMatchObject({ label: "Aufmaßblatt 12", page: "ab-12:2" });
+    expect(f1.taskText).toBe(f1.risk!.remedy);
+  });
+
+  it("every source opens an original with the place marked", () => {
+    const sources = [...f1.calc.steps.flatMap((s) => s.sources), ...f1.evidence.work.map((x) => x.source), ...f1.evidence.price.map((x) => x.source), ...f1.risk!.sources];
+    for (const s of sources) {
+      const page = f1.originals[s.page];
+      expect(page, s.page).toBeDefined();
+      expect(markOf(page, s.place), `${s.page} ${s.place}`).not.toBeNull();
+    }
+    expect(f1.originals["ab-12:2"].sign).toMatchObject({ value: "nicht gegengezeichnet", given: false });
+    expect(f1.originals["ab-12:1"].table!.rows.find((r) => r.place === "Zeile 22.04.12B")!.cells[1]).toBe("14 Stk");
+    expect(f1.originals["lv:9"].table!.rows.find((r) => r.place === "Pos. 22.04.12B")!.cells[2]).toBe("286,40 €");
+  });
+
+  it("Verlauf holds the correction of the e-mail date and the confirmed WhatsApp-Meldung; no decision yet", () => {
+    expect(f1.activity.map((a) => a.text)).toEqual([
+      "korrigierte E-Mail: Wohnungstyp C Heizkörper, Kopf, Datum: 01.04.2026 auf 07.04.2026",
+      "bestätigte WhatsApp-Meldung W1: zusätzliche Heizkörper montiert",
+    ]);
+    expect(f1.decision).toBe("gefunden");
+    expect(f1.nav).toMatchObject({ index: 1, count: 8, prev: null, next: "wohnpark-mooshaim-f2" });
+  });
+});
+
+describe("every find page", () => {
+  it("has an amount equal to its row, a first original, and a visible mark for each source", () => {
+    const rows = findRows();
+    for (const slug of findSlugs()) {
+      const r = findRecord(slug);
+      expect(r.amount).toBe(rows.find((x) => x.href === `/funde/${slug}/`)!.amount.text);
+      expect(r.first, slug).not.toBeNull();
+      for (const s of [...r.calc.steps.flatMap((x) => x.sources), ...r.evidence.work.map((x) => x.source), ...r.evidence.price.map((x) => x.source)]) {
+        expect(r.originals[s.page], `${slug} ${s.page}`).toBeDefined();
+        expect(markOf(r.originals[s.page], s.place), `${slug} ${s.page} ${s.place}`).not.toBeNull();
+      }
+    }
+  });
+});

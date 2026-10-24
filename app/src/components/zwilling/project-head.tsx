@@ -36,10 +36,6 @@ export function ProjectHead({ view, projects }: { view: TwinView; projects: Proj
             {[
               <span key="c">{p.client}</span>,
               ...(p.date ? [<span key="d">{p.date.label} {p.date.text}</span>] : []),
-              <span key="s" className="inline-flex items-center gap-1.5 text-fg">
-                <i className={cn("size-2 rounded-full", DOT[p.status.colour])} aria-hidden />
-                {p.status.text}
-              </span>,
             ].map((fact) => (
               <span key={fact.key} className="flex items-center whitespace-nowrap before:w-4 before:shrink-0 before:text-center before:text-fg-faint before:content-['·'] max-md:before:hidden">
                 {fact}

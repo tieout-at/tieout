@@ -1,0 +1,139 @@
+"use client";
+
+import Link from "next/link";
+import { ChevronDown, ChevronUp, SearchCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+
+import { Activity } from "@/components/record/activity";
+import { Highlights } from "@/components/record/highlights";
+import { RecordHead } from "@/components/shell/record-head";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { useMediaQuery } from "@/components/zwilling/use-media";
+import { appendDecision, appendTask, currentState, localTime, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
+import type { FindRecord, SourceRef } from "@/lib/finds";
+import type { ActivityEntry, Highlight } from "@/lib/records";
+import { cn } from "@/lib/utils";
+import { DecisionBar } from "./decision-bar";
+import { OriginalViewer } from "./original-viewer";
+import { CalcPath, EvidenceList, WeakSpot } from "./sources";
+
+const zeitText = (z: string) => `${z.slice(8, 10)}.${z.slice(5, 7)}.${z.slice(0, 4)}, ${z.slice(11, 16)}`;
+
+const navButton =
+  "flex size-7 items-center justify-center rounded-md text-fg-secondary shadow-button outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent max-md:size-11";
+
+/**
+ * The find page (SPEZIFIKATION.md 4.2 and 7.3): Attio's record layout with the chat panel turned into the original.
+ * Left: name, decision bar, highlights, weak spot, Rechenweg, Belege, Verlauf. Right (from 1024 px): the original of the
+ * chosen source with its place marked; below 1024 px the original opens as a panel when a source is tapped.
+ */
+export function FindView({ record }: { record: FindRecord }) {
+  const [source, setSource] = useState<SourceRef | null>(record.first);
+  const [sheet, setSheet] = useState(false);
+  const wide = useMediaQuery("(min-width: 1024px)", true);
+  const phone = useMediaQuery("(max-width: 767px)", false);
+  const [decisions, setDecisions] = useState<Decision[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  // the static page shows the core's state; what this browser recorded replaces it after the first paint
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of a browser-only value
+    setDecisions(readDecisions());
+    setTasks(readTasks());
+  }, []);
+
+  const keys = useMemo(() => [record.key, ...record.earlierKeys], [record]);
+  const mine = decisions.filter((d) => keys.includes(d.fundSchluessel));
+  const state = currentState(decisions, keys, record.decision);
+  const last = mine.toSorted((a, b) => a.zeit.localeCompare(b.zeit)).at(-1);
+
+  const decisionCard: Highlight = {
+    id: "entscheidung",
+    title: "Entscheidung",
+    value: record.decisionText[state],
+    lines: last ? [`${last.wer}, ${zeitText(last.zeit)}`, ...(last.grund && last.stand === "nicht_verrechnen" ? [last.grund] : [])] : ["noch nicht geprüft"],
+    status: state === "nicht_verrechnen" ? "grau" : state === "gefunden" ? undefined : "gruen",
+  };
+
+  const activity: ActivityEntry[] = [
+    ...mine.map((d, i) => ({
+      id: `entscheidung-${i}`,
+      time: d.zeit,
+      timeText: zeitText(d.zeit),
+      who: d.wer,
+      text: `setzte die Entscheidung auf ${record.decisionText[d.stand]}${d.grund ? `: ${d.grund}` : ""}`,
+      kind: "entscheidung" as const,
+    })),
+    ...tasks
+      .filter((t) => keys.includes(t.fundSchluessel))
+      .map((t) => ({
+        id: t.id,
+        time: t.zeit,
+        timeText: zeitText(t.zeit),
+        who: t.wer,
+        text: `legte eine Aufgabe für ${t.zustaendig} an: ${t.text}${t.bis ? `, bis ${t.bis.slice(8, 10)}.${t.bis.slice(5, 7)}.${t.bis.slice(0, 4)}` : ""}`,
+        kind: "aufgabe" as const,
+      })),
+    ...record.activity,
+  ].sort((x, y) => y.time.localeCompare(x.time) || y.id.localeCompare(x.id));
+
+  const open = (s: SourceRef) => {
+    setSource(s);
+    if (!wide) setSheet(true);
+  };
+
+  return (
+    // shrink-0: the row grows with its content, so the original can stick to the top while the page scrolls
+    <div className="flex min-h-full shrink-0">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <RecordHead icon={SearchCheck} badge={record.number} title={record.name} facts={record.facts}>
+          <span className="ml-auto flex shrink-0 items-center gap-1.5 pl-2 text-xs text-fg-secondary tabular-nums">
+            <span className="max-sm:hidden">
+              {record.nav.index} von {record.nav.count} in {record.project.name}
+            </span>
+            {[
+              { slug: record.nav.prev, label: "Voriger Fund", Icon: ChevronUp },
+              { slug: record.nav.next, label: "Nächster Fund", Icon: ChevronDown },
+            ].map(({ slug, label, Icon }) =>
+              slug ? (
+                <Link key={label} href={`/funde/${slug}/`} aria-label={label} className={navButton}>
+                  <Icon className="size-4" aria-hidden />
+                </Link>
+              ) : (
+                <span key={label} aria-hidden className={cn(navButton, "opacity-40")}>
+                  <Icon className="size-4" />
+                </span>
+              ),
+            )}
+          </span>
+        </RecordHead>
+        <DecisionBar
+          state={state}
+          amount={record.amount}
+          taskText={record.taskText}
+          onDecide={(stand, wer, grund) => setDecisions(appendDecision({ fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }))}
+          onTask={(t) => setTasks(appendTask({ id: `aufgabe-${Date.now()}`, fundSchluessel: record.key, zeit: localTime(), wer: "Abrechnung", ...t }))}
+        />
+        <div className="flex flex-col gap-6 px-6 pt-1 pb-10 max-md:px-4">
+          <Highlights items={[...record.highlights, decisionCard]} title="Auf einen Blick" columns={4} />
+          <WeakSpot record={record} active={source} onOpen={open} />
+          <CalcPath calc={record.calc} active={source} onOpen={open} />
+          <EvidenceList evidence={record.evidence} active={source} onOpen={open} />
+          <Activity entries={activity} />
+        </div>
+      </div>
+
+      {source && (
+        <aside className="sticky top-0 h-[calc(100dvh-var(--header-height))] w-[400px] shrink-0 self-start shadow-[inset_1px_0_0_0_var(--color-line)] max-lg:hidden">
+          <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} />
+        </aside>
+      )}
+      <Sheet open={!wide && sheet} onOpenChange={setSheet}>
+        <SheetContent side={phone ? "bottom" : "right"} className={phone ? "h-[85dvh]" : ""}>
+          <SheetTitle>Original</SheetTitle>
+          {source && <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} onClose={() => setSheet(false)} />}
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+}

@@ -36,10 +36,14 @@ export function FindsTable({
       width: 250,
       sortValue: (r) => r.title,
       cell: (r) => (
-        <span className="flex min-w-0 items-center gap-1.5" title={r.title}>
+        <Link
+          href={r.href}
+          title={r.title}
+          className="-mx-1 flex min-w-0 items-center gap-1.5 rounded-md px-1 py-0.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent"
+        >
           <span className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{r.number}</span>
           <span className="truncate">{r.title}</span>
-        </span>
+        </Link>
       ),
     },
     {
