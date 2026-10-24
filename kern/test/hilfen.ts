@@ -9,7 +9,9 @@ const LISTE = readFileSync(new URL("../../docs/Demo_Faelle.md", import.meta.url)
 
 /** "14.620,15 €" → 1462015, after checking that the solution list contains exactly this amount. */
 export function ausListe(betrag: string): number {
-  if (!LISTE.includes(betrag.replace(" €", ""))) throw new Error(`${betrag} steht nicht in docs/Demo_Faelle.md`);
+  // the whole number only: "0,00 €" must not match inside "746.820,00 €"
+  const zahl = betrag.replace(" €", "").replaceAll(".", "[.]");
+  if (!new RegExp(`(?<![0-9.,])${zahl}(?![0-9])`).test(LISTE)) throw new Error(`${betrag} steht nicht in docs/Demo_Faelle.md`);
   return centAus(betrag);
 }
 
@@ -62,7 +64,7 @@ export function kleinerDatensatz(): Datensatz {
         leistungBis: f("2026-02-27"),
         gegengezeichnet: f(true),
         gegengezeichnetAm: f("2026-03-03"),
-        erfasstAm: "2026-03-04",
+        erfasstAm: f("2026-03-04"),
         grundlageBelegId: null,
         zeilen: [{ positionNr: f("22.01.01A"), menge: f(10_000), ort: f("Stiege 1") }],
       },

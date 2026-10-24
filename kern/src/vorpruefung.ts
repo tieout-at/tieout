@@ -5,7 +5,7 @@
 // the Aufmaß), "Regie nicht unterschrieben" for a Regiebericht the Abrechnung puts into the Entwurf.
 
 import { betragAusMenge, euro, menge, stundenBetrag } from "./geld";
-import { arbeitsdatum, aufmassMenge, baueKontext, type Kontext } from "./kontext";
+import { arbeitsdatum, aufmassMenge, baueKontext, verrechnetMenge, type Kontext } from "./kontext";
 import type { AbzugArt, Bp, Cent, Datensatz } from "./modell";
 import { datumText, type Abgleich } from "./regeln";
 import type { Kuerzungsrisiko, Nachweis } from "./typen";
@@ -24,12 +24,16 @@ type Roh = Omit<Kuerzungsrisiko, "nr">;
 function aufmassNichtGegengezeichnet(k: Kontext, a: Abgleich): Roh[] {
   const jeFund = new Map<string, { nrs: string[]; betrag: Cent; blaetter: Set<string>; text: string[] }>();
   for (const p of k.d.positionen) {
+    // What goes to the Auftraggeber (Entwurf plus the finds) beyond what he countersigned, at most what lies on sheets
+    // he did not countersign.
     const nr = p.nr.wert;
-    const aufmass = aufmassMenge(k, nr);
-    if (aufmass <= p.menge.wert) continue;
     const funde = k.aufmass.get(nr) ?? [];
     const gezeichnet = funde.filter((f) => f.blatt.gegengezeichnet.wert).reduce((s, f) => s + f.zeile.menge.wert, 0);
-    const gefaehrdet = aufmass - Math.max(p.menge.wert, gezeichnet);
+    const ungezeichnet = aufmassMenge(k, nr) - gezeichnet;
+    if (ungezeichnet <= 0) continue;
+    const fundTeile = a.funde.filter((f) => f.entscheidung !== "nicht_verrechnen" && f.belegstand === "belegt").flatMap((f) => f.positionen.filter((x) => x.positionNr === nr));
+    const abgerechnet = verrechnetMenge(k, nr) + fundTeile.reduce((s, x) => s + x.differenz, 0);
+    const gefaehrdet = Math.min(ungezeichnet, abgerechnet - gezeichnet);
     if (gefaehrdet <= 0) continue;
     const fund = a.funde.find((f) => f.positionen.some((x) => x.positionNr === nr));
     const key = fund?.schluessel ?? `position:${nr}`;
@@ -52,7 +56,7 @@ function aufmassNichtGegengezeichnet(k: Kontext, a: Abgleich): Roh[] {
       grund: "aufmass_nicht_gegengezeichnet" as const,
       bezug: fund ? `${fund.nr} (${g.nrs.length === 1 ? g.nrs[0] : `${g.nrs.length} Positionen`})` : g.nrs[0],
       fundSchluessel: fund?.schluessel ?? null,
-      was: fund?.art === "mehrmenge_plan" ? `Mehrmenge, ${fund.titel.split(": ").slice(1).join(": ")}` : `Mehrmenge ${g.text.join(", ")}`,
+      was: fund?.art === "mehrmenge_plan" ? `Mehrmenge, ${fund.titel.split(": ").slice(1).join(": ")}` : `${g.text.join(", ")} ohne Gegenzeichnung`,
       detail: `${blaetter.map((b) => `Aufmaßblatt ${b.nr}`).join(", ")} vom Auftraggeber nicht gegengezeichnet`,
       abhilfe: `${beilegen.length ? `${beilegen.join(" und ")} beilegen, ` : ""}gemeinsames Aufmaß vereinbaren`,
       betrag: g.betrag,
@@ -66,15 +70,19 @@ function stundenWeichenAb(k: Kontext, a: Abgleich): Roh[] {
   const v = k.d.vertrag;
   const abzurechnen = k.d.regie.filter((rb) => k.regieVerrechnet.has(rb.nr) || a.funde.some((f) => f.schluessel === `regie:${rb.nr}` && f.belegstand === "belegt"));
   return abzurechnen.flatMap((rb): Roh[] => {
-    const tag = arbeitsdatum(rb);
-    const zettel = k.d.stundenzettel.find((s) => s.von.wert <= tag && tag <= s.bis.wert && s.eintraege.some((e) => e.regieberichtNr.wert === rb.nr));
-    const e = zettel?.eintraege.find((x) => x.regieberichtNr.wert === rb.nr);
-    if (!zettel || !e) return [];
+    // Every Stundenzettel of a week with a work day of the report and an entry for it; the hours are added up.
+    const tage = rb.arbeitstage.wert.length ? rb.arbeitstage.wert : [arbeitsdatum(rb)];
+    const zettel = k.d.stundenzettel.filter((s) => tage.some((t) => s.von.wert <= t && t <= s.bis.wert) && s.eintraege.some((x) => x.regieberichtNr.wert === rb.nr));
+    if (!zettel.length) return [];
+    const eintraege = zettel.flatMap((s) => s.eintraege.filter((x) => x.regieberichtNr.wert === rb.nr));
+    const e = { stundenMonteur: { wert: eintraege.reduce((s, x) => s + x.stundenMonteur.wert, 0), quelle: eintraege[0].stundenMonteur.quelle }, stundenHelfer: { wert: eintraege.reduce((s, x) => s + x.stundenHelfer.wert, 0) } };
     const mehrM = Math.max(0, rb.stundenMonteur.wert - e.stundenMonteur.wert);
     const mehrH = Math.max(0, rb.stundenHelfer.wert - e.stundenHelfer.wert);
     if (mehrM === 0 && mehrH === 0) return [];
     const was = [mehrM ? `${menge(mehrM)} h Monteur` : "", mehrH ? `${menge(mehrH)} h Helfer` : ""].filter(Boolean).join(", ");
-    const kw = kalenderwoche(zettel.von.wert);
+    const kw = [...new Set(zettel.map((s) => kalenderwoche(s.von.wert)))].join(" und ");
+    const trupp = [...new Set(zettel.map((s) => s.trupp.wert))].join(", ");
+    const bis = zettel.map((s) => s.bis.wert).sort().at(-1)!;
     const h = (m: number, hh: number) => `${menge(m)} h Monteur und ${menge(hh)} h Helfer`;
     const fund = a.funde.find((f) => f.schluessel === `regie:${rb.nr}`);
     return [
@@ -84,13 +92,13 @@ function stundenWeichenAb(k: Kontext, a: Abgleich): Roh[] {
         bezug: `Regiebericht ${rb.nr}${fund ? ` (${fund.nr})` : ""}`,
         fundSchluessel: fund?.schluessel ?? null,
         was,
-        detail: `Regiebericht ${rb.nr}: ${h(rb.stundenMonteur.wert, rb.stundenHelfer.wert)}; Stundenzettel KW ${kw}, ${zettel.trupp}: ${h(e.stundenMonteur.wert, e.stundenHelfer.wert)} zu Regiebericht ${rb.nr}`,
+        detail: `Regiebericht ${rb.nr}: ${h(rb.stundenMonteur.wert, rb.stundenHelfer.wert)}; Stundenzettel KW ${kw}, ${trupp}: ${h(e.stundenMonteur.wert, e.stundenHelfer.wert)} zu Regiebericht ${rb.nr}`,
         abhilfe: `${was} mit der Bauleitung klären, bevor die Schlussrechnung hinausgeht`,
         betrag: stundenBetrag(mehrM, v.regiesatzMonteur.wert) + stundenBetrag(mehrH, v.regiesatzHelfer.wert),
         zustand: k.kuerzungen.has(`Regiebericht ${rb.nr}`) ? "schon_gekuerzt" : "droht",
         nachweise: [
           { titel: `Regiebericht ${rb.nr}`, text: h(rb.stundenMonteur.wert, rb.stundenHelfer.wert), datum: rb.datum.wert, quelle: rb.stundenMonteur.quelle, art: "regiebericht", rolle: "leistung", imErp: false },
-          { titel: `Stundenzettel KW ${kw}, ${zettel.trupp}`, text: `${h(e.stundenMonteur.wert, e.stundenHelfer.wert)} zu Regiebericht ${rb.nr}`, datum: zettel.bis.wert, quelle: e.stundenMonteur.quelle, art: "stundenzettel", rolle: "leistung", imErp: false },
+          { titel: `Stundenzettel KW ${kw}, ${trupp}`, text: `${h(e.stundenMonteur.wert, e.stundenHelfer.wert)} zu Regiebericht ${rb.nr}`, datum: bis, quelle: e.stundenMonteur.quelle, art: "stundenzettel", rolle: "leistung", imErp: false },
         ],
       },
     ];

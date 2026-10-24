@@ -18,6 +18,9 @@ export function vonDem(rolle: string): string {
   return `vom ${rolle}`;
 }
 
+/** A find before it gets its number and decision. */
+type RohFund = Omit<Fund, "nr" | "entscheidung" | "fruehereSchluessel"> & { fruehereSchluessel?: string[] };
+
 const quellen = (...q: Quelle[]): { quellen?: Quelle[] } => (q.length ? { quellen: q } : {});
 const nachDatum = (n: Nachweis[]) => [...n].sort((a, b) => (a.datum ?? "").localeCompare(b.datum ?? ""));
 const ohneDoppel = (n: Nachweis[]) => n.filter((x, i) => n.findIndex((y) => y.quelle.belegId === x.quelle.belegId) === i);
@@ -46,7 +49,7 @@ const meldungNachweis = (m: WhatsAppMeldung): Nachweis => ({
 const blattNachweis = (k: Kontext, f: AufmassFund): Nachweis[] => {
   const b = f.blatt;
   const einheit = k.lv.get(f.zeile.positionNr.wert)?.einheit.wert;
-  const zustand = [b.gegengezeichnet.wert ? "gegengezeichnet" : "nicht gegengezeichnet", b.erfasstAm ? `erfasst am ${datumText(b.erfasstAm)}` : "nie erfasst"].join(", ");
+  const zustand = [b.gegengezeichnet.wert ? "gegengezeichnet" : "nicht gegengezeichnet", b.erfasstAm ? `erfasst am ${datumText(b.erfasstAm.wert)}` : "nie erfasst"].join(", ");
   const grundlage = b.grundlageBelegId ? k.d.fotodokumentationen.find((x) => x.belegId === b.grundlageBelegId) : undefined;
   return [
     { titel: `Aufmaßblatt ${b.nr}`, text: `${menge(f.zeile.menge.wert, einheit)} aufgemessen, ${zustand}`, datum: b.datum.wert, quelle: f.zeile.menge.quelle, art: "aufmassblatt", rolle: "leistung", imErp: b.erfasstAm !== null },
@@ -69,7 +72,6 @@ function kandidaten(k: Kontext): Kandidat[] {
   const ergebnis: Kandidat[] = [];
   for (const p of k.d.positionen) {
     const nr = p.nr.wert;
-    if (p.einheit.wert === "psch") continue;
     const aufmass = aufmassMenge(k, nr, true);
     const verrechnet = verrechnetMenge(k, nr);
     if (aufmass <= verrechnet) continue;
@@ -82,15 +84,18 @@ function kandidaten(k: Kontext): Kandidat[] {
         rest = 0;
       }
     }
-    const differenz = aufmass - verrechnet;
-    const ueberLv = aufmass > p.menge.wert;
-    const planAenderung = ueberLv ? (k.d.plaene.filter((pl) => pl.vermerke.some((v) => v.typ === "aenderung" && v.positionNr.wert === nr)).sort((a, b) => b.datum.wert.localeCompare(a.datum.wert))[0] ?? null) : null;
-    ergebnis.push({
-      pos: { positionNr: nr, kurztext: p.kurztext.wert, einheit: p.einheit.wert, ep: p.ep.wert, lvMenge: p.menge.wert, aufmassMenge: aufmass, verrechnetMenge: verrechnet, differenz, betrag: betragAusMenge(differenz, p.ep.wert) },
+    // Above the quantity of the Leistungsverzeichnis it is a Mehrmenge, below it "erbracht, nicht verrechnet": a
+    // position measured above and invoiced below the Leistungsverzeichnis gives one find for each part.
+    const lv = p.menge.wert;
+    const planAenderung = k.d.plaene.filter((pl) => pl.vermerke.some((v) => v.typ === "aenderung" && v.positionNr.wert === nr)).sort((a, b) => b.datum.wert.localeCompare(a.datum.wert))[0] ?? null;
+    const teil = (differenz: number, ueberLv: boolean): Kandidat => ({
+      pos: { positionNr: nr, kurztext: p.kurztext.wert, einheit: p.einheit.wert, ep: p.ep.wert, lvMenge: lv, aufmassMenge: aufmass, verrechnetMenge: verrechnet, differenz, betrag: betragAusMenge(differenz, p.ep.wert) },
       offen,
       ueberLv,
-      planAenderung,
+      planAenderung: ueberLv ? planAenderung : null,
     });
+    if (aufmass > lv && verrechnet < lv) ergebnis.push(teil(aufmass - lv, true), teil(lv - verrechnet, false));
+    else ergebnis.push(teil(aufmass - verrechnet, aufmass > lv));
   }
   return ergebnis;
 }
@@ -105,7 +110,7 @@ function k7Text(k: Kontext, nr: string): string | null {
   return `K7 ${nr}: ${stunden(k7.lohnHundertstel.wert)} × ${euro(mlp)} = ${euro(lohn)} Lohn + ${euro(sonst)} Sonstiges = ${euro(lohn + sonst)}${lohn + sonst === ep ? "" : `, weicht vom Einheitspreis ${euro(ep)} ab`}`;
 }
 
-function mengenFunde(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
+function mengenFunde(k: Kontext): RohFund[] {
   const gruppen = new Map<string, Kandidat[]>();
   for (const c of kandidaten(k)) {
     const key = c.planAenderung ? `plan:${c.planAenderung.planNr.wert}:${c.planAenderung.index.wert}` : `${c.ueberLv ? "mehrmenge" : "nicht_verrechnet"}:${c.pos.positionNr}`;
@@ -210,10 +215,10 @@ function stundenSchritte(k: Kontext, m: { wert: number; quelle: Quelle }, h: { w
 
 /** Is a Meldung already written up as a Regiebericht (the report names it, or the message names an existing report)? */
 function zuBericht(k: Kontext, m: WhatsAppMeldung): Regiebericht | undefined {
-  return k.d.regie.find((r) => r.ausMeldung === m.nr || r.nr === m.bezugRegiebericht?.wert);
+  return k.d.regie.find((r) => r.ausMeldung?.wert === m.nr || r.nr === m.bezugRegiebericht?.wert);
 }
 
-function regieFunde(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
+function regieFunde(k: Kontext): RohFund[] {
   const v = k.d.vertrag;
   const zuschlag = v.regiematerialZuschlag.wert;
   return k.d.regie
@@ -238,6 +243,7 @@ function regieFunde(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
       const gh = k.d.grosshaendlerrechnungen.filter((g) => g.regieberichtNr.wert === rb.nr);
       return {
         schluessel: `regie:${rb.nr}`,
+        fruehereSchluessel: rb.ausMeldung ? [`meldung:${rb.ausMeldung.wert}`] : [],
         art: "regie" as const,
         belegstand: (unterschrieben ? "belegt" : "beleg_fehlt") as Belegstand,
         titel: `Regiebericht ${rb.nr}, ${rb.taetigkeit.wert}`,
@@ -266,7 +272,7 @@ function regieFunde(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
 }
 
 /** Hours known only from a WhatsApp-Meldung: no Regiebericht, no signature. Priced with the Regiesätze, no material. */
-function meldungsFunde(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
+function meldungsFunde(k: Kontext): RohFund[] {
   const v = k.d.vertrag;
   return k.d.meldungen
     .filter((m) => m.stundenMonteur.wert + m.stundenHelfer.wert > 0 && m.bezugPositionen.wert.length === 0 && !zuBericht(k, m) && !k.regieVerrechnet.has(m.nr) && vorGrenze(k, m.zeitpunkt.slice(0, 10)))
@@ -291,7 +297,7 @@ function meldungsFunde(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
 
 // ---------- Preisumrechnung (variable prices) ----------
 
-function preisumrechnung(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
+function preisumrechnung(k: Kontext): RohFund[] {
   const pr = k.d.vertrag.preise;
   const ix = k.d.indexblatt;
   if (pr.art !== "veraenderlich" || !ix || !k.d.entwurf) return [];
@@ -336,7 +342,7 @@ function preisumrechnung(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
 
 // ---------- Changes notified by e-mail and never priced ----------
 
-function anmeldungen(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
+function anmeldungen(k: Kontext): RohFund[] {
   const v = k.d.vertrag;
   return k.d.emails
     .filter((m) => m.kategorie.wert === "anmeldung" && m.anmeldung && !m.anmeldung.nachtragGelegt.wert && vorGrenze(k, m.datum.wert))
@@ -348,7 +354,7 @@ function anmeldungen(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
       const aufschlag = prozent(a.material.wert, pb.materialzuschlag.wert);
       const material = a.material.wert + aufschlag;
       const betrag = lohn + material;
-      const pauschale = v.pauschalen.find((p) => p.kategorie === a.kategorie);
+      const pauschale = v.pauschalen.find((p) => p.kategorie === a.kategorie.wert);
       const anweisung = a.anweisungBelegId ? k.d.emails.find((x) => x.belegId === a.anweisungBelegId) : undefined;
       const mehr = `${menge(a.stunden.wert)} h × ${euro(pb.mittellohnpreis.wert)} (Mittellohnpreis) = ${euro(lohn)} + Material ${euro(a.material.wert)} + ${prozentText(pb.materialzuschlag.wert, 0)} (${euro(aufschlag)}) = ${euro(material)}`;
       const nachweise = nachDatum([...(anweisung ? [mailNachweis(anweisung)] : []), mailNachweis(m)]);
@@ -395,7 +401,7 @@ function anmeldungen(k: Kontext): Omit<Fund, "nr" | "entscheidung">[] {
 
 function hinweise(k: Kontext, funde: readonly Fund[]): Hinweis[] {
   const rechtsfragen = k.d.emails
-    .filter((m) => m.kategorie.wert === "termin" && m.aendertBauzeit && m.von === "auftraggeber")
+    .filter((m) => m.kategorie.wert === "termin" && m.aendertBauzeit.wert && m.von === "auftraggeber")
     .map(
       (m): Hinweis => ({
         schluessel: `rechtsfrage:${m.belegId}`,
@@ -472,7 +478,12 @@ export function abgleich(d: Datensatz, optionen: AbgleichOptionen = {}): Abgleic
   const roh = laeuft ? [...mengenFunde(k), ...regieFunde(k), ...meldungsFunde(k), ...preisumrechnung(k), ...anmeldungen(k)] : [];
   const funde: Fund[] = roh
     .sort((a, b) => STAND_REIHE.indexOf(a.belegstand) - STAND_REIHE.indexOf(b.belegstand) || ART_REIHE.indexOf(a.art) - ART_REIHE.indexOf(b.art) || b.betrag - a.betrag || a.schluessel.localeCompare(b.schluessel))
-    .map((f, i) => ({ ...f, nr: `F${i + 1}`, entscheidung: entscheidungsstand(optionen.entscheidungen ?? [], f.schluessel) }));
+    .map((f, i) => {
+      const frueher = f.fruehereSchluessel ?? [];
+      // a decision on an earlier key of the same work counts for the find as it is now
+      const eigene = (optionen.entscheidungen ?? []).filter((e) => e.fundSchluessel === f.schluessel || frueher.includes(e.fundSchluessel)).map((e) => ({ ...e, fundSchluessel: f.schluessel }));
+      return { ...f, fruehereSchluessel: frueher, nr: `F${i + 1}`, entscheidung: entscheidungsstand(eigene, f.schluessel) };
+    });
   const zaehlt = (f: Fund, ...staende: Belegstand[]) => f.belegstand !== null && staende.includes(f.belegstand) && f.entscheidung !== "nicht_verrechnen";
   const summe = (...staende: Belegstand[]) => funde.filter((f) => zaehlt(f, ...staende)).reduce((s, f) => s + f.betrag, 0);
   const offeneRegie = d.regie.filter((r) => !k.regieVerrechnet.has(r.nr));

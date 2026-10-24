@@ -15,8 +15,8 @@ const anmeldung = (kategorie: string): Email => ({
   kategorie: f("anmeldung"),
   zitat: null,
   bezugPositionen: f([]),
-  aendertBauzeit: false,
-  anmeldung: { gegenstand: f("Zusatzleistung"), kategorie, anweisungBelegId: null, stunden: f(1_000), material: f(10_000), nachtragGelegt: f(false) },
+  aendertBauzeit: f(false),
+  anmeldung: { gegenstand: f("Zusatzleistung"), kategorie: f(kategorie), anweisungBelegId: null, stunden: f(1_000), material: f(10_000), nachtragGelegt: f(false) },
 });
 
 describe("counter-checks on a project without anything open", () => {

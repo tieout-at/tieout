@@ -39,6 +39,9 @@ describe("rounding and cent arithmetic", () => {
     expect(menge(3_746, "m")).toBe("37,46 m");
     expect(prozentText(380)).toBe("3,8 %");
     expect(prozentText(300, 2)).toBe("3,00 %");
+    expect(prozentText(2_015)).toBe("20,2 %");
+    expect(prozentText(2_625)).toBe("26,3 %");
+    expect(prozentText(1_500, 0)).toBe("15 %");
     expect(centAus("14.620,15 €")).toBe(1_462_015);
     expect(centAus("−23.008,05 €")).toBe(-2_300_805);
     expect(centAus("0,00 €")).toBe(0);

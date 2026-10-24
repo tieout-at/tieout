@@ -1,6 +1,7 @@
 // Data model of the twin (SPEZIFIKATION.md section 2). Every value read from a document is a Feld with its source
 // (Beleg, page, place), its review state and its Verlauf. A correction never overwrites: the old value stays in the
 // Verlauf ("korrigiert, vorher 98 Stk"). The core reads only `wert`.
+// Plain values without a Feld are either set by the system (ids, file names) or the place of a Feld (Vertragspunkt).
 // German identifiers follow the vocabulary of the specification (section 6), as in the v1 core.
 
 import type { Bp, Cent, Datum, Einheit, Hundertstel, Zeitpunkt } from "./grundtypen";
@@ -303,7 +304,7 @@ export interface Aufmassblatt {
   gegengezeichnet: Feld<boolean>;
   gegengezeichnetAm: Feld<Datum> | null;
   /** Day the sheet was entered into the AVA; null if never (an Excel file, or not countersigned). */
-  erfasstAm: Datum | null;
+  erfasstAm: Feld<Datum> | null;
   /** Beleg the measurement is based on, for example the Fotodokumentation Brandschutz. */
   grundlageBelegId: string | null;
   zeilen: AufmassZeile[];
@@ -326,7 +327,7 @@ export interface Regiebericht {
   unterschrieben: Feld<boolean>;
   unterschriebenAm: Feld<Datum> | null;
   /** WhatsApp-Meldung the report was written from, or null. */
-  ausMeldung: string | null;
+  ausMeldung: Feld<string> | null;
 }
 
 /** Internal hours per crew and week, booked to Regieberichte. Read only as a sum per crew and week. */
@@ -334,7 +335,7 @@ export interface Stundenzettel {
   belegId: string;
   von: Feld<Datum>;
   bis: Feld<Datum>;
-  trupp: string;
+  trupp: Feld<string>;
   eintraege: { regieberichtNr: Feld<string>; stundenMonteur: Feld<Hundertstel>; stundenHelfer: Feld<Hundertstel> }[];
 }
 
@@ -363,6 +364,8 @@ export interface Rechnung {
   zeilen: RechnungsZeile[];
   /** Total as printed on the document. */
   summe: Feld<Cent>;
+  /** Abschlagsrechnung that lists the whole work up to its date (cumulative); its quantities are never added to earlier ones. */
+  kumuliert?: boolean;
 }
 
 /** A line of the breakdown on a Zahlungsavis: what the Auftraggeber deducts from the invoice. */
@@ -466,12 +469,12 @@ export interface Email {
   zitat: Feld<string> | null;
   bezugPositionen: Feld<string[]>;
   /** "Termin" only: the Auftraggeber changes the schedule (the app shows a "Rechtsfrage", never a legal reading). */
-  aendertBauzeit: boolean;
+  aendertBauzeit: Feld<boolean>;
   /** "Anmeldung" only: a change notified with Mehrkosten, and the own estimate of it. */
   anmeldung: {
     gegenstand: Feld<string>;
     /** Subject, matched against the Pauschalen of the Vertrag. */
-    kategorie: string;
+    kategorie: Feld<string>;
     /** E-mail of the Auftraggeber that instructed the change. */
     anweisungBelegId: string | null;
     stunden: Feld<Hundertstel>;

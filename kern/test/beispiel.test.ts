@@ -77,9 +77,9 @@ describe("P1 Wohnpark Mooshaim: Vertrag, Leistungsverzeichnis, invoices", () => 
 
   it("Aufmaßblatt 11 never entered, 12 not countersigned, 13 entered one day after the Entwurf", () => {
     const ab = (nr: string) => p1.aufmass.find((a) => a.nr === nr)!;
-    expect([ab("11").erfasstAm, ab("11").gegengezeichnet.wert]).toEqual([null, true]);
-    expect([ab("12").erfasstAm, ab("12").gegengezeichnet.wert]).toEqual([null, false]);
-    expect([ab("13").erfasstAm, ab("13").gegengezeichnetAm?.wert]).toEqual(["2026-10-20", "2026-10-08"]);
+    expect([ab("11").erfasstAm?.wert ?? null, ab("11").gegengezeichnet.wert]).toEqual([null, true]);
+    expect([ab("12").erfasstAm?.wert ?? null, ab("12").gegengezeichnet.wert]).toEqual([null, false]);
+    expect([ab("13").erfasstAm?.wert, ab("13").gegengezeichnetAm?.wert]).toEqual(["2026-10-20", "2026-10-08"]);
     expect(p1.aufmass.filter((a) => !a.gegengezeichnet.wert).map((a) => a.nr)).toEqual(["12"]);
   });
 

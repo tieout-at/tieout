@@ -117,9 +117,12 @@ export function pruefeFirma(f: Firmendaten, entscheidungen: readonly Entscheidun
     const xs = funde.filter((x) => x.belegstand === stand);
     return { betrag: xs.reduce((s, x) => s + x.betrag, 0), anzahl: xs.length };
   };
-  const risiken = offen.flatMap((p) => ergebnisse[p.projektId].vorpruefung?.risiken ?? []);
-  const verrechenbar = new Set(funde.filter((x) => x.belegstand === "belegt").map((x) => x.schluessel));
-  const imRisiko = risiken.filter((r) => r.zustand === "droht" && r.fundSchluessel && verrechenbar.has(r.fundSchluessel));
+  // per project: find keys are unique inside a project only
+  const imRisiko = offen.flatMap((p) => {
+    const e = ergebnisse[p.projektId];
+    const verrechenbar = new Set(e.abgleich.funde.filter((x) => x.belegstand === "belegt" && x.entscheidung !== "nicht_verrechnen").map((x) => x.schluessel));
+    return (e.vorpruefung?.risiken ?? []).filter((r) => r.zustand === "droht" && r.fundSchluessel !== null && verrechenbar.has(r.fundSchluessel));
+  });
   const naechste = offen
     .filter((p) => p.datum?.art === "legen_bis" && p.datum.wert >= f.stichtag)
     .sort((a, b) => a.datum!.wert.localeCompare(b.datum!.wert))[0];

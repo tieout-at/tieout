@@ -20,9 +20,9 @@ export interface Kontext {
   aufmass: Map<string, AufmassFund[]>;
   /** Lines of the own Entwurf per position (empty without an Entwurf). */
   entwurf: Map<string, ZeilenFund[]>;
-  /** Lines of every Abschlagsrechnung per position. */
+  /** Lines of the Abschlagsrechnungen per position (from the latest cumulative one on, if any). */
   abschlaege: Map<string, ZeilenFund[]>;
-  /** Regieberichte invoiced in an Abschlagsrechnung or in the Entwurf. */
+  /** Regieberichte invoiced: in the Entwurf, or without one in the Abschlagsrechnungen. */
   regieVerrechnet: Set<string>;
   /** Cut amounts per position or Regiebericht according to the Korrekturblätter. */
   kuerzungen: Map<string, number>;
@@ -55,11 +55,18 @@ export function baueKontext(d: Datensatz, auftraggeber = "Der Auftraggeber"): Ko
 
   const entwurf = new Map<string, ZeilenFund[]>();
   if (d.entwurf) positionsZeilen(d.entwurf, entwurf);
+  // Abschlagsrechnungen for their period are added up; a cumulative one already lists all work up to its date, so the
+  // latest cumulative one replaces every earlier Abschlagsrechnung.
+  const sortiert = [...d.abschlaege].sort((a, b) => a.datum.wert.localeCompare(b.datum.wert));
+  const letzteKumuliert = sortiert.findLastIndex((r) => r.kumuliert);
+  const geltend = letzteKumuliert >= 0 ? sortiert.slice(letzteKumuliert) : sortiert;
   const abschlaege = new Map<string, ZeilenFund[]>();
-  for (const ar of d.abschlaege) positionsZeilen(ar, abschlaege);
+  for (const ar of geltend) positionsZeilen(ar, abschlaege);
 
+  // With an Entwurf only the Entwurf counts: a Regiebericht invoiced in an Abschlagsrechnung but left out of the Entwurf
+  // is lost money, because the Rechnungsabschluss subtracts every payment.
   const regieVerrechnet = new Set<string>();
-  for (const r of d.entwurf ? [...d.abschlaege, d.entwurf] : d.abschlaege) for (const z of r.zeilen) if (z.typ === "regie") regieVerrechnet.add(z.regieberichtNr.wert);
+  for (const r of d.entwurf ? [d.entwurf] : geltend) for (const z of r.zeilen) if (z.typ === "regie") regieVerrechnet.add(z.regieberichtNr.wert);
 
   const kuerzungen = new Map<string, number>();
   for (const kb of d.korrekturblaetter) for (const z of kb.zeilen) kuerzungen.set(z.positionNr.wert, (kuerzungen.get(z.positionNr.wert) ?? 0) + z.kuerzung.wert);

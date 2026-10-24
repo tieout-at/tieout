@@ -95,7 +95,7 @@ function baue(def: ProjektDef): Datensatz {
       material: f(r.material, qr("Material zum Einstandspreis")),
       unterschrieben: f(r.unterschriebenAm !== null, qr(`Unterschrift ${def.unterschrift}`)),
       unterschriebenAm: r.unterschriebenAm ? f(r.unterschriebenAm, qr(`Unterschrift ${def.unterschrift}, Datum`)) : null,
-      ausMeldung: r.ausMeldung ?? null,
+      ausMeldung: r.ausMeldung ? f(r.ausMeldung, qr("aus WhatsApp-Meldung")) : null,
     };
   });
   const rbBetrag = (r: RbDef) => regieBetrag(r, def.regieM, def.regieH, def.materialBp);
@@ -153,7 +153,7 @@ function baue(def: ProjektDef): Datensatz {
       leistungBis: f(b.datum, q(id, 1, "Kopf, Leistungszeitraum")),
       gegengezeichnet: f(true, q(id, 2, `Unterschrift ${def.unterschrift}`)),
       gegengezeichnetAm: f(b.erfasst, q(id, 2, `Unterschrift ${def.unterschrift}, Datum`)),
-      erfasstAm: b.erfasst,
+      erfasstAm: f(b.erfasst, q(id, 1, "AVA, erfasst am")),
       grundlageBelegId: null,
       zeilen,
     };

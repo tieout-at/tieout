@@ -20,7 +20,7 @@ export interface Positionszeile {
   beauftragt: Hundertstel | null;
   /** Measured quantity (for ongoing projects up to the last Abschlagsrechnung), or hours. */
   erbracht: Hundertstel | null;
-  /** Quantity in the own Entwurf, or without one in the Abschlagsrechnungen (read as for their period, never cumulative). */
+  /** Quantity in the own Entwurf, or without one in the Abschlagsrechnungen (a cumulative one is read as cumulative, never added up). */
   verrechnet: Hundertstel | null;
   /** Measured after the last Abschlagsrechnung: goes into the next one, no find. */
   nachGrenze: Hundertstel;
@@ -42,7 +42,8 @@ const stundenText = (m: Hundertstel, h: Hundertstel) => [m ? `${menge(m)} h Mont
 export function positionstabelle(d: Datensatz, a: Abgleich): Positionstabelle {
   const k = baueKontext(d);
   const fundZu = new Map<string, { fund: Fund; offen: Cent }>();
-  for (const f of a.funde) for (const p of f.positionen) fundZu.set(p.positionNr, { fund: f, offen: p.betrag });
+  // a position may carry two finds (Mehrmenge above, "erbracht, nicht verrechnet" below the Leistungsverzeichnis)
+  for (const f of a.funde) for (const p of f.positionen) fundZu.set(p.positionNr, { fund: fundZu.get(p.positionNr)?.fund ?? f, offen: (fundZu.get(p.positionNr)?.offen ?? 0) + p.betrag });
 
   const positionen: Positionszeile[] = d.positionen.map((p) => {
     const nr = p.nr.wert;

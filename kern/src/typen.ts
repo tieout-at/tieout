@@ -86,6 +86,8 @@ export type Kosten = { art: "vertragspreis" } | { art: "aufwand"; stunden: Hunde
 export interface Fund {
   /** Stable key, for example "plan:H-201:D", "regie:9", "meldung:W4", "mehrmenge:24.02.05A". */
   schluessel: string;
+  /** Keys the same work had before (a Regiebericht written from a WhatsApp-Meldung was "meldung:…"); decisions carry over. */
+  fruehereSchluessel: string[];
   /** Number in the project, "F1" …, in the order of the result (Belegstand, Art, amount). */
   nr: string;
   art: FundArt;

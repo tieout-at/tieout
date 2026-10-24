@@ -88,7 +88,11 @@ export function rechnungsabschluss(d: Datensatz, a: Abgleich): Rechnungsabschlus
   const zahlungsSumme = bezahlt.reduce((s, z) => s + z.betrag.wert, 0);
 
   const kaskade = (mitOhneVertragspunkt: boolean) => {
-    const p = pruefungen.filter((x) => mitOhneVertragspunkt || x.pruefung !== "abzug_ohne_vertragspunkt");
+    // as the Auftraggeber announced; "laut Vertrag": without deductions that have no contract item, and with the rate of
+    // the Vertrag where he deviates from it
+    const p = pruefungen
+      .filter((x) => mitOhneVertragspunkt || x.pruefung !== "abzug_ohne_vertragspunkt")
+      .map((x) => (!mitOhneVertragspunkt && x.pruefung === "abweichung" ? { ...x, satz: v.saetze.find((y) => y.art === x.art && y.phase !== "abschlag")!.satz.wert, pruefung: "laut_vertrag" as const } : x));
     const s = abrechnen(gesamtleistung, 0, p.map((x): Satz => ({ art: x.art, satz: x.satz })));
     const zeilen: AbschlussZeile[] = [
       { bezeichnung: "Entwurf der Schlussrechnung", art: "summe", abzugArt: null, satz: null, pruefung: null, vertragspunkt: null, betrag: e.summe.wert, nachweise: [nw("Entwurf", `Summe netto ${euro(e.summe.wert)}`, e.datum.wert, e.summe.quelle, "entwurf")] },

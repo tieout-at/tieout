@@ -15,7 +15,7 @@ export function zumStichtag(d: Datensatz, tag: Datum): Datensatz {
       .filter((a) => bis(a.datum.wert))
       .map((a) => ({
         ...a,
-        erfasstAm: a.erfasstAm && bis(a.erfasstAm) ? a.erfasstAm : null,
+        erfasstAm: a.erfasstAm && bis(a.erfasstAm.wert) ? a.erfasstAm : null,
         ...(a.gegengezeichnetAm && !bis(a.gegengezeichnetAm.wert) ? { gegengezeichnet: { ...a.gegengezeichnet, wert: false }, gegengezeichnetAm: null } : {}),
       })),
     regie: d.regie

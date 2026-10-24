@@ -274,7 +274,7 @@ export function erzeugeMooshaim(): Datensatz {
       leistungBis: f(b.bis, q(id, 1, "Kopf, Leistungszeitraum")),
       gegengezeichnet: f(b.gegengezeichnetAm !== null, q(id, 2, "Unterschrift Auftraggeber")),
       gegengezeichnetAm: b.gegengezeichnetAm ? f(b.gegengezeichnetAm, q(id, 2, "Unterschrift Auftraggeber, Datum")) : null,
-      erfasstAm: b.erfasst,
+      erfasstAm: b.erfasst ? f(b.erfasst, q(id, 1, "AVA, erfasst am")) : null,
       grundlageBelegId: b.nr === "13" ? "fotodoku" : null,
       zeilen,
     };
@@ -288,7 +288,7 @@ export function erzeugeMooshaim(): Datensatz {
     const id = ordner.add(`ar-${ar.nr}`, "abschlagsrechnung", `P1_Abschlagsrechnung_${ar.nr}.pdf`, ar.datum, 4);
     const verfuegbar = new Map<string, Hundertstel>();
     if (ar.nr === 1) verfuegbar.set(AUSGLEICH, 100);
-    for (const a of aufmass.filter((x) => x.erfasstAm !== null && x.erfasstAm <= ar.datum))
+    for (const a of aufmass.filter((x) => x.erfasstAm !== null && x.erfasstAm.wert <= ar.datum))
       for (const zl of a.zeilen) if (zl.positionNr.wert !== Z01.nr) verfuegbar.set(zl.positionNr.wert, (verfuegbar.get(zl.positionNr.wert) ?? 0) + zl.menge.wert);
     for (const [nr, m] of verrechnet) verfuegbar.set(nr, (verfuegbar.get(nr) ?? 0) - m);
     const rbs = regie.filter((r) => REGIE.find((x) => x.nr === r.nr)!.ar === ar.nr);
@@ -367,7 +367,7 @@ export function erzeugeMooshaim(): Datensatz {
       belegId: "stundenzettel-kw23",
       von: f("2026-06-01", qs("Kopf, Woche")),
       bis: f("2026-06-05", qs("Kopf, Woche")),
-      trupp: "Trupp 2",
+      trupp: f("Trupp 2", qs("Kopf, Trupp")),
       eintraege: [{ regieberichtNr: f("9", qs("Zeile Regiebericht 9")), stundenMonteur: f(900, qs("Zeile Regiebericht 9, Monteur")), stundenHelfer: f(1_200, qs("Zeile Regiebericht 9, Helfer")) }],
     },
   ];
@@ -405,7 +405,7 @@ export function erzeugeMooshaim(): Datensatz {
       kategorie: f(kategorie, qm("Inhalt")),
       zitat: zitat ? f(zitat, qm("Absatz 1")) : null,
       bezugPositionen: f([], qm("Inhalt")),
-      aendertBauzeit: false,
+      aendertBauzeit: f(false, qm("Inhalt")),
       anmeldung: null,
       ...teil,
     };
@@ -417,7 +417,7 @@ export function erzeugeMooshaim(): Datensatz {
     mail("mail-0316", "2026-03-16", "Bauleitung Kronfeld Haustechnik", "betrieb", "Anmeldung Mehrkosten Technikraum", "anmeldung", "Für die Umplanung des Technikraums melden wir hiermit Mehrkosten an.", {
       anmeldung: {
         gegenstand: f("Technikraum umgeplant: zweiter Pufferspeicher, Verteiler versetzt", q("mail-0316", 1, "Betreff")),
-        kategorie: "technikraum",
+        kategorie: f("technikraum", q("mail-0316", 1, "Betreff")),
         anweisungBelegId: "mail-0312",
         stunden: f(6_400, q("mail-0316", 1, "Absatz 2, geschätzter Aufwand")),
         material: f(286_000, q("mail-0316", 1, "Absatz 2, Material")),
@@ -427,7 +427,7 @@ export function erzeugeMooshaim(): Datensatz {
     mail("mail-0407", "2026-04-07", "Bauleitung Hornfeld Bau", "auftraggeber", "Wohnungstyp C Heizkörper", "anweisung", "Wohnungstyp C: je ein Heizkörper zusätzlich laut Plan D, bitte gleich mitmachen.", { bezugPositionen: f(F1_NR, q("mail-0407", 1, "Absatz 1")) }, "2026-04-01"),
     mail("mail-0513", "2026-05-13", "Planung Haustechnik", "auftraggeber", "Plan L-310 Index E", "sonstiges", "Anbei Plan L-310 Index E, Lüftungsleitung in der Tiefgarage umgeführt."),
     mail("mail-0609", "2026-06-09", "Bauleitung Hornfeld Bau", "auftraggeber", "Anlieferung Lüftungsgerät", "sonstiges", null),
-    mail("mail-0702", "2026-07-02", "Bauleitung Hornfeld Bau", "auftraggeber", "Fertigstellung Stiege 2", "termin", "Fertigstellung Stiege 2 drei Wochen vorziehen.", { aendertBauzeit: true }),
+    mail("mail-0702", "2026-07-02", "Bauleitung Hornfeld Bau", "auftraggeber", "Fertigstellung Stiege 2", "termin", "Fertigstellung Stiege 2 drei Wochen vorziehen.", { aendertBauzeit: f(true, q("mail-0702", 1, "Absatz 1")) }),
     mail("mail-0721", "2026-07-21", "Bauleitung Hornfeld Bau", "auftraggeber", "Bemusterung Sanitär", "sonstiges", null),
     mail("mail-0813", "2026-08-13", "Bauleitung Kronfeld Haustechnik", "betrieb", "Fotodokumentation Brandschutz", "sonstiges", "Anbei die Fotodokumentation der Brandschutzmanschetten.", {}, "2026-08-31"),
     mail("mail-0915", "2026-09-15", "Bauleitung Hornfeld Bau", "auftraggeber", "Abnahme Lüftung", "termin", "Die Abnahme der Lüftung ist am 29.09. um 10 Uhr."),

@@ -60,10 +60,15 @@ export function menge(hundertstel: number, einheit?: Einheit): string {
   return einheit ? `${minus}${text} ${einheit}` : `${minus}${text}`;
 }
 
-/** 380 → "3,8 %"; 300 → "3,00 %" with stellen = 2. */
+/** 380 → "3,8 %"; 300 → "3,00 %" with stellen = 2. Rounded commercially in integers (2015 → "20,2 %"). */
 export function prozentText(satz: Bp, stellen = 1): string {
-  const wert = satz / 100;
-  return `${wert.toFixed(stellen).replace(".", ",")} %`;
+  if (stellen < 0 || stellen > 2) throw new Error("stellen 0 bis 2");
+  const teile = rundeHalbAuf(satz, 10 ** (2 - stellen));
+  const minus = teile < 0 ? "−" : "";
+  const abs = Math.abs(teile);
+  const ganz = Math.floor(abs / 10 ** stellen);
+  const rest = stellen ? `,${String(abs % 10 ** stellen).padStart(stellen, "0")}` : "";
+  return `${minus}${ganz}${rest} %`;
 }
 
 /** Hours in hundredths → "1,30 h". */

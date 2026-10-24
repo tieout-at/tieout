@@ -28,12 +28,13 @@ export interface OrdnerStand {
   meldungen: number;
 }
 
-/** Counts the fields in state "korrigiert", wherever they are in the dataset. */
+/** Counts the fields a human corrected (also when confirmed afterwards), wherever they are in the dataset. */
 export function zaehleKorrekturen(wert: unknown): number {
   if (Array.isArray(wert)) return wert.reduce((s: number, w) => s + zaehleKorrekturen(w), 0);
   if (wert && typeof wert === "object") {
     const o = wert as Record<string, unknown>;
-    const selbst = "quelle" in o && "wert" in o && o.pruefstand === "korrigiert" ? 1 : 0;
+    const verlauf = Array.isArray(o.verlauf) ? (o.verlauf as { art?: string }[]) : [];
+    const selbst = "quelle" in o && "wert" in o && (o.pruefstand === "korrigiert" || verlauf.some((v) => v.art === "korrigiert")) ? 1 : 0;
     return selbst + Object.entries(o).reduce((s: number, [k, w]) => s + (k === "verlauf" ? 0 : zaehleKorrekturen(w)), 0);
   }
   return 0;
