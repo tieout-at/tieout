@@ -2,7 +2,7 @@
 // duplicates, 18 corrected fields, the website's groups, and every find traced back to at least one Beleg.
 
 import { describe, expect, it } from "vitest";
-import { belegListe, BELEG_GRUPPE, korrekturen } from "../src/belege";
+import { belegListe, BELEG_GRUPPE, gelesen, korrekturen } from "../src/belege";
 import { beispielFirma } from "../src/beispiel";
 import { pruefeFirma } from "../src/firma";
 import type { BelegArt } from "../src/modell";
@@ -58,5 +58,32 @@ describe("Belege of Wohnpark Mooshaim", () => {
     );
     expect(f.ergebnisse.p1.abgleich.funde.every((x) => belegt.has(x.nr) || ausMeldung.has(x.nr))).toBe(true);
     expect(liste.find((b) => b.id === "rb-9")?.funde).toContain("F2");
+  });
+});
+
+describe("values read from one Beleg (the original viewer)", () => {
+  it("Aufmaßblatt 12: the four rows of F1 on page 1, the missing countersignature on page 2", () => {
+    const werte = gelesen(p1, "ab-12");
+    expect(werte.find((w) => w.stelle === "Zeile 22.04.12B" && w.schluessel === "menge")?.text).toBe("14 Stk");
+    expect(werte.find((w) => w.stelle === "Zeile 22.03.02A" && w.schluessel === "menge")?.text).toBe("126 m");
+    expect(werte.find((w) => w.stelle === "Unterschrift Auftraggeber")).toMatchObject({ seite: 2, text: "nein" });
+    expect(werte.map((w) => w.seite)).toEqual([...werte.map((w) => w.seite)].sort());
+  });
+
+  it("a corrected field keeps the value read before", () => {
+    expect(gelesen(p1, "mail-0407").find((w) => w.stelle === "Kopf, Datum")).toMatchObject({ text: "07.04.2026", vorher: "01.04.2026", pruefstand: "korrigiert" });
+  });
+
+  it("the Leistungsverzeichnis names the Einheitspreis of 22.04.12B on page 9, a WhatsApp-Meldung its transcript", () => {
+    expect(gelesen(p1, "lv").find((w) => w.stelle === "Pos. 22.04.12B, Einheitspreis")).toMatchObject({ seite: 9, text: "286,40 €" });
+    expect(gelesen(p1, "w1").find((w) => w.stelle === "Transkript")?.text).toContain("Plan D sind montiert");
+  });
+});
+
+describe("rates read from the Bauvertrag", () => {
+  it("shows basis points as a percentage, as the Vertrag writes it", () => {
+    const werte = gelesen(p1, "vertrag");
+    expect(werte.find((w) => w.schluessel === "regiematerialZuschlag")?.text).toBe("15 %");
+    expect(werte.find((w) => w.schluessel === "regiesatzMonteur")?.text).toBe("64,80 €");
   });
 });
