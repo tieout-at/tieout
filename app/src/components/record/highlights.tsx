@@ -4,20 +4,20 @@ import { ChevronRight } from "lucide-react";
 import type { Highlight } from "@/lib/records";
 import { cn } from "@/lib/utils";
 
-const DOT = { rot: "bg-state-red", gelb: "bg-state-yellow", gruen: "bg-state-green", grau: "bg-state-grey" } as const;
+const DOT = { rot: "bg-state-red", gelb: "bg-state-yellow", gruen: "bg-state-green", grau: "bg-state-grey", orange: "bg-state-orange" } as const;
 
 /** Highlights of a record page (Attio: cards in a 3-column grid, title above, value below). A card with a target is a link. */
-export function Highlights({ items, title = "Auf einen Blick" }: { items: Highlight[]; title?: string }) {
+export function Highlights({ items, title = "Auf einen Blick", columns = 3 }: { items: Highlight[]; title?: string; columns?: 2 | 3 | 4 }) {
   return (
     <section aria-label={title}>
       <h2 className="mb-2 text-sm text-fg-secondary">{title}</h2>
-      <ul className="grid grid-cols-2 gap-2 xl:grid-cols-3">
+      <ul className={cn("grid grid-cols-2 gap-2", columns === 3 && "xl:grid-cols-3", columns === 4 && "2xl:grid-cols-4")}>
         {items.map((h) => {
           const body = (
             <>
               <span className="flex items-center justify-between gap-2 text-xs text-fg-secondary">
                 <span className="truncate">{h.title}</span>
-                {h.href && <ChevronRight aria-hidden className="size-3.5 shrink-0 text-fg-faint" />}
+                {h.href && !h.href.startsWith("#") && <ChevronRight aria-hidden className="size-3.5 shrink-0 text-fg-faint" />}
               </span>
               <span className="mt-2 flex items-center gap-1.5 text-base font-semibold tabular-nums">
                 {h.status && <span aria-hidden className={cn("size-2 shrink-0 rounded-full", DOT[h.status])} />}

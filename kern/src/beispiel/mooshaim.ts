@@ -388,7 +388,7 @@ export function erzeugeMooshaim(): Datensatz {
     plan("plan-s150-c", "S-150", "C", "2026-01-22", "Sanitär Steigleitungen", null, []),
     plan("plan-l310-d", "L-310", "D", "2026-01-28", "Lüftung Tiefgarage", null, []),
     plan("plan-h201-c", "H-201", "C", "2026-02-12", "Heizung Wohnungen Stiege 1 und 2", null, F1_NR.map((nr) => vermerk("plan-h201-c", "stand", nr, "Wohnungstyp C: eine Wohnküche mit einem Heizkörper"))),
-    plan("plan-h201-d", "H-201", "D", "2026-04-03", "Heizung Wohnungen Stiege 1 und 2", "Wohnungstyp C: Wohnküche geteilt, 1 Heizkörper mehr", F1_NR.map((nr) => vermerk("plan-h201-d", "aenderung", nr, "Wohnungstyp C: Wohnküche geteilt, 1 Heizkörper mehr"))),
+    plan("plan-h201-d", "H-201", "D", "2026-04-03", "Heizung Wohnungen Stiege 1 und 2", "14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr", F1_NR.map((nr) => vermerk("plan-h201-d", "aenderung", nr, "14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr"))),
     plan("plan-l310-e", "L-310", "E", "2026-05-13", "Lüftung Tiefgarage", "Lüftungsleitung in der Tiefgarage umgeführt", [vermerk("plan-l310-e", "aenderung", PLAN_E.nr, "Lüftungsleitung in der Tiefgarage umgeführt")]),
   ];
 

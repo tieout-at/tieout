@@ -41,7 +41,7 @@ describe("P1 Wohnpark Mooshaim: 8 finds", () => {
 
   it("F1 covers 4 positions of Plan H-201 Index C → D", () => {
     const f1 = fund("F1");
-    expect(f1.titel).toBe("Plan H-201 Index C → D: Wohnungstyp C: Wohnküche geteilt, 1 Heizkörper mehr");
+    expect(f1.titel).toBe("Plan H-201 Index C → D: 14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr");
     expect(f1.positionen.map((p) => [p.positionNr, p.lvMenge, p.aufmassMenge, p.verrechnetMenge, p.betrag])).toEqual([
       ["22.03.02A", 151_200, 163_800, 151_200, ausListe("1.751,40 €")],
       ["22.04.12B", 8_600, 10_000, 8_600, ausListe("4.009,60 €")],

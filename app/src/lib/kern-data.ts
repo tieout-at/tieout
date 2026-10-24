@@ -21,6 +21,7 @@ import {
   prozentText,
   pruefeFirma,
   type Belegstand,
+  type Entscheidungsstand,
   type FirmenErgebnis,
   type Firmendaten,
   type ProjektZeile,
@@ -28,7 +29,7 @@ import {
 } from "@tieout/kern";
 import { beispielFirma } from "@tieout/kern/beispiel";
 
-import { projectSlug } from "./example";
+import { findSlug, projectSlug } from "./example";
 import type { Calculation, Row, Sum } from "./table";
 
 export type Amount = { cent: number; text: string };
@@ -54,12 +55,17 @@ export type FindRow = Row & {
   number: string;
   title: string;
   detail: string;
+  /** The find page. */
+  href: string;
   project: { slug: string; name: string };
   kind: string;
   /** null for "Pauschale laut Vertrag". */
   belegstand: { state: Belegstand; text: string } | null;
   amount: Amount;
   decision: string;
+  decisionState: Entscheidungsstand;
+  /** Keys the same work had before; their decisions carry over. */
+  earlierIds: string[];
   /** The Vorprüfung line that lies in this find. */
   risk: { number: string; reason: string; amount: Amount; alreadyCut: boolean } | null;
   sources: string[];
@@ -164,11 +170,14 @@ export function findRows(): FindRow[] {
         number: f.nr,
         title: f.titel,
         detail: f.untertitel,
+        href: `/funde/${findSlug(p.name, f.nr)}/`,
         project,
         kind: FUND_ART_TEXT[f.art],
         belegstand: f.belegstand ? { state: f.belegstand, text: BELEGSTAND_TEXT[f.belegstand] } : null,
         amount: amount(f.betrag),
         decision: ENTSCHEIDUNG_TEXT[f.entscheidung],
+        decisionState: f.entscheidung,
+        earlierIds: f.fruehereSchluessel.map((k) => `${p.projektId}/${k}`),
         risk: risk ? { number: risk.nr, reason: KUERZUNGSGRUND_TEXT[risk.grund], amount: amount(risk.betrag), alreadyCut: risk.zustand === "schon_gekuerzt" } : null,
         sources: (e.belegquellen[f.schluessel] ?? []).map((s) => BELEGQUELLE_TEXT[s]),
         workDate: dated(f.arbeitsdatum),

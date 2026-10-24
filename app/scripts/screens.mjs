@@ -9,6 +9,8 @@ import { chromium } from "playwright-core";
 
 const base = process.argv[2] ?? "http://localhost:3100";
 const out = process.argv[3] ?? "qa-shots";
+// optional: only the screens whose name starts with this ("fundseite")
+const only = process.argv[4] ?? "";
 
 const SIZES = [
   { width: 1440, height: 900 },
@@ -95,6 +97,31 @@ const SCREENS = [
     },
   },
   { name: "uebersicht-kiefernau", path: "/uebersicht/buerohaus-kiefernau/" },
+  // the find page: F1 with its first original, another Beleg chosen, the decision confirmed, a find in Klärung
+  { name: "fundseite", path: "/funde/wohnpark-mooshaim-f1/" },
+  {
+    name: "fundseite-plan",
+    path: "/funde/wohnpark-mooshaim-f1/",
+    act: async (page) => {
+      await page.getByRole("button", { name: /Plan H-201, Index D/ }).click();
+    },
+  },
+  {
+    name: "fundseite-signatur",
+    path: "/funde/wohnpark-mooshaim-f1/",
+    act: async (page) => {
+      await page.locator("#kuerzungsrisiko").getByRole("button", { name: /Aufmaßblatt 12/ }).click();
+    },
+  },
+  {
+    name: "fundseite-pruefen",
+    path: "/funde/wohnpark-mooshaim-f1/",
+    act: async (page) => {
+      await page.getByRole("button", { name: "Prüfen", exact: true }).click();
+      await page.getByRole("dialog").waitFor();
+    },
+  },
+  { name: "fundseite-f7", path: "/funde/wohnpark-mooshaim-f7/" },
   { name: "schlussrechnungen", path: "/schlussrechnungen/" },
   { name: "nicht-gefunden", path: "/gibt-es-nicht/", expect404: true },
   {
@@ -163,6 +190,7 @@ try {
     page.on("pageerror", (e) => errors.push(`${current?.name}: ${e.message}`));
     page.on("console", (m) => m.type() === "error" && !current?.expect404 && errors.push(`${current?.name}: ${m.text()}`));
     for (const screen of SCREENS) {
+      if (only && !screen.name.startsWith(only)) continue;
       if (screen.desktopOnly && size.width < 768) continue;
       if (screen.mobileOnly && size.width >= 768) continue;
       current = screen;

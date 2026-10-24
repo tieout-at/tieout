@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { X } from "lucide-react";
 import { useState } from "react";
 
@@ -130,6 +131,9 @@ export function TraceSheet({
                   <b className="text-[22px] leading-7 font-semibold tracking-[-0.02em] text-fg tabular-nums">{d.amount}</b>
                 </div>
               </div>
+              <Link href={d.href} className="mt-4 flex min-h-11 items-center justify-center rounded-item bg-accent px-3 text-white shadow-primary outline-none focus-visible:outline-2 focus-visible:outline-accent">
+                {d.nr} öffnen: Rechenweg, Belege, Original
+              </Link>
             </div>
           </>
         )}

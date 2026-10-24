@@ -122,9 +122,13 @@ export function Readout({ detail, sentence, reserve }: { detail: FindDetail | nu
   const rows = detail?.cells.slice(0, CFG.readout.tableRows) ?? [];
   const rest = (detail?.cells.length ?? 0) - rows.length;
   return (
-    <div aria-hidden className="mt-4 text-xs leading-[18px] text-fg" style={{ minHeight: reserve }}>
+    <div className="mt-4 text-xs leading-[18px] text-fg" style={{ minHeight: reserve }}>
       {detail ? (
         <div className="flex flex-col gap-2">
+          <Link href={detail.href} className="self-start rounded-xs font-medium text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+            {detail.nr} öffnen: Rechenweg, Belege, Original
+          </Link>
+          <div aria-hidden className="contents">
           <p>
             <span className="font-mono text-accent">{detail.nr}</span> · <span className="tabular-nums">{detail.amount}</span> ·{" "}
             {detail.proofText ?? <span className="inline-flex items-center gap-1.5"><i className={cn("size-1.5 rounded-full", TONE_DOT[detail.tone])} />{detail.stand}</span>}
@@ -154,9 +158,10 @@ export function Readout({ detail, sentence, reserve }: { detail: FindDetail | nu
               <b className="font-semibold">{detail.memory.who}</b>: {detail.memory.text}
             </p>
           )}
+          </div>
         </div>
       ) : (
-        sentence && <p>{sentence}</p>
+        sentence && <p aria-hidden>{sentence}</p>
       )}
     </div>
   );

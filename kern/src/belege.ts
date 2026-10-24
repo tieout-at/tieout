@@ -3,7 +3,7 @@
 // repeats and the finds it proves. Plus every correction a human made, for the Verlauf of the project. Counts and
 // texts only; no amount is calculated here.
 
-import { euro, menge, stunden } from "./geld";
+import { euro, menge, prozentText, stunden } from "./geld";
 import type { BelegArt, Datensatz, Datum, Einheit, Pruefstand, Quelle } from "./modell";
 import type { ProjektErgebnis } from "./projekt";
 import { datumText } from "./regeln";
@@ -156,6 +156,7 @@ export function belegTitel(d: Datensatz, belegId: string): string {
 }
 
 const HUNDERTSTEL = new Set(["menge", "stundenMonteur", "stundenHelfer", "stunden", "lohnHundertstel", "aufmassMenge"]);
+const BASISPUNKTE = new Set(["satz", "regiematerialZuschlag", "materialzuschlag", "lohnanteil"]);
 const CENT = new Set(["betrag", "ep", "material", "summe", "kuerzung", "auftragssumme", "regiesatzMonteur", "regiesatzHelfer", "mittellohnkosten", "mittellohnpreis", "sonstigesJeEinheit"]);
 
 /** A value as the Verlauf shows it, by the key the field sits under. */
@@ -165,6 +166,7 @@ function wertText(wert: unknown, schluessel: string, einheit?: Einheit): string 
     if (schluessel.startsWith("stunden")) return stunden(wert);
     if (HUNDERTSTEL.has(schluessel)) return menge(wert, einheit);
     if (CENT.has(schluessel)) return euro(wert);
+    if (BASISPUNKTE.has(schluessel)) return prozentText(wert, wert % 100 === 0 ? 0 : wert % 10 === 0 ? 1 : 2);
     return String(wert);
   }
   if (typeof wert === "string") {
@@ -196,6 +198,41 @@ export function korrekturen(d: Datensatz): Korrektur[] {
         }));
     })
     .sort((a, b) => a.zeit.localeCompare(b.zeit) || a.beleg.localeCompare(b.beleg, "de", { numeric: true }));
+}
+
+/** One value read from a Beleg, as the original viewer marks it. */
+export interface GelesenerWert {
+  seite: number;
+  /** Place on the page ("Zeile 22.04.12B", "Plankopf, Index"); `Seite n` when the source names none. */
+  stelle: string;
+  /** Key the field sits under in the twin ("menge", "zitat", "gegengezeichnet"). */
+  schluessel: string;
+  text: string;
+  pruefstand: Pruefstand;
+  /** The value as read before a human corrected it. */
+  vorher: string | null;
+}
+
+/** Every value the twin read from one Beleg (or WhatsApp-Meldung), in page order. Texts only; nothing is calculated. */
+export function gelesen(d: Datensatz, belegId: string): GelesenerWert[] {
+  const einheitJe = new Map(d.positionen.map((p) => [p.nr.wert, p.einheit.wert]));
+  const gesehen = new Set<object>();
+  return felder(d)
+    .filter(({ f }) => f.quelle.belegId === belegId && !gesehen.has(f) && !!gesehen.add(f))
+    .map(({ f, schluessel, eltern }) => {
+      const nr = eltern && istFeld(eltern.positionNr) ? String(eltern.positionNr.wert) : eltern && istFeld(eltern.nr) ? String(eltern.nr.wert) : undefined;
+      const einheit = nr ? einheitJe.get(nr) : undefined;
+      const korrektur = f.verlauf.find((v) => v.art === "korrigiert");
+      return {
+        seite: f.quelle.seite,
+        stelle: f.quelle.stelle ?? `Seite ${f.quelle.seite}`,
+        schluessel,
+        text: wertText(f.wert, schluessel, einheit),
+        pruefstand: f.pruefstand,
+        vorher: korrektur ? wertText(korrektur.vorher, schluessel, einheit) : null,
+      };
+    })
+    .sort((a, b) => a.seite - b.seite);
 }
 
 /** The Belege of the folder in date order, with their group, review state, duplicate and finds. */

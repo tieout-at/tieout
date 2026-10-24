@@ -19,6 +19,8 @@ function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
 const SIDE = {
   /** Panel from the left edge, used for the sidebar on small screens. */
   left: "inset-y-0 left-0 w-[var(--sidebar-width)] max-w-[85vw] bg-sidebar data-open:slide-in-from-left data-closed:slide-out-to-left",
+  /** Panel from the right edge (the original of a find on tablets). */
+  right: "inset-y-0 right-0 w-[400px] max-w-[90vw] bg-surface data-open:slide-in-from-right data-closed:slide-out-to-right",
   /** Sheet from the bottom edge (a trace on the Übersicht on phones). */
   bottom:
     "inset-x-0 bottom-0 max-h-[calc(100dvh-64px)] rounded-t-2xl bg-surface data-open:slide-in-from-bottom data-closed:slide-out-to-bottom",
