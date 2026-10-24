@@ -1,12 +1,13 @@
-# Checks for the v2 app (app/): types, lint, tests, build with the word check. Runs only when something changes there.
+# Checks for the v2 app (app/): types, lint, tests, build with the word check. Runs when something changes there or in
+# kern/ (linked as @tieout/kern, its amounts are built into the pages) or in the solution list the tests read.
 name: App
 
 on:
   pull_request:
-    paths: ["app/**", ".github/workflows/app.yml"]
+    paths: ["app/**", "kern/**", "docs/Demo_Faelle.md", ".github/workflows/app.yml"]
   push:
     branches: [main]
-    paths: ["app/**"]
+    paths: ["app/**", "kern/**", "docs/Demo_Faelle.md"]
 
 concurrency:
   group: app-${{ github.ref }}
