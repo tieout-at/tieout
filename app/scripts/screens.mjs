@@ -34,6 +34,11 @@ const SCREENS = [
   { name: "projekt-kiefernau", path: "/projekte/buerohaus-kiefernau/" },
   { name: "projekt", path: "/projekte/wohnpark-mooshaim/" },
   { name: "projekt-positionen", path: "/projekte/wohnpark-mooshaim/positionen/" },
+  { name: "projekt-belege", path: "/projekte/wohnpark-mooshaim/belege/" },
+  { name: "projekt-funde", path: "/projekte/wohnpark-mooshaim/funde/" },
+  { name: "projekt-vertrag", path: "/projekte/wohnpark-mooshaim/vertrag/" },
+  { name: "projekt-erlenhain", path: "/projekte/wohnhof-erlenhain/" },
+  { name: "auftraggeber-hornfeld", path: "/auftraggeber/hornfeld-bau/" },
   { name: "funde", path: "/funde/" },
   {
     name: "funde-filter",
