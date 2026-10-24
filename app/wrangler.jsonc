@@ -11,5 +11,7 @@
     "html_handling": "auto-trailing-slash"
   },
   "workers_dev": true,
-  "preview_urls": true
+  "preview_urls": true,
+  // Needed by `wrangler preview` (one preview per branch). Empty: the preview takes the assets from above.
+  "previews": {}
 }
