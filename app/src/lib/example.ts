@@ -27,7 +27,7 @@ export const STEPS: Step[] = [
     title: "Ihre Daten",
     run: ["Ordner lesen"],
     tabs: [
-      { slug: "", title: "Zeitstrahl" },
+      { slug: "zeitstrahl", title: "Zeitstrahl" },
       { slug: "belege", title: "Belege" },
     ],
   },
@@ -51,7 +51,10 @@ export const STEPS: Step[] = [
   },
 ];
 
-export const PROJECT_TABS: ProjectTab[] = STEPS.flatMap((s) => s.tabs);
+/** The record itself (Attio's "Overview"): Angaben, highlights and Verlauf of the project, before the step tabs. */
+export const OVERVIEW_TAB: ProjectTab = { slug: "", title: "Überblick" };
+
+export const PROJECT_TABS: ProjectTab[] = [OVERVIEW_TAB, ...STEPS.flatMap((s) => s.tabs)];
 
 export type Project = {
   /** Id of the project in `kern/` ("p1" …). */

@@ -61,7 +61,8 @@ const FORBIDDEN = [
   [/\bDossier\b/, "Beweispaket"],
   [/\bAkte\b/, "Beweispaket"],
   [/\bEvidence\b/i, "Beleg"],
-  [/\bDokument/, "Beleg"],
+  // "Dokumente" stays: it is the website's group next to Systeme and Kommunikation (SPEZIFIKATION.md 1.2)
+  [/\bDokument(?!e\b)/, "Beleg"],
   [/\bZeilen?\b/, "Position"],
   [/(?<![-\p{L}])Mails?\b/u, "E-Mail"],
   [/\bgebaut\b/, "erbracht"],

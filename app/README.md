@@ -17,13 +17,17 @@ v1 runs at https://app.tieout.workers.dev; its code is under the tag [`v1-archiv
 
 | Path | What |
 |---|---|
-| `src/app/` | one folder per page; `projekte/[projekt]/` is the project page with its step bar and tabs |
+| `src/app/` | one folder per page; `projekte/[projekt]/` is the project page with its step bar and tabs ("Überblick" first), `auftraggeber/[auftraggeber]/` the Auftraggeber page |
 | `src/components/shell/` | sidebar, header, search (Strg K), empty states, record head, step bar |
 | `src/components/ui/` | buttons, menus, popovers, dialogs (shadcn on Base UI, restyled to the tokens) |
 | `src/lib/navigation.ts` | every page of the sidebar in one place; sidebar, header and search read from it |
 | `src/lib/example.ts` | names of the sample company from `docs/Demo_Faelle.md`, no amounts; a test checks them against `kern/` |
 | `src/lib/kern-data.ts` | rows and fixed sums of the tables, computed from `kern/` (`@tieout/kern`, linked as `file:../kern`) while the pages are built |
+| `src/lib/records.ts` | record pages (project, Auftraggeber): Angaben with the place in the original, highlights, Verlauf, history; drawn by `src/components/record/` |
 | `src/lib/table.ts` | sort, filter and which fixed sum fits the visible rows (tested); `src/components/table/` draws the table |
+| `src/lib/twin.ts` | view model of the Übersicht (Belege, Ebene 1, the Abgleich per position, findings, money), computed from `kern/` while the pages are built |
+| `src/app/uebersicht/` | the Übersicht (Digitaler Zwilling): Wohnpark Mooshaim at `/uebersicht/`, every other open project at `/uebersicht/<slug>/`; closed projects have none |
+| `src/components/zwilling/` | its stage: `model.ts` (indices and sentences), `layout.ts` (pure layout and line routing, tested with real, small, large, long and empty data), `use-stage-geometry.ts` and `use-trace-lines.ts` (measure once, draw a trace), the columns, the cards and the sheet for phones; every tunable number in `config.ts` |
 | `src/lib/search.ts` | abbreviations ("RB 11" becomes "Regiebericht 11") and matching |
 | `wrangler.jsonc` | Cloudflare worker `app-neu`, static files from `out/` |
 

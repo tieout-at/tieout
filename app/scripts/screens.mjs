@@ -34,6 +34,11 @@ const SCREENS = [
   { name: "projekt-kiefernau", path: "/projekte/buerohaus-kiefernau/" },
   { name: "projekt", path: "/projekte/wohnpark-mooshaim/" },
   { name: "projekt-positionen", path: "/projekte/wohnpark-mooshaim/positionen/" },
+  { name: "projekt-belege", path: "/projekte/wohnpark-mooshaim/belege/" },
+  { name: "projekt-funde", path: "/projekte/wohnpark-mooshaim/funde/" },
+  { name: "projekt-vertrag", path: "/projekte/wohnpark-mooshaim/vertrag/" },
+  { name: "projekt-erlenhain", path: "/projekte/wohnhof-erlenhain/" },
+  { name: "auftraggeber-hornfeld", path: "/auftraggeber/hornfeld-bau/" },
   { name: "funde", path: "/funde/" },
   {
     name: "funde-filter",
@@ -68,6 +73,28 @@ const SCREENS = [
       await page.getByRole("dialog").waitFor();
     },
   },
+  { name: "uebersicht", path: "/uebersicht/" },
+  {
+    // the trace of F1: hover on wide screens, the sheet on phones
+    name: "uebersicht-spur",
+    path: "/uebersicht/",
+    act: async (page) => {
+      const row = page.locator('[data-target="fund:F1"]').first();
+      if ((page.viewportSize()?.width ?? 0) < 768) await row.click();
+      else await row.hover();
+    },
+  },
+  {
+    // the money block "zusätzlich verrechenbar" with every finding it holds
+    name: "uebersicht-geld",
+    path: "/uebersicht/",
+    act: async (page) => {
+      const block = page.locator('[data-target="block:zusaetzlich"]').first();
+      if ((page.viewportSize()?.width ?? 0) < 768) await block.click();
+      else await block.hover();
+    },
+  },
+  { name: "uebersicht-kiefernau", path: "/uebersicht/buerohaus-kiefernau/" },
   { name: "schlussrechnungen", path: "/schlussrechnungen/" },
   { name: "nicht-gefunden", path: "/gibt-es-nicht/", expect404: true },
   {

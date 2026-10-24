@@ -1,6 +1,6 @@
 # tieout v2: design
 
-**As of:** 24 October 2026, step 3 (Tabellen). Written by Claude for Maxi S.
+**As of:** 24 October 2026, step 4 (Datensätze). Written by Claude for Maxi S.
 **Rule:** layout, behaviour, sizes and spacing follow Attio (app.attio.com); brand, colours, icons, illustrations and words are tieout's own. The tokens live in `app/src/app/globals.css` (`@theme`); this file explains each value and where it comes from. Light only; a dark theme is not planned before the switch-over.
 
 **Sources:** *measured* means read from the computed styles of app.attio.com in Maxi S.'s workspace (23.10.2026, `../tieout-intern/docs/Plan_Neustart.md` "Gemessene Vorlage", and again on 23.10.2026 at night for this file); *brand* means `brand/README.md` and `website/app/globals.css`; *ours* means decided in this step, with the reason.
@@ -39,6 +39,9 @@ Ink and ultramarine come from the brand; the greys are Attio's alphas, applied t
 | `count` | `#505155` | numbers in small counters | measured |
 | `accent` | `#1d3bff` | primary button, focus ring, the square in pictures | brand ultramarine (Attio: `#266df0`); used sparingly ("less blue") |
 | `grid` | `#e8ecf2` | plan grid in empty-state pictures | brand grid minor |
+| `cell`, `cell-edge` | `#e6e9ef`, ink at 10 % | a cell of the Abgleich on "Übersicht" | ours |
+| `state-*-edge` | darker green, yellow, orange | 1 px inner contour of a coloured cell, so it reaches 3:1 against white; lines and cells share one yellow | ours, measured contrast |
+| `sweep` | `#a9b6ff` | the light that travels along a traced line | ours |
 
 ## Sizes and spacing
 
@@ -64,6 +67,14 @@ Ink and ultramarine come from the brand; the greys are Attio's alphas, applied t
 | Table: grid | header 40 px, rows 36 px (44 px below 768 px), cells padding 0 12, 1 px `line` right and below, text 14/500; first column 250 px and fixed (132 px below 768 px, so the amounts stay in view); checkbox 16 px, radius 6, ring black at 9 %; numbers right aligned with tabular figures, headers always left; a "+" after the last header adds a column | measured; phone width ours |
 | Table: footer | 36 px, line above, fixed to the bottom of the table; counter right aligned in the first column ("14 Funde", "3 von 14 Funden"); per column a sum chosen as in Attio's "Add calculation", but only fixed sums from `kern/`: label 12 px secondary, amount 14 px; when a filter cuts a group apart it says "keine feste Summe" | measured layout, rule from SPEZIFIKATION.md 4.2 |
 | Tags | 24 px, radius 6, `fill-subtle` with ring, padding 0 6; the colour is only an 8 px dot: red, yellow, orange, green, grey (`state-*` tokens) | measured pill, our dot |
+
+## Record pages (step 4)
+
+Attio's record layout, measured on `qa-shots/attio/record.jpg`: the record head (chip, name, one line of facts) and the step bar span the page; on the tab "Überblick" a 374 px column on the left holds "Angaben" and "Vertrag" (rows of at least 40 px, label 132 px, value with its detail on a second line in 12 px; hovering or focusing a value read from a document names its place in the original, on phones that place is written under the value). On the right: highlights as cards in a grid of 3 columns from 1280 px (2 below, also on phones), title 12 px secondary, value 16/600 with tabular figures, at most two quiet lines; a card with a target is a link. Below them "Verlauf" (Attio's Activity): newest first, append only, the first 5 entries and "Alle anzeigen". Small tables inside a record (projects of an Auftraggeber, cuts, deductions, Nachträge) are `MiniTable`: 36 px rows with 1 px lines, amounts right aligned and never wrapped. Below 1024 px the two columns stack, highlights first.
+
+## "Übersicht" (Digitaler Zwilling)
+
+The page that shows the flow of the website section 03 with the real data of one project (decided with Maxi S. on 24.10.2026, `SPEZIFIKATION.md` 4.4). Three columns in a CSS grid sized by the stage width, not the viewport: "Ihre Daten" (every Beleg as a tick in a ruler per group, the ones that prove a finding long and in ink), "Digitaler Zwilling" ("Wissen aus Ihrem Betrieb" with Auftraggeber, Vertrag and Preisbasis, then the Abgleich: one cell per position of the Leistungsverzeichnis in its order and one per service without a position, coloured only where the Abgleich found something, in the Belegstand colour of that finding) and "Ergebnis" (the two money words apart, each finding as a row). Hairline evidence lines of equal weight, gradient from ink into the Belegstand colour; a Beleg proves money, it does not contain it, so no line is sized by an amount. Pointing at a finding or a money figure (or Tab and Enter) traces it: the proving Belege slide out as cards (240 ms, `ease-soft`, 30 ms stagger), the lines draw from the money back to them and a light (`sweep`) travels along them; everything else dims. The own Entwurf is drawn dashed as "verrechnet laut Entwurf" and never counted as proof. An entrance of about 1,2 s plays once per session (ticks, lines, cells, money), none with reduced motion; there is no automatic tour (it disturbs reading, WCAG 2.2.2). Below a stage width of 740 px the columns stack with the money first, and a tap opens the trace as a sheet from the bottom. Every number in `components/zwilling/config.ts`; layout functions are pure and tested with real, small, large (2.000 Belege), long and empty data (`layout.test.ts`).
 
 ## Icons and pictures
 

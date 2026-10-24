@@ -12,6 +12,7 @@ import {
   SquareCheck,
   Workflow,
   Briefcase,
+  Layers,
 } from "lucide-react";
 
 /**
@@ -61,6 +62,7 @@ export const SECTIONS: Section[] = [
     id: "digitaler-zwilling",
     title: "Digitaler Zwilling",
     destinations: [
+      { id: "uebersicht", title: "Übersicht", href: "/uebersicht/", icon: Layers, keywords: ["Zwilling", "Abgleich", "beauftragt", "erbracht", "verrechnet"] },
       { id: "betrieb", title: "Betrieb", href: "/betrieb/", icon: Building2, keywords: ["Verträge", "Preisbasis", "Mitglieder"] },
       { id: "auftraggeber", title: "Auftraggeber", href: "/auftraggeber/", icon: Briefcase, keywords: ["Hornfeld Bau"] },
       { id: "projekte", title: "Projekte", href: "/projekte/", icon: Construction, keywords: ["Wohnpark Mooshaim"] },

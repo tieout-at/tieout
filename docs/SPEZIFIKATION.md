@@ -191,12 +191,12 @@ Sidebar (Attio layout): business switcher, "Suche" (Strg K), "Start", "Aufgaben"
 | Section | Entries |
 |---|---|
 | "Ihre Daten" | "Belege", "E-Mails", "WhatsApp-Meldungen" |
-| "Digitaler Zwilling" | "Betrieb" (Verträge, Preisbasis, members), "Auftraggeber", "Projekte" |
+| "Digitaler Zwilling" | "Übersicht" (4.4), "Betrieb" (Verträge, Preisbasis, members), "Auftraggeber", "Projekte" |
 | "Ergebnis" | "Funde", "Schlussrechnungen" |
 
 Bottom: "Erste Schritte", "Mitglieder einladen", "Beispieldaten".
 
-Project page: header with name, Auftraggeber, "Schlussrechnung legen bis 30.10.2026" and the step bar "Ihre Daten → Digitaler Zwilling → Ergebnis" with the five run steps below it (section 5). Tabs in the same order: "Zeitstrahl", "Belege" | "Positionen", "Vertrag" | "Funde", "Schlussrechnung".
+Project page: header with name, Auftraggeber, "Schlussrechnung legen bis 30.10.2026" and the step bar "Ihre Daten → Digitaler Zwilling → Ergebnis" with the five run steps below it (section 5). Tabs in the same order, after "Überblick" (the record itself, as Attio's "Overview": Angaben with their source, Vertrag, highlights, Verlauf; added in step 4): "Zeitstrahl", "Belege" | "Positionen", "Vertrag" | "Funde", "Schlussrechnung".
 
 Search also finds the abbreviations people type ("LV", "AR 3", "RB 11", "AB 12") and shows the full words.
 
@@ -260,7 +260,11 @@ Search also finds the abbreviations people type ("LV", "AR 3", "RB 11", "AB 12")
 
 Never less understandable than the website: the three step names, the Ebene 1 box (Auftraggeber, Verträge, Preisbasis, Projekte), the Ebene 2 table, the Ergebnis card with its checks and the words "fehlt" and "verrechnet" must appear in the app with the website's words.
 
-### 4.4 Draft, not decided: making the twin visible
+### 4.4 Making the twin visible (decided 24.10.2026)
+
+**Decision (Maxi S., step 4):** candidate A, built as the page "Übersicht" at the top of "Digitaler Zwilling": per open project the flow Ihre Daten → Digitaler Zwilling → Ergebnis with the real data, where pointing at a finding or an amount lights exactly the Belege that prove it. The middle shows what the twin is: the knowledge of the business (Auftraggeber with its history, Vertrag, Preisbasis) and the Abgleich of the project, beauftragt, erbracht, verrechnet per position. Reached after two rounds with three, then four drafts, research of references and independent design, domain and code reviews; design in `DESIGN.md`. Candidate B (Belegabdeckung) stays for step 5 or 8. The draft text below is kept as the reasoning.
+
+#### Draft (23.10.2026)
 
 **Input (Maxi D., 23.10.2026):** it would be good to show the twin's data visually as well; what matters most is the complete, aggregated database on which the Schlussrechnung is built. Visualising such a database gives first insights even before the analytics on top of it exist.
 
