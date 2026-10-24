@@ -18,7 +18,7 @@ type Group = { heading: string; entries: Entry[] };
 
 // Words a project tab answers to, so "LV" finds Positionen and "RB 11" finds Belege.
 const TAB_KEYWORDS: Record<string, string[]> = {
-  "": ["Baustelle", "WhatsApp", "fehlt", "verrechnet"],
+  zeitstrahl: ["Baustelle", "WhatsApp", "fehlt", "verrechnet"],
   belege: ["Regiebericht", "Aufmaßblatt", "Abschlagsrechnung", "Plan", "Foto", "E-Mail"],
   positionen: ["Leistungsverzeichnis", "Einheitspreis", "beauftragt", "erbracht", "verrechnet", "offen"],
   vertrag: ["Vertragspunkt", "Nachlass", "Haftrücklass", "Regiesatz"],
@@ -35,7 +35,7 @@ function buildGroups(): Group[] {
     heading: p.name,
     entries: STEPS.flatMap((step) =>
       step.tabs.map((tab) => ({
-        id: `projekt-${p.slug}-${tab.slug || "zeitstrahl"}`,
+        id: `projekt-${p.slug}-${tab.slug}`,
         title: tab.title,
         href: projectHref(p, tab.slug),
         icon: Construction,

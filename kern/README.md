@@ -23,6 +23,7 @@ npm run check
 | `src/stufen.ts`, `src/rechnungsabschluss.ts` | settlement steps; "Rechnungsabschluss", "Restforderung laut Vertrag", payments per Abschlagsrechnung | ported (`kaskade.ts`), plus E14 |
 | `src/schlussbesprechung.ts` | "Schlussbesprechungs-Blatt", floor with the Mittellohnkosten | ported, floor rule of v3 |
 | `src/belegquelle.ts` | "Belegquelle", "nur außerhalb ERP" per money word | ported, split by money word |
+| `src/belege.ts` | the Belege as a list: readable title, the website's group (Systeme, Dokumente, Kommunikation), review state of the fields read from each, duplicates, the finds each proves; every correction for the Verlauf | new |
 | `src/historie.ts` | Auftraggeber history, "gleicher Grund", settlement of closed projects | ported (`historie.ts`, `abrechnung.ts`) |
 | `src/projekt.ts`, `src/firma.ts` | one project through the run; business level with status colours | rewritten (`pruefe.ts`), ported (`firma.ts`) |
 | `src/stand.ts` | the twin as known on a given day (Verlauf of a find, replay of a run) | new |

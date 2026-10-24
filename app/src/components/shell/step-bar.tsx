@@ -2,18 +2,21 @@
 
 import { ChevronRight, Circle } from "lucide-react";
 
-import { STEPS, projectHref, type Project } from "@/lib/example";
+import { OVERVIEW_TAB, STEPS, projectHref, type Project } from "@/lib/example";
 import { TabLinks } from "./tab-links";
 
 /**
  * Step bar of the project page (SPEZIFIKATION.md 4.1): the three website steps in order, each with its run steps
- * of the Abschluss-Lauf and its tabs. Every run step is "offen" until the core runs (step 2 onwards).
+ * of the Abschluss-Lauf and its tabs, after the tab "Überblick" of the record itself. Every run step is "offen" until the core runs (step 2 onwards).
  * Side by side from 1024 px; below that one step per row, so nothing runs into the next column.
  */
 export function StepBar({ project }: { project: Project }) {
   return (
     <div className="shadow-line-bottom">
-      <ol className="grid gap-3 px-4 pb-2 md:px-6 lg:grid-cols-[1fr_1fr_1.35fr] lg:gap-4">
+      <ol className="grid gap-3 px-4 pb-2 md:px-6 lg:grid-cols-[auto_1fr_1fr_1.35fr] lg:gap-4">
+        <li className="flex min-w-0 lg:self-end">
+          <TabLinks label="Reiter: Überblick" className="lg:-ml-0.5" tabs={[{ title: OVERVIEW_TAB.title, href: projectHref(project, OVERVIEW_TAB.slug) }]} />
+        </li>
         {STEPS.map((step, i) => (
           <li key={step.id} className="flex min-w-0 flex-col gap-2 lg:gap-2.5">
             <div className="flex items-center gap-2">

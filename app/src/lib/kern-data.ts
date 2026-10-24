@@ -5,17 +5,24 @@
  */
 
 import {
+  AUFTRAGGEBER_ART_TEXT,
+  BELEG_ART_TEXT,
+  BELEGGRUPPE_TEXT,
   BELEGQUELLE_TEXT,
   BELEGSTAND_TEXT,
   ENTSCHEIDUNG_TEXT,
   FUND_ART_TEXT,
   KUERZUNGSGRUND_TEXT,
   PROJEKTSTUFE_TEXT,
+  PRUEFSTAND_TEXT,
+  belegListe,
   datumText,
   euro,
+  prozentText,
   pruefeFirma,
   type Belegstand,
   type FirmenErgebnis,
+  type Firmendaten,
   type ProjektZeile,
   type Statusfarbe,
 } from "@tieout/kern";
@@ -61,11 +68,18 @@ export type FindRow = Row & {
   original: { belegId: string; page: number } | null;
 };
 
+let data: Firmendaten | null = null;
 let cached: FirmenErgebnis | null = null;
+
+/** The sample company's twin as the core holds it (Belege, fields, Verlauf). */
+export function firm(): Firmendaten {
+  data ??= beispielFirma();
+  return data;
+}
 
 /** The business through the whole run, computed once per build. */
 export function business(): FirmenErgebnis {
-  cached ??= pruefeFirma(beispielFirma());
+  cached ??= pruefeFirma(firm());
   return cached;
 }
 
@@ -195,4 +209,91 @@ export function findCalculations(rows: FindRow[]): Record<"amount" | "belegstand
       },
     ],
   };
+}
+
+export type ClientRow = Row & {
+  slug: string;
+  name: string;
+  short: string;
+  kind: string;
+  projects: number;
+  closed: number;
+  /** Cuts on Korrekturblätter, with how many rows and projects; null when there were none. */
+  cuts: (Amount & { rows: number; projects: number }) | null;
+  /** Rates deducted on Zahlungsavisos that the Vertrag does not name. */
+  deductions: (Amount & { projects: number }) | null;
+  /** "2 von 3", with the share of the amount accepted. */
+  changeOrders: { text: string; share: string | null; offered: number } | null;
+  /** Days from the submitted Schlussrechnung to the final payment, per closed project. */
+  paymentDays: { project: string; days: number }[];
+};
+
+export const clientSlug = (short: string) => projectSlug(short);
+
+/** "Auftraggeber" (SPEZIFIKATION.md 2.2): facts from the documents of every project, never an assessment. */
+export function clientRows(): ClientRow[] {
+  return business().historie.map((h) => ({
+    id: h.auftraggeber.id,
+    groups: ["alle"],
+    slug: clientSlug(h.auftraggeber.kurzname),
+    name: h.auftraggeber.name,
+    short: h.auftraggeber.kurzname,
+    kind: AUFTRAGGEBER_ART_TEXT[h.auftraggeber.art],
+    projects: h.projekte,
+    closed: h.abgeschlossen,
+    cuts: h.kuerzungen.length ? { ...amount(h.kuerzungenSumme), rows: h.kuerzungen.length, projects: h.kuerzungenProjekte } : null,
+    deductions: h.abzuege.length ? { ...amount(h.abzuegeSumme), projects: h.abzuegeProjekte } : null,
+    changeOrders: h.nachtraege.angeboten
+      ? {
+          text: `${h.nachtraege.beauftragt} von ${h.nachtraege.angeboten}`,
+          share: h.nachtraege.quote === null ? null : prozentText(h.nachtraege.quote, 1),
+          offered: h.nachtraege.angeboten,
+        }
+      : null,
+    paymentDays: h.schlusszahlung.map((s) => ({ project: s.projekt, days: s.tage })),
+  }));
+}
+
+export type BelegRow = Row & {
+  number: number;
+  title: string;
+  file: string;
+  kind: string;
+  group: string;
+  project: { slug: string; name: string };
+  date: Dated;
+  pages: number;
+  /** "maschinell gelesen", "bestätigt", "korrigiert"; "Kopie" for a duplicate. */
+  review: { state: "maschinell" | "bestaetigt" | "korrigiert" | "kopie"; text: string };
+  fields: { read: number; corrected: number };
+  /** Title of the file this one repeats. */
+  copyOf: string | null;
+  finds: string[];
+};
+
+/** Every Beleg of every project folder (SPEZIFIKATION.md 4.3), with its group, review state and finds. */
+export function belegRows(): BelegRow[] {
+  const b = business();
+  let n = 0;
+  return firm().projekte.flatMap((d) => {
+    const liste = belegListe(d, b.ergebnisse[d.projekt.id]);
+    const titel = new Map(liste.map((x) => [x.id, x.titel]));
+    const project = { slug: projectSlug(d.projekt.name), name: d.projekt.name };
+    return liste.map((x): BelegRow => ({
+      id: `${d.projekt.id}/${x.id}`,
+      groups: ["alle"],
+      number: ++n,
+      title: x.titel,
+      file: x.dateiname,
+      kind: BELEG_ART_TEXT[x.art],
+      group: BELEGGRUPPE_TEXT[x.gruppe],
+      project,
+      date: dated(x.datum),
+      pages: x.seiten,
+      review: x.duplikatVon ? { state: "kopie", text: "Kopie" } : { state: x.pruefstand, text: PRUEFSTAND_TEXT[x.pruefstand] },
+      fields: { read: x.felder.felder, corrected: x.felder.korrigiert },
+      copyOf: x.duplikatVon ? (titel.get(x.duplikatVon) ?? null) : null,
+      finds: x.funde,
+    }));
+  });
 }

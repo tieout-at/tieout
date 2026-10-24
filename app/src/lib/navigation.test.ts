@@ -29,7 +29,7 @@ describe("navigation", () => {
 
   it("orders the project tabs by the three steps", () => {
     expect(STEPS.map((s) => s.title)).toEqual(["Ihre Daten", "Digitaler Zwilling", "Ergebnis"]);
-    expect(PROJECT_TABS.map((t) => t.title)).toEqual(["Zeitstrahl", "Belege", "Positionen", "Vertrag", "Funde", "Schlussrechnung"]);
+    expect(PROJECT_TABS.map((t) => t.title)).toEqual(["Überblick", "Zeitstrahl", "Belege", "Positionen", "Vertrag", "Funde", "Schlussrechnung"]);
     expect(STEPS.flatMap((s) => s.run)).toEqual(["Ordner lesen", "Abgleich", "Vorprüfung", "Entwurf", "Ausgaben"]);
   });
 });

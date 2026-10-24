@@ -18,7 +18,16 @@ const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: Ta
  * "Funde" (SPEZIFIKATION.md 3.2 and 4.2): every find of the open projects with Art, Belegstand, Betrag, Kürzungsrisiko
  * from the Vorprüfung and Entscheidung. The footer keeps "zusätzlich verrechenbar" and "in Klärung" in two columns.
  */
-export function FindsTable({ rows, calculations }: { rows: FindRow[]; calculations: Record<"amount" | "belegstand" | "risk", Calculation[]> }) {
+export function FindsTable({
+  rows,
+  calculations,
+  project,
+}: {
+  rows: FindRow[];
+  calculations: Record<"amount" | "belegstand" | "risk", Calculation[]>;
+  /** On a project page: the project column is hidden and the view is remembered per project. */
+  project?: string;
+}) {
   const columns: Column<FindRow>[] = [
     {
       id: "find",
@@ -130,7 +139,7 @@ export function FindsTable({ rows, calculations }: { rows: FindRow[]; calculatio
   ];
 
   const sums = { amount: "zusaetzlich", belegstand: "klaerung", risk: "risiko" };
-  const hidden = ["sources", "workDate"];
+  const hidden = project ? ["sources", "workDate", "project"] : ["sources", "workDate"];
   const views: View[] = [
     { id: "alle", title: "Alle Funde", state: { sort: null, filters: [], hidden, calculations: sums } },
     {
@@ -150,5 +159,5 @@ export function FindsTable({ rows, calculations }: { rows: FindRow[]; calculatio
     },
   ];
 
-  return <DataTable name="funde" rows={rows} columns={columns} views={views} noun={{ one: "Fund", many: "Funde", dative: "Funden" }} />;
+  return <DataTable name={project ? `funde.${project}` : "funde"} rows={rows} columns={columns} views={views} noun={{ one: "Fund", many: "Funde", dative: "Funden" }} />;
 }
