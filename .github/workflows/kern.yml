@@ -1,0 +1,39 @@
+# Checks for the calculation core (kern/): types, lint, tests against the solution list. Runs only when something
+# changes there or in the solution list, which the tests read.
+name: Kern
+
+on:
+  pull_request:
+    paths: ["kern/**", "docs/Demo_Faelle.md", ".github/workflows/kern.yml"]
+  push:
+    branches: [main]
+    paths: ["kern/**", "docs/Demo_Faelle.md"]
+
+concurrency:
+  group: kern-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  kern:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: kern
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: kern/package-lock.json
+      - run: npm ci
+      - name: Typen
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Tests
+        run: npm test
