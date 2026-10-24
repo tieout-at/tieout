@@ -42,6 +42,7 @@ export function kleinerDatensatz(): Datensatz {
       regiePunkt: "6.3",
       regiematerialZuschlag: f(1_500),
       regiematerialPunkt: "6.4",
+      regieUnterschrift: f("Polier"),
       preise: { art: "fest", punkt: "7.1", text: f("Festpreise bis Bauende") },
       pauschalen: [{ kategorie: "baustelleneinrichtung", punkt: "4.3", text: f("Baustelleneinrichtung pauschal") }],
       schlussrechnungLegenBis: f("2026-10-30"),

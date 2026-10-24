@@ -73,6 +73,7 @@ function baue(def: AbgeschlossenDef, teil: (ordner: Ordner) => Teil): Datensatz 
       regiePunkt: "6.3",
       regiematerialZuschlag: f(def.materialBp, qv("Punkt 6.4")),
       regiematerialPunkt: "6.4",
+      regieUnterschrift: f("Polier", qv("Punkt 6.2")),
       preise: { art: "fest", punkt: "7.1", text: f("Festpreise bis Bauende", qv("Punkt 7.1")) },
       pauschalen: [],
       schlussrechnungLegenBis: null,

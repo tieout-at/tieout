@@ -515,6 +515,7 @@ export function erzeugeMooshaim(): Datensatz {
     regiePunkt: "6.3",
     regiematerialZuschlag: f(REGIEMATERIAL_BP, qv("Punkt 6.4", 7)),
     regiematerialPunkt: "6.4",
+    regieUnterschrift: f("Polier", qv("Punkt 6.2", 7)),
     preise: { art: "fest", punkt: "7.1", text: f("Festpreise bis Bauende", qv("Punkt 7.1", 8)) },
     pauschalen: [{ kategorie: "baustelleneinrichtung", punkt: "4.3", text: f("Die Baustelleneinrichtung wird pauschal vergütet.", qv("Punkt 4.3", 4)) }],
     schlussrechnungLegenBis: f("2026-10-30", qv("Punkt 8.4", 9)),

@@ -47,6 +47,8 @@ interface ProjektDef {
   regieH: number;
   materialBp: number;
   unterschrift: string;
+  /** Who signs Regieberichte as the Vertrag names it. */
+  regieUnterschrift: string;
   angewiesen: string;
   blaetter: BlattDef[];
   /** Share of the quantity in the Leistungsverzeichnis that each position has on the sheets of each Abschlagsrechnung (and after). */
@@ -188,6 +190,7 @@ function baue(def: ProjektDef): Datensatz {
       regiePunkt: "6.3",
       regiematerialZuschlag: f(def.materialBp, qv("Punkt 6.4", 6)),
       regiematerialPunkt: "6.4",
+      regieUnterschrift: f(def.regieUnterschrift, qv("Punkt 6.2", 6)),
       preise: { art: "fest", punkt: "7.1", text: f("Festpreise bis Bauende", qv("Punkt 7.1", 7)) },
       pauschalen: [{ kategorie: "baustelleneinrichtung", punkt: "4.3", text: f("Die Baustelleneinrichtung wird pauschal vergütet.", qv("Punkt 4.3")) }],
       schlussrechnungLegenBis: null,
@@ -282,6 +285,7 @@ const KIEFERNAU: ProjektDef = {
   regieH: 5_420,
   materialBp: 1_500,
   unterschrift: "Polier Hornfeld Bau",
+  regieUnterschrift: "Polier",
   angewiesen: "Bauleitung Hornfeld Bau",
   blaetter: [
     { nr: "1", von: "2026-04-20", datum: "2026-05-22", erfasst: "2026-05-26", titel: "Heizung und Sanitär Untergeschoß", ar: 1 },
@@ -383,6 +387,7 @@ const AHORNBRUNN: ProjektDef = {
   regieH: 5_120,
   materialBp: 1_000,
   unterschrift: "örtliche Bauaufsicht Marktgemeinde Ahornbrunn",
+  regieUnterschrift: "örtliche Bauaufsicht",
   angewiesen: "örtliche Bauaufsicht Marktgemeinde Ahornbrunn",
   blaetter: [
     { nr: "1", von: "2026-05-04", datum: "2026-06-19", erfasst: "2026-06-23", titel: "Zubau Untergeschoß und Technik", ar: 1 },

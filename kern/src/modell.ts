@@ -252,6 +252,8 @@ export interface Vertrag {
   /** Surcharge on Regiematerial at Einstandspreis, in basis points (15 % = 1500). */
   regiematerialZuschlag: Feld<Bp>;
   regiematerialPunkt: string;
+  /** Who signs Regieberichte for the Auftraggeber, as the Vertrag names it: "Polier", "örtliche Bauaufsicht". */
+  regieUnterschrift: Feld<string>;
   preise: Preise;
   pauschalen: Pauschale[];
   /** "Schlussrechnung legen bis" as written in the Vertrag. */
