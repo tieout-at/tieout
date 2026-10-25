@@ -212,7 +212,7 @@ Search also finds the abbreviations people type ("LV", "AR 3", "RB 11", "AB 12")
 | Home: meetings | deadlines ("Schlussrechnung legen bis") | Ergebnis | when the money must be out | adapt |
 | Notifications | new WhatsApp-Meldung, task due | Ihre Daten | only useful with live messages | later |
 | Tasks, "Create task" modal | "Aufgaben" from gaps, with deadline, find and person in charge | Ergebnis | closes "Beleg fehlt" ("Regiebericht 12 vom Polier unterschreiben lassen") | keep |
-| Notes | "Notizen" for the final meeting | Ergebnis | small | later, not in the sidebar until used |
+| Notes | "Notizen" for the final meeting | Ergebnis | small | later, not in the sidebar until used; not built in step 7 (Maxi S., 25.10.2026: no real use in stage 0, the final meeting gets the Schlussbesprechungs-Blatt in step 8) |
 | Emails | "E-Mails" from the folder, read and assign, never send | Ihre Daten | the instructions | keep, read only |
 | Calls | "WhatsApp-Meldungen" with transcript and photo | Ihre Daten | site knowledge with time and sender role | keep |
 | Reports | "Berichte" | Ergebnis (business) | "zusätzlich verrechenbar" per project, Auftraggeber history, "nur außerhalb ERP" (E15) | keep |

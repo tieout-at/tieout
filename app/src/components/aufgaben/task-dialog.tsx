@@ -117,7 +117,7 @@ function TaskForm({ targets, onCancel, onMade }: { targets: TaskTarget[]; onCanc
           onChange={(e) => setTask({ ...task, text: e.target.value })}
           rows={3}
           required
-          placeholder={target ? undefined : "Zuerst den Fund wählen, dann steht hier seine Abhilfe."}
+          placeholder={!target ? "Zuerst den Fund wählen, dann steht hier seine Abhilfe." : target.taskText ? undefined : "Für diesen Fund gibt es keine Abhilfe. Was ist zu tun?"}
           className={field}
         />
       </label>

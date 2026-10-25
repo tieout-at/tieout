@@ -40,13 +40,14 @@ function TaskCircle({ task, onChange }: { task: TaskItem; onChange: (done: boole
   );
 }
 
-function Due({ task, today }: { task: TaskItem; today: string }) {
-  if (task.done) return <span className="text-fg-muted">erledigt {datum(task.done.zeit)}</span>;
+/** The due date; `word` says "überfällig" in letters where no group heading says it (Start). */
+function Due({ task, today, word = false }: { task: TaskItem; today: string; word?: boolean }) {
+  if (task.done) return <span className="whitespace-nowrap text-fg-muted">erledigt {datum(task.done.zeit)}</span>;
   const due = dueText(task.bis, today);
   if (!due) return <span className="text-fg-muted">ohne Frist</span>;
   return (
     <span className={cn("tabular-nums", due.tone === "red" && "text-state-red", due.tone === "orange" && "text-state-orange-edge")}>
-      {due.tone === "red" && <span className="sr-only">überfällig, </span>}
+      {due.tone === "red" && <span className={word ? undefined : "sr-only"}>überfällig, </span>}
       {due.text}
     </span>
   );
@@ -65,7 +66,7 @@ function FindLink({ task }: { task: TaskItem }) {
   );
 }
 
-const GRID = "md:grid md:grid-cols-[minmax(0,1fr)_150px_minmax(0,240px)_160px]";
+const GRID = "md:grid md:grid-cols-[minmax(0,1fr)_170px_minmax(0,240px)_160px]";
 
 /** One row of the list (Attio's task row): circle and text; due date, find and role in columns, on phones in one line below. */
 function TaskRow({ task, today, onCheck }: { task: TaskItem; today: string; onCheck: (t: TaskItem, done: boolean) => void }) {
@@ -284,9 +285,9 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
             ))}
           </PopoverContent>
         </Popover>
-        <Button variant="primary" className="ml-auto" onClick={() => setMaking(true)}>
+        <Button variant="primary" className="ml-auto max-md:w-11 max-md:px-0" onClick={() => setMaking(true)}>
           <Plus aria-hidden />
-          Neue Aufgabe
+          <span className="max-md:sr-only">Neue Aufgabe</span>
         </Button>
       </div>
 
@@ -378,7 +379,7 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
                 <TaskCircle task={t} onChange={(done) => checkTask(t, done)} />
               </span>
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="line-clamp-2">{t.text}</span>
+                <span className="line-clamp-3">{t.text}</span>
                 <span className="text-xs text-fg-secondary">
                   {t.zustaendig} ·{" "}
                   <Link href={t.href} className="rounded-xs text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
@@ -387,7 +388,7 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
                 </span>
               </span>
               <span className="shrink-0 pt-px text-xs">
-                <Due task={t} today={today} />
+                <Due task={t} today={today} word />
               </span>
             </li>
           ))}

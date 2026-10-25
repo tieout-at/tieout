@@ -176,9 +176,49 @@ const SCREENS = [
       await page.getByRole("dialog").waitFor();
     },
   },
+  // tasks (step 7): four open ones around today and one ticked off, laid out in this browser
+  { name: "aufgaben-gefuellt", path: "/aufgaben/", tasks: true },
+  { name: "start-gefuellt", path: "/", tasks: true },
+  {
+    name: "aufgaben-erledigt",
+    path: "/aufgaben/",
+    tasks: true,
+    act: async (page) => {
+      await page.getByRole("button", { name: "Erledigt" }).click();
+    },
+  },
+  {
+    name: "aufgaben-neu",
+    path: "/aufgaben/",
+    tasks: true,
+    act: async (page) => {
+      await page.getByRole("button", { name: "Neue Aufgabe" }).first().click();
+      await page.getByRole("dialog").getByLabel("Fund").selectOption("p1/meldung:W4");
+    },
+  },
+  {
+    name: "fundseite-aufgabe",
+    path: "/funde/wohnpark-mooshaim-f1/",
+    tasks: true,
+    act: async (page) => {
+      await page.getByRole("button", { name: "Aufgabe anlegen" }).click();
+      await page.getByRole("dialog").waitFor();
+    },
+  },
   // the board by Entscheidung (step 6); last, because the browser then remembers the board as the view of these tables
   { name: "funde-board", path: "/funde/", act: (page) => showBoard(page) },
   { name: "projekt-funde-board", path: "/projekte/wohnpark-mooshaim/funde/", act: (page) => showBoard(page) },
+  {
+    name: "projekt-funde-board-aufgabe",
+    path: "/projekte/wohnpark-mooshaim/funde/",
+    desktopOnly: true,
+    act: async (page) => {
+      await showBoard(page);
+      await page.getByRole("button", { name: "Entscheidung zu F6" }).click();
+      await page.getByRole("menuitem", { name: "Aufgabe anlegen" }).click();
+      await page.getByRole("dialog").waitFor();
+    },
+  },
   {
     name: "projekt-funde-board-pruefen",
     path: "/projekte/wohnpark-mooshaim/funde/",
@@ -205,6 +245,25 @@ const DECISIONS = [
   { fundSchluessel: "p1/regie:9", zeit: "2026-10-25T09:40", wer: "Geschäftsführung", stand: "freigegeben" },
   { fundSchluessel: "p2/meldung:P2-W1", zeit: "2026-10-25T09:30", wer: "Abrechnung", stand: "geprueft" },
 ];
+
+/** Tasks as "Aufgabe anlegen" records them, due around the day the pictures are taken, and one tick. */
+function seedTasks() {
+  const day = (n) => {
+    const d = new Date();
+    d.setDate(d.getDate() + n);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+  const task = (id, key, fund, slug, text, zustaendig, bis, zeit) => ({ id, fundSchluessel: key, fund, href: `/funde/${slug}/`, zeit, wer: "Abrechnung", text, zustaendig, bis });
+  const tasks = [
+    task("aufgabe-1", "p1/plan:H-201:D", "F1 Wohnpark Mooshaim", "wohnpark-mooshaim-f1", "Plan H-201 Index D und die E-Mail vom 07.04. beilegen, gemeinsames Aufmaß vereinbaren", "Bauleitung", day(3), `${day(-1)}T09:10`),
+    task("aufgabe-2", "p1/regie:12", "F6 Wohnpark Mooshaim", "wohnpark-mooshaim-f6", "Regiebericht 12 vom Polier unterschreiben lassen", "Bauleitung", day(0), `${day(-1)}T09:20`),
+    task("aufgabe-3", "p1/anmeldung:mail-0316", "F8 Wohnpark Mooshaim", "wohnpark-mooshaim-f8", "Nachtrag mit Preis legen", "Abrechnung", day(-1), `${day(-2)}T14:00`),
+    task("aufgabe-4", "p3/regie:5", "F3 Volksschule Ahornbrunn", "volksschule-ahornbrunn-f3", "Regiebericht von der örtlichen Bauaufsicht unterschreiben lassen", "Bauleitung", null, `${day(-1)}T10:00`),
+    task("aufgabe-5", "p1/regie:9", "F2 Wohnpark Mooshaim", "wohnpark-mooshaim-f2", "3 h Monteur mit der Bauleitung klären, bevor die Schlussrechnung hinausgeht", "Bauleitung", day(1), `${day(-2)}T11:00`),
+  ];
+  localStorage.setItem("tieout.aufgaben.v1", JSON.stringify(tasks));
+  localStorage.setItem("tieout.aufgaben-erledigt.v1", JSON.stringify([{ aufgabeId: "aufgabe-5", zeit: `${day(0)}T08:30`, wer: "Bauleitung", erledigt: true }]));
+}
 
 /** Switches a find table to the board, unless the browser already remembers it. */
 async function showBoard(page) {
@@ -235,6 +294,10 @@ try {
       await page.goto(base + screen.path, { waitUntil: "networkidle" });
       if (screen.decided && !(await page.evaluate(() => localStorage.getItem("tieout.entscheidungen.v1")))) {
         await page.evaluate((list) => localStorage.setItem("tieout.entscheidungen.v1", JSON.stringify(list)), DECISIONS);
+        await page.reload({ waitUntil: "networkidle" });
+      }
+      if (screen.tasks && !(await page.evaluate(() => localStorage.getItem("tieout.aufgaben.v1")))) {
+        await page.evaluate(seedTasks);
         await page.reload({ waitUntil: "networkidle" });
       }
       await page.evaluate(() => document.fonts.ready);

@@ -49,7 +49,7 @@ export function StartMoney({ built }: { built: StartView }) {
   const view = useLive()?.startView() ?? built;
   const cards = [
     { title: "zusätzlich verrechenbar", amount: view.extra, line: view.risk.cent ? `davon mit Kürzungsrisiko ${view.risk.text}` : null },
-    { title: "in Klärung", amount: view.unclear, line: "bis der Beleg da oder der Nachtrag gelegt ist" },
+    { title: "in Klärung", amount: view.unclear, line: "Beleg fehlt oder Nachtrag nicht gelegt" },
   ];
   return (
     <section aria-label="Ergebnis" className="grid grid-cols-2 gap-2">
@@ -95,7 +95,7 @@ export function NextSteps({ built }: { built: StartView }) {
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="flex gap-2">
                       <span className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{s.find.number}</span>
-                      <span className="line-clamp-2">{s.find.name}</span>
+                      <span className="line-clamp-3">{s.find.name}</span>
                     </span>
                     <span className="text-xs text-fg-secondary">
                       {s.step}, {s.who} · {s.find.project.name}
