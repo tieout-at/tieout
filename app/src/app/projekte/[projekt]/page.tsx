@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { Activity } from "@/components/record/activity";
 import { AttributeList } from "@/components/record/attribute-list";
-import { Highlights } from "@/components/record/highlights";
+import { ProjectHighlights } from "@/components/record/live-highlights";
 import { projectRecord } from "@/lib/records";
 import { findProject } from "./project-tabs";
 
@@ -25,7 +25,7 @@ export default async function ProjectOverviewPage({ params }: Props) {
         <AttributeList title="Vertrag" attributes={record.contract} className="shadow-[inset_0_1px_0_0_var(--color-line)]" />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col gap-6 px-6 py-5 max-md:px-4 max-lg:order-1">
-        <Highlights items={record.highlights} />
+        <ProjectHighlights projektId={record.id} items={record.highlights} />
         <Activity entries={record.activity} />
       </div>
     </div>

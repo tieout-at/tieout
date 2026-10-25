@@ -8,7 +8,7 @@
 import type { AusserhalbErp } from "./belegquelle";
 import { abrechnung, auftraggeberHistorie, gleicherGrund, tageZwischen, type Abrechnung, type AuftraggeberHistorie } from "./historie";
 import type { Auftraggeber, Cent, Datensatz, Datum, Entscheidung, Firmendaten, Projektstufe } from "./modell";
-import { pruefeProjekt, type ProjektErgebnis } from "./projekt";
+import { LEERE_ENTSCHEIDUNGSSUMME, pruefeProjekt, ZAEHLENDE_ENTSCHEIDUNGEN, type Entscheidungssumme, type ProjektErgebnis, type ZaehlendeEntscheidung } from "./projekt";
 
 export const STATUS_TAGE = 21;
 
@@ -50,6 +50,8 @@ export interface FirmenErgebnis {
   geld: { belegt: { betrag: Cent; anzahl: number }; belegFehlt: { betrag: Cent; anzahl: number }; nachtragNichtGelegt: { betrag: Cent; anzahl: number } };
   /** E13, shown under "zusätzlich verrechenbar", never subtracted. */
   davonMitKuerzungsrisiko: { betrag: Cent; anzahl: number };
+  /** The money words of the open projects split by decision (the board of all finds). */
+  jeEntscheidung: Record<ZaehlendeEntscheidung, Entscheidungssumme>;
   /** E15, only in "Berichte", per money word. */
   ausserhalbErp: { zusaetzlichVerrechenbar: AusserhalbErp; inKlaerung: AusserhalbErp };
   /** The earliest "Schlussrechnung legen bis" from the demo date on, among the open projects. */
@@ -84,6 +86,14 @@ function projektDatum(d: Datensatz): ProjektZeile["datum"] {
 
 const plus = (a: AusserhalbErp, b: AusserhalbErp): AusserhalbErp => ({ betrag: a.betrag + b.betrag, anzahl: a.anzahl + b.anzahl, vonBetrag: a.vonBetrag + b.vonBetrag, vonAnzahl: a.vonAnzahl + b.vonAnzahl });
 const NULL_ERP: AusserhalbErp = { betrag: 0, anzahl: 0, vonBetrag: 0, vonAnzahl: 0 };
+const plusSumme = (a: Entscheidungssumme, b: Entscheidungssumme): Entscheidungssumme => ({
+  anzahl: a.anzahl + b.anzahl,
+  zusaetzlichVerrechenbar: a.zusaetzlichVerrechenbar + b.zusaetzlichVerrechenbar,
+  inKlaerung: a.inKlaerung + b.inKlaerung,
+  belegFehlt: a.belegFehlt + b.belegFehlt,
+  nachtragNichtGelegt: a.nachtragNichtGelegt + b.nachtragNichtGelegt,
+  davonMitKuerzungsrisiko: a.davonMitKuerzungsrisiko + b.davonMitKuerzungsrisiko,
+});
 
 export function pruefeFirma(f: Firmendaten, entscheidungen: readonly Entscheidung[] = []): FirmenErgebnis {
   const ergebnisse: Record<string, ProjektErgebnis> = {};
@@ -159,6 +169,7 @@ export function pruefeFirma(f: Firmendaten, entscheidungen: readonly Entscheidun
     },
     geld: { belegt: geld("belegt"), belegFehlt: geld("beleg_fehlt"), nachtragNichtGelegt: geld("nachtrag_nicht_gelegt") },
     davonMitKuerzungsrisiko: { betrag: imRisiko.reduce((s, r) => s + r.betrag, 0), anzahl: imRisiko.length },
+    jeEntscheidung: Object.fromEntries(ZAEHLENDE_ENTSCHEIDUNGEN.map((s) => [s, offen.map((p) => ergebnisse[p.projektId].jeEntscheidung[s]).reduce(plusSumme, LEERE_ENTSCHEIDUNGSSUMME)])) as FirmenErgebnis["jeEntscheidung"],
     ausserhalbErp: {
       zusaetzlichVerrechenbar: offen.map((p) => ergebnisse[p.projektId].ausserhalbErp.zusaetzlichVerrechenbar).reduce(plus, NULL_ERP),
       inKlaerung: offen.map((p) => ergebnisse[p.projektId].ausserhalbErp.inKlaerung).reduce(plus, NULL_ERP),

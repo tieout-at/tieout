@@ -6,6 +6,7 @@ import { Building2, CalendarDays, CircleDot, Construction, FileSignature, Hourgl
 import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
 import type { ProjectRow, StatusColour } from "@/lib/kern-data";
+import { useLive } from "@/lib/live";
 import type { Calculation, View } from "@/lib/table";
 
 const COLOUR: Record<StatusColour, TagColour> = { rot: "red", gelb: "yellow", gruen: "green", grau: "grey" };
@@ -13,7 +14,11 @@ const COLOUR: Record<StatusColour, TagColour> = { rot: "red", gelb: "yellow", gr
 const OPEN_STAGES = ["in Ausführung", "Schlussrechnung vorbereiten"];
 
 /** "Projekte" (SPEZIFIKATION.md 2.2 and 7.2): one row per project, amounts and status colour from `kern/`. */
-export function ProjectsTable({ rows, calculations }: { rows: ProjectRow[]; calculations: Record<"extra" | "unclear" | "contractSum", Calculation[]> }) {
+export function ProjectsTable({ rows: built, calculations: builtCalculations }: { rows: ProjectRow[]; calculations: Record<"extra" | "unclear" | "contractSum", Calculation[]> }) {
+  // with a decision in this browser the core runs here too (live.ts)
+  const live = useLive();
+  const rows = live ? live.projectRows() : built;
+  const calculations = live ? live.projectCalculations() : builtCalculations;
   const columns: Column<ProjectRow>[] = [
     {
       id: "name",

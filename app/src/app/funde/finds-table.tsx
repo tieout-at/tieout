@@ -8,6 +8,7 @@ import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
 import { currentState, decide, DECISION_TEXT, localTime, onStorageChange, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
+import { useLive } from "@/lib/live";
 import type { Calculation, View } from "@/lib/table";
 import { FindsBoard, PhoneRow, RiskText } from "./finds-board";
 
@@ -23,8 +24,8 @@ const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: Ta
  * The view "Nach Entscheidung" shows the same finds as a board (Attio's "Pipeline"), where moving a card decides.
  */
 export function FindsTable({
-  rows,
-  calculations,
+  rows: built,
+  calculations: builtCalculations,
   project,
 }: {
   rows: FindRow[];
@@ -46,14 +47,18 @@ export function FindsTable({
   const keys = (r: FindRow) => [r.id, ...r.earlierIds];
   const stateOf = (r: FindRow) => currentState(decisions, keys(r), r.decisionState);
   const tasksOf = (r: FindRow) => tasks.filter((t) => keys(r).includes(t.fundSchluessel));
-  // a decision made in this browser shows at once; a find set to "Nicht verrechnen" here leaves its group, so no fixed sum of
-  // `kern/` (which still counts it) fits any more and the footer says "keine feste Summe"
+  // with a decision in this browser the core runs here too (live.ts): rows, groups and sums over these decisions
+  const live = useLive();
+  const rows = live ? live.findRows().filter((r) => !project || r.project.slug === project) : built;
+  const calculations = live ? live.findCalculations() : builtCalculations;
   const reasonOf = (r: FindRow) =>
     decisions
       .filter((d) => keys(r).includes(d.fundSchluessel) && d.stand === "nicht_verrechnen")
       .sort((a, b) => a.zeit.localeCompare(b.zeit))
       .at(-1)?.grund ?? null;
-  const shown = decisions.length
+  // until the core is loaded, a decision made here shows at once; a find set to "Nicht verrechnen" leaves its group, so
+  // no fixed sum fits it for that moment and the footer says "nicht gerechnet"
+  const shown = decisions.length && !live
     ? rows.map((r) => {
         const state = stateOf(r);
         return { ...r, decision: DECISION_TEXT[state], groups: state === "nicht_verrechnen" ? [] : r.countedGroups };

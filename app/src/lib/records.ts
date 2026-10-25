@@ -18,6 +18,7 @@ import {
   prozentText,
   type Belegstand,
   type Datensatz,
+  type FirmenErgebnis,
   type Pruefstand,
   type Quelle,
 } from "@tieout/kern";
@@ -112,9 +113,13 @@ function contractAttributes(d: Datensatz): Attribute[] {
   ];
 }
 
-/** Highlights by stage: the money words of an open project (SPEZIFIKATION.md 7.2), the settlement of a closed one. */
-function projectHighlights(projektId: string, d: Datensatz, row: ProjectRow): Highlight[] {
-  const b = business();
+/**
+ * Highlights by stage: the money words of an open project (SPEZIFIKATION.md 7.2), the settlement of a closed one.
+ * Takes the core's result, so the browser can show them again with the decisions recorded there (`live.ts`).
+ */
+export function projectHighlights(projektId: string, b: FirmenErgebnis = business()): Highlight[] {
+  const d = dataset(projektId);
+  const row = projectRows(b).find((r) => r.id === projektId)!;
   const e = b.ergebnisse[projektId];
   const v = d.vertrag;
   const findsHref = `/projekte/${row.slug}/funde/`;
@@ -137,7 +142,9 @@ function projectHighlights(projektId: string, d: Datensatz, row: ProjectRow): Hi
   }
 
   const s = e.abgleich.summen;
-  const count = (stand: Belegstand) => e.abgleich.funde.filter((f) => f.belegstand === stand).length;
+  // a find set to "Nicht verrechnen" counts in no money word and is named apart
+  const count = (stand: Belegstand) => e.abgleich.funde.filter((f) => f.belegstand === stand && f.entscheidung !== "nicht_verrechnen").length;
+  const excluded = e.abgleich.funde.filter((f) => f.entscheidung === "nicht_verrechnen").length;
   const cards: Highlight[] = [
     {
       id: "zusaetzlich",
@@ -164,7 +171,10 @@ function projectHighlights(projektId: string, d: Datensatz, row: ProjectRow): Hi
       ? { id: "restforderung", title: "Restforderung", value: euro(e.rechnungsabschluss.restforderung), lines: [`laut Vertrag ${euro(e.rechnungsabschluss.lautVertrag.restforderung)}`], href: invoiceHref }
       : contract,
   );
-  const parts = (["belegt", "beleg_fehlt", "nachtrag_nicht_gelegt"] as const).filter((x) => count(x)).map((x) => `${count(x)} ${BELEGSTAND_TEXT[x]}`);
+  const parts = [
+    ...(["belegt", "beleg_fehlt", "nachtrag_nicht_gelegt"] as const).filter((x) => count(x)).map((x) => `${count(x)} ${BELEGSTAND_TEXT[x]}`),
+    ...(excluded ? [`${excluded} nicht verrechnen`] : []),
+  ];
   cards.push({ id: "funde", title: "Funde", value: String(e.abgleich.funde.length), lines: [parts.join(", ")], href: findsHref });
   return cards;
 }
@@ -204,7 +214,7 @@ export function projectRecord(projektId: string): ProjectRecord {
     client: { name: client.name, href: client.href },
     attributes: projectAttributes(d, row, client),
     contract: contractAttributes(d),
-    highlights: projectHighlights(projektId, d, row),
+    highlights: projectHighlights(projektId),
     activity: projectActivity(d),
   };
 }

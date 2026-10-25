@@ -26,7 +26,7 @@ const LANES: { state: DecisionState; icon: LucideIcon; empty: string; done: stri
 const LANE = Object.fromEntries(LANES.map((l) => [l.state, l])) as Record<DecisionState, (typeof LANES)[number]>;
 
 /** Explains a column without a fixed sum; the same words as under the tables. */
-export const NOT_COMPUTED = "Für genau diese Funde liefert der Rechenkern keine Summe: ein Filter teilt die Gruppe, oder eine Entscheidung ist nur in diesem Browser vermerkt und wird erst mit der Anmeldung gerechnet.";
+export const NOT_COMPUTED = "Für genau diese Funde liefert der Rechenkern keine Summe: ein Filter teilt die Gruppe.";
 
 /** The Kürzungsrisiko of a find in one form on every screen: its red dot, the reason, and the amount where it is only part of the find. */
 export function RiskText({ risk, amount, className, label = true, wrap = false }: { risk: NonNullable<FindRow["risk"]>; amount: FindRow["amount"]; className?: string; label?: boolean; wrap?: boolean }) {

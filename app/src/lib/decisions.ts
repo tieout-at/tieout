@@ -89,7 +89,13 @@ export function localTime(date = new Date()): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
+/** Lists this browser could not keep (private window): they live for this visit, and every page of the visit reads them. */
+const memory = new Map<string, unknown[]>();
+/** Tells the other parts of this page that an entry was appended; the "storage" event reaches only other tabs. */
+const CHANGED = "tieout:entries";
+
 function read<T>(key: string): T[] {
+  if (memory.has(key)) return memory.get(key) as T[];
   try {
     const raw = window.localStorage.getItem(key);
     const list = raw ? (JSON.parse(raw) as unknown) : [];
@@ -105,8 +111,9 @@ function append<T>(key: string, entry: T): T[] {
   try {
     window.localStorage.setItem(key, JSON.stringify(list));
   } catch {
-    // stays in memory for this visit
+    memory.set(key, list);
   }
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(CHANGED));
   return list;
 }
 
@@ -124,13 +131,20 @@ export function decide(keys: readonly string[], fallback: DecisionState, entry: 
   return why ? { list: fresh, refused: why } : { list: appendDecision(entry), refused: null };
 }
 
-/** Calls back when another tab of this browser records a decision or a task, so a page never decides on an old state. */
+/**
+ * Calls back when this page or another tab of this browser records a decision or a task, so a page never decides on an
+ * old state and every sum on it follows at once.
+ */
 export function onStorageChange(callback: () => void): () => void {
   const listener = (e: StorageEvent) => {
     if (e.key === null || e.key === KEYS.decisions || e.key === KEYS.tasks) callback();
   };
   window.addEventListener("storage", listener);
-  return () => window.removeEventListener("storage", listener);
+  window.addEventListener(CHANGED, callback);
+  return () => {
+    window.removeEventListener("storage", listener);
+    window.removeEventListener(CHANGED, callback);
+  };
 }
 export const readTasks = () => read<Task>(KEYS.tasks);
 export const appendTask = (t: Task) => append(KEYS.tasks, t);

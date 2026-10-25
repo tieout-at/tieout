@@ -1,7 +1,8 @@
 /**
- * Rows of the tables, derived from `kern/` at build time (the pages are a static export). Every amount and every
- * money word comes from here: `pruefeFirma(beispielFirma())` with the core's own label maps and `euro()`. Client
- * components import only the types of this file, so the core and its sample data stay out of the browser bundle.
+ * Rows of the tables, derived from `kern/` (the pages are a static export). Every amount and every money word comes
+ * from here: `pruefeFirma(beispielFirma())` with the core's own label maps and `euro()`. Each builder takes the core's
+ * result, so the same code runs while the pages are built (no decisions) and in the browser once decisions are recorded
+ * there (`live.ts`, which loads the core only then). Client components import only the types of this file.
  */
 
 import {
@@ -27,6 +28,7 @@ import {
   type Fund,
   type ProjektZeile,
   type Statusfarbe,
+  ZAEHLENDE_ENTSCHEIDUNGEN,
 } from "@tieout/kern";
 import { beispielFirma } from "@tieout/kern/beispiel";
 
@@ -114,8 +116,8 @@ const STATUS: Record<StatusColour, { text: string; rank: number }> = {
   grau: { text: "abgeschlossen", rank: 3 },
 };
 
-export function projectRows(): ProjectRow[] {
-  return business().projekte.map((p) => ({
+export function projectRows(b: FirmenErgebnis = business()): ProjectRow[] {
+  return b.projekte.map((p) => ({
     id: p.projektId,
     groups: p.zusaetzlichVerrechenbar === null ? ["alle"] : ["alle", "offen"],
     slug: projectSlug(p.name),
@@ -132,8 +134,7 @@ export function projectRows(): ProjectRow[] {
 }
 
 /** Fixed sums of the project table: the business totals over the open projects, and each project on its own. */
-export function projectCalculations(): Record<"extra" | "unclear" | "contractSum", Calculation[]> {
-  const b = business();
+export function projectCalculations(b: FirmenErgebnis = business()): Record<"extra" | "unclear" | "contractSum", Calculation[]> {
   const open = b.projekte.filter((p) => p.zusaetzlichVerrechenbar !== null);
   const each = (value: (p: ProjektZeile) => number): Sum[] => open.map((p) => ({ group: "offen", ids: [p.projektId], text: euro(value(p)) }));
   return {
@@ -172,8 +173,7 @@ export function nameAndFacts(f: Fund): { name: string; facts: string[] } {
 }
 
 /** Every find of the open projects, in the order of the core (project, then F1 …). */
-export function findRows(): FindRow[] {
-  const b = business();
+export function findRows(b: FirmenErgebnis = business()): FindRow[] {
   return b.projekte.flatMap((p) => {
     const e = b.ergebnisse[p.projektId];
     if (!e.abgleich.laeuft) return [];
@@ -211,24 +211,32 @@ export function findRows(): FindRow[] {
 /**
  * Fixed sums of the find table, for the business and per project: "zusätzlich verrechenbar" under the amount,
  * "in Klärung" (and its two parts) under the Belegstand, "davon mit Kürzungsrisiko" (E13) under the risk column;
- * never one total of both money words. Always over every find: a page that shows one project passes its rows to the
- * table, and the sums of the business must still cover all finds, or they would match that project's rows.
+ * never one total of both money words. Then the same sums per Entscheidung (`jeEntscheidung` of the core), for the
+ * columns of the board and a filter by Entscheidung; they come after the totals, so a list where every find stands on
+ * one decision shows the total. Always over every find: a page that shows one project passes its rows to the table,
+ * and the sums of the business must still cover all finds, or they would match that project's rows.
  */
-export function findCalculations(): Record<"amount" | "belegstand" | "risk", Calculation[]> {
-  const b = business();
-  const rows = findRows();
+export function findCalculations(b: FirmenErgebnis = business()): Record<"amount" | "belegstand" | "risk", Calculation[]> {
+  const rows = findRows(b);
   const open = b.projekte.filter((p) => b.ergebnisse[p.projektId].abgleich.laeuft);
-  const ids = (group: string, projektId?: string) => rows.filter((r) => r.groups.includes(group) && (!projektId || r.id.startsWith(`${projektId}/`))).map((r) => r.id);
-  const scoped = (group: string, total: number, perProject: (projektId: string) => number): Sum[] => [
-    { group, ids: ids(group), text: euro(total) },
-    ...open.map((p) => ({ group, ids: ids(group, p.projektId), text: euro(perProject(p.projektId)) })).filter((s) => s.ids.length),
-  ];
+  const ids = (group: string, projektId?: string, stand?: Entscheidungsstand) =>
+    rows.filter((r) => r.groups.includes(group) && (!projektId || r.id.startsWith(`${projektId}/`)) && (!stand || r.decisionState === stand)).map((r) => r.id);
+  type Part = "zusaetzlichVerrechenbar" | "inKlaerung" | "belegFehlt" | "nachtragNichtGelegt" | "davonMitKuerzungsrisiko";
+  const scoped = (group: string, part: Part, total: number, perProject: (projektId: string) => number): Sum[] =>
+    [
+      { group, ids: ids(group), text: euro(total) },
+      ...open.map((p) => ({ group, ids: ids(group, p.projektId), text: euro(perProject(p.projektId)) })),
+      ...ZAEHLENDE_ENTSCHEIDUNGEN.flatMap((st) => [
+        { group, ids: ids(group, undefined, st), text: euro(b.jeEntscheidung[st][part]) },
+        ...open.map((p) => ({ group, ids: ids(group, p.projektId, st), text: euro(b.ergebnisse[p.projektId].jeEntscheidung[st][part]) })),
+      ]),
+    ].filter((s, i) => i === 0 || s.ids.length);
   const sums = (id: string) => b.ergebnisse[id].abgleich.summen;
-  const extra: Calculation = { id: "zusaetzlich", title: "zusätzlich verrechenbar", sums: scoped("zusaetzlich", b.summen.zusaetzlichVerrechenbar, (id) => sums(id).zusaetzlichVerrechenbar) };
+  const extra: Calculation = { id: "zusaetzlich", title: "zusätzlich verrechenbar", sums: scoped("zusaetzlich", "zusaetzlichVerrechenbar", b.summen.zusaetzlichVerrechenbar, (id) => sums(id).zusaetzlichVerrechenbar) };
   const unclear: Calculation[] = [
-    { id: "klaerung", title: "in Klärung", sums: scoped("klaerung", b.summen.inKlaerung, (id) => sums(id).inKlaerung) },
-    { id: "beleg_fehlt", title: "Beleg fehlt", sums: scoped("beleg_fehlt", b.geld.belegFehlt.betrag, (id) => sums(id).belegFehlt) },
-    { id: "nachtrag", title: "Nachtrag nicht gelegt", sums: scoped("nachtrag", b.geld.nachtragNichtGelegt.betrag, (id) => sums(id).nachtragNichtGelegt) },
+    { id: "klaerung", title: "in Klärung", sums: scoped("klaerung", "inKlaerung", b.summen.inKlaerung, (id) => sums(id).inKlaerung) },
+    { id: "beleg_fehlt", title: "Beleg fehlt", sums: scoped("beleg_fehlt", "belegFehlt", b.geld.belegFehlt.betrag, (id) => sums(id).belegFehlt) },
+    { id: "nachtrag", title: "Nachtrag nicht gelegt", sums: scoped("nachtrag", "nachtragNichtGelegt", b.geld.nachtragNichtGelegt.betrag, (id) => sums(id).nachtragNichtGelegt) },
   ];
   return {
     amount: [extra, ...unclear],
@@ -237,7 +245,7 @@ export function findCalculations(): Record<"amount" | "belegstand" | "risk", Cal
       {
         id: "risiko",
         title: "davon mit Kürzungsrisiko",
-        sums: scoped("risiko", b.davonMitKuerzungsrisiko.betrag, (id) => b.ergebnisse[id].vorpruefung?.davonMitKuerzungsrisiko ?? 0),
+        sums: scoped("risiko", "davonMitKuerzungsrisiko", b.davonMitKuerzungsrisiko.betrag, (id) => b.ergebnisse[id].vorpruefung?.davonMitKuerzungsrisiko ?? 0),
       },
     ],
   };
@@ -263,8 +271,8 @@ export type ClientRow = Row & {
 export const clientSlug = (short: string) => projectSlug(short);
 
 /** "Auftraggeber" (SPEZIFIKATION.md 2.2): facts from the documents of every project, never an assessment. */
-export function clientRows(): ClientRow[] {
-  return business().historie.map((h) => ({
+export function clientRows(b: FirmenErgebnis = business()): ClientRow[] {
+  return b.historie.map((h) => ({
     id: h.auftraggeber.id,
     groups: ["alle"],
     slug: clientSlug(h.auftraggeber.kurzname),

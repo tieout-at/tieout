@@ -13,7 +13,7 @@ export { vorpruefung, saetzePruefen, kalenderwoche, type Vorpruefung, type Satzp
 export { rechnungsabschluss, type Rechnungsabschluss, type AbschlussZeile, type Abschlagszahlung } from "./rechnungsabschluss";
 export { schlussbesprechung, type Schlussbesprechung, type BesprechungsGruppe, type BesprechungsPosten } from "./schlussbesprechung";
 export { belegquellen, nurAusserhalbErp, ausserhalbErp, BELEGQUELLE_TEXT, type Belegquelle, type AusserhalbErp } from "./belegquelle";
-export { pruefeProjekt, type ProjektErgebnis } from "./projekt";
+export { pruefeProjekt, ZAEHLENDE_ENTSCHEIDUNGEN, type Entscheidungssumme, type ProjektErgebnis, type ZaehlendeEntscheidung } from "./projekt";
 export { belegListe, belegTitel, gelesen, korrekturen, BELEG_GRUPPE, BELEGGRUPPE_TEXT, type BelegZeile, type Belegsgruppe, type Feldstand, type GelesenerWert, type Korrektur } from "./belege";
 export { auftraggeberHistorie, gleicherGrund, abrechnung, tageZwischen, imProjekt, type AuftraggeberHistorie, type HistorieKuerzung, type HistorieAbzug, type Abrechnung, type AbrechnungsZeile } from "./historie";
 export { pruefeFirma, statusfarbe, STATUS_TAGE, type FirmenErgebnis, type ProjektZeile, type Statusfarbe } from "./firma";

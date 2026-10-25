@@ -708,7 +708,7 @@ function FooterSum<R extends Row>({ column, chosen, visible, onChoose }: { colum
         className="group/sum flex h-full min-w-0 flex-1 items-center justify-end gap-1.5 px-3 text-fg-muted outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover"
         title={
           result && "cut" in result
-            ? "Für genau diese Einträge liefert der Rechenkern keine Summe: ein Filter teilt die Gruppe, oder eine Entscheidung ist nur in diesem Browser vermerkt und wird erst mit der Anmeldung gerechnet."
+            ? "Für genau diese Einträge liefert der Rechenkern keine Summe: ein Filter teilt die Gruppe."
             : result
               ? `${result.calculation.title} ${result.sum.text}`
               : undefined

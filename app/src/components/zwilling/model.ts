@@ -8,7 +8,7 @@ import type { TwinBeleg, TwinCell, TwinFind, TwinGroup, TwinView } from "@/lib/t
 import { CFG } from "./config";
 
 export type Tone = "belegt" | "fehlt" | "nachtrag" | "pauschale";
-export type BlockKey = "zusaetzlich" | "klaerung" | "pauschale";
+export type BlockKey = "zusaetzlich" | "klaerung" | "pauschale" | "nicht_verrechnen";
 export type CellRef = { area: "grid" | "ohne"; index: number };
 
 export type TickRow = {
@@ -88,6 +88,7 @@ const BLOCK_LABEL: Record<BlockKey, string> = {
   zusaetzlich: "zusätzlich verrechenbar",
   klaerung: "in Klärung",
   pauschale: "Pauschale laut Vertrag",
+  nicht_verrechnen: "Nicht verrechnen",
 };
 
 export function plural(n: number, one: string, many: string): string {
@@ -179,7 +180,8 @@ export function buildModel(view: TwinView, cfg = CFG): Model {
 
   const finds = new Map<string, FindInfo>();
   for (const f of view.finds) {
-    const tone: Tone = f.belegstand ? TONE[f.belegstand.state] : "pauschale";
+    // a find set to "Nicht verrechnen" is drawn grey like a Pauschale: it counts in no money word
+    const tone: Tone = f.belegstand && f.bucket !== "nicht_verrechnen" ? TONE[f.belegstand.state] : "pauschale";
     finds.set(f.number, {
       find: f,
       tone,
@@ -192,7 +194,7 @@ export function buildModel(view: TwinView, cfg = CFG): Model {
   }
 
   const sorted = [...finds.values()].sort((a, b) => b.find.amount.cent - a.find.amount.cent);
-  const blocks: Block[] = (["zusaetzlich", "klaerung", "pauschale"] as const)
+  const blocks: Block[] = (["zusaetzlich", "klaerung", "pauschale", "nicht_verrechnen"] as const)
     .map((key): Block => ({
       key,
       label: BLOCK_LABEL[key],
@@ -200,8 +202,9 @@ export function buildModel(view: TwinView, cfg = CFG): Model {
       quiet: key === "zusaetzlich" && view.money.atRisk ? { label: "davon mit Kürzungsrisiko", amount: view.money.atRisk } : null,
       finds: sorted.filter((f) => f.block === key).map((f) => f.find.number),
     }))
-    // "zusätzlich verrechenbar" and "in Klärung" always show, also at 0,00 € (SPEZIFIKATION.md 7.2); Pauschalen only when there are any
-    .filter((b) => b.key !== "pauschale" || b.finds.length > 0);
+    // "zusätzlich verrechenbar" and "in Klärung" always show, also at 0,00 € (SPEZIFIKATION.md 7.2); Pauschalen and finds
+    // set to "Nicht verrechnen" in this browser only when there are any, without an amount: they count in no sum
+    .filter((b) => b.key === "zusaetzlich" || b.key === "klaerung" || b.finds.length > 0);
   const largest = Math.max(1, ...blocks.map((b) => b.finds.reduce((s, n) => s + Math.max(0, finds.get(n)!.find.amount.cent), 0)));
   for (const f of finds.values()) f.share = Math.max(0, f.find.amount.cent) / largest;
 
