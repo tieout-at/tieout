@@ -25,11 +25,11 @@ npm run check
 | `src/belegquelle.ts` | "Belegquelle", "nur außerhalb ERP" per money word | ported, split by money word |
 | `src/belege.ts` | the Belege as a list: readable title, the website's group (Systeme, Dokumente, Kommunikation), review state of the fields read from each, duplicates, the finds each proves; every correction for the Verlauf; every value read from one Beleg with page and place (`gelesen`, for the original viewer) | new |
 | `src/historie.ts` | Auftraggeber history, "gleicher Grund", settlement of closed projects | ported (`historie.ts`, `abrechnung.ts`) |
-| `src/projekt.ts`, `src/firma.ts` | one project through the run; business level with status colours | rewritten (`pruefe.ts`), ported (`firma.ts`) |
+| `src/projekt.ts`, `src/firma.ts` | one project through the run; business level with status colours; the money words split by decision (`jeEntscheidung`, step 6b) | rewritten (`pruefe.ts`), ported (`firma.ts`) |
 | `src/stand.ts` | the twin as known on a given day (Verlauf of a find, replay of a run) | new |
 | `src/beispiel/` | synthetic sample company Kronfeld Haustechnik with the five projects of solution list v3 | mechanics of the v1 generator, data rewritten |
 
-Entry points: `pruefeFirma(firmendaten, entscheidungen)` for the business, `pruefeProjekt(datensatz, optionen)` for one project; `beispielFirma()` from `@tieout/kern/beispiel` gives the sample data. Decisions on finds are an append-only list; at business level their key carries the project id (`p1/regie:9`).
+Entry points: `pruefeFirma(firmendaten, entscheidungen)` for the business, `pruefeProjekt(datensatz, optionen)` for one project; `beispielFirma()` from `@tieout/kern/beispiel` gives the sample data. Decisions on finds are an append-only list; at business level their key carries the project id (`p1/regie:9`). Since step 6b `app/` runs the core in the browser with the decisions recorded there (`app/src/lib/live.ts`), only once there is one; without decisions every figure is the one the pages were built with.
 
 Identifiers follow the German vocabulary of the specification (section 6), as the v1 core did; comments and docs are English.
 

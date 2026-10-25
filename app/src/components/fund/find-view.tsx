@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/components/zwilling/use-media";
 import { appendTask, currentState, decide, localTime, onStorageChange, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
 import type { FindRecord, SourceRef } from "@/lib/finds";
+import { useLive } from "@/lib/live";
 import type { ActivityEntry, Highlight } from "@/lib/records";
 import { cn } from "@/lib/utils";
 import { DecisionBar } from "./decision-bar";
@@ -34,6 +35,9 @@ export function FindView({ record }: { record: FindRecord }) {
   const phone = useMediaQuery("(max-width: 767px)", false);
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  // with a decision in this browser the core runs here too (live.ts): the money word and the Kürzungsrisiko follow it
+  const live = useLive();
+  const highlights = live?.findHighlights(record.slug) ?? record.highlights;
 
   // the static page shows the core's state; what this browser recorded replaces it after the first paint
   useEffect(() => {
@@ -123,7 +127,7 @@ export function FindView({ record }: { record: FindRecord }) {
           onTask={(t) => setTasks(appendTask({ id: `aufgabe-${Date.now()}`, fundSchluessel: record.key, fund: `${record.number} ${record.project.name}`, href: `/funde/${record.slug}/`, zeit: localTime(), wer: "Abrechnung", ...t }))}
         />
         <div className="flex flex-col gap-6 px-6 pt-1 pb-10 max-md:px-4">
-          <Highlights items={[...record.highlights, decisionCard]} title="Auf einen Blick" columns={4} />
+          <Highlights items={[...highlights, decisionCard]} title="Auf einen Blick" columns={4} />
           <WeakSpot record={record} active={source} onOpen={open} />
           <CalcPath calc={record.calc} active={source} onOpen={open} />
           <EvidenceList evidence={record.evidence} active={source} onOpen={open} />

@@ -2,7 +2,8 @@
  * The find page (SPEZIFIKATION.md 3.2, 4.2, 4.3 "Rechenweg" and 7.3 at 1:10), derived from `kern/` at build time like
  * the record pages in `records.ts`: Rechenweg step by step with its sources, the Belege, the Kürzungsrisiko of the
  * Vorprüfung with its Abhilfe, the Verlauf, and the original of every source. Every amount is a figure of the core
- * formatted with `euro()`. Client components import only the types of this file.
+ * formatted with `euro()`; the highlights are computed again in the browser with the decisions recorded there
+ * (`live.ts`). Client components import only the types of this file.
  */
 
 import {
@@ -19,6 +20,7 @@ import {
   type Datensatz,
   type Einheit,
   type Entscheidungsstand,
+  type FirmenErgebnis,
   type Fund,
   type Nachweis,
   type Quelle,
@@ -112,8 +114,7 @@ function sourceRef(d: Datensatz, q: Quelle): SourceRef {
 }
 
 /** Every find of the open projects with its project, in the order of the core. */
-function allFinds() {
-  const b = business();
+function allFinds(b: FirmenErgebnis = business()) {
   return b.projekte.flatMap((p) => {
     const e = b.ergebnisse[p.projektId];
     if (!e.abgleich.laeuft) return [];
@@ -162,29 +163,19 @@ export function findSearchEntries(): { id: string; title: string; hint: string; 
   }));
 }
 
-/** The find page of one find; throws for an unknown slug (the pages are generated from `findSlugs()`). */
-export function findRecord(slug: string): FindRecord {
-  const list = allFinds();
-  const at = list.findIndex((x) => x.slug === slug);
-  if (at < 0) throw new Error(`Unknown find ${slug}`);
-  const { f, d, p, e } = list[at];
-  const b = business();
-  const inProject = list.filter((x) => x.p.projektId === p.projektId);
-  const index = inProject.findIndex((x) => x.slug === slug);
-
-  const risk = (e.vorpruefung?.risiken ?? []).find((r) => r.fundSchluessel === f.schluessel) ?? null;
-  const sameReason = risk ? (b.gleicherGrund[`${p.projektId}/${risk.schluessel}`]?.[0]?.text ?? null) : null;
-  const money = f.belegstand === null ? null : f.belegstand === "belegt" ? "zusätzlich verrechenbar" : "in Klärung";
-
-  const calcSteps = steps(d, f);
-  const total = f.rechenweg.schritte.find((s) => s.summe);
-  const evidence = f.nachweise.map((n, i): EvidenceItem => ({ id: `beleg-${i}`, kind: n.art, title: n.titel, text: n.text, date: n.datum ? datumText(n.datum) : null, source: sourceRef(d, n.quelle) }));
+/**
+ * "Auf einen Blick" of a find: the Betrag with the money word it counts in, the Belegstand and the Kürzungsrisiko of the
+ * Vorprüfung. A find set to "Nicht verrechnen" counts in no money word and is in no Entwurf, so it has no Kürzungsrisiko.
+ */
+function highlightsOf({ f, d, e }: ReturnType<typeof allFinds>[number]): Highlight[] {
+  const excluded = f.entscheidung === "nicht_verrechnen";
+  const risk = excluded ? null : ((e.vorpruefung?.risiken ?? []).find((r) => r.fundSchluessel === f.schluessel) ?? null);
+  const money = excluded ? "zählt in keiner Summe" : f.belegstand === null ? null : f.belegstand === "belegt" ? "zusätzlich verrechenbar" : "in Klärung";
   const messages = new Set(d.meldungen.map((m) => m.id));
   const files = new Set(f.nachweise.filter((n) => !messages.has(n.quelle.belegId)).map((n) => n.quelle.belegId)).size;
   const fromMessages = new Set(f.nachweise.filter((n) => messages.has(n.quelle.belegId)).map((n) => n.quelle.belegId)).size;
   const count = [files ? `${files} ${files === 1 ? "Beleg" : "Belege"}` : "", fromMessages ? `${fromMessages} ${fromMessages === 1 ? "WhatsApp-Meldung" : "WhatsApp-Meldungen"}` : ""].filter(Boolean).join(", ");
-
-  const highlights: Highlight[] = [
+  return [
     {
       id: "betrag",
       title: "Betrag",
@@ -202,14 +193,40 @@ export function findRecord(slug: string): FindRecord {
       id: "risiko",
       title: "Kürzungsrisiko",
       // a find in Klärung is not in the Entwurf yet, so the Vorprüfung has not looked at it
-      value: risk ? KUERZUNGSGRUND_TEXT[risk.grund] : f.belegstand === "belegt" ? "keines" : "noch nicht geprüft",
+      value: risk ? KUERZUNGSGRUND_TEXT[risk.grund] : excluded ? "entfällt" : f.belegstand === "belegt" ? "keines" : "noch nicht geprüft",
       lines: risk
         ? [risk.zustand === "droht" ? `droht für ${euro(risk.betrag)}` : `schon gekürzt ${euro(risk.betrag)}`]
-        : [f.belegstand === "belegt" ? "die Vorprüfung meldet hier nichts" : "erst mit Beleg in der Vorprüfung"],
+        : [excluded ? "der Fund wird nicht verrechnet" : f.belegstand === "belegt" ? "die Vorprüfung meldet hier nichts" : "erst mit Beleg in der Vorprüfung"],
       status: risk ? "rot" : undefined,
       href: risk ? "#kuerzungsrisiko" : undefined,
     },
   ];
+}
+
+/** The highlights of one find with the decisions in `b`; null for an unknown slug. */
+export function findHighlights(slug: string, b: FirmenErgebnis): Highlight[] | null {
+  const x = allFinds(b).find((y) => y.slug === slug);
+  return x ? highlightsOf(x) : null;
+}
+
+/** The find page of one find; throws for an unknown slug (the pages are generated from `findSlugs()`). */
+export function findRecord(slug: string): FindRecord {
+  const list = allFinds();
+  const at = list.findIndex((x) => x.slug === slug);
+  if (at < 0) throw new Error(`Unknown find ${slug}`);
+  const { f, d, p, e } = list[at];
+  const b = business();
+  const inProject = list.filter((x) => x.p.projektId === p.projektId);
+  const index = inProject.findIndex((x) => x.slug === slug);
+
+  const risk = (e.vorpruefung?.risiken ?? []).find((r) => r.fundSchluessel === f.schluessel) ?? null;
+  const sameReason = risk ? (b.gleicherGrund[`${p.projektId}/${risk.schluessel}`]?.[0]?.text ?? null) : null;
+  const money = f.belegstand === null ? null : f.belegstand === "belegt" ? "zusätzlich verrechenbar" : "in Klärung";
+
+  const calcSteps = steps(d, f);
+  const total = f.rechenweg.schritte.find((s) => s.summe);
+  const evidence = f.nachweise.map((n, i): EvidenceItem => ({ id: `beleg-${i}`, kind: n.art, title: n.titel, text: n.text, date: n.datum ? datumText(n.datum) : null, source: sourceRef(d, n.quelle) }));
+  const highlights = highlightsOf(list[at]);
 
   // the Belege behind the find, for its Verlauf: corrections to them and the WhatsApp-Meldungen confirmed
   const quellen = [...f.nachweise.map((n) => n.quelle), ...f.rechenweg.schritte.flatMap((s) => s.quellen ?? [])];

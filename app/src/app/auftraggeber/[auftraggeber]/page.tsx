@@ -7,9 +7,10 @@ import { Highlights } from "@/components/record/highlights";
 import { MiniTable } from "@/components/record/mini-table";
 import { Page } from "@/components/shell/page";
 import { RecordHead } from "@/components/shell/record-head";
-import { Tag, type TagColour } from "@/components/table/tag";
+import { Tag } from "@/components/table/tag";
 import { clientRows } from "@/lib/kern-data";
 import { clientRecord } from "@/lib/records";
+import { ClientProjects } from "./client-projects";
 
 type Props = { params: Promise<{ auftraggeber: string }> };
 
@@ -29,7 +30,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: find((await params).auftraggeber).name };
 }
 
-const COLOUR: Record<string, TagColour> = { rot: "red", gelb: "yellow", gruen: "green", grau: "grey" };
 
 const projectLink = (p: { name: string; href: string }) => (
   <Link href={p.href} className="rounded-xs outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
@@ -75,17 +75,7 @@ export default async function AuftraggeberRecordPage({ params }: Props) {
             </section>
           )}
 
-          <MiniTable
-            title="Projekte"
-            rows={r.projects}
-            columns={[
-              { id: "name", title: "Projekt", className: "whitespace-nowrap", cell: (p) => projectLink({ name: p.name, href: `/projekte/${p.slug}/` }) },
-              { id: "status", title: "Status", className: "whitespace-nowrap", cell: (p) => <Tag colour={COLOUR[p.status.colour]}>{p.status.text}</Tag> },
-              { id: "date", title: "Datum", cell: (p) => p.date && <span className="text-fg-secondary">{p.date.label} <span className="text-fg tabular-nums">{p.date.text}</span></span> },
-              { id: "extra", title: "Zusätzlich verrechenbar", align: "right", cell: (p) => p.extra?.text },
-              { id: "unclear", title: "In Klärung", align: "right", cell: (p) => p.unclear?.text },
-            ]}
-          />
+          <ClientProjects rows={r.projects} />
 
           <MiniTable
             title="Kürzungen"

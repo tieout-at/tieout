@@ -1,8 +1,9 @@
 /**
  * View model of the page "Übersicht" (Digitaler Zwilling): the Belege of the folder, the twin (Ebene 1 "Ihr Betrieb" and
  * the Abgleich of Ebene 2: beauftragt, erbracht, verrechnet per position) and the money, with every link from a finding
- * back to the Belege that prove it. Computed from `kern/` while the page is built; the client draws it and never adds
- * an amount (SPEZIFIKATION.md 4.4, decided with Maxi S. on 24.10.2026).
+ * back to the Belege that prove it. Computed from `kern/` while the page is built, and again in the browser with the
+ * decisions recorded there (`live.ts`); the client draws it and never adds an amount (SPEZIFIKATION.md 4.4, decided
+ * with Maxi S. on 24.10.2026).
  */
 
 import {
@@ -18,6 +19,7 @@ import {
   type BelegArt,
   type Belegstand,
   type Belegsgruppe,
+  type FirmenErgebnis,
   type Fund,
   type Positionszeile,
 } from "@tieout/kern";
@@ -96,8 +98,8 @@ export type TwinFind = {
   title: string;
   /** "4 Positionen über dem Leistungsverzeichnis", "nicht unterschrieben". */
   detail: string;
-  /** Which money word the finding belongs to; never added across both. */
-  bucket: "zusaetzlich" | "klaerung" | "pauschale";
+  /** Which money word the finding belongs to; never added across both. A find set to "Nicht verrechnen" is in none. */
+  bucket: "zusaetzlich" | "klaerung" | "pauschale" | "nicht_verrechnen";
   belegstand: { state: Belegstand; text: string } | null;
   amount: { cent: number; text: string };
   /** Cells of the finding: position numbers, or the id of its row without position. */
@@ -154,17 +156,15 @@ function findLabel(f: Fund): string {
 const BUCKET: Record<Belegstand, TwinFind["bucket"]> = { belegt: "zusaetzlich", beleg_fehlt: "klaerung", nachtrag_nicht_gelegt: "klaerung" };
 
 /** Projects that have an overview: the open ones the core compares. */
-export function twinProjects(): string[] {
-  const b = business();
+export function twinProjects(b: FirmenErgebnis = business()): string[] {
   return b.projekte.filter((p) => b.ergebnisse[p.projektId].abgleich.laeuft).map((p) => p.projektId);
 }
 
 /** The overview of one open project; null for a project that is not compared (Schlussrechnung submitted, closed). */
-export function twinView(projektId: string): TwinView | null {
-  const b = business();
+export function twinView(projektId: string, b: FirmenErgebnis = business()): TwinView | null {
   const d = firm().projekte.find((x) => x.projekt.id === projektId);
   const e = b.ergebnisse[projektId];
-  const row = projectRows().find((r) => r.id === projektId);
+  const row = projectRows(b).find((r) => r.id === projektId);
   if (!d || !row || !e.abgleich.laeuft) return null;
   const p = b.projekte.find((x) => x.projektId === projektId)!;
   const h = b.historie.find((x) => x.auftraggeber.id === p.auftraggeber.id)!;
@@ -263,7 +263,7 @@ export function twinView(projektId: string): TwinView | null {
       kind: FUND_ART_TEXT[f.art],
       title: f.titel,
       detail: f.untertitel,
-      bucket: f.belegstand ? BUCKET[f.belegstand] : "pauschale",
+      bucket: f.entscheidung === "nicht_verrechnen" ? "nicht_verrechnen" : f.belegstand ? BUCKET[f.belegstand] : "pauschale",
       belegstand: f.belegstand ? { state: f.belegstand, text: BELEGSTAND_TEXT[f.belegstand] } : null,
       amount: { cent: f.betrag, text: euro(f.betrag) },
       cells: cellsOf(f.nr),

@@ -189,6 +189,21 @@ const SCREENS = [
       await page.getByRole("dialog").waitFor();
     },
   },
+  // after decisions in this browser (step 6b): the core runs in the browser and every sum follows; last, because they stay
+  { name: "entschieden-projekt", path: "/projekte/wohnpark-mooshaim/", decided: true },
+  { name: "entschieden-projekt-funde-board", path: "/projekte/wohnpark-mooshaim/funde/", decided: true, act: (page) => showBoard(page) },
+  { name: "entschieden-funde-board", path: "/funde/", decided: true, act: (page) => showBoard(page) },
+  { name: "entschieden-projekte", path: "/projekte/", decided: true },
+  { name: "entschieden-fundseite", path: "/funde/wohnpark-mooshaim-f1/", decided: true },
+  { name: "entschieden-uebersicht", path: "/uebersicht/", decided: true },
+];
+
+/** Decisions as the decision bar records them: F1 not to be invoiced, F2 checked and released, Bürohaus F1 checked under its earlier key. */
+const DECISIONS = [
+  { fundSchluessel: "p1/plan:H-201:D", zeit: "2026-10-25T09:10", wer: "Abrechnung", stand: "nicht_verrechnen", grund: "Mit Nachtrag abgegolten" },
+  { fundSchluessel: "p1/regie:9", zeit: "2026-10-25T09:20", wer: "Abrechnung", stand: "geprueft" },
+  { fundSchluessel: "p1/regie:9", zeit: "2026-10-25T09:40", wer: "Geschäftsführung", stand: "freigegeben" },
+  { fundSchluessel: "p2/meldung:P2-W1", zeit: "2026-10-25T09:30", wer: "Abrechnung", stand: "geprueft" },
 ];
 
 /** Switches a find table to the board, unless the browser already remembers it. */
@@ -218,6 +233,10 @@ try {
       if (screen.mobileOnly && size.width >= 768) continue;
       current = screen;
       await page.goto(base + screen.path, { waitUntil: "networkidle" });
+      if (screen.decided && !(await page.evaluate(() => localStorage.getItem("tieout.entscheidungen.v1")))) {
+        await page.evaluate((list) => localStorage.setItem("tieout.entscheidungen.v1", JSON.stringify(list)), DECISIONS);
+        await page.reload({ waitUntil: "networkidle" });
+      }
       await page.evaluate(() => document.fonts.ready);
       if (screen.act) await screen.act(page);
       await page.waitForTimeout(250);

@@ -3,6 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useId, useMemo, useReducer, useRef, useState } from "react";
 
+import { useLive } from "@/lib/live";
 import type { TwinView } from "@/lib/twin";
 import { cn } from "@/lib/utils";
 import { CFG } from "./config";
@@ -67,7 +68,7 @@ function parseTarget(value: string | undefined): Target | null {
   const kind = value.slice(0, i);
   const id = value.slice(i + 1);
   if (kind === "fund" || kind === "tick") return { kind, id };
-  if (kind === "block" && (id === "zusaetzlich" || id === "klaerung" || id === "pauschale")) return { kind, id };
+  if (kind === "block" && (id === "zusaetzlich" || id === "klaerung" || id === "pauschale" || id === "nicht_verrechnen")) return { kind, id };
   if (kind === "gruppe" && (id === "systeme" || id === "dokumente" || id === "kommunikation" || id === "whatsapp")) return { kind, id };
   return null;
 }
@@ -87,9 +88,12 @@ function Step({ n, title, id, column, chevron, className }: { n: number; title: 
 
 /**
  * The page "Übersicht" (Digitaler Zwilling): Ihre Daten, the twin, the money, and the line from every finding back
- * to the Belege that prove it. The view comes computed from `kern/`; this component only draws and links it.
+ * to the Belege that prove it. The view comes computed from `kern/`, with a decision in this browser computed again by
+ * the core (live.ts); this component only draws and links it.
  */
-export function Zwilling({ view, projects }: { view: TwinView; projects: ProjectLink[] }) {
+export function Zwilling({ view: built, projects }: { view: TwinView; projects: ProjectLink[] }) {
+  const recomputed = useLive();
+  const view = recomputed?.twinView(built.project.slug) ?? built;
   const model = useMemo(() => buildModel(view), [view]);
   const [state, dispatch] = useReducer(reducer, INITIAL);
   const reduced = useReducedMotion();

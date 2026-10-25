@@ -91,7 +91,7 @@ export function matchingSum(calculation: Calculation, visible: Row[]): Sum | nul
 
 /**
  * The fixed sums of one column of a board: for each calculation whose group has cards in the column, its sum when the
- * column holds exactly the rows that sum covers, otherwise "cut" (the board says "keine feste Summe"). Never a new sum.
+ * column holds exactly the rows that sum covers, otherwise "cut" (the board says "nicht gerechnet"). Never a new sum.
  */
 export function columnSums(calculations: Calculation[], cards: Row[]): ({ title: string; text: string } | { title: string; cut: true })[] {
   return calculations
