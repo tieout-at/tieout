@@ -24,6 +24,7 @@ export function InvoiceView({ built }: { built: View }) {
   const v = useLive()?.invoiceView(built.project.id) ?? built;
   return (
     <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-10 px-6 py-5 max-md:gap-8 max-md:px-4 print:max-w-none print:px-0">
+      <p className="hidden text-xs font-medium print:block">Intern, nicht für {v.project.client.name}: mit Vorprüfung, Kalkulation und Untergrenzen. Für den Auftraggeber sind die Beweispakete.</p>
       <StatusBar v={v} />
       <ChangeList v={v} />
       <Settlement v={v} />
@@ -294,7 +295,7 @@ function Settlement({ v }: { v: View }) {
             </span>
           </div>
           <div className="flex flex-col gap-1 rounded-lg px-4 py-3 shadow-ring">
-            <span className="text-xs text-fg-secondary">Zahlungen nachgerechnet</span>
+            <span className="text-xs text-fg-secondary">Zahlungen nachgerechnet mit den Sätzen des Zahlungsavis</span>
             <ul className="flex flex-col">
               {s.payments.map((p) => (
                 <li key={p.invoice} className="flex min-h-9 items-center gap-2 text-xs [&:not(:last-child)]:shadow-line-bottom">
@@ -304,11 +305,17 @@ function Settlement({ v }: { v: View }) {
                   </span>
                   <span className="tabular-nums">{p.paid.text}</span>
                   <Tag colour={p.ok ? "green" : "red"} className="h-5 text-xs">
-                    {p.ok ? "stimmt" : "weicht ab"}
+                    {p.ok ? "wie Zahlungsavis" : "weicht ab"}
                   </Tag>
                 </li>
               ))}
             </ul>
+            {s.withheld.map((w) => (
+              <span key={w.kind} className="flex items-start gap-1.5 pt-1 text-xs text-fg-secondary">
+                <span aria-hidden className="mt-1 size-2 shrink-0 rounded-full bg-state-red" />
+                Darin schon einbehalten, ohne Vertragspunkt: {w.kind} {w.amount.text} ({w.invoices}).
+              </span>
+            ))}
           </div>
         </div>
       </div>

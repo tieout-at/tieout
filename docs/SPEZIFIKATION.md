@@ -262,7 +262,7 @@ Never less understandable than the website: the three step names, the Ebene 1 bo
 
 ### 4.4 Making the twin visible (decided 24.10.2026)
 
-**Decision (Maxi S., step 4):** candidate A, built as the page "Übersicht" at the top of "Digitaler Zwilling": per open project the flow Ihre Daten → Digitaler Zwilling → Ergebnis with the real data, where pointing at a finding or an amount lights exactly the Belege that prove it. The middle shows what the twin is: the knowledge of the business (Auftraggeber with its history, Vertrag, Preisbasis) and the Abgleich of the project, beauftragt, erbracht, verrechnet per position. Reached after two rounds with three, then four drafts, research of references and independent design, domain and code reviews; design in `DESIGN.md`. Candidate B (Belegabdeckung) stays for step 5 or 8. The draft text below is kept as the reasoning.
+**Decision (Maxi S., step 4):** candidate A, built as the page "Übersicht" at the top of "Digitaler Zwilling": per open project the flow Ihre Daten → Digitaler Zwilling → Ergebnis with the real data, where pointing at a finding or an amount lights exactly the Belege that prove it. The middle shows what the twin is: the knowledge of the business (Auftraggeber with its history, Vertrag, Preisbasis) and the Abgleich of the project, beauftragt, erbracht, verrechnet per position. Reached after two rounds with three, then four drafts, research of references and independent design, domain and code reviews; design in `DESIGN.md`. Candidate B (Belegabdeckung) was not built in step 8 (decided 25.10.2026): it needs to know which Beleg proves which position, which `kern/` does not hold yet, so it comes with the tab "Positionen". The draft text below is kept as the reasoning.
 
 #### Draft (23.10.2026)
 

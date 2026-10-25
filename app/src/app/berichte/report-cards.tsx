@@ -89,14 +89,14 @@ const quiet = "link-quiet";
 
 function FindChip({ f, withProject = true }: { f: FindLink; withProject?: boolean }) {
   return (
-    <span className="flex min-w-0 items-center gap-2">
+    <span className="flex min-w-0 items-center gap-x-2 max-md:flex-wrap">
       <Link href={f.href} className="inline-flex h-5 shrink-0 items-center rounded-xs bg-fill-subtle px-1 font-mono text-xs shadow-ring outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent">
         {f.number}
       </Link>
       <Link href={f.href} className={cn(quiet, "min-w-0 truncate max-md:line-clamp-2 max-md:whitespace-normal")}>
         {f.name}
       </Link>
-      {withProject && <span className="shrink-0 text-xs text-fg-muted max-md:hidden">{f.project.name}</span>}
+      {withProject && <span className="shrink-0 text-xs text-fg-muted max-md:basis-full max-md:pl-9">{f.project.name}</span>}
     </span>
   );
 }

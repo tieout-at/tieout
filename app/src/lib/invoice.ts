@@ -6,6 +6,7 @@
  */
 
 import {
+  ABZUG_TEXT,
   BELEGSTAND_TEXT,
   datumText,
   euro,
@@ -67,6 +68,8 @@ export type InvoiceView = {
     restforderung: Amount;
     contract: { restforderung: Amount; difference: SettlementLine[] };
     payments: { invoice: string; date: string; amount: Amount; cut: Amount; paid: Amount; paidOn: string; ok: boolean }[];
+    /** Rates without a contract item the Auftraggeber already withheld on the Abschlagsrechnungen (history of the core). */
+    withheld: { kind: string; invoices: string; amount: Amount }[];
   };
   check: {
     total: Amount;
@@ -183,6 +186,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
         // what "laut Vertrag" leaves out: the deductions without a contract item
         difference: lines.filter((l) => l.check?.state === "abzug_ohne_vertragspunkt" && !contractLines.some((c) => c.label === l.label && c.kind === l.kind)),
       },
+      withheld: b.historie.flatMap((h) => h.abzuege.filter((a) => a.projektId === projektId).map((a) => ({ kind: ABZUG_TEXT[a.art], invoices: a.rechnungen.join(", "), amount: amount(a.betrag) }))),
       payments: ra.abschlaege.map((a) => ({
         invoice: a.rechnungNr,
         date: datumText(a.datum),
@@ -250,7 +254,16 @@ export function invoiceList(b: FirmenErgebnis = business()): InvoiceListRow[] {
     const ab = b.abrechnungen[p.projektId];
     const href = `/projekte/${projectSlug(p.name)}/schlussrechnung/`;
     const base = { id: p.projektId, name: p.name, href, client: p.auftraggeber.kurzname, date: p.datum ? datumText(p.datum.wert) : null };
-    if (e.rechnungsabschluss) return { ...base, state: "Entwurf geprüft", date: p.datum?.art === "legen_bis" ? `legen bis ${datumText(p.datum.wert)}` : base.date, figure: { label: "Restforderung", amount: amount(e.rechnungsabschluss.restforderung) }, cut: null };
+    if (e.rechnungsabschluss) {
+      const open = e.abgleich.funde.filter((f) => f.entscheidung === "gefunden" || f.entscheidung === "geprueft").length;
+      return {
+        ...base,
+        state: open ? `Entwurf, ${open === 1 ? "1 Fund" : `${open} Funde`} offen` : "alle Funde entschieden",
+        date: p.datum?.art === "legen_bis" ? `legen bis ${datumText(p.datum.wert)}` : base.date,
+        figure: { label: "Restforderung", amount: amount(e.rechnungsabschluss.restforderung) },
+        cut: e.vorpruefung?.schonGekuerzt ? amount(e.vorpruefung.schonGekuerzt) : null,
+      };
+    }
     if (ab) return { ...base, state: "bezahlt", date: `Schlusszahlung ${datumText(ab.schlusszahlung.datum)}`, figure: { label: "Schlusszahlung", amount: amount(ab.schlusszahlung.betrag) }, cut: ab.gekuerzt ? amount(ab.gekuerzt) : null };
     if (p.stufe === "in_ausfuehrung") return { ...base, state: "in Ausführung, noch kein Entwurf", date: p.datum ? `letzte Abschlagsrechnung ${datumText(p.datum.wert)}` : null, figure: null, cut: null };
     return { ...base, state: "gelegt", figure: null, cut: null };
