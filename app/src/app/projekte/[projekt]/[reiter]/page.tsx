@@ -31,7 +31,7 @@ export default async function ProjectTabPage({ params }: Props) {
 
   if (reiter === "funde") {
     const rows = findRows().filter((r) => r.project.slug === project.slug);
-    if (rows.length) return <FindsTable rows={rows} calculations={findCalculations(rows)} project={project.slug} />;
+    if (rows.length) return <FindsTable rows={rows} calculations={findCalculations()} project={project.slug} />;
   }
 
   if (reiter === "vertrag") {

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { ENTSCHEIDUNG_TEXT } from "@tieout/kern";
 
-import { currentState, DECISION_TEXT, localTime, nextStep, type Decision } from "./decisions";
+import { currentState, decide, DECISION_TEXT, localTime, moves, nextStep, refusal, type Decision } from "./decisions";
 
 const d = (zeit: string, stand: Decision["stand"], key = "p1/plan:H-201:D"): Decision => ({ fundSchluessel: key, zeit, wer: "Abrechnung", stand });
 
@@ -23,6 +23,27 @@ describe("decisions on a find (append only)", () => {
     expect(nextStep("geprueft")).toMatchObject({ stand: "freigegeben", wer: "Geschäftsführung" });
     expect(nextStep("freigegeben")).toBeNull();
     expect(nextStep("nicht_verrechnen")?.stand).toBe("geprueft");
+  });
+
+  it("moves a card on the board only as the decision bar would, one step at a time", () => {
+    expect(moves("gefunden").map((m) => m.stand)).toEqual(["geprueft", "nicht_verrechnen"]);
+    expect(moves("geprueft").map((m) => m.stand)).toEqual(["freigegeben", "nicht_verrechnen"]);
+    expect(moves("freigegeben").map((m) => m.stand)).toEqual(["nicht_verrechnen"]);
+    expect(moves("nicht_verrechnen").map((m) => m.stand)).toEqual(["geprueft"]);
+    expect(moves("in_schlussrechnung")).toEqual([]);
+    expect(refusal("gefunden", "geprueft")).toBeNull();
+    expect(refusal("gefunden", "gefunden")).toBeNull();
+    expect(refusal("gefunden", "freigegeben")).toMatch(/Erst prüfen/);
+    expect(refusal("geprueft", "gefunden")).toMatch(/nicht zurückgenommen/);
+    expect(refusal("freigegeben", "in_schlussrechnung")).toMatch(/Schlussrechnung/);
+    expect(refusal("nicht_verrechnen", "gefunden")).toMatch(/wieder aufgenommen/);
+  });
+
+  it("refuses a decision the find can no longer take, so an old page cannot set it back", () => {
+    const entry = (stand: Decision["stand"]): Decision => ({ fundSchluessel: "p1/plan:H-201:D", zeit: "2026-10-25T10:00", wer: "Abrechnung", stand });
+    expect(decide(["p1/plan:H-201:D"], "freigegeben", entry("geprueft")).refused).toMatch(/nicht zurückgenommen/);
+    expect(decide(["p1/plan:H-201:D"], "geprueft", entry("geprueft")).refused).toBe("Der Fund steht schon auf Geprüft.");
+    expect(decide(["p1/plan:H-201:D"], "gefunden", entry("geprueft")).refused).toBeNull();
   });
 
   it("uses the words of the core", () => {

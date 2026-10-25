@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFilters, applySort, countText, filterOptions, footerSum, matchingSum, readState, type Access, type Calculation, type ViewState } from "./table";
+import { applyFilters, applySort, columnSums, countText, filterOptions, footerSum, matchingSum, readState, type Access, type Calculation, type ViewState } from "./table";
 
 type R = { id: string; groups: string[]; project: string; stand: string | null; cent: number | null };
 
@@ -86,5 +86,17 @@ describe("table", () => {
     );
     expect(saved).toEqual({ sort: view.sort, filters: [{ column: "project", values: ["Wohnpark"] }], hidden: [], calculations: { amount: null } });
     expect(readState(JSON.stringify({ sort: null }), view, columns).sort).toBeNull();
+  });
+
+  it("gives a board column only the fixed sums that cover exactly its cards", () => {
+    const unclear: Calculation = { id: "klaerung", title: "in Klärung", sums: [{ group: "klaerung", ids: ["p1/b"], text: "Klärung" }] };
+    expect(columnSums([extra, unclear], rows)).toEqual([
+      { title: "zusätzlich verrechenbar", text: "alle" },
+      { title: "in Klärung", text: "Klärung" },
+    ]);
+    // one card moved out: the column no longer holds a whole group, the other column holds part of it
+    expect(columnSums([extra, unclear], [rows[0], rows[1], rows[2]])).toEqual([{ title: "zusätzlich verrechenbar", cut: true }, { title: "in Klärung", text: "Klärung" }]);
+    expect(columnSums([extra, unclear], [rows[3]])).toEqual([{ title: "zusätzlich verrechenbar", cut: true }]);
+    expect(columnSums([extra, unclear], [])).toEqual([]);
   });
 });

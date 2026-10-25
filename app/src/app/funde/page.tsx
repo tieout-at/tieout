@@ -9,7 +9,7 @@ export default function FundePage() {
   const rows = findRows();
   return (
     <Page destination="funde">
-      <FindsTable rows={rows} calculations={findCalculations(rows)} />
+      <FindsTable rows={rows} calculations={findCalculations()} />
     </Page>
   );
 }

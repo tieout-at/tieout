@@ -24,6 +24,7 @@ import {
   type Entscheidungsstand,
   type FirmenErgebnis,
   type Firmendaten,
+  type Fund,
   type ProjektZeile,
   type Statusfarbe,
 } from "@tieout/kern";
@@ -54,6 +55,8 @@ export type ProjectRow = Row & {
 export type FindRow = Row & {
   number: string;
   title: string;
+  /** Short name as on the find page, with the word that matters ("14 Wohnungen Typ C: …, je 1 Heizkörper mehr"). */
+  name: string;
   detail: string;
   /** The find page. */
   href: string;
@@ -64,10 +67,14 @@ export type FindRow = Row & {
   amount: Amount;
   decision: string;
   decisionState: Entscheidungsstand;
+  /** The groups of its fixed sums while it counts; a decision "Nicht verrechnen" made in the browser takes them away. */
+  countedGroups: string[];
   /** Keys the same work had before; their decisions carry over. */
   earlierIds: string[];
   /** The Vorprüfung line that lies in this find. */
   risk: { number: string; reason: string; amount: Amount; alreadyCut: boolean } | null;
+  /** What closes the gap of a find in Klärung; named before a release, as on the find page. */
+  remedy: string | null;
   sources: string[];
   workDate: Dated;
   /** Link target for the original viewer (step 5): the first Beleg behind the find and its place. */
@@ -153,6 +160,17 @@ function moneyGroups(stand: Belegstand | null, decision: string, atRisk: boolean
   return ["klaerung", stand === "beleg_fehlt" ? "beleg_fehlt" : "nachtrag"];
 }
 
+/**
+ * Name and facts of a find's head. A find from a plan change is named by what changed ("14 Wohnungen Typ C: Wohnküche
+ * geteilt, je 1 Heizkörper mehr"), the plan index goes into the facts; every other find by its title up to the first colon.
+ */
+export function nameAndFacts(f: Fund): { name: string; facts: string[] } {
+  const at = f.titel.indexOf(": ");
+  if (at < 0) return { name: f.titel, facts: [f.untertitel, FUND_ART_TEXT[f.art]] };
+  const [before, after] = [f.titel.slice(0, at), f.titel.slice(at + 2)];
+  return f.art === "mehrmenge_plan" ? { name: after, facts: [before, FUND_ART_TEXT[f.art]] } : { name: before, facts: [after, FUND_ART_TEXT[f.art]] };
+}
+
 /** Every find of the open projects, in the order of the core (project, then F1 …). */
 export function findRows(): FindRow[] {
   const b = business();
@@ -167,8 +185,10 @@ export function findRows(): FindRow[] {
       return {
         id: `${p.projektId}/${f.schluessel}`,
         groups: moneyGroups(f.belegstand, f.entscheidung, atRisk),
+        countedGroups: moneyGroups(f.belegstand, "gefunden", atRisk),
         number: f.nr,
         title: f.titel,
+        name: nameAndFacts(f).name,
         detail: f.untertitel,
         href: `/funde/${findSlug(p.name, f.nr)}/`,
         project,
@@ -179,6 +199,7 @@ export function findRows(): FindRow[] {
         decisionState: f.entscheidung,
         earlierIds: f.fruehereSchluessel.map((k) => `${p.projektId}/${k}`),
         risk: risk ? { number: risk.nr, reason: KUERZUNGSGRUND_TEXT[risk.grund], amount: amount(risk.betrag), alreadyCut: risk.zustand === "schon_gekuerzt" } : null,
+        remedy: f.abhilfe ?? null,
         sources: (e.belegquellen[f.schluessel] ?? []).map((s) => BELEGQUELLE_TEXT[s]),
         workDate: dated(f.arbeitsdatum),
         original: q ? { belegId: q.belegId, page: q.seite } : null,
@@ -190,10 +211,12 @@ export function findRows(): FindRow[] {
 /**
  * Fixed sums of the find table, for the business and per project: "zusätzlich verrechenbar" under the amount,
  * "in Klärung" (and its two parts) under the Belegstand, "davon mit Kürzungsrisiko" (E13) under the risk column;
- * never one total of both money words.
+ * never one total of both money words. Always over every find: a page that shows one project passes its rows to the
+ * table, and the sums of the business must still cover all finds, or they would match that project's rows.
  */
-export function findCalculations(rows: FindRow[]): Record<"amount" | "belegstand" | "risk", Calculation[]> {
+export function findCalculations(): Record<"amount" | "belegstand" | "risk", Calculation[]> {
   const b = business();
+  const rows = findRows();
   const open = b.projekte.filter((p) => b.ergebnisse[p.projektId].abgleich.laeuft);
   const ids = (group: string, projektId?: string) => rows.filter((r) => r.groups.includes(group) && (!projektId || r.id.startsWith(`${projektId}/`))).map((r) => r.id);
   const scoped = (group: string, total: number, perProject: (projektId: string) => number): Sum[] => [

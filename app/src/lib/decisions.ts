@@ -62,6 +62,28 @@ export function nextStep(state: DecisionState): { stand: Decision["stand"]; labe
   }
 }
 
+export type Move = { stand: Decision["stand"]; label: string; wer: string };
+
+/** Every decision a find can take from its state, as the decision bar offers them: the next step and "Nicht verrechnen". */
+export function moves(state: DecisionState): Move[] {
+  const next = nextStep(state);
+  const no: Move[] = state === "nicht_verrechnen" || state === "in_schlussrechnung" ? [] : [{ stand: "nicht_verrechnen", label: "Nicht verrechnen", wer: "Abrechnung" }];
+  return [...(next ? [next] : []), ...no];
+}
+
+/**
+ * Why a card cannot be moved to a column of the board, or null when the move is a decision the find can take. One step
+ * at a time and never back: the Verlauf keeps what was decided, and "In der Schlussrechnung" is set by the invoice.
+ */
+export function refusal(from: DecisionState, to: DecisionState): string | null {
+  if (from === to || moves(from).some((m) => m.stand === to)) return null;
+  if (to === "in_schlussrechnung") return "In der Schlussrechnung steht ein Fund erst, wenn die Schlussrechnung ihn enthält.";
+  if (from === "in_schlussrechnung") return "Der Fund steht schon in der Schlussrechnung.";
+  if (to === "freigegeben") return "Erst prüfen, dann freigeben: ein Fund geht einen Schritt nach dem anderen.";
+  if (from === "nicht_verrechnen") return "Ein ausgeschlossener Fund wird zuerst wieder aufgenommen und geht dann als geprüft zur Freigabe.";
+  return "Eine Entscheidung wird nicht zurückgenommen. Der Fund kann auf Nicht verrechnen gesetzt werden, mit Grund.";
+}
+
 export function localTime(date = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -90,5 +112,25 @@ function append<T>(key: string, entry: T): T[] {
 
 export const readDecisions = () => read<Decision>(KEYS.decisions);
 export const appendDecision = (d: Decision) => append(KEYS.decisions, d);
+
+/**
+ * Records a decision only if the find can still take it in the latest list of this browser: another tab may have
+ * decided in the meantime, and an older page must not set a released find back. Returns the list and, if refused, why.
+ */
+export function decide(keys: readonly string[], fallback: DecisionState, entry: Decision): { list: Decision[]; refused: string | null } {
+  const fresh = readDecisions();
+  const from = currentState(fresh, keys, fallback);
+  const why = from === entry.stand ? `Der Fund steht schon auf ${DECISION_TEXT[from]}.` : refusal(from, entry.stand);
+  return why ? { list: fresh, refused: why } : { list: appendDecision(entry), refused: null };
+}
+
+/** Calls back when another tab of this browser records a decision or a task, so a page never decides on an old state. */
+export function onStorageChange(callback: () => void): () => void {
+  const listener = (e: StorageEvent) => {
+    if (e.key === null || e.key === KEYS.decisions || e.key === KEYS.tasks) callback();
+  };
+  window.addEventListener("storage", listener);
+  return () => window.removeEventListener("storage", listener);
+}
 export const readTasks = () => read<Task>(KEYS.tasks);
 export const appendTask = (t: Task) => append(KEYS.tasks, t);

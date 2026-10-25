@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   Eye,
   EyeOff,
+  Kanban,
   ListFilter,
   Minus,
   Plus,
@@ -54,7 +55,8 @@ export type Column<R> = Access<R> & {
 /**
  * Table in Attio's layout (measured 24.10.2026 on app.attio.com, "Companies"): view bar and sort and filter bar of
  * 48 px, header 40 px, rows 36 px with 1 px lines, the first column 250 px and fixed, checkboxes, a "+" to add a
- * column, and the footer with the counter and a sum per column. The view is remembered in the browser.
+ * column, and the footer with the counter and a sum per column. The view is remembered in the browser. A view of the
+ * kind "board" shows the same sorted and filtered rows as Attio's kanban ("Pipeline"), drawn by the page.
  */
 export function DataTable<R extends Row>({
   name,
@@ -62,6 +64,8 @@ export function DataTable<R extends Row>({
   columns,
   views,
   noun,
+  board,
+  phoneRow,
 }: {
   /** Key under which the browser remembers the view. */
   name: string;
@@ -69,6 +73,10 @@ export function DataTable<R extends Row>({
   columns: Column<R>[];
   views: View[];
   noun: Noun;
+  /** Draws the rows of a board view, sorted and filtered like the table. */
+  board?: (visible: R[]) => ReactNode;
+  /** Below 768 px the rows become a list, each row drawn by the page, instead of the wide grid (customer test 2). */
+  phoneRow?: (r: R) => ReactNode;
 }) {
   const storageKey = `tieout.tabelle.${name}`;
   const ids = columns.map((c) => c.id);
@@ -107,6 +115,7 @@ export function DataTable<R extends Row>({
   const access = useMemo(() => Object.fromEntries(columns.map((c) => [c.id, c])), [columns]);
   const visible = useMemo(() => applySort(applyFilters(rows, state.filters, access), state.sort, access), [rows, state.filters, state.sort, access]);
   const shown = columns.filter((c, i) => i === 0 || !state.hidden.includes(c.id));
+  const isBoard = view.kind === "board" && board !== undefined;
 
   const switchView = (v: View) => {
     setViewId(v.id);
@@ -134,12 +143,80 @@ export function DataTable<R extends Row>({
         state={state}
         onState={update}
         onReset={() => setState(view.state)}
+        board={isBoard}
         selected={selected.size}
         onClearSelection={() => setSelected(new Set())}
       />
       <SortFilterBar rows={rows} columns={columns} state={state} onState={update} />
 
-      <div role="table" aria-label={view.title} aria-rowcount={visible.length + 2} className="relative min-h-0 flex-1 overflow-auto overscroll-x-none">
+      {isBoard ? (
+        <div className="relative flex min-h-0 flex-1 flex-col">{board(visible)}</div>
+      ) : (
+        <>
+          {phoneRow && list(phoneRow)}
+          {grid()}
+        </>
+      )}
+    </div>
+  );
+
+  function empty(className: string) {
+    return (
+      <div className={cn("flex flex-col items-center gap-3 px-4 py-16 text-center", className)}>
+        <p className="text-fg-secondary">Keine {noun.many} für diesen Filter.</p>
+        <button
+          type="button"
+          onClick={() => update({ filters: [] })}
+          className="flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 shadow-button hover:bg-row-hover max-md:h-11"
+        >
+          <RotateCcw className="size-4 text-fg-secondary" aria-hidden />
+          Filter entfernen
+        </button>
+      </div>
+    );
+  }
+
+  // the phone list: one row per entry as the page draws it, then the counter and the fixed sums the footer would show
+  function list(row: (r: R) => ReactNode) {
+    const sums = shown.flatMap((c): { id: string; title: string; text: string | null }[] => {
+      const result = c.calculations?.length ? footerSum(c.calculations, state.calculations[c.id] ?? null, visible) : null;
+      if (!result) return [];
+      const chosen = c.calculations!.find((x) => x.id === state.calculations[c.id])?.title ?? c.title;
+      return "cut" in result ? [{ id: c.id, title: chosen, text: null }] : [{ id: c.id, title: result.calculation.title, text: result.sum.text }];
+    });
+    return (
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:hidden">
+        <ul aria-label={view.title}>
+          {visible.map((r) => (
+            <li key={r.id} className="shadow-line-bottom">
+              {row(r)}
+            </li>
+          ))}
+        </ul>
+        {visible.length === 0 && empty("")}
+        <div className="flex-1" />
+        <div className="sticky bottom-0 flex flex-col gap-0.5 bg-surface px-4 py-2 shadow-[inset_0_1px_0_var(--color-line)]">
+          <span className="text-fg-secondary">{countText(visible.length, rows.length, noun)}</span>
+          {sums.map((s) => (
+            <span key={s.id} className="flex items-baseline justify-between gap-3">
+              <span className="text-xs text-fg-secondary">{s.title}</span>
+              {s.text ? <span className="tabular-nums">{s.text}</span> : <span className="text-xs text-fg-muted">keine feste Summe</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // a plain function, not a component, so the grid keeps its scroll position between renders
+  function grid() {
+    return (
+      <div
+        role="table"
+        aria-label={view.title}
+        aria-rowcount={visible.length + 2}
+        className={cn("relative min-h-0 flex-1 overflow-auto overscroll-x-none", phoneRow && "max-md:hidden")}
+      >
         <div className="flex min-h-full w-max min-w-full flex-col">
           <div role="rowgroup" className="sticky top-0 z-20 bg-surface">
             <div role="row" className="flex h-10">
@@ -193,19 +270,7 @@ export function DataTable<R extends Row>({
             })}
           </div>
 
-          {visible.length === 0 && (
-            <div className="sticky left-0 flex w-[min(100%,100vw)] flex-col items-center gap-3 px-4 py-16 text-center">
-              <p className="text-fg-secondary">Keine {noun.many} für diesen Filter.</p>
-              <button
-                type="button"
-                onClick={() => update({ filters: [] })}
-                className="flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 shadow-button hover:bg-row-hover max-md:h-11"
-              >
-                <RotateCcw className="size-4 text-fg-secondary" aria-hidden />
-                Filter entfernen
-              </button>
-            </div>
-          )}
+          {visible.length === 0 && empty("sticky left-0 w-[min(100%,100vw)]")}
           <div className="flex-1" />
 
           <div role="rowgroup" className="sticky bottom-0 z-20 bg-surface">
@@ -237,8 +302,8 @@ export function DataTable<R extends Row>({
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 function ViewBar<R>({
@@ -249,6 +314,7 @@ function ViewBar<R>({
   state,
   onState,
   onReset,
+  board,
   selected,
   onClearSelection,
 }: {
@@ -259,6 +325,7 @@ function ViewBar<R>({
   state: ViewState;
   onState: (patch: Partial<ViewState>) => void;
   onReset: () => void;
+  board: boolean;
   selected: number;
   onClearSelection: () => void;
 }) {
@@ -268,7 +335,7 @@ function ViewBar<R>({
       <DropdownMenu>
         <DropdownMenuTrigger className={barButton}>
           <span className="flex size-4 items-center justify-center rounded-xs bg-fg text-white" aria-hidden>
-            <Table className="size-3" />
+            {board ? <Kanban className="size-3" /> : <Table className="size-3" />}
           </span>
           <span className="max-w-56 truncate">{view.title}</span>
           <ChevronDown className="size-4 text-fg-secondary" aria-hidden />
@@ -278,6 +345,7 @@ function ViewBar<R>({
             <DropdownMenuLabel>Ansichten</DropdownMenuLabel>
             {views.map((v) => (
               <DropdownMenuItem key={v.id} onClick={() => onView(v)}>
+                {v.kind === "board" ? <Kanban /> : <Table />}
                 <span className="flex-1">{v.title}</span>
                 {v.id === view.id && <Check aria-label="gewählt" />}
               </DropdownMenuItem>
@@ -286,40 +354,42 @@ function ViewBar<R>({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Popover>
-        <PopoverTrigger className={barButton}>
-          <SlidersHorizontal className="size-4 text-fg-secondary" aria-hidden />
-          Ansicht
-          <ChevronDown className="size-4 text-fg-secondary" aria-hidden />
-        </PopoverTrigger>
-        <PopoverContent className="w-64">
-          <PopoverTitle>Spalten</PopoverTitle>
-          <ul>
-            {columns.slice(1).map((c) => {
-              const hidden = state.hidden.includes(c.id);
-              return (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    aria-pressed={!hidden}
-                    onClick={() => onState({ hidden: hidden ? state.hidden.filter((h) => h !== c.id) : [...state.hidden, c.id] })}
-                    className={menuItem}
-                  >
-                    <c.icon className="size-4 text-fg-secondary" aria-hidden />
-                    <span className={cn("flex-1 text-left", hidden && "text-fg-muted")}>{c.title}</span>
-                    {hidden ? <EyeOff className="size-4 text-fg-faint" aria-label="ausgeblendet" /> : <Eye className="size-4 text-fg-secondary" aria-label="sichtbar" />}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          <div className="-mx-1 my-1 h-px bg-line" />
-          <button type="button" disabled={!changed} onClick={onReset} className={cn(menuItem, "disabled:text-fg-muted")}>
-            <RotateCcw className="size-4 text-fg-secondary" aria-hidden />
-            Ansicht zurücksetzen
-          </button>
-        </PopoverContent>
-      </Popover>
+      {!board && (
+        <Popover>
+          <PopoverTrigger className={barButton}>
+            <SlidersHorizontal className="size-4 text-fg-secondary" aria-hidden />
+            Ansicht
+            <ChevronDown className="size-4 text-fg-secondary" aria-hidden />
+          </PopoverTrigger>
+          <PopoverContent className="w-64">
+            <PopoverTitle>Spalten</PopoverTitle>
+            <ul>
+              {columns.slice(1).map((c) => {
+                const hidden = state.hidden.includes(c.id);
+                return (
+                  <li key={c.id}>
+                    <button
+                      type="button"
+                      aria-pressed={!hidden}
+                      onClick={() => onState({ hidden: hidden ? state.hidden.filter((h) => h !== c.id) : [...state.hidden, c.id] })}
+                      className={menuItem}
+                    >
+                      <c.icon className="size-4 text-fg-secondary" aria-hidden />
+                      <span className={cn("flex-1 text-left", hidden && "text-fg-muted")}>{c.title}</span>
+                      {hidden ? <EyeOff className="size-4 text-fg-faint" aria-label="ausgeblendet" /> : <Eye className="size-4 text-fg-secondary" aria-label="sichtbar" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="-mx-1 my-1 h-px bg-line" />
+            <button type="button" disabled={!changed} onClick={onReset} className={cn(menuItem, "disabled:text-fg-muted")}>
+              <RotateCcw className="size-4 text-fg-secondary" aria-hidden />
+              Ansicht zurücksetzen
+            </button>
+          </PopoverContent>
+        </Popover>
+      )}
 
       {selected > 0 && (
         <div className="ml-auto flex items-center gap-2">

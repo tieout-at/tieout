@@ -6,9 +6,10 @@ import { CalendarDays, Construction, FileCheck, FolderInput, Gavel, ShieldAlert,
 
 import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
-import { currentState, DECISION_TEXT, readDecisions, type Decision } from "@/lib/decisions";
+import { currentState, decide, DECISION_TEXT, localTime, onStorageChange, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import type { Calculation, View } from "@/lib/table";
+import { FindsBoard } from "./finds-board";
 
 const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: TagColour; rank: number }> = {
   belegt: { colour: "green", rank: 0 },
@@ -19,6 +20,7 @@ const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: Ta
 /**
  * "Funde" (SPEZIFIKATION.md 3.2 and 4.2): every find of the open projects with Art, Belegstand, Betrag, Kürzungsrisiko
  * from the Vorprüfung and Entscheidung. The footer keeps "zusätzlich verrechenbar" and "in Klärung" in two columns.
+ * The view "Nach Entscheidung" shows the same finds as a board (Attio's "Pipeline"), where moving a card decides.
  */
 export function FindsTable({
   rows,
@@ -32,11 +34,26 @@ export function FindsTable({
 }) {
   // decisions recorded in this browser replace the core's state after the first paint (stage 0, until the backend)
   const [decisions, setDecisions] = useState<Decision[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of a browser-only value
-    setDecisions(readDecisions());
+    const load = () => {
+      setDecisions(readDecisions());
+      setTasks(readTasks());
+    };
+    load();
+    return onStorageChange(load);
   }, []);
-  const shown = decisions.length ? rows.map((r) => ({ ...r, decision: DECISION_TEXT[currentState(decisions, [r.id, ...r.earlierIds], r.decisionState)] })) : rows;
+  const keys = (r: FindRow) => [r.id, ...r.earlierIds];
+  const stateOf = (r: FindRow) => currentState(decisions, keys(r), r.decisionState);
+  const tasksOf = (r: FindRow) => tasks.filter((t) => keys(r).includes(t.fundSchluessel));
+  // a decision made in this browser shows at once; a find set to "Nicht verrechnen" here leaves its group, so no fixed sum of
+  // `kern/` (which still counts it) fits any more and the footer says "keine feste Summe"
+  const shown = decisions.length
+    ? rows.map((r) => {
+        const state = stateOf(r);
+        return { ...r, decision: DECISION_TEXT[state], groups: state === "nicht_verrechnen" ? [] : r.countedGroups };
+      })
+    : rows;
 
   const columns: Column<FindRow>[] = [
     {
@@ -156,6 +173,7 @@ export function FindsTable({
   const hidden = project ? ["sources", "workDate", "project"] : ["sources", "workDate"];
   const views: View[] = [
     { id: "alle", title: "Alle Funde", state: { sort: null, filters: [], hidden, calculations: sums } },
+    { id: "entscheidung", title: "Nach Entscheidung", kind: "board", state: { sort: null, filters: [], hidden, calculations: sums } },
     {
       id: "zusaetzlich",
       title: "Zusätzlich verrechenbar",
@@ -173,5 +191,60 @@ export function FindsTable({
     },
   ];
 
-  return <DataTable name={project ? `funde.${project}` : "funde"} rows={shown} columns={columns} views={views} noun={{ one: "Fund", many: "Funde", dative: "Funden" }} />;
+  return (
+    <DataTable
+      name={project ? `funde.${project}` : "funde"}
+      rows={shown}
+      columns={columns}
+      views={views}
+      noun={{ one: "Fund", many: "Funde", dative: "Funden" }}
+      phoneRow={(r) => <PhoneRow row={r} withProject={!project} />}
+      board={(visible) => (
+        <FindsBoard
+          rows={visible}
+          calculations={calculations.amount.filter((c) => c.id === "zusaetzlich" || c.id === "klaerung")}
+          stateOf={stateOf}
+          tasksOf={(r) => tasksOf(r).length}
+          openOf={(r) => [
+            ...(r.risk && !r.risk.alreadyCut ? [`Kürzungsrisiko ${r.risk.reason}, ${r.risk.amount.text}`] : []),
+            ...(r.remedy ? [r.remedy] : []),
+            ...tasksOf(r).map((t) => `Aufgabe für ${t.zustaendig}: ${t.text}`),
+          ]}
+          withProject={!project}
+          onDecide={(r, move, grund) => {
+            const { list, refused } = decide(keys(r), r.decisionState, { fundSchluessel: r.id, zeit: localTime(), wer: move.wer, stand: move.stand, ...(grund ? { grund } : {}) });
+            setDecisions(list);
+            return refused;
+          }}
+        />
+      )}
+    />
+  );
+}
+
+/**
+ * A find in the phone list (below 768 px, customer test 2: the wide table showed four letters of the name): number,
+ * the short name with the word that matters and the amount on top, then Belegstand and Entscheidung, then where it
+ * belongs and what it risks. The whole row opens the find page.
+ */
+function PhoneRow({ row, withProject }: { row: FindRow; withProject: boolean }) {
+  const facts = [
+    ...(withProject ? [row.project.name] : []),
+    row.kind,
+    ...(row.risk ? [row.risk.alreadyCut ? `schon gekürzt ${row.risk.amount.text}` : `Kürzungsrisiko ${row.risk.amount.text}`] : []),
+  ];
+  return (
+    <Link href={row.href} className="flex flex-col gap-1.5 px-4 py-3 outline-none active:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent">
+      <span className="flex items-start gap-2">
+        <span className="mt-px flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{row.number}</span>
+        <span className="line-clamp-2 min-w-0 flex-1">{row.name}</span>
+        <span className="shrink-0 whitespace-nowrap tabular-nums">{row.amount.text}</span>
+      </span>
+      <span className="flex flex-wrap items-center gap-1.5 pl-9">
+        {row.belegstand && <Tag colour={EVIDENCE[row.belegstand.state].colour}>{row.belegstand.text}</Tag>}
+        <Tag>{row.decision}</Tag>
+      </span>
+      <span className="line-clamp-2 pl-9 text-xs text-fg-secondary">{facts.join(" · ")}</span>
+    </Link>
+  );
 }

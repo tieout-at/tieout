@@ -25,7 +25,7 @@ import {
 } from "@tieout/kern";
 
 import { findSlug, projectSlug } from "./example";
-import { business, clientSlug, firm } from "./kern-data";
+import { business, clientSlug, firm, nameAndFacts } from "./kern-data";
 import { originalPage, placeText, type OriginalPage } from "./originals";
 import type { ActivityEntry, Highlight } from "./records";
 
@@ -144,16 +144,6 @@ function steps(d: Datensatz, f: Fund): CalcStep[] {
     });
 }
 
-/**
- * Name and facts of the head. A find from a plan change is named by what changed ("14 Wohnungen Typ C: Wohnküche
- * geteilt, je 1 Heizkörper mehr"), the plan index goes into the facts; every other find by its title up to the first colon.
- */
-function nameAndFacts(f: Fund): { name: string; facts: string[] } {
-  const at = f.titel.indexOf(": ");
-  if (at < 0) return { name: f.titel, facts: [f.untertitel, FUND_ART_TEXT[f.art]] };
-  const [before, after] = [f.titel.slice(0, at), f.titel.slice(at + 2)];
-  return f.art === "mehrmenge_plan" ? { name: after, facts: [before, FUND_ART_TEXT[f.art]] } : { name: before, facts: [after, FUND_ART_TEXT[f.art]] };
-}
 
 function largest(f: Fund, steps: CalcStep[]): CalcStep | undefined {
   const amounts = f.rechenweg.schritte.filter((s) => !s.summe).map((s) => s.betrag ?? 0);
