@@ -60,8 +60,8 @@ export function FindsTable({
       id: "find",
       title: "Fund",
       icon: SearchCheck,
-      width: 250,
-      sortValue: (r) => r.title,
+      width: 290,
+      sortValue: (r) => r.name,
       cell: (r) => (
         <Link
           href={r.href}
@@ -69,7 +69,7 @@ export function FindsTable({
           className="-mx-1 flex min-w-0 items-center gap-1.5 rounded-md px-1 py-0.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent"
         >
           <span className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{r.number}</span>
-          <span className="truncate">{r.title}</span>
+          <span className="truncate">{r.name}</span>
         </Link>
       ),
     },
@@ -77,7 +77,7 @@ export function FindsTable({
       id: "amount",
       title: "Betrag",
       icon: Wallet,
-      width: 256,
+      width: 260,
       align: "right",
       sortValue: (r) => r.amount.cent,
       calculations: calculations.amount,
@@ -94,10 +94,19 @@ export function FindsTable({
       cell: (r) => r.belegstand && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>,
     },
     {
+      id: "decision",
+      title: "Entscheidung",
+      icon: Gavel,
+      width: 150,
+      sortValue: (r) => r.decision,
+      filterValue: (r) => r.decision,
+      cell: (r) => <Tag>{r.decision}</Tag>,
+    },
+    {
       id: "risk",
       title: "Kürzungsrisiko",
       icon: ShieldAlert,
-      width: 330,
+      width: 270,
       sortValue: (r) => r.risk?.amount.cent ?? null,
       filterValue: (r) => r.risk?.reason ?? null,
       calculations: calculations.risk,
@@ -113,7 +122,7 @@ export function FindsTable({
       id: "project",
       title: "Projekt",
       icon: Construction,
-      width: 200,
+      width: 190,
       sortValue: (r) => r.project.name,
       filterValue: (r) => r.project.name,
       cell: (r) => (
@@ -130,15 +139,6 @@ export function FindsTable({
       sortValue: (r) => r.kind,
       filterValue: (r) => r.kind,
       cell: (r) => <span className="truncate">{r.kind}</span>,
-    },
-    {
-      id: "decision",
-      title: "Entscheidung",
-      icon: Gavel,
-      width: 160,
-      sortValue: (r) => r.decision,
-      filterValue: (r) => r.decision,
-      cell: (r) => <Tag>{r.decision}</Tag>,
     },
     {
       id: "detail",
@@ -170,7 +170,8 @@ export function FindsTable({
   ];
 
   const sums = { amount: "zusaetzlich", belegstand: "klaerung", risk: "risiko" };
-  const hidden = project ? ["sources", "workDate", "project"] : ["sources", "workDate"];
+  // the table shows what a decision needs; Art, Beschreibung, Belegquelle and Arbeitsdatum come back through "Ansicht" or "+"
+  const hidden = project ? ["kind", "detail", "sources", "workDate", "project"] : ["kind", "detail", "sources", "workDate"];
   const views: View[] = [
     { id: "alle", title: "Alle Funde", state: { sort: null, filters: [], hidden, calculations: sums } },
     { id: "entscheidung", title: "Nach Entscheidung", kind: "board", state: { sort: null, filters: [], hidden, calculations: sums } },
@@ -205,6 +206,7 @@ export function FindsTable({
           calculations={calculations.amount.filter((c) => c.id === "zusaetzlich" || c.id === "klaerung")}
           stateOf={stateOf}
           tasksOf={(r) => tasksOf(r).length}
+          reasonOf={(r) => decisions.filter((d) => keys(r).includes(d.fundSchluessel) && d.stand === "nicht_verrechnen").sort((a, b) => a.zeit.localeCompare(b.zeit)).at(-1)?.grund ?? null}
           openOf={(r) => [
             ...(r.risk && !r.risk.alreadyCut ? [`Kürzungsrisiko ${r.risk.reason}, ${r.risk.amount.text}`] : []),
             ...(r.remedy ? [r.remedy] : []),
@@ -224,13 +226,12 @@ export function FindsTable({
 
 /**
  * A find in the phone list (below 768 px, customer test 2: the wide table showed four letters of the name): number,
- * the short name with the word that matters and the amount on top, then Belegstand and Entscheidung, then where it
- * belongs and what it risks. The whole row opens the find page.
+ * the short name with the word that matters and the amount on top, then the Entscheidung and a Belegstand only when
+ * it is not "belegt", then the project and the Kürzungsrisiko. Everything else is on the find page the row opens.
  */
 function PhoneRow({ row, withProject }: { row: FindRow; withProject: boolean }) {
   const facts = [
     ...(withProject ? [row.project.name] : []),
-    row.kind,
     ...(row.risk ? [row.risk.alreadyCut ? `schon gekürzt ${row.risk.amount.text}` : `Kürzungsrisiko ${row.risk.amount.text}`] : []),
   ];
   return (
@@ -241,10 +242,10 @@ function PhoneRow({ row, withProject }: { row: FindRow; withProject: boolean }) 
         <span className="shrink-0 whitespace-nowrap tabular-nums">{row.amount.text}</span>
       </span>
       <span className="flex flex-wrap items-center gap-1.5 pl-9">
-        {row.belegstand && <Tag colour={EVIDENCE[row.belegstand.state].colour}>{row.belegstand.text}</Tag>}
+        {row.belegstand && row.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[row.belegstand.state].colour}>{row.belegstand.text}</Tag>}
         <Tag>{row.decision}</Tag>
       </span>
-      <span className="line-clamp-2 pl-9 text-xs text-fg-secondary">{facts.join(" · ")}</span>
+      {facts.length > 0 && <span className="truncate pl-9 text-xs text-fg-secondary">{facts.join(" · ")}</span>}
     </Link>
   );
 }

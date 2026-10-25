@@ -77,7 +77,7 @@ export function moves(state: DecisionState): Move[] {
  */
 export function refusal(from: DecisionState, to: DecisionState): string | null {
   if (from === to || moves(from).some((m) => m.stand === to)) return null;
-  if (to === "in_schlussrechnung") return "In der Schlussrechnung steht ein Fund erst, wenn die Schlussrechnung ihn enthält.";
+  if (to === "in_schlussrechnung") return "Freigegebene Funde kommen in die Schlussrechnung, wenn sie erstellt wird. Von Hand geht das nicht.";
   if (from === "in_schlussrechnung") return "Der Fund steht schon in der Schlussrechnung.";
   if (to === "freigegeben") return "Erst prüfen, dann freigeben: ein Fund geht einen Schritt nach dem anderen.";
   if (from === "nicht_verrechnen") return "Ein ausgeschlossener Fund wird zuerst wieder aufgenommen und geht dann als geprüft zur Freigabe.";

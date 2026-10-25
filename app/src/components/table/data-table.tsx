@@ -44,7 +44,7 @@ export type Column<R> = Access<R> & {
   id: string;
   title: string;
   icon: LucideIcon;
-  /** Width in px (Attio's default is 180 to 288); the first column is 250 px and fixed (132 px on phones, so the amounts stay in view). */
+  /** Width in px (Attio's default is 180 to 288); the first column stays fixed at the left (132 px on phones, so the amounts stay in view). */
   width: number;
   align?: "right";
   cell: (r: R) => ReactNode;
@@ -214,6 +214,7 @@ export function DataTable<R extends Row>({
       <div
         role="table"
         aria-label={view.title}
+        style={{ "--first-column": `${columns[0].width}px` } as React.CSSProperties}
         aria-rowcount={visible.length + 2}
         className={cn("relative min-h-0 flex-1 overflow-auto overscroll-x-none", phoneRow && "max-md:hidden")}
       >
@@ -256,7 +257,7 @@ export function DataTable<R extends Row>({
                       style={i === 0 ? undefined : { width: c.width }}
                       className={cn(
                         "flex shrink-0 items-center overflow-hidden border-r border-b border-line bg-surface px-3 whitespace-nowrap group-hover:bg-row-hover group-[.is-selected]:bg-row-selected",
-                        i === 0 && "sticky left-0 z-10 w-[132px] gap-2.5 md:w-[250px]",
+                        i === 0 && "sticky left-0 z-10 w-[132px] gap-2.5 md:w-[var(--first-column)]",
                         c.align === "right" && "justify-end text-right tabular-nums",
                       )}
                     >
@@ -280,7 +281,7 @@ export function DataTable<R extends Row>({
                   <div
                     key={c.id}
                     role="cell"
-                    className="sticky left-0 z-10 flex w-[132px] shrink-0 items-center justify-end border-r border-line bg-surface px-3 text-fg-secondary md:w-[250px]"
+                    className="sticky left-0 z-10 flex w-[132px] shrink-0 items-center justify-end border-r border-line bg-surface px-3 text-fg-secondary md:w-[var(--first-column)]"
                   >
                     <span aria-live="polite">{countText(visible.length, rows.length, noun)}</span>
                   </div>
@@ -617,7 +618,7 @@ function HeaderCell<R>({
       style={first ? undefined : { width: column.width }}
       className={cn(
         "flex shrink-0 items-center gap-2.5 border-r border-b border-line bg-surface px-3",
-        first && "sticky left-0 z-10 w-[132px] md:w-[250px]",
+        first && "sticky left-0 z-10 w-[132px] md:w-[var(--first-column)]",
       )}
     >
       {children}

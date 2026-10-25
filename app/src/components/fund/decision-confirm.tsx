@@ -51,7 +51,9 @@ export function DecisionConfirm({
           Grund
           <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} required placeholder="Zum Beispiel: schon mit einem Nachtrag verrechnet" className={field} />
         </label>
-        <p className="text-xs text-fg-muted">Vermerkt als {move.wer}, bis zur Anmeldung nur in diesem Browser.</p>
+        <p className="text-xs text-fg-muted">
+          {amount} kommen nicht in die Schlussrechnung. Vermerkt als {move.wer}, vorerst nur in diesem Browser gespeichert.
+        </p>
         <div className="flex justify-end gap-2">
           <Button type="button" onClick={onCancel}>
             Abbrechen
@@ -72,7 +74,7 @@ export function DecisionConfirm({
       {about && <div className="pb-1">{about}</div>}
       <p className="text-xs text-fg-secondary">
         {release ? `${amount} werden für die Schlussrechnung freigegeben.` : again ? "Der Fund zählt wieder und geht zur Freigabe." : "Danach gibt die Geschäftsführung frei."} Vermerkt als{" "}
-        {move.wer}, bis zur Anmeldung nur in diesem Browser.
+        {move.wer}, vorerst nur in diesem Browser gespeichert.
       </p>
       {release && open.length > 0 && (
         <ul className="mt-2 flex flex-col gap-1 rounded-md bg-fill-subtle px-2 py-1.5 text-xs shadow-ring">

@@ -123,7 +123,7 @@ export function DecisionBar({
                   <input type="date" value={task.bis} onChange={(e) => setTask({ ...task, bis: e.target.value })} className={field} />
                 </label>
               </div>
-              <p className="text-xs text-fg-muted">{deadline ? `${deadline}. ` : ""}Bis zur Anmeldung nur in diesem Browser.</p>
+              <p className="text-xs text-fg-muted">{deadline ? `${deadline}. ` : ""}Vorerst nur in diesem Browser gespeichert.</p>
               <div className="flex justify-end gap-2">
                 <Button type="button" onClick={() => setOpenTask(false)}>
                   Abbrechen

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type DragEvent } from "react";
-import { Ban, Check, CircleCheck, CircleCheckBig, CircleDashed, Construction, Ellipsis, FileCheck, ListTodo, ReceiptText, ShieldAlert, Wallet, type LucideIcon } from "lucide-react";
+import { Ban, Check, CircleCheck, CircleCheckBig, CircleDashed, Ellipsis, ListTodo, ReceiptText, ShieldAlert, type LucideIcon } from "lucide-react";
 
 import { DecisionConfirm } from "@/components/fund/decision-confirm";
 import { Tag, type TagColour } from "@/components/table/tag";
@@ -37,6 +37,7 @@ export function FindsBoard({
   calculations,
   stateOf,
   tasksOf,
+  reasonOf,
   openOf,
   withProject,
   onDecide,
@@ -47,6 +48,8 @@ export function FindsBoard({
   calculations: Calculation[];
   stateOf: (r: FindRow) => DecisionState;
   tasksOf: (r: FindRow) => number;
+  /** The reason given for the latest "Nicht verrechnen" of a find. */
+  reasonOf: (r: FindRow) => string | null;
   /** What is still open before a release, as on the find page. */
   openOf: (r: FindRow) => string[];
   withProject: boolean;
@@ -129,6 +132,7 @@ export function FindsBoard({
                         row={r}
                         moves={moves(stateOf(r))}
                         tasks={tasksOf(r)}
+                        reason={lane.state === "nicht_verrechnen" ? reasonOf(r) : null}
                         about={about(r)}
                         withProject={withProject}
                         dragging={dragging?.id === r.id}
@@ -204,6 +208,7 @@ function Card({
   row,
   moves,
   tasks,
+  reason,
   about,
   withProject,
   dragging,
@@ -214,6 +219,8 @@ function Card({
   row: FindRow;
   moves: Move[];
   tasks: number;
+  /** The reason of a "Nicht verrechnen", shown on the card in that column. */
+  reason: string | null;
   /** "F1" or "F1 Wohnpark Mooshaim" on the board of the business. */
   about: string;
   withProject: boolean;
@@ -232,54 +239,50 @@ function Card({
         dragging && "opacity-50",
       )}
     >
-      <Link href={row.href} draggable={false} className="block rounded-[12px] outline-none focus-visible:outline-2 focus-visible:outline-accent">
-        <span className="flex gap-2 py-2.5 pr-9 pl-3 max-md:pr-12">
+      <Link href={row.href} draggable={false} className="block rounded-[12px] pb-2.5 outline-none focus-visible:outline-2 focus-visible:outline-accent">
+        <span className="flex gap-2 px-3 pt-2.5 pb-1">
           <span className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{row.number}</span>
           <span className="line-clamp-3 min-w-0" title={row.name}>
             {row.name}
           </span>
         </span>
-        <span className="flex flex-col pb-0.5">
-          <Attribute icon={Wallet} label="Betrag">
-            <span className="tabular-nums">{row.amount.text}</span>
-          </Attribute>
-          {row.belegstand && (
-            <Attribute icon={FileCheck} label="Belegstand">
-              <Tag colour={EVIDENCE[row.belegstand.state]}>{row.belegstand.text}</Tag>
-            </Attribute>
-          )}
-          <Attribute icon={ShieldAlert} label="Kürzungsrisiko" wrap={Boolean(row.risk)}>
-            {row.risk ? (
-              <span className="line-clamp-2 min-w-0" title={`${row.risk.number}: ${row.risk.reason}`}>
-                {row.risk.reason},{" "}
-                <span className="whitespace-nowrap text-fg-secondary tabular-nums">{row.risk.alreadyCut ? `schon gekürzt ${row.risk.amount.text}` : row.risk.amount.text}</span>
-              </span>
-            ) : (
-              <span className="text-fg-muted">kein Kürzungsrisiko</span>
-            )}
-          </Attribute>
-          {withProject && (
-            <Attribute icon={Construction} label="Projekt">
-              <span className="truncate">{row.project.name}</span>
-            </Attribute>
-          )}
+        {/* only what a decision needs; Rechenweg, Belege and the reason of a risk are one click away on the find page */}
+        <span className="flex min-h-7 flex-wrap items-center gap-x-2 gap-y-1 pr-10 pl-3">
+          <span className="tabular-nums">
+            <span className="sr-only">Betrag </span>
+            {row.amount.text}
+          </span>
+          {row.belegstand && row.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[row.belegstand.state]}>{row.belegstand.text}</Tag>}
         </span>
-        <span className="flex h-[34px] items-center gap-2 px-3 pt-1.5 pb-2 text-xs text-fg-secondary">
-          <span className="min-w-0 flex-1 truncate">{row.kind}</span>
-          {tasks > 0 && (
-            <span className="flex shrink-0 items-center gap-1" title={`${tasks} ${tasks === 1 ? "Aufgabe" : "Aufgaben"}`}>
-              <ListTodo className="size-3.5" aria-hidden />
-              <span className="tabular-nums">{tasks}</span>
-              <span className="sr-only">{tasks === 1 ? "Aufgabe" : "Aufgaben"}</span>
+        {row.risk && (
+          <span className="flex items-start gap-1.5 pr-10 pl-3 text-xs text-fg-secondary">
+            <ShieldAlert className="mt-px size-3.5 shrink-0" aria-hidden />
+            {/* the reason says what to do; the amount only where it is not the whole find */}
+            <span className="line-clamp-2">
+              {row.risk.alreadyCut ? "Schon gekürzt" : "Kürzungsrisiko"}: {row.risk.reason}
+              {row.risk.amount.cent !== row.amount.cent && <span className="whitespace-nowrap tabular-nums">, {row.risk.amount.text}</span>}
             </span>
-          )}
-        </span>
+          </span>
+        )}
+        {reason && <span className="line-clamp-2 pr-10 pl-3 text-xs text-fg-secondary">Grund: {reason}</span>}
+        {(withProject || tasks > 0) && (
+          <span className="mt-1 flex items-center gap-2 pr-10 pl-3 text-xs text-fg-secondary">
+            {withProject && <span className="min-w-0 truncate">{row.project.name}</span>}
+            {tasks > 0 && (
+              <span className="flex shrink-0 items-center gap-1" title={`${tasks} ${tasks === 1 ? "Aufgabe" : "Aufgaben"}`}>
+                <ListTodo className="size-3.5" aria-hidden />
+                <span className="tabular-nums">{tasks}</span>
+                <span className="sr-only">{tasks === 1 ? "Aufgabe" : "Aufgaben"}</span>
+              </span>
+            )}
+          </span>
+        )}
       </Link>
 
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`Entscheidung zu ${about}`}
-          className="absolute top-2 right-2 flex size-6 items-center justify-center rounded-md text-fg-secondary opacity-0 outline-none group-hover/card:opacity-100 hover:bg-fill-hover hover:text-fg focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover data-popup-open:opacity-100 max-md:top-0.5 max-md:right-0.5 max-md:size-11 max-md:opacity-100"
+          className="absolute right-2 bottom-2 flex size-7 items-center justify-center rounded-md text-fg-muted outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover data-popup-open:text-fg max-md:right-0 max-md:bottom-0 max-md:size-11"
         >
           <Ellipsis className="size-4" aria-hidden />
         </DropdownMenuTrigger>
@@ -297,17 +300,6 @@ function Card({
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
-}
-
-/** One attribute of a card (Attio: 32 px, icon and value); `wrap` lets a longer value take a second line. */
-function Attribute({ icon: Icon, label, wrap, children }: { icon: LucideIcon; label: string; wrap?: boolean; children: React.ReactNode }) {
-  return (
-    <span className={cn("flex min-w-0 gap-2 px-3", wrap ? "min-h-8 items-start py-1.5 [&>svg]:mt-0.5" : "h-8 items-center")}>
-      <Icon className="size-4 shrink-0 text-fg-secondary" aria-hidden />
-      <span className="sr-only">{label}: </span>
-      <span className="flex min-w-0 flex-1">{children}</span>
-    </span>
   );
 }
 
