@@ -7,7 +7,7 @@
 
 ## Typeface
 
-Inter (variable, self-hosted from `@fontsource-variable/inter`, no request to Google). Attio sets every piece of UI text in weight 500 and tightens the larger sizes.
+Inter (variable, self-hosted from `@fontsource-variable/inter`, no request to Google). Attio sets every piece of UI text in weight 500 and tightens the larger sizes. Numbers of positions, Belege and dates in the readouts of "Übersicht" use `font-mono`, the brand's IBM Plex Mono 400 and 500 (self-hosted from `@fontsource/ibm-plex-mono`), never a system mono.
 
 | Token | Size / line | Weight | Letter spacing | Used for | Source |
 |---|---|---|---|---|---|
@@ -28,7 +28,7 @@ Ink and ultramarine come from the brand; the greys are Attio's alphas, applied t
 | `fg` | `#0a1020` | text | brand ink (Attio: `#101112`) |
 | `fg-secondary` | ink at 63 % | secondary text, icons, section headings | measured alpha |
 | `fg-help` | ink at 55 % | "Hilfe" in the header | measured alpha |
-| `fg-muted` | ink at 50 % | hints, key caps, counters | measured alpha |
+| `fg-muted` | ink at 58 % | hints, key caps, counters | Attio's 50 % has 3.55:1 on white; 58 % reaches 4.67:1 (AA), for screens read on site (design review, 25.10.2026) |
 | `fg-faint` | ink at 30 % | separators in text, open status circles | ours |
 | `surface` | `#ffffff` | page, buttons, popups | measured |
 | `sidebar` | `#fbfbfb` | sidebar; the open tab | measured |
@@ -37,9 +37,10 @@ Ink and ultramarine come from the brand; the greys are Attio's alphas, applied t
 | `fill-subtle` | black at 2 % | quiet chips | measured |
 | `fill-selected` | `#f6f7f7` | highlighted row in the search | measured |
 | `count` | `#505155` | numbers in small counters | measured |
-| `accent` | `#1d3bff` | primary button, focus ring, the square in pictures | brand ultramarine (Attio: `#266df0`); used sparingly ("less blue") |
+| `accent` | `#1d3bff` | the one primary button of a screen, focus ring, a chosen source and its mark, the trace on "Übersicht", the square in pictures, the drag state of the board; never for links or icons without an action | brand ultramarine (Attio: `#266df0`); 6.73:1 with white; kept after an independent design review (25.10.2026), a duller shade would hardly differ and break with the website |
 | `grid` | `#e8ecf2` | plan grid in empty-state pictures | brand grid minor |
 | `cell`, `cell-edge` | `#e6e9ef`, ink at 10 % | a cell of the Abgleich on "Übersicht" | ours |
+| `state-red-edge` | `#c4312f` | red as text (an overdue date), 5.49:1 on white; the dot stays `state-red` (3.91:1) | ours, measured contrast |
 | `state-*-edge` | darker green, yellow, orange | 1 px inner contour of a coloured cell, so it reaches 3:1 against white; lines and cells share one yellow | ours, measured contrast |
 | `sweep` | `#a9b6ff` | the light that travels along a traced line | ours |
 
@@ -120,6 +121,8 @@ The page that shows the flow of the website section 03 with the real data of one
 - **Below 768 px** the sidebar becomes a panel from the left that scrolls as a whole, opened with the menu button in the header; the header also gets a search button. Tap targets are at least 44 px there (entries, tabs, buttons, menu and search rows), inputs use 16 px text, and no page scrolls sideways.
 - **No button before it works** (SPEZIFIKATION.md 3.3): empty states only offer actions that exist ("Wohnpark Mooshaim öffnen"). "Erste Schritte" lists its three steps marked "folgt" instead of linking to empty pages; the members page says that inviting comes with sign-in. "Ordner importieren", inviting and exports come with the steps that build them.
 - **One truth on every screen:** what the sample company already has in the shell (the project, its Auftraggeber, its deadline) appears the same everywhere; Start shows the deadline of Wohnpark Mooshaim as a plain date.
+- **Links:** an internal link is ink with a faint underline that darkens on hover (`link-quiet`, Attio names a record in ink); a find is named by its number chip and project. Blue text is not a link colour.
+- **Phones:** buttons, bar buttons and filter chips look 32 px high and take a 44 px tap through an invisible frame (`before:-inset-y-1.5`), source chips look 24 px; rows and menu items stay 44 px.
 - **Words:** German, full words, vocabulary of SPEZIFIKATION.md section 6. `app/scripts/check-words.mjs` runs after every build and fails on a forbidden word, an abbreviation, a dash used as punctuation, an amount or an open placeholder, in the exported pages (text and read-out attributes) and in every string of `app/src/` (text that only appears after a click).
 
 ## Not taken from Attio

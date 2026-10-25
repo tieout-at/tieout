@@ -1,10 +1,13 @@
 "use client";
 
+import { CalendarDays, Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 
 import { field } from "@/components/fund/decision-confirm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { appendTask, localTime, type Task } from "@/lib/decisions";
 import { ROLES, type TaskTarget } from "@/lib/tasks";
 
@@ -92,7 +95,7 @@ function TaskForm({ targets, onCancel, onMade }: { targets: TaskTarget[]; onCanc
       ) : (
         <label className="flex flex-col gap-1 text-xs text-fg-secondary">
           Fund
-          <select value={key} onChange={(e) => choose(e.target.value)} required className={field}>
+          <Select value={key} onChange={(e) => choose(e.target.value)} required>
             <option value="" disabled>
               Fund wählen
             </option>
@@ -107,7 +110,7 @@ function TaskForm({ targets, onCancel, onMade }: { targets: TaskTarget[]; onCanc
                   ))}
               </optgroup>
             ))}
-          </select>
+          </Select>
         </label>
       )}
       <label className="flex flex-col gap-1 text-xs text-fg-secondary">
@@ -124,16 +127,16 @@ function TaskForm({ targets, onCancel, onMade }: { targets: TaskTarget[]; onCanc
       <div className="grid grid-cols-2 gap-2">
         <label className="flex flex-col gap-1 text-xs text-fg-secondary">
           Zuständig
-          <select value={task.zustaendig} onChange={(e) => setTask({ ...task, zustaendig: e.target.value })} className={field}>
+          <Select value={task.zustaendig} onChange={(e) => setTask({ ...task, zustaendig: e.target.value })}>
             {ROLES.map((r) => (
               <option key={r}>{r}</option>
             ))}
-          </select>
+          </Select>
         </label>
-        <label className="flex flex-col gap-1 text-xs text-fg-secondary">
-          Erledigen bis
-          <input type="date" value={task.bis} min={localTime().slice(0, 10)} onChange={(e) => setTask({ ...task, bis: e.target.value })} className={field} />
-        </label>
+        <div className="flex flex-col gap-1 text-xs text-fg-secondary">
+          <span aria-hidden>Erledigen bis</span>
+          <DuePicker value={task.bis} onChange={(bis) => setTask({ ...task, bis })} />
+        </div>
       </div>
       <p className="text-xs text-fg-muted">{target?.deadline ? `${target.deadline}. ` : ""}Vorerst nur in diesem Browser gespeichert.</p>
       <div className="flex justify-end gap-2">
@@ -145,5 +148,66 @@ function TaskForm({ targets, onCancel, onMade }: { targets: TaskTarget[]; onCanc
         </Button>
       </div>
     </form>
+  );
+}
+
+/** A native select (the phone's own picker) drawn as our field, with Lucide's up-down chevrons instead of the browser's arrow. */
+function Select({ className, children, ...props }: React.ComponentProps<"select">) {
+  return (
+    <span className="relative flex">
+      <select {...props} className={cn(field, "h-8 cursor-pointer appearance-none pr-8 text-fg max-md:h-11", className)}>
+        {children}
+      </select>
+      <ChevronsUpDown className="pointer-events-none absolute top-1/2 right-2 size-4 -translate-y-1/2 text-fg-muted" aria-hidden />
+    </span>
+  );
+}
+
+const plus = (days: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return localTime(d).slice(0, 10);
+};
+const dayText = (iso: string) => new Intl.DateTimeFormat("de-AT", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(`${iso}T12:00`));
+
+/** The due date as Attio picks it: a field that says "Ohne Frist" or the day, and a popup with the usual choices and a calendar. */
+function DuePicker({ value, onChange }: { value: string; onChange: (iso: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const choices = [
+    { label: "Ohne Frist", iso: "" },
+    { label: "Heute", iso: plus(0) },
+    { label: "Morgen", iso: plus(1) },
+    { label: "In drei Tagen", iso: plus(3) },
+    { label: "In einer Woche", iso: plus(7) },
+  ];
+  const pick = (iso: string) => {
+    onChange(iso);
+    setOpen(false);
+  };
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger aria-label={`Erledigen bis: ${value ? dayText(value) : "Ohne Frist"}`} className={cn(field, "flex h-8 items-center gap-2 text-left text-fg max-md:h-11")}>
+        <CalendarDays className="size-4 shrink-0 text-fg-muted" aria-hidden />
+        <span className={cn("flex-1 truncate", !value && "text-fg-muted")}>{value ? dayText(value) : "Ohne Frist"}</span>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-60">
+        <ul>
+          {choices.map((c) => (
+            <li key={c.label}>
+              <button type="button" onClick={() => pick(c.iso)} className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm outline-none hover:bg-fill-hover focus-visible:bg-fill-hover max-md:h-11">
+                <span className="flex-1 text-left">{c.label}</span>
+                {c.iso && <span className="text-xs text-fg-muted tabular-nums">{dayText(c.iso)}</span>}
+                {value === c.iso && <Check className="size-4 text-fg-secondary" aria-label="gewählt" />}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className="-mx-1 my-1 h-px bg-line" />
+        <label className="flex flex-col gap-1 px-2 pt-1 pb-1.5 text-xs text-fg-secondary">
+          Anderes Datum
+          <input type="date" value={value} min={plus(0)} onChange={(e) => onChange(e.target.value)} className={cn(field, "text-fg")} />
+        </label>
+      </PopoverContent>
+    </Popover>
   );
 }

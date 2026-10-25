@@ -46,21 +46,28 @@ function Due({ task, today, word = false }: { task: TaskItem; today: string; wor
   const due = dueText(task.bis, today);
   if (!due) return <span className="text-fg-muted">ohne Frist</span>;
   return (
-    <span className={cn("tabular-nums", due.tone === "red" && "text-state-red", due.tone === "orange" && "text-state-orange-edge")}>
+    <span className={cn("tabular-nums", due.tone === "red" && "text-state-red-edge", due.tone === "orange" && "text-state-orange-edge")}>
       {due.tone === "red" && <span className={word ? undefined : "sr-only"}>überfällig, </span>}
       {due.text}
     </span>
   );
 }
 
-function FindLink({ task }: { task: TaskItem }) {
+/**
+ * The find of a task as Attio names a record: its number chip and the project, in ink, never as a blue link. `small`
+ * is the 12 px form inside a line of facts; its tap target still reaches 44 px on phones.
+ */
+function FindLink({ task, small = false }: { task: TaskItem; small?: boolean }) {
   const [number, ...project] = task.fund.split(" ");
   return (
     <Link
       href={task.href}
-      className="-mx-1 flex min-w-0 items-center gap-1.5 rounded-md px-1 py-0.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent"
+      className={cn(
+        "relative -mx-1 flex min-w-0 items-center gap-1.5 rounded-md px-1 py-0.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent",
+        small && "text-fg-secondary hover:text-fg max-md:before:absolute max-md:before:-inset-y-3",
+      )}
     >
-      <span className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{number}</span>
+      <span className={cn("flex shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-count shadow-ring", small ? "h-4 min-w-6 text-[11px]" : "h-5 min-w-7 text-xs")}>{number}</span>
       <span className="truncate">{project.join(" ")}</span>
     </Link>
   );
@@ -89,9 +96,7 @@ function TaskRow({ task, today, onCheck }: { task: TaskItem; today: string; onCh
             <span aria-hidden className="text-fg-faint">
               ·
             </span>
-            <Link href={task.href} className="flex min-h-11 items-center text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
-              {task.fund}
-            </Link>
+            <FindLink task={task} small />
           </span>
         </span>
       </div>
@@ -241,7 +246,7 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
         {options
           .filter((o) => filters[o.id].length)
           .map((o) => (
-            <div key={o.id} className="flex h-7 items-center rounded-md bg-surface shadow-button max-md:h-11">
+            <div key={o.id} className="flex h-7 items-center rounded-md bg-surface shadow-button max-md:relative max-md:h-8 max-md:before:absolute max-md:before:-inset-y-1.5 max-md:before:inset-x-0">
               <span className="flex h-full max-w-72 items-center gap-1.5 pr-1 pl-2">
                 <o.icon className="size-4 shrink-0 text-fg-secondary" aria-hidden />
                 <span className="text-fg-secondary">{o.title}</span>
@@ -285,7 +290,7 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
             ))}
           </PopoverContent>
         </Popover>
-        <Button variant="primary" className="ml-auto max-md:w-11 max-md:px-0" onClick={() => setMaking(true)}>
+        <Button variant="primary" className="ml-auto max-md:w-8 max-md:px-0" onClick={() => setMaking(true)}>
           <Plus aria-hidden />
           <span className="max-md:sr-only">Neue Aufgabe</span>
         </Button>
@@ -380,11 +385,12 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
               </span>
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span className="line-clamp-3">{t.text}</span>
-                <span className="text-xs text-fg-secondary">
-                  {t.zustaendig} ·{" "}
-                  <Link href={t.href} className="rounded-xs text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
-                    {t.fund}
-                  </Link>
+                <span className="flex flex-wrap items-center gap-x-1.5 text-xs text-fg-secondary">
+                  <span>{t.zustaendig}</span>
+                  <span aria-hidden className="text-fg-faint">
+                    ·
+                  </span>
+                  <FindLink task={t} small />
                 </span>
               </span>
               <span className="shrink-0 pt-px text-xs">

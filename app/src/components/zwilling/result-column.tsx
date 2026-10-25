@@ -1,6 +1,6 @@
 "use client";
 
-import { Brain, CircleCheck } from "lucide-react";
+import { CircleCheck, Repeat } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { formatInt, headline, type BlockKey, type Model } from "./model";
@@ -130,7 +130,7 @@ export function ResultColumn({
                     <span className={cn("font-mono text-[11px] text-fg-secondary", isOn && "text-accent")}>{nr}</span>
                     <span className="flex min-w-0 items-center gap-1.5">
                       <span className="truncate">{f.find.label}</span>
-                      {f.find.sameReason && <Brain className="size-3.5 shrink-0 text-accent" aria-hidden />}
+                      {f.find.sameReason && <Repeat className="size-3.5 shrink-0 text-fg-secondary" aria-hidden />}
                     </span>
                     <span className="whitespace-nowrap tabular-nums">{f.find.amount.text}</span>
                   </button>

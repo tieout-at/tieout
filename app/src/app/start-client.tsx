@@ -57,10 +57,10 @@ export function StartMoney({ built }: { built: StartView }) {
         <Link
           key={c.title}
           href="/funde/"
-          className="flex flex-col gap-1 rounded-lg bg-surface px-3 py-2.5 shadow-ring outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent"
+          className="flex flex-col gap-1 rounded-lg bg-surface px-4 py-3 shadow-ring outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent"
         >
           <span className="text-xs text-fg-secondary">{c.title}</span>
-          <span className="text-base font-semibold tabular-nums">{c.amount.text}</span>
+          <span className="text-xl font-semibold tabular-nums">{c.amount.text}</span>
           {c.line && <span className="text-xs text-fg-muted">{c.line}</span>}
         </Link>
       ))}

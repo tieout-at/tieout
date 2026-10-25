@@ -92,7 +92,7 @@ export function DecisionBar({
       {made && (
         <p role="status" className="text-xs text-fg">
           {made}{" "}
-          <Link href="/aufgaben/" className="rounded-xs text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+          <Link href="/aufgaben/" className="link-quiet">
             Aufgaben öffnen
           </Link>
         </p>

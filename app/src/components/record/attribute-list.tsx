@@ -17,7 +17,7 @@ function Value({ a }: { a: Attribute }) {
       <span className="flex min-w-0 items-baseline gap-1.5">
         {a.status && <span aria-hidden className={cn("size-2 shrink-0 -translate-y-px self-center rounded-full", DOT[a.status])} />}
         {a.href ? (
-          <Link href={a.href} className="min-w-0 rounded-xs text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+          <Link href={a.href} className="link-quiet min-w-0">
             {a.value}
           </Link>
         ) : (

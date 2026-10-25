@@ -15,9 +15,10 @@ const buttonVariants = cva(
         quiet: "bg-fill-subtle text-fg-muted hover:bg-fill-hover",
       },
       size: {
-        md: "h-7 rounded-md py-1 pr-2 pl-1.5 max-md:h-11",
-        lg: "h-8 rounded-item py-1.5 pr-2.5 pl-2 max-md:h-11",
-        icon: "size-7 rounded-md max-md:size-11",
+        // on phones 32 px to look at and 44 px to tap (an invisible frame above and below), not a 44 px block
+        md: "h-7 rounded-md py-1 pr-2 pl-1.5 max-md:relative max-md:h-8 max-md:before:absolute max-md:before:-inset-y-1.5 max-md:before:inset-x-0",
+        lg: "h-8 rounded-item py-1.5 pr-2.5 pl-2 max-md:relative max-md:h-8 max-md:before:absolute max-md:before:-inset-y-1.5 max-md:before:inset-x-0",
+        icon: "size-7 rounded-md max-md:relative max-md:size-8 max-md:before:absolute max-md:before:-inset-1.5",
       },
     },
     defaultVariants: { variant: "secondary", size: "md" },

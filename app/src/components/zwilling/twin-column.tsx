@@ -125,7 +125,7 @@ export function Readout({ detail, sentence, reserve }: { detail: FindDetail | nu
     <div className="mt-4 text-xs leading-[18px] text-fg" style={{ minHeight: reserve }}>
       {detail ? (
         <div className="flex flex-col gap-2">
-          <Link href={detail.href} className="self-start rounded-xs font-medium text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+          <Link href={detail.href} className="link-quiet self-start font-medium">
             {detail.nr} öffnen: Rechenweg, Belege, Original
           </Link>
           <div aria-hidden className="contents">
