@@ -28,8 +28,8 @@ export type ViewState = {
   calculations: Record<string, string | null>;
 };
 
-/** A saved view (Attio's view switcher): its name and the state it starts with. */
-export type View = { id: string; title: string; state: ViewState };
+/** A saved view (Attio's view switcher): its name, the state it starts with, and whether it is a table or a board. */
+export type View = { id: string; title: string; state: ViewState; kind?: "table" | "board" };
 
 export type SortValue = string | number | null;
 
@@ -87,6 +87,19 @@ export function matchingSum(calculation: Calculation, visible: Row[]): Sum | nul
     if (ids.size === s.ids.length && s.ids.every((id) => ids.has(id))) return s;
   }
   return null;
+}
+
+/**
+ * The fixed sums of one column of a board: for each calculation whose group has cards in the column, its sum when the
+ * column holds exactly the rows that sum covers, otherwise "cut" (the board says "keine feste Summe"). Never a new sum.
+ */
+export function columnSums(calculations: Calculation[], cards: Row[]): ({ title: string; text: string } | { title: string; cut: true })[] {
+  return calculations
+    .filter((c) => c.sums.some((s) => cards.some((r) => r.groups.includes(s.group))))
+    .map((c) => {
+      const sum = matchingSum(c, cards);
+      return sum ? { title: c.title, text: sum.text } : { title: c.title, cut: true as const };
+    });
 }
 
 export type FooterResult = { calculation: Calculation; sum: Sum } | { cut: true } | null;

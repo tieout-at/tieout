@@ -49,7 +49,7 @@ describe("kern data", () => {
     const f1 = rows[0];
     expect([f1.number, f1.amount.text, f1.belegstand?.text, f1.risk?.reason, f1.risk?.amount.text]).toEqual(["F1", listed("6.648,60 €"), "belegt", "Aufmaß nicht gegengezeichnet", "6.648,60 €"]);
 
-    const calc = findCalculations(rows);
+    const calc = findCalculations();
     const sum = (id: string, visible = rows) => matchingSum([...calc.amount, ...calc.risk].find((c) => c.id === id)!, visible)?.text;
     expect(sum("zusaetzlich")).toBe(listed("22.632,96 €"));
     expect(sum("klaerung")).toBe(listed("8.319,19 €"));
@@ -57,6 +57,8 @@ describe("kern data", () => {
     const mooshaim = rows.filter((r) => r.project.name === "Wohnpark Mooshaim");
     expect([sum("zusaetzlich", mooshaim), sum("klaerung", mooshaim), sum("risiko", mooshaim)]).toEqual([listed("14.620,15 €"), listed("8.073,59 €"), listed("6.843,00 €")]);
     expect([sum("beleg_fehlt", mooshaim), sum("nachtrag", mooshaim)]).toEqual([listed("1.119,99 €"), listed("6.953,60 €")]);
+    // the project tab shows only these rows; the business sums must not match them (found in step 6: 22.632,96 € under 8 finds)
+    expect(calc.amount[0].sums[0].ids).toHaveLength(rows.filter((r) => r.groups.includes("zusaetzlich")).length);
     // one find of a group filtered away: no amount at all
     expect(sum("zusaetzlich", rows.slice(1))).toBeUndefined();
   });

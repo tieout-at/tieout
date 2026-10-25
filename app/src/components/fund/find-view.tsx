@@ -9,7 +9,7 @@ import { Highlights } from "@/components/record/highlights";
 import { RecordHead } from "@/components/shell/record-head";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/components/zwilling/use-media";
-import { appendDecision, appendTask, currentState, localTime, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
+import { appendTask, currentState, decide, localTime, onStorageChange, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
 import type { FindRecord, SourceRef } from "@/lib/finds";
 import type { ActivityEntry, Highlight } from "@/lib/records";
 import { cn } from "@/lib/utils";
@@ -37,9 +37,12 @@ export function FindView({ record }: { record: FindRecord }) {
 
   // the static page shows the core's state; what this browser recorded replaces it after the first paint
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of a browser-only value
-    setDecisions(readDecisions());
-    setTasks(readTasks());
+    const load = () => {
+      setDecisions(readDecisions());
+      setTasks(readTasks());
+    };
+    load();
+    return onStorageChange(load);
   }, []);
 
   const keys = useMemo(() => [record.key, ...record.earlierKeys], [record]);
@@ -116,7 +119,7 @@ export function FindView({ record }: { record: FindRecord }) {
             ...(record.remedy ? [record.remedy] : []),
             ...myTasks.map((t) => `Aufgabe für ${t.zustaendig}: ${t.text}`),
           ]}
-          onDecide={(stand, wer, grund) => setDecisions(appendDecision({ fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }))}
+          onDecide={(stand, wer, grund) => setDecisions(decide(keys, record.decision, { fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }).list)}
           onTask={(t) => setTasks(appendTask({ id: `aufgabe-${Date.now()}`, fundSchluessel: record.key, fund: `${record.number} ${record.project.name}`, href: `/funde/${record.slug}/`, zeit: localTime(), wer: "Abrechnung", ...t }))}
         />
         <div className="flex flex-col gap-6 px-6 pt-1 pb-10 max-md:px-4">

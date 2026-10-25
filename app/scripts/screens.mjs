@@ -176,7 +176,30 @@ const SCREENS = [
       await page.getByRole("dialog").waitFor();
     },
   },
+  // the board by Entscheidung (step 6); last, because the browser then remembers the board as the view of these tables
+  { name: "funde-board", path: "/funde/", act: (page) => showBoard(page) },
+  { name: "projekt-funde-board", path: "/projekte/wohnpark-mooshaim/funde/", act: (page) => showBoard(page) },
+  {
+    name: "projekt-funde-board-pruefen",
+    path: "/projekte/wohnpark-mooshaim/funde/",
+    act: async (page) => {
+      await showBoard(page);
+      await page.getByRole("button", { name: "Entscheidung zu F1" }).click();
+      await page.getByRole("menuitem", { name: "Prüfen" }).click();
+      await page.getByRole("dialog").waitFor();
+    },
+  },
 ];
+
+/** Switches a find table to the board, unless the browser already remembers it. */
+async function showBoard(page) {
+  const views = page.getByRole("button", { name: /^(Alle Funde|Zusätzlich verrechenbar|In Klärung)$/ });
+  if (await views.count()) {
+    await views.click();
+    await page.getByRole("menuitem", { name: "Nach Entscheidung" }).click();
+  }
+  await page.locator("section[aria-label]:visible").first().waitFor();
+}
 
 const browser = await chromium.launch({ channel: "msedge", headless: true });
 try {

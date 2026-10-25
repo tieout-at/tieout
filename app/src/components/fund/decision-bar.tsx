@@ -6,10 +6,8 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
-import { nextStep, type Decision, type DecisionState, type Task } from "@/lib/decisions";
-
-const field =
-  "w-full rounded-md bg-surface px-2 py-1.5 text-sm shadow-[inset_0_0_0_1px_var(--color-line)] outline-none focus-visible:shadow-[inset_0_0_0_1px_var(--color-accent)] max-md:text-base";
+import { moves, nextStep, type Decision, type DecisionState, type Task } from "@/lib/decisions";
+import { DecisionConfirm, field } from "./decision-confirm";
 
 const ROLES = ["Abrechnung", "Bauleitung", "Geschäftsführung"];
 
@@ -37,10 +35,10 @@ export function DecisionBar({
   onTask: (t: Pick<Task, "text" | "zustaendig" | "bis">) => void;
 }) {
   const next = nextStep(state);
+  const notBilled = moves(state).find((m) => m.stand === "nicht_verrechnen");
   const [openNext, setOpenNext] = useState(false);
   const [openNo, setOpenNo] = useState(false);
   const [openTask, setOpenTask] = useState(false);
-  const [reason, setReason] = useState("");
   // the Abhilfe is site work (joint Aufmaß, a signature) in most finds, so the Bauleitung is proposed
   const [task, setTask] = useState({ text: taskText, zustaendig: "Bauleitung", bis: "" });
   const [made, setMade] = useState<string | null>(null);
@@ -55,72 +53,38 @@ export function DecisionBar({
               {next.label}
             </PopoverTrigger>
             <PopoverContent className="w-80 p-3">
-              <PopoverTitle className="p-0 pb-1 text-sm text-fg">{next.label === "Freigeben" ? "Für die Schlussrechnung freigeben?" : next.label === "Prüfen" ? "Rechenweg und Belege geprüft?" : "Wieder aufnehmen?"}</PopoverTitle>
-              <p className="text-xs text-fg-secondary">
-                {next.label === "Freigeben"
-                  ? `${amount} werden für die Schlussrechnung freigegeben.`
-                  : next.label === "Prüfen"
-                    ? "Danach gibt die Geschäftsführung frei."
-                    : "Der Fund zählt wieder und geht zur Freigabe."}{" "}
-                Vermerkt als {next.wer}, bis zur Anmeldung nur in diesem Browser.
-              </p>
-              {next.label === "Freigeben" && open.length > 0 && (
-                <ul className="mt-2 flex flex-col gap-1 rounded-md bg-fill-subtle px-2 py-1.5 text-xs shadow-ring">
-                  {open.map((o) => (
-                    <li key={o}>
-                      <span className="text-fg-secondary">Noch offen: </span>
-                      {o}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div className="mt-3 flex justify-end gap-2">
-                <Button onClick={() => setOpenNext(false)}>Abbrechen</Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    onDecide(next.stand, next.wer, next.label === "Wieder aufnehmen" ? "wieder aufgenommen" : undefined);
-                    setOpenNext(false);
-                  }}
-                >
-                  {next.label === "Prüfen" ? "Als geprüft vermerken" : next.label}
-                </Button>
-              </div>
+              <DecisionConfirm
+                move={next}
+                amount={amount}
+                open={open}
+                title={PopoverTitle}
+                onConfirm={(grund) => {
+                  onDecide(next.stand, next.wer, grund);
+                  setOpenNext(false);
+                }}
+                onCancel={() => setOpenNext(false)}
+              />
             </PopoverContent>
           </Popover>
         )}
-        {state !== "nicht_verrechnen" && state !== "in_schlussrechnung" && (
+        {notBilled && (
           <Popover open={openNo} onOpenChange={setOpenNo}>
             <PopoverTrigger render={<Button />}>
               <Ban aria-hidden />
               Nicht verrechnen
             </PopoverTrigger>
             <PopoverContent className="w-80 p-3">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!reason.trim()) return;
-                  onDecide("nicht_verrechnen", "Abrechnung", reason.trim());
-                  setReason("");
+              <DecisionConfirm
+                move={notBilled}
+                amount={amount}
+                open={open}
+                title={PopoverTitle}
+                onConfirm={(grund) => {
+                  onDecide(notBilled.stand, notBilled.wer, grund);
                   setOpenNo(false);
                 }}
-                className="flex flex-col gap-2"
-              >
-                <PopoverTitle className="p-0 text-sm text-fg">Nicht verrechnen</PopoverTitle>
-                <label className="flex flex-col gap-1 text-xs text-fg-secondary">
-                  Grund
-                  <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} required placeholder="Zum Beispiel: schon mit einem Nachtrag verrechnet" className={field} />
-                </label>
-                <p className="text-xs text-fg-muted">Vermerkt als Abrechnung, bis zur Anmeldung nur in diesem Browser.</p>
-                <div className="flex justify-end gap-2">
-                  <Button type="button" onClick={() => setOpenNo(false)}>
-                    Abbrechen
-                  </Button>
-                  <Button type="submit" variant="primary" disabled={!reason.trim()}>
-                    Nicht verrechnen
-                  </Button>
-                </div>
-              </form>
+                onCancel={() => setOpenNo(false)}
+              />
             </PopoverContent>
           </Popover>
         )}
@@ -159,7 +123,7 @@ export function DecisionBar({
                   <input type="date" value={task.bis} onChange={(e) => setTask({ ...task, bis: e.target.value })} className={field} />
                 </label>
               </div>
-              <p className="text-xs text-fg-muted">{deadline ? `${deadline}. ` : ""}Bis zur Anmeldung nur in diesem Browser.</p>
+              <p className="text-xs text-fg-muted">{deadline ? `${deadline}. ` : ""}Vorerst nur in diesem Browser gespeichert.</p>
               <div className="flex justify-end gap-2">
                 <Button type="button" onClick={() => setOpenTask(false)}>
                   Abbrechen
