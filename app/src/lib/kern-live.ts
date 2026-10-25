@@ -12,6 +12,7 @@ import { findHighlights } from "./finds";
 import { findCalculations, findRows, firm, projectCalculations, projectRows, startView } from "./kern-data";
 import { projectHighlights } from "./records";
 import { reportsView } from "./reports";
+import { invoiceList, invoiceView } from "./invoice";
 import { twinProjects, twinView } from "./twin";
 
 export type Live = ReturnType<typeof live>;
@@ -40,6 +41,10 @@ export function live(decisions: readonly Decision[]) {
     startView: once(() => startView(b)),
     /** The figures of "Berichte". */
     reportsView: once(() => reportsView(b)),
+    /** The tab "Schlussrechnung" of a project, by the core's project id. */
+    /** The list "Schlussrechnungen". */
+    invoiceList: once(() => invoiceList(b)),
+    invoiceView: perKey((projektId) => invoiceView(projektId, b)),
     /** The highlights of a project's "Überblick", by the core's project id. */
     projectHighlights: perKey((projektId) => projectHighlights(projektId, b)),
     /** "Auf einen Blick" of a find page, by its slug. */

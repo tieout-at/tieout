@@ -19,7 +19,7 @@ import { TabLinks } from "./tab-links";
  */
 export function StepBar({ project }: { project: Project }) {
   return (
-    <div className="shadow-line-bottom">
+    <div className="shadow-line-bottom print:hidden">
       <PhoneTabs project={project} />
       <ol className="grid gap-3 px-4 pb-2 max-md:hidden md:px-6 lg:grid-cols-[auto_1fr_1fr_1.35fr] lg:gap-4">
         <li className="flex min-w-0 lg:self-end">

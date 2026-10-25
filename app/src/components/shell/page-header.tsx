@@ -34,7 +34,7 @@ export function PageHeader({
   const crumbs: Crumb[] = [{ label: title ?? page?.title ?? "", href: trail.length ? page?.href : undefined }, ...trail];
 
   return (
-    <header className="flex h-[var(--header-height)] shrink-0 items-center gap-1.5 px-3 shadow-line-bottom">
+    <header className="flex h-[var(--header-height)] shrink-0 items-center gap-1.5 px-3 shadow-line-bottom print:hidden">
       <button
         type="button"
         onClick={() => setMobileOpen(true)}

@@ -126,6 +126,10 @@ const SCREENS = [
   },
   { name: "fundseite-f7", path: "/funde/wohnpark-mooshaim-f7/" },
   { name: "schlussrechnungen", path: "/schlussrechnungen/" },
+  { name: "projekt-schlussrechnung", path: "/projekte/wohnpark-mooshaim/schlussrechnung/" },
+  { name: "projekt-schlussrechnung-laufend", path: "/projekte/buerohaus-kiefernau/schlussrechnung/" },
+  { name: "beweispaket", path: "/funde/wohnpark-mooshaim-f1/beweispaket/" },
+  { name: "beweispakete", path: "/schlussrechnungen/wohnpark-mooshaim/beweispakete/" },
   { name: "nicht-gefunden", path: "/gibt-es-nicht/", expect404: true },
   {
     name: "suche",

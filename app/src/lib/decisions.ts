@@ -143,6 +143,19 @@ export function decide(keys: readonly string[], fallback: DecisionState, entry: 
 }
 
 /**
+ * "In der Schlussrechnung" is never a move of the board or the find page: it is noted on the tab "Schlussrechnung" when
+ * the business takes the Änderungsliste over into its own invoice, and only for a find that is released in the latest
+ * list of this browser. Noted as the Abrechnung, which writes the invoice.
+ */
+export function takeIntoInvoice(keys: readonly string[], fallback: DecisionState, zeit: string): { list: Decision[]; refused: string | null } {
+  const fresh = readDecisions();
+  const from = currentState(fresh, keys, fallback);
+  if (from === "in_schlussrechnung") return { list: fresh, refused: "Der Fund steht schon in der Schlussrechnung." };
+  if (from !== "freigegeben") return { list: fresh, refused: "Nur freigegebene Funde kommen in die Schlussrechnung." };
+  return { list: appendDecision({ fundSchluessel: keys[0], zeit, wer: "Abrechnung", stand: "in_schlussrechnung" }), refused: null };
+}
+
+/**
  * Calls back when this page or another tab of this browser records a decision or a task, so a page never decides on an
  * old state and every sum on it follows at once.
  */
