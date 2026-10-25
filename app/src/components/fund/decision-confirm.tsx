@@ -34,7 +34,7 @@ export function DecisionConfirm({
   onCancel: () => void;
 }) {
   const [reason, setReason] = useState("");
-  const about = subject && <p className="truncate text-xs text-fg">{subject}</p>;
+  const about = subject && <p className="line-clamp-2 text-xs text-fg">{subject}</p>;
 
   if (move.stand === "nicht_verrechnen") {
     return (
