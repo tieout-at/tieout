@@ -3,16 +3,23 @@ import { Construction } from "lucide-react";
 
 import { Page } from "@/components/shell/page";
 import { PROJECTS, projectHref } from "@/lib/example";
+import { findRows, startView } from "@/lib/kern-data";
+import { targetOf } from "@/lib/tasks";
 import { TaskPreview } from "./aufgaben/task-list";
-import { Greeting, Today } from "./start-client";
+import { Greeting, NextSteps, StartMoney, Today } from "./start-client";
 
-// Start (decision E3): money and "Als Nächstes" come with the core in step 7. The deadlines are dates from the
-// solution list, not amounts, so they are shown already.
+// Start (decision E3): the Ergebnis first. Money and "Als Nächstes" are computed by `kern/` while the page is built and
+// again in the browser after a decision there; the deadlines are dates from the solution list.
 export default function StartPage() {
+  const view = startView();
   return (
     <Page destination="start" heading={false}>
-      <div className="mx-auto flex w-full max-w-[592px] flex-col gap-12 px-4 pt-12 pb-16 md:pt-14">
-        <Greeting />
+      <div className="mx-auto flex w-full max-w-[592px] flex-col gap-10 px-4 pt-12 pb-16 md:pt-14">
+        <div className="flex flex-col gap-6">
+          <Greeting />
+          <StartMoney built={view} />
+        </div>
+        <NextSteps built={view} />
         <section aria-labelledby="fristen" className="flex flex-col gap-2">
           <div className="flex h-7 items-center justify-between px-1">
             <h2 id="fristen" className="text-fg-secondary">
@@ -36,20 +43,7 @@ export default function StartPage() {
             ))}
           </ul>
         </section>
-        <section aria-labelledby="aufgaben" className="flex flex-col gap-2">
-          <div className="flex h-7 items-center justify-between px-1">
-            <h2 id="aufgaben" className="text-fg-secondary">
-              Aufgaben
-            </h2>
-            <Link
-              href="/aufgaben/"
-              className="flex items-center rounded-sm px-1 text-xs text-fg-secondary hover:bg-fill-hover hover:text-fg max-md:-my-2 max-md:h-11"
-            >
-              Alle anzeigen
-            </Link>
-          </div>
-          <TaskPreview />
-        </section>
+        <TaskPreview targets={findRows().map(targetOf)} />
       </div>
     </Page>
   );

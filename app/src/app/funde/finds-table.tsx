@@ -6,10 +6,11 @@ import { CalendarDays, Construction, FileCheck, FolderInput, Gavel, ShieldAlert,
 
 import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
-import { currentState, decide, DECISION_TEXT, localTime, onStorageChange, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
+import { currentState, decide, DECISION_TEXT, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import { useLive } from "@/lib/live";
 import type { Calculation, View } from "@/lib/table";
+import { useTasks } from "@/lib/use-tasks";
 import { FindsBoard, PhoneRow, RiskText } from "./finds-board";
 
 const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: TagColour; rank: number }> = {
@@ -35,18 +36,16 @@ export function FindsTable({
 }) {
   // decisions recorded in this browser replace the core's state after the first paint (stage 0, until the backend)
   const [decisions, setDecisions] = useState<Decision[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const tasks = useTasks() ?? [];
   useEffect(() => {
-    const load = () => {
-      setDecisions(readDecisions());
-      setTasks(readTasks());
-    };
+    const load = () => setDecisions(readDecisions());
     load();
     return onStorageChange(load);
   }, []);
   const keys = (r: FindRow) => [r.id, ...r.earlierIds];
   const stateOf = (r: FindRow) => currentState(decisions, keys(r), r.decisionState);
-  const tasksOf = (r: FindRow) => tasks.filter((t) => keys(r).includes(t.fundSchluessel));
+  // a ticked task is no longer open: neither on the card nor before a release
+  const tasksOf = (r: FindRow) => tasks.filter((t) => !t.done && keys(r).includes(t.fundSchluessel));
   // with a decision in this browser the core runs here too (live.ts): rows, groups and sums over these decisions
   const live = useLive();
   const rows = live ? live.findRows().filter((r) => !project || r.project.slug === project) : built;

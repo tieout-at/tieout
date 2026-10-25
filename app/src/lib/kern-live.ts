@@ -9,7 +9,7 @@ import { pruefeFirma } from "@tieout/kern";
 
 import type { Decision } from "./decisions";
 import { findHighlights } from "./finds";
-import { findCalculations, findRows, firm, projectCalculations, projectRows } from "./kern-data";
+import { findCalculations, findRows, firm, projectCalculations, projectRows, startView } from "./kern-data";
 import { projectHighlights } from "./records";
 import { twinProjects, twinView } from "./twin";
 
@@ -35,6 +35,8 @@ export function live(decisions: readonly Decision[]) {
     findCalculations: once(() => findCalculations(b)),
     projectRows: once(() => projectRows(b)),
     projectCalculations: once(() => projectCalculations(b)),
+    /** Money and "Als Nächstes" on Start. */
+    startView: once(() => startView(b)),
     /** The highlights of a project's "Überblick", by the core's project id. */
     projectHighlights: perKey((projektId) => projectHighlights(projektId, b)),
     /** "Auf einen Blick" of a find page, by its slug. */

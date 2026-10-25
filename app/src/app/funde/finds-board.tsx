@@ -4,13 +4,23 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { Ban, CircleCheck, CircleCheckBig, CircleDashed, Ellipsis, ListTodo, ReceiptText, type LucideIcon } from "lucide-react";
 
+import { TaskDialog } from "@/components/aufgaben/task-dialog";
 import { DecisionConfirm } from "@/components/fund/decision-confirm";
 import { Tag, type TagColour } from "@/components/table/tag";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { DECISION_TEXT, moves, refusal, type DecisionState, type Move } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import { columnSums, type Calculation } from "@/lib/table";
+import { targetOf } from "@/lib/tasks";
 import { cn } from "@/lib/utils";
 
 export const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], TagColour> = { belegt: "green", beleg_fehlt: "yellow", nachtrag_nicht_gelegt: "orange" };
@@ -80,13 +90,14 @@ export function FindsBoard({
   const [dragging, setDragging] = useState<FindRow | null>(null);
   const [over, setOver] = useState<DecisionState | null>(null);
   const [pending, setPending] = useState<Pending | null>(null);
-  const [message, setMessage] = useState<{ text: string; href?: string } | null>(null);
+  const [taskFor, setTaskFor] = useState<FindRow | null>(null);
+  const [message, setMessage] = useState<{ text: string; href?: string; link?: string } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => () => clearTimeout(timer.current), []);
-  const say = (text: string, href?: string) => {
+  const say = (text: string, href?: string, link = "Fund öffnen") => {
     clearTimeout(timer.current);
-    setMessage({ text, href });
+    setMessage({ text, href, link });
     timer.current = setTimeout(() => setMessage(null), 6000);
   };
 
@@ -131,6 +142,7 @@ export function FindsBoard({
         setOver(null);
       }}
       onMove={(m) => setPending({ row: r, move: m })}
+      onTask={() => setTaskFor(r)}
     />
   );
 
@@ -232,7 +244,7 @@ export function FindsBoard({
                 {cards.map((r) => (
                   <li key={r.id} className="relative shadow-line-bottom">
                     <PhoneRow row={r} withProject={withProject} reason={lane.state === "nicht_verrechnen" ? reasonOf(r) : null} menuSpace />
-                    <DecisionMenu about={about(r)} moves={moves(stateOf(r))} onMove={(m) => setPending({ row: r, move: m })} className="absolute right-1 bottom-1 size-11" />
+                    <DecisionMenu about={about(r)} moves={moves(stateOf(r))} onMove={(m) => setPending({ row: r, move: m })} onTask={() => setTaskFor(r)} className="absolute right-1 bottom-1 size-11" />
                   </li>
                 ))}
               </ul>
@@ -260,7 +272,7 @@ export function FindsBoard({
               <>
                 {" "}
                 <Link href={message.href} className="underline underline-offset-2 outline-none focus-visible:outline-2 focus-visible:outline-white">
-                  Fund öffnen
+                  {message.link}
                 </Link>
               </>
             )}
@@ -289,6 +301,12 @@ export function FindsBoard({
           )}
         </DialogContent>
       </Dialog>
+      <TaskDialog
+        open={taskFor !== null}
+        onOpenChange={(o) => !o && setTaskFor(null)}
+        targets={taskFor ? [targetOf(taskFor)] : []}
+        onMade={(t) => say(`Aufgabe für ${t.zustaendig} zu ${about(taskFor!)} angelegt.`, "/aufgaben/", "Aufgaben öffnen")}
+      />
     </>
   );
 }
@@ -332,6 +350,7 @@ function Card({
   onDragStart,
   onDragEnd,
   onMove,
+  onTask,
 }: {
   row: FindRow;
   moves: Move[];
@@ -345,6 +364,7 @@ function Card({
   onDragStart: (e: DragEvent) => void;
   onDragEnd: () => void;
   onMove: (m: Move) => void;
+  onTask: () => void;
 }) {
   return (
     <div
@@ -389,13 +409,16 @@ function Card({
           </span>
         )}
       </Link>
-      <DecisionMenu about={about} moves={moves} onMove={onMove} className="absolute right-2 bottom-2 size-7" />
+      <DecisionMenu about={about} moves={moves} onMove={onMove} onTask={onTask} className="absolute right-2 bottom-2 size-7" />
     </div>
   );
 }
 
-/** "…" with the decisions a find can take, each with the icon of its column; always visible, the way for keyboard and phones. */
-function DecisionMenu({ about, moves, onMove, className }: { about: string; moves: Move[]; onMove: (m: Move) => void; className?: string }) {
+/**
+ * "…" with the decisions a find can take, each with the icon of its column, and "Aufgabe anlegen"; always visible, the
+ * way for keyboard and phones.
+ */
+function DecisionMenu({ about, moves, onMove, onTask, className }: { about: string; moves: Move[]; onMove: (m: Move) => void; onTask: () => void; className?: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -421,6 +444,11 @@ function DecisionMenu({ about, moves, onMove, className }: { about: string; move
           })}
           {moves.length === 0 && <DropdownMenuItem disabled>Steht in der Schlussrechnung</DropdownMenuItem>}
         </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onTask}>
+          <ListTodo />
+          Aufgabe anlegen
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

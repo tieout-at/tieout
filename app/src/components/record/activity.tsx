@@ -1,11 +1,11 @@
 "use client";
 
-import { Gavel, ListTodo, MessageCircle, PencilLine } from "lucide-react";
+import { CircleCheck, Gavel, ListTodo, MessageCircle, PencilLine } from "lucide-react";
 import { useState } from "react";
 
 import type { ActivityEntry } from "@/lib/records";
 
-const ICON = { korrektur: PencilLine, meldung: MessageCircle, entscheidung: Gavel, aufgabe: ListTodo } as const;
+const ICON = { korrektur: PencilLine, meldung: MessageCircle, entscheidung: Gavel, aufgabe: ListTodo, erledigt: CircleCheck } as const;
 
 /**
  * "Verlauf" of a record (Attio's "Activity" with "View all"): append only, newest first. Shows the first entries and

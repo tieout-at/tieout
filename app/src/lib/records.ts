@@ -42,7 +42,7 @@ export type Attribute = {
 /** A card of the highlights grid (Attio: 3 columns). */
 export type Highlight = { id: string; title: string; value: string; lines: string[]; status?: StatusColour | "orange"; href?: string };
 
-export type ActivityEntry = { id: string; time: string; timeText: string; who: string; text: string; kind: "korrektur" | "meldung" | "entscheidung" | "aufgabe" };
+export type ActivityEntry = { id: string; time: string; timeText: string; who: string; text: string; kind: "korrektur" | "meldung" | "entscheidung" | "aufgabe" | "erledigt" };
 
 export type ProjectRecord = {
   id: string;

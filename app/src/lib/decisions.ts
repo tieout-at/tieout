@@ -29,6 +29,17 @@ export type Task = {
   bis: string | null;
 };
 
+/**
+ * Ticking a task off, or opening it again: appended, never changed; the latest entry of a task counts. Noted as the
+ * role in charge of the task (no persons before sign-in, step 10).
+ */
+export type TaskCheck = {
+  aufgabeId: string;
+  zeit: string;
+  wer: string;
+  erledigt: boolean;
+};
+
 /** The words of the core for each state (`ENTSCHEIDUNG_TEXT` in kern/; a test keeps both equal). */
 export const DECISION_TEXT: Record<DecisionState, string> = {
   gefunden: "Gefunden",
@@ -38,7 +49,7 @@ export const DECISION_TEXT: Record<DecisionState, string> = {
   nicht_verrechnen: "Nicht verrechnen",
 };
 
-const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1" } as const;
+const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1" } as const;
 
 /** The current decision of a find: the latest entry for it or an earlier key of the same work, "gefunden" without any (as `entscheidungsstand` in kern/). */
 export function currentState(list: readonly Decision[], keys: readonly string[], fallback: DecisionState = "gefunden"): DecisionState {
@@ -137,7 +148,7 @@ export function decide(keys: readonly string[], fallback: DecisionState, entry: 
  */
 export function onStorageChange(callback: () => void): () => void {
   const listener = (e: StorageEvent) => {
-    if (e.key === null || e.key === KEYS.decisions || e.key === KEYS.tasks) callback();
+    if (e.key === null || Object.values(KEYS).includes(e.key as (typeof KEYS)[keyof typeof KEYS])) callback();
   };
   window.addEventListener("storage", listener);
   window.addEventListener(CHANGED, callback);
@@ -148,3 +159,5 @@ export function onStorageChange(callback: () => void): () => void {
 }
 export const readTasks = () => read<Task>(KEYS.tasks);
 export const appendTask = (t: Task) => append(KEYS.tasks, t);
+export const readTaskChecks = () => read<TaskCheck>(KEYS.checks);
+export const appendTaskCheck = (c: TaskCheck) => append(KEYS.checks, c);

@@ -19,6 +19,7 @@ import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/compone
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BUSINESS } from "@/lib/example";
 import { activeDestination, SECTIONS, TOP, type Destination } from "@/lib/navigation";
+import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
 import { useModifierLabel, useShell } from "./shell-state";
 
@@ -152,8 +153,21 @@ function NavItem({ destination, active }: { destination: Destination; active: bo
       >
         <Icon className={cn("size-4 shrink-0", active ? "text-fg" : "text-fg-secondary")} aria-hidden />
         <span className="truncate">{destination.title}</span>
+        {destination.id === "aufgaben" && <OpenTasks />}
       </Link>
     </li>
+  );
+}
+
+/** The number of open tasks next to "Aufgaben" (Attio's counter on Tasks); nothing while there are none. */
+function OpenTasks() {
+  const open = (useTasks() ?? []).filter((t) => !t.done).length;
+  if (!open) return null;
+  return (
+    <span className="ml-auto flex h-4 min-w-4 items-center justify-center rounded-xs bg-surface px-1 text-[11px] text-count tabular-nums shadow-ring">
+      {open}
+      <span className="sr-only"> offen</span>
+    </span>
   );
 }
 

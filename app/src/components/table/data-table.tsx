@@ -770,7 +770,7 @@ function Checkbox({ checked, label, onChange }: { checked: boolean | "mixed"; la
   );
 }
 
-function CheckMark({ checked }: { checked: boolean | "mixed" }) {
+export function CheckMark({ checked }: { checked: boolean | "mixed" }) {
   return (
     <span
       aria-hidden
@@ -784,8 +784,8 @@ function CheckMark({ checked }: { checked: boolean | "mixed" }) {
   );
 }
 
-const barButton =
+export const barButton =
   "flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 shadow-button outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover max-md:h-11";
 
-const menuItem =
+export const menuItem =
   "flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm outline-none hover:bg-fill-hover focus-visible:bg-fill-hover max-md:h-11";
