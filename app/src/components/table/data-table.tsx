@@ -167,7 +167,7 @@ export function DataTable<R extends Row>({
         <button
           type="button"
           onClick={() => update({ filters: [] })}
-          className="flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 shadow-button hover:bg-row-hover max-md:h-11"
+          className="flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 shadow-button hover:bg-row-hover max-md:relative max-md:h-8 max-md:before:absolute max-md:before:-inset-y-1.5 max-md:before:inset-x-0"
         >
           <RotateCcw className="size-4 text-fg-secondary" aria-hidden />
           Filter entfernen
@@ -468,7 +468,7 @@ function SortFilterBar<R>({ rows, columns, state, onState }: { rows: R[]; column
       {filters.map((f) => {
         const c = columns.find((x) => x.id === f.column)!;
         return (
-          <div key={f.column} className="flex h-7 items-center rounded-md bg-surface shadow-button max-md:h-11">
+          <div key={f.column} className="flex h-7 items-center rounded-md bg-surface shadow-button max-md:relative max-md:h-8 max-md:before:absolute max-md:before:-inset-y-1.5 max-md:before:inset-x-0">
             <Popover>
               <PopoverTrigger className="flex h-full max-w-72 items-center gap-1.5 rounded-l-md pr-1 pl-2 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent">
                 <c.icon className="size-4 shrink-0 text-fg-secondary" aria-hidden />
@@ -770,7 +770,7 @@ function Checkbox({ checked, label, onChange }: { checked: boolean | "mixed"; la
   );
 }
 
-function CheckMark({ checked }: { checked: boolean | "mixed" }) {
+export function CheckMark({ checked }: { checked: boolean | "mixed" }) {
   return (
     <span
       aria-hidden
@@ -784,8 +784,8 @@ function CheckMark({ checked }: { checked: boolean | "mixed" }) {
   );
 }
 
-const barButton =
-  "flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 shadow-button outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover max-md:h-11";
+export const barButton =
+  "flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 shadow-button outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover max-md:relative max-md:h-8 max-md:before:absolute max-md:before:-inset-y-1.5 max-md:before:inset-x-0";
 
-const menuItem =
+export const menuItem =
   "flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm outline-none hover:bg-fill-hover focus-visible:bg-fill-hover max-md:h-11";

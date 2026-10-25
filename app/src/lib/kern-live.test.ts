@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { Decision } from "./decisions";
 import { findSlug } from "./example";
 import { findHighlights } from "./finds";
-import { business, findCalculations, findRows, projectCalculations, projectRows } from "./kern-data";
+import { business, findCalculations, findRows, projectCalculations, projectRows, startView } from "./kern-data";
 import { live } from "./kern-live";
 import { projectHighlights } from "./records";
 import { columnSums, footerSum, matchingSum, type Row } from "./table";
@@ -72,5 +72,28 @@ describe("the core in the browser (step 6b)", () => {
     expect(twin.finds.find((f) => f.number === "F1")!.bucket).toBe("nicht_verrechnen");
     // another project stays as it was
     expect(l.projectRows().find((r) => r.id === "p2")).toEqual(projectRows().find((r) => r.id === "p2"));
+  });
+});
+
+describe("Start (step 7)", () => {
+  it("shows the money of the business and the first check in the project due first", () => {
+    const v = startView();
+    expect([v.extra.text, v.unclear.text]).toEqual(["22.632,96 €", "8.319,19 €"]);
+    expect(v.next.map((s) => [s.step, s.find.number, s.find.project.name, s.deadline])).toEqual([["Prüfen", "F1", "Wohnpark Mooshaim", "Schlussrechnung legen bis 30.10.2026"]]);
+    expect(live([]).startView()).toEqual(v);
+  });
+
+  it("follows the decisions of this browser: a check moves on to F2 and asks for the release of F1", () => {
+    const l = live([decision(f1, "geprueft")]);
+    expect(l.startView().next.map((s) => [s.step, s.find.number])).toEqual([
+      ["Prüfen", "F2"],
+      ["Freigeben", "F1"],
+    ]);
+  });
+
+  it("drops a find set to Nicht verrechnen from the money, as the core does", () => {
+    const v = live([decision(f1, "nicht_verrechnen")]).startView();
+    expect(v.extra.text).toBe("15.984,36 €");
+    expect(v.next[0].find.number).toBe("F2");
   });
 });

@@ -14,6 +14,9 @@ const dir = resolve(process.argv[2] ?? "qa-shots");
 const PAIRS = [
   ["start", "home", "Start ↔ Home"],
   ["aufgaben", "tasks", "Aufgaben ↔ Tasks"],
+  ["aufgaben-gefuellt", "tasks", "Aufgaben mit offenen Aufgaben ↔ Tasks"],
+  ["aufgaben-neu", "tasks", "Aufgaben, Neue Aufgabe ↔ Tasks"],
+  ["start-gefuellt", "home", "Start mit Aufgaben ↔ Home"],
   ["berichte", "reports", "Berichte ↔ Reports"],
   ["ablaeufe", "workflows", "Abläufe ↔ Workflows"],
   ["belege", "companies", "Belege ↔ Companies (Tabelle)"],

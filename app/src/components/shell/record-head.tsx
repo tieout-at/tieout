@@ -20,10 +20,14 @@ export function RecordHead({
   return (
     <div className="flex flex-col gap-1 px-6 pt-5 pb-4 max-md:px-4">
       <div className={wrap ? "flex items-start gap-2 [&>span]:mt-0.5" : "flex items-center gap-2"}>
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-surface text-fg-secondary shadow-ring" aria-hidden>
-          <Icon className="size-4" />
-        </span>
-        {badge && <span className="flex h-6 min-w-8 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1.5 text-sm text-count shadow-ring tabular-nums">{badge}</span>}
+        {/* one chip, as Attio: the number of a find stands for its object, else the object's icon */}
+        {badge ? (
+          <span className="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md bg-fill-hover px-1.5 text-sm text-count shadow-ring tabular-nums">{badge}</span>
+        ) : (
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-surface text-fg-secondary shadow-ring" aria-hidden>
+            <Icon className="size-4" />
+          </span>
+        )}
         <h1 className={wrap ? "line-clamp-2 min-w-0 text-lg font-semibold max-sm:line-clamp-3" : "truncate text-lg font-semibold max-md:line-clamp-2 max-md:whitespace-normal"}>{title}</h1>
         {children}
       </div>

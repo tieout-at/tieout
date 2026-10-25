@@ -21,7 +21,7 @@ export function SourceChip({ source, active, onOpen }: { source: SourceRef; acti
       aria-pressed={on}
       title={`${source.label}, ${source.detail}`}
       className={cn(
-        "inline-flex h-6 max-w-full items-center rounded-sm px-1.5 text-xs shadow-ring outline-none focus-visible:outline-2 focus-visible:outline-accent max-md:min-h-11",
+        "inline-flex h-6 max-w-full items-center rounded-sm px-1.5 text-xs shadow-ring outline-none focus-visible:outline-2 focus-visible:outline-accent max-md:relative max-md:before:absolute max-md:before:-inset-y-2.5 max-md:before:inset-x-0",
         on ? "bg-accent-soft text-accent shadow-[inset_0_0_0_1px_rgb(29_59_255/0.25)]" : "bg-fill-subtle text-fg-secondary hover:bg-fill-hover hover:text-fg",
       )}
     >
@@ -88,7 +88,7 @@ function EvidenceRows({ title, items, active, onOpen }: { title: string; items: 
                 onClick={() => onOpen(x.source)}
                 aria-pressed={on}
                 className={cn(
-                  "flex w-full items-start gap-2.5 rounded-md px-2 py-2 text-left outline-none focus-visible:outline-2 focus-visible:outline-accent max-md:min-h-11",
+                  "flex w-full items-start gap-2.5 rounded-md px-2 py-2 text-left outline-none focus-visible:outline-2 focus-visible:outline-accent max-md:relative max-md:before:absolute max-md:before:-inset-y-2.5 max-md:before:inset-x-0",
                   on ? "bg-row-selected" : "hover:bg-row-hover",
                 )}
               >
@@ -148,7 +148,7 @@ export function WeakSpot({ record, active, onOpen }: { record: FindRecord; activ
             {r.sameReason && (
               <p className="pl-6 text-xs text-fg-secondary">
                 {r.sameReason}{" "}
-                <Link href={record.client.href} className="rounded-xs text-accent outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+                <Link href={record.client.href} className="link-quiet">
                   {record.client.name} öffnen
                 </Link>
               </p>

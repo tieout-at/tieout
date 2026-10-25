@@ -77,6 +77,10 @@ export type FindRow = Row & {
   risk: { number: string; reason: string; amount: Amount; alreadyCut: boolean } | null;
   /** What closes the gap of a find in Klärung; named before a release, as on the find page. */
   remedy: string | null;
+  /** The text a new task on this find starts with: the Abhilfe of its Kürzungsrisiko, else of its gap (as on the find page). */
+  taskText: string;
+  /** "Schlussrechnung legen bis 30.10.2026" of its project, named where a task is made. */
+  deadline: string | null;
   sources: string[];
   workDate: Dated;
   /** Link target for the original viewer (step 5): the first Beleg behind the find and its place. */
@@ -200,6 +204,8 @@ export function findRows(b: FirmenErgebnis = business()): FindRow[] {
         earlierIds: f.fruehereSchluessel.map((k) => `${p.projektId}/${k}`),
         risk: risk ? { number: risk.nr, reason: KUERZUNGSGRUND_TEXT[risk.grund], amount: amount(risk.betrag), alreadyCut: risk.zustand === "schon_gekuerzt" } : null,
         remedy: f.abhilfe ?? null,
+        taskText: risk?.abhilfe ?? f.abhilfe ?? "",
+        deadline: p.datum?.art === "legen_bis" ? `${DATE_LABEL.legen_bis} ${datumText(p.datum.wert)}` : null,
         sources: (e.belegquellen[f.schluessel] ?? []).map((s) => BELEGQUELLE_TEXT[s]),
         workDate: dated(f.arbeitsdatum),
         original: q ? { belegId: q.belegId, page: q.seite } : null,
@@ -336,4 +342,49 @@ export function belegRows(): BelegRow[] {
       finds: x.funde,
     }));
   });
+}
+
+export type NextStep = {
+  /** "Prüfen" by the Abrechnung or "Freigeben" by the Geschäftsführung, as the decision bar offers it. */
+  step: "Prüfen" | "Freigeben";
+  who: string;
+  find: FindRow;
+  /** How many finds wait for this step in the same project. */
+  waiting: number;
+  /** "Schlussrechnung legen bis 30.10.2026", or null for a project without that deadline. */
+  deadline: string | null;
+};
+
+export type StartView = {
+  extra: Amount;
+  risk: Amount;
+  unclear: Amount;
+  /** The next check and the next release, in the project whose Schlussrechnung is due first; empty once all are decided. */
+  next: NextStep[];
+};
+
+/**
+ * Start (decision E3): the money of the business and "Als Nächstes". The projects are taken in the order of their
+ * deadline "Schlussrechnung legen bis", then the others; in each, the first find (F1 …) that waits for a check and the
+ * first that waits for a release. Every amount is the core's.
+ */
+export function startView(b: FirmenErgebnis = business()): StartView {
+  const rows = findRows(b);
+  const projects = projectRows(b)
+    .filter((p) => rows.some((r) => r.project.slug === p.slug))
+    .map((p, i) => ({ p, i, due: p.date?.label === DATE_LABEL.legen_bis ? p.date.iso : null }))
+    .sort((x, y) => (x.due && y.due ? x.due.localeCompare(y.due) : x.due ? -1 : y.due ? 1 : x.i - y.i));
+  const step = (state: Entscheidungsstand, label: NextStep["step"], who: string): NextStep | null => {
+    for (const { p, due } of projects) {
+      const waiting = rows.filter((r) => r.project.slug === p.slug && r.decisionState === state);
+      if (waiting.length) return { step: label, who, find: waiting[0], waiting: waiting.length, deadline: due ? `${DATE_LABEL.legen_bis} ${datumText(due)}` : null };
+    }
+    return null;
+  };
+  return {
+    extra: amount(b.summen.zusaetzlichVerrechenbar),
+    risk: amount(b.davonMitKuerzungsrisiko.betrag),
+    unclear: amount(b.summen.inKlaerung),
+    next: [step("gefunden", "Prüfen", "Abrechnung"), step("geprueft", "Freigeben", "Geschäftsführung")].filter((s): s is NextStep => s !== null),
+  };
 }

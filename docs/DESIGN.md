@@ -1,13 +1,13 @@
 # tieout v2: design
 
-**As of:** 25 October 2026, step 6 (Board und Listen). Written by Claude for Maxi S.
+**As of:** 25 October 2026, step 7 (Aufgaben und Start). Written by Claude for Maxi S.
 **Rule:** layout, behaviour, sizes and spacing follow Attio (app.attio.com); brand, colours, icons, illustrations and words are tieout's own. The tokens live in `app/src/app/globals.css` (`@theme`); this file explains each value and where it comes from. Light only; a dark theme is not planned before the switch-over.
 
 **Sources:** *measured* means read from the computed styles of app.attio.com in Maxi S.'s workspace (23.10.2026, `../tieout-intern/docs/Plan_Neustart.md` "Gemessene Vorlage", and again on 23.10.2026 at night for this file); *brand* means `brand/README.md` and `website/app/globals.css`; *ours* means decided in this step, with the reason.
 
 ## Typeface
 
-Inter (variable, self-hosted from `@fontsource-variable/inter`, no request to Google). Attio sets every piece of UI text in weight 500 and tightens the larger sizes.
+Inter (variable, self-hosted from `@fontsource-variable/inter`, no request to Google). Attio sets every piece of UI text in weight 500 and tightens the larger sizes. Numbers of positions, Belege and dates in the readouts of "Übersicht" use `font-mono`, the brand's IBM Plex Mono 400 and 500 (self-hosted from `@fontsource/ibm-plex-mono`), never a system mono.
 
 | Token | Size / line | Weight | Letter spacing | Used for | Source |
 |---|---|---|---|---|---|
@@ -28,7 +28,7 @@ Ink and ultramarine come from the brand; the greys are Attio's alphas, applied t
 | `fg` | `#0a1020` | text | brand ink (Attio: `#101112`) |
 | `fg-secondary` | ink at 63 % | secondary text, icons, section headings | measured alpha |
 | `fg-help` | ink at 55 % | "Hilfe" in the header | measured alpha |
-| `fg-muted` | ink at 50 % | hints, key caps, counters | measured alpha |
+| `fg-muted` | ink at 58 % | hints, key caps, counters | Attio's 50 % has 3.55:1 on white; 58 % reaches 4.67:1 (AA), for screens read on site (design review, 25.10.2026) |
 | `fg-faint` | ink at 30 % | separators in text, open status circles | ours |
 | `surface` | `#ffffff` | page, buttons, popups | measured |
 | `sidebar` | `#fbfbfb` | sidebar; the open tab | measured |
@@ -37,9 +37,10 @@ Ink and ultramarine come from the brand; the greys are Attio's alphas, applied t
 | `fill-subtle` | black at 2 % | quiet chips | measured |
 | `fill-selected` | `#f6f7f7` | highlighted row in the search | measured |
 | `count` | `#505155` | numbers in small counters | measured |
-| `accent` | `#1d3bff` | primary button, focus ring, the square in pictures | brand ultramarine (Attio: `#266df0`); used sparingly ("less blue") |
+| `accent` | `#1d3bff` | the one primary button of a screen, focus ring, a chosen source and its mark, the trace on "Übersicht", the square in pictures, the drag state of the board; never for links or icons without an action | brand ultramarine (Attio: `#266df0`); 6.73:1 with white; kept after an independent design review (25.10.2026), a duller shade would hardly differ and break with the website |
 | `grid` | `#e8ecf2` | plan grid in empty-state pictures | brand grid minor |
 | `cell`, `cell-edge` | `#e6e9ef`, ink at 10 % | a cell of the Abgleich on "Übersicht" | ours |
+| `state-red-edge` | `#c4312f` | red as text (an overdue date), 5.49:1 on white; the dot stays `state-red` (3.91:1) | ours, measured contrast |
 | `state-*-edge` | darker green, yellow, orange | 1 px inner contour of a coloured cell, so it reaches 3:1 against white; lines and cells share one yellow | ours, measured contrast |
 | `sweep` | `#a9b6ff` | the light that travels along a traced line | ours |
 
@@ -94,6 +95,15 @@ Attio's "Deals" board ("Pipeline"), measured 25.10.2026 on a filled board in Max
 - **Sums (Attio's "Add calculation" under each column):** only the fixed sums of `kern/` that cover exactly the cards of the column ("zusätzlich verrechenbar", "in Klärung", label 12 px secondary, amount 14 px, `columnSums()` in `lib/table.ts`). Where `kern/` has no sum for exactly these finds, because a filter splits a group or a decision is only in this browser, the label stays and says "nicht gerechnet", with the reason on hover; the tables do the same (decided by Maxi S., 25.10.2026: no sums of the app). "Nicht verrechnen" says "zählt in keiner Summe". A find set to "Nicht verrechnen" in the browser leaves its group (`countedGroups`).
 - **Phones (below 768 px):** the board becomes one list grouped by Entscheidung, each group with a sticky 40 px head (icon, name, count) and its sums below; empty groups are left out; deciding goes through the menu of each row. The find table becomes a list (`phoneRow` of `DataTable`): number, short name in up to two lines and amount on top, the Entscheidung (not in a group that already says it) and a Belegstand only when it is not "belegt" as tags, then the Kürzungsrisiko and the project in 12 px; the counter and the fixed sums at the bottom (customer test 2). The step bar of a project is one row of tabs that scrolls sideways, the steps parted by a thin line, without the run steps, so a tab starts at about 350 px instead of 650 px.
 
+## Tasks and Start (step 7)
+
+Attio's "Tasks" and "Home", measured on `qa-shots/attio/tasks.jpg` and `home.jpg` (local only).
+
+- **"Aufgaben":** the bar of the tables (48 px): "Sortiert nach Frist" (or "Angelegt, neueste zuerst"), the quiet "Filter" with Zuständig and Projekt and the active filters as chips, "Neue Aufgabe" as the primary button at the right (on phones a 44 px "+"). Below a header of 34 px with icons (Aufgabe, Erledigen bis, Fund, Zuständig; columns 1fr, 170, 240, 160 px). Open tasks in groups by due date ("Überfällig", "Heute", "Nächste 7 Tage", "Später", "Ohne Frist"), each with a 26 px head on `fill-subtle` and its count, as Attio's "Today 1"; rows of at least 42 px with the 16 px circle, the text in up to two lines, the due date ("Heute" in the orange edge colour, an overdue date in red with "überfällig" for screen readers, the group says it), the find as number chip and project, the role. Done tasks fold under "Erledigt" (struck through, green circle, "erledigt 25.10.2026"). On phones each row is the circle, the text and one 12 px line with due date, role and find. The sidebar shows the number of open tasks next to "Aufgaben".
+- **Ticking off is appended:** the circle appends a tick (`TaskCheck` in `lib/decisions.ts`, noted as the role in charge), "Rückgängig" in the note at the bottom appends an opening again; the latest counts, the Verlauf of the find shows both ("Bauleitung hakte die Aufgabe ab: …"). A ticked task is no longer named on the card of the board nor before a release.
+- **"Aufgabe anlegen"** (Attio's "Create task" modal, `components/aufgaben/task-dialog.tsx`): one 520 px dialog with a light dim, from "Aufgaben" ("Neue Aufgabe"), from Start ("+"), from the decision bar of a find and from the menu "…" of a card on the board. On a find the find is set and its Abhilfe is the text; on "Aufgaben" and Start the find is chosen first (grouped by project) and brings its Abhilfe, unless a text of one's own was written. The Bauleitung is proposed; the deadline of the project is named; "Vorerst nur in diesem Browser gespeichert."
+- **Start** (decision E3, the 592 px column of Attio's Home): the greeting; the money of the business as two cards ("zusätzlich verrechenbar" with "davon mit Kürzungsrisiko", "in Klärung" with "Beleg fehlt oder Nachtrag nicht gelegt"), each a link to "Funde"; "Als Nächstes" with the next check (Abrechnung) and the next release (Geschäftsführung), each the first such find of the project due first, with its amount and how many follow, a jump to the find page; "Fristen"; "Aufgaben" with the three open tasks due first, each with its circle (overdue says "überfällig" in letters here), "Alle anzeigen" and "+". Money and "Als Nächstes" come from `startView()` in `lib/kern-data.ts`, built with the page and computed again in the browser after a decision (`live.ts`).
+
 ## "Übersicht" (Digitaler Zwilling)
 
 The page that shows the flow of the website section 03 with the real data of one project (decided with Maxi S. on 24.10.2026, `SPEZIFIKATION.md` 4.4). Three columns in a CSS grid sized by the stage width, not the viewport: "Ihre Daten" (every Beleg as a tick in a ruler per group, the ones that prove a finding long and in ink), "Digitaler Zwilling" ("Wissen aus Ihrem Betrieb" with Auftraggeber, Vertrag and Preisbasis, then the Abgleich: one cell per position of the Leistungsverzeichnis in its order and one per service without a position, coloured only where the Abgleich found something, in the Belegstand colour of that finding) and "Ergebnis" (the two money words apart, each finding as a row). Hairline evidence lines of equal weight, gradient from ink into the Belegstand colour; a Beleg proves money, it does not contain it, so no line is sized by an amount. Pointing at a finding or a money figure (or Tab and Enter) traces it: the proving Belege slide out as cards (240 ms, `ease-soft`, 30 ms stagger), the lines draw from the money back to them and a light (`sweep`) travels along them; everything else dims. The own Entwurf is drawn dashed as "verrechnet laut Entwurf" and never counted as proof. An entrance of about 1,2 s plays once per session (ticks, lines, cells, money), none with reduced motion; there is no automatic tour (it disturbs reading, WCAG 2.2.2). Below a stage width of 740 px the columns stack with the money first, and a tap opens the trace as a sheet from the bottom. Every number in `components/zwilling/config.ts`; layout functions are pure and tested with real, small, large (2.000 Belege), long and empty data (`layout.test.ts`).
@@ -111,6 +121,8 @@ The page that shows the flow of the website section 03 with the real data of one
 - **Below 768 px** the sidebar becomes a panel from the left that scrolls as a whole, opened with the menu button in the header; the header also gets a search button. Tap targets are at least 44 px there (entries, tabs, buttons, menu and search rows), inputs use 16 px text, and no page scrolls sideways.
 - **No button before it works** (SPEZIFIKATION.md 3.3): empty states only offer actions that exist ("Wohnpark Mooshaim öffnen"). "Erste Schritte" lists its three steps marked "folgt" instead of linking to empty pages; the members page says that inviting comes with sign-in. "Ordner importieren", inviting and exports come with the steps that build them.
 - **One truth on every screen:** what the sample company already has in the shell (the project, its Auftraggeber, its deadline) appears the same everywhere; Start shows the deadline of Wohnpark Mooshaim as a plain date.
+- **Links:** an internal link is ink with a faint underline that darkens on hover (`link-quiet`, Attio names a record in ink); a find is named by its number chip and project. Blue text is not a link colour.
+- **Phones:** buttons, bar buttons and filter chips look 32 px high and take a 44 px tap through an invisible frame (`before:-inset-y-1.5`), source chips look 24 px; rows and menu items stay 44 px.
 - **Words:** German, full words, vocabulary of SPEZIFIKATION.md section 6. `app/scripts/check-words.mjs` runs after every build and fails on a forbidden word, an abbreviation, a dash used as punctuation, an amount or an open placeholder, in the exported pages (text and read-out attributes) and in every string of `app/src/` (text that only appears after a click).
 
 ## Not taken from Attio
