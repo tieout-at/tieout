@@ -11,6 +11,7 @@ import type { Decision } from "./decisions";
 import { findHighlights } from "./finds";
 import { findCalculations, findRows, firm, projectCalculations, projectRows, startView } from "./kern-data";
 import { projectHighlights } from "./records";
+import { reportsView } from "./reports";
 import { twinProjects, twinView } from "./twin";
 
 export type Live = ReturnType<typeof live>;
@@ -37,6 +38,8 @@ export function live(decisions: readonly Decision[]) {
     projectCalculations: once(() => projectCalculations(b)),
     /** Money and "Als Nächstes" on Start. */
     startView: once(() => startView(b)),
+    /** The figures of "Berichte". */
+    reportsView: once(() => reportsView(b)),
     /** The highlights of a project's "Überblick", by the core's project id. */
     projectHighlights: perKey((projektId) => projectHighlights(projektId, b)),
     /** "Auf einen Blick" of a find page, by its slug. */
