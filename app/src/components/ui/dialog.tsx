@@ -21,11 +21,11 @@ function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
 }
 
 /** Centred panel without padding; the content decides its own layout (search, forms). */
-function DialogContent({ className, children, ...props }: DialogPrimitive.Popup.Props) {
+function DialogContent({ className, children, dim = false, ...props }: DialogPrimitive.Popup.Props & { dim?: boolean }) {
   return (
     <DialogPrimitive.Portal>
-      {/* Attio dims nothing behind the search; the backdrop only catches the click outside. */}
-      <DialogPrimitive.Backdrop className="fixed inset-0 z-50" />
+      {/* Attio dims nothing behind the search, the backdrop only catches the click outside; a confirmation dims lightly (`dim`). */}
+      <DialogPrimitive.Backdrop className={cn("fixed inset-0 z-50", dim && "bg-black/15 data-open:animate-in data-open:fade-in-0")} />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(

@@ -198,7 +198,7 @@ async function showBoard(page) {
     await views.click();
     await page.getByRole("menuitem", { name: "Nach Entscheidung" }).click();
   }
-  await page.locator("section[aria-label]").first().waitFor();
+  await page.locator("section[aria-label]:visible").first().waitFor();
 }
 
 const browser = await chromium.launch({ channel: "msedge", headless: true });

@@ -200,7 +200,7 @@ export function DataTable<R extends Row>({
           {sums.map((s) => (
             <span key={s.id} className="flex items-baseline justify-between gap-3">
               <span className="text-xs text-fg-secondary">{s.title}</span>
-              {s.text ? <span className="tabular-nums">{s.text}</span> : <span className="text-xs text-fg-muted">keine feste Summe</span>}
+              {s.text ? <span className="tabular-nums">{s.text}</span> : <span className="text-xs text-fg-muted">nicht gerechnet</span>}
             </span>
           ))}
         </div>
@@ -708,7 +708,7 @@ function FooterSum<R extends Row>({ column, chosen, visible, onChoose }: { colum
         className="group/sum flex h-full min-w-0 flex-1 items-center justify-end gap-1.5 px-3 text-fg-muted outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover"
         title={
           result && "cut" in result
-            ? "Der Filter teilt diese Gruppe. Summen kommen nur aus dem Rechenkern, die App zählt keine Beträge zusammen."
+            ? "Für genau diese Einträge liefert der Rechenkern keine Summe: ein Filter teilt die Gruppe, oder eine Entscheidung ist nur in diesem Browser vermerkt und wird erst mit der Anmeldung gerechnet."
             : result
               ? `${result.calculation.title} ${result.sum.text}`
               : undefined
@@ -716,7 +716,10 @@ function FooterSum<R extends Row>({ column, chosen, visible, onChoose }: { colum
       >
         {result ? (
           "cut" in result ? (
-            <span className="truncate">keine feste Summe</span>
+            <>
+              <span className="min-w-0 truncate text-xs text-fg-secondary">{column.calculations?.find((c) => c.id === chosen)?.title}</span>
+              <span className="shrink-0 text-xs whitespace-nowrap">nicht gerechnet</span>
+            </>
           ) : (
             <>
               <span className="min-w-0 truncate text-xs text-fg-secondary">{result.calculation.title}</span>

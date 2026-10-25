@@ -14,7 +14,7 @@ import { TabLinks } from "./tab-links";
  * Step bar of the project page (SPEZIFIKATION.md 4.1): the three website steps in order, each with its run steps
  * of the Abschluss-Lauf and its tabs, after the tab "Überblick" of the record itself. Every run step is "offen" until the core runs (step 2 onwards).
  * Side by side from 1024 px; below that one step per row, so nothing runs into the next column. On phones one row of
- * tabs that scrolls sideways, each step marked by its number, so the content of a tab starts high on the screen
+ * tabs that scrolls sideways, the steps parted by a thin line, so the content of a tab starts high on the screen
  * (customer test of step 6: the full bar took 650 of 844 px).
  */
 export function StepBar({ project }: { project: Project }) {
@@ -59,24 +59,20 @@ export function StepBar({ project }: { project: Project }) {
 function PhoneTabs({ project }: { project: Project }) {
   const path = normalisePath(usePathname());
   const row = useRef<HTMLElement>(null);
-  // the open tab in view, without moving the page
+  // the step of the open tab in view from its start, without moving the page
   useEffect(() => {
-    const active = row.current?.querySelector<HTMLElement>('[aria-current="page"]');
-    if (row.current && active) row.current.scrollLeft = active.offsetLeft - row.current.clientWidth / 2 + active.offsetWidth / 2;
+    const group = row.current?.querySelector<HTMLElement>('[aria-current="page"]')?.parentElement;
+    if (row.current && group) row.current.scrollLeft = Math.max(0, group.offsetLeft - 16);
   }, [path]);
   const groups = [
     { number: null, tabs: [OVERVIEW_TAB] },
     ...STEPS.map((step, i) => ({ number: i + 1, title: step.title, tabs: step.tabs })),
   ];
   return (
-    <nav ref={row} aria-label="Reiter" className="flex items-center gap-1 overflow-x-auto px-4 pb-2 [scrollbar-width:none] md:hidden">
+    <nav ref={row} aria-label="Reiter" className="relative flex items-center gap-1 overflow-x-auto px-4 pb-2 [scrollbar-width:none] md:hidden">
       {groups.map((g) => (
         <span key={g.number ?? 0} className="flex shrink-0 items-center gap-1">
-          {g.number && (
-            <span title={"title" in g ? g.title : undefined} className="ml-1 flex size-5 shrink-0 items-center justify-center rounded-xs bg-fill-hover text-2xs text-count shadow-ring">
-              {g.number}
-            </span>
-          )}
+          {g.number && <span aria-hidden title={"title" in g ? g.title : undefined} className="mx-1 h-5 w-px shrink-0 bg-line" />}
           {g.tabs.map((t) => {
             const href = projectHref(project, t.slug);
             const active = path === href;

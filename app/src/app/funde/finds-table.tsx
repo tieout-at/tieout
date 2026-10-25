@@ -9,7 +9,7 @@ import { Tag, type TagColour } from "@/components/table/tag";
 import { currentState, decide, DECISION_TEXT, localTime, onStorageChange, readDecisions, readTasks, type Decision, type Task } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import type { Calculation, View } from "@/lib/table";
-import { FindsBoard } from "./finds-board";
+import { FindsBoard, PhoneRow, RiskText } from "./finds-board";
 
 const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: TagColour; rank: number }> = {
   belegt: { colour: "green", rank: 0 },
@@ -48,6 +48,11 @@ export function FindsTable({
   const tasksOf = (r: FindRow) => tasks.filter((t) => keys(r).includes(t.fundSchluessel));
   // a decision made in this browser shows at once; a find set to "Nicht verrechnen" here leaves its group, so no fixed sum of
   // `kern/` (which still counts it) fits any more and the footer says "keine feste Summe"
+  const reasonOf = (r: FindRow) =>
+    decisions
+      .filter((d) => keys(r).includes(d.fundSchluessel) && d.stand === "nicht_verrechnen")
+      .sort((a, b) => a.zeit.localeCompare(b.zeit))
+      .at(-1)?.grund ?? null;
   const shown = decisions.length
     ? rows.map((r) => {
         const state = stateOf(r);
@@ -60,7 +65,7 @@ export function FindsTable({
       id: "find",
       title: "Fund",
       icon: SearchCheck,
-      width: 290,
+      width: 270,
       sortValue: (r) => r.name,
       cell: (r) => (
         <Link
@@ -70,6 +75,19 @@ export function FindsTable({
         >
           <span className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{r.number}</span>
           <span className="truncate">{r.name}</span>
+        </Link>
+      ),
+    },
+    {
+      id: "project",
+      title: "Projekt",
+      icon: Construction,
+      width: 180,
+      sortValue: (r) => r.project.name,
+      filterValue: (r) => r.project.name,
+      cell: (r) => (
+        <Link href={`/projekte/${r.project.slug}/`} className="-mx-1 truncate rounded-md px-1 py-0.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent">
+          {r.project.name}
         </Link>
       ),
     },
@@ -97,7 +115,7 @@ export function FindsTable({
       id: "decision",
       title: "Entscheidung",
       icon: Gavel,
-      width: 150,
+      width: 170,
       sortValue: (r) => r.decision,
       filterValue: (r) => r.decision,
       cell: (r) => <Tag>{r.decision}</Tag>,
@@ -110,26 +128,7 @@ export function FindsTable({
       sortValue: (r) => r.risk?.amount.cent ?? null,
       filterValue: (r) => r.risk?.reason ?? null,
       calculations: calculations.risk,
-      cell: (r) =>
-        r.risk && (
-          <span className="flex min-w-0 gap-1.5" title={`${r.risk.number}: ${r.risk.reason}`}>
-            <span className="truncate">{r.risk.reason}</span>
-            <span className="shrink-0 text-fg-secondary tabular-nums">{r.risk.alreadyCut ? `schon gekürzt ${r.risk.amount.text}` : r.risk.amount.text}</span>
-          </span>
-        ),
-    },
-    {
-      id: "project",
-      title: "Projekt",
-      icon: Construction,
-      width: 190,
-      sortValue: (r) => r.project.name,
-      filterValue: (r) => r.project.name,
-      cell: (r) => (
-        <Link href={`/projekte/${r.project.slug}/`} className="-mx-1 truncate rounded-md px-1 py-0.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent">
-          {r.project.name}
-        </Link>
-      ),
+      cell: (r) => r.risk && <RiskText risk={r.risk} amount={r.amount} label={false} />,
     },
     {
       id: "kind",
@@ -199,14 +198,14 @@ export function FindsTable({
       columns={columns}
       views={views}
       noun={{ one: "Fund", many: "Funde", dative: "Funden" }}
-      phoneRow={(r) => <PhoneRow row={r} withProject={!project} />}
+      phoneRow={(r) => <PhoneRow row={r} withProject={!project} decision={r.decision} reason={stateOf(r) === "nicht_verrechnen" ? reasonOf(r) : null} />}
       board={(visible) => (
         <FindsBoard
           rows={visible}
           calculations={calculations.amount.filter((c) => c.id === "zusaetzlich" || c.id === "klaerung")}
           stateOf={stateOf}
           tasksOf={(r) => tasksOf(r).length}
-          reasonOf={(r) => decisions.filter((d) => keys(r).includes(d.fundSchluessel) && d.stand === "nicht_verrechnen").sort((a, b) => a.zeit.localeCompare(b.zeit)).at(-1)?.grund ?? null}
+          reasonOf={reasonOf}
           openOf={(r) => [
             ...(r.risk && !r.risk.alreadyCut ? [`Kürzungsrisiko ${r.risk.reason}, ${r.risk.amount.text}`] : []),
             ...(r.remedy ? [r.remedy] : []),
@@ -224,28 +223,3 @@ export function FindsTable({
   );
 }
 
-/**
- * A find in the phone list (below 768 px, customer test 2: the wide table showed four letters of the name): number,
- * the short name with the word that matters and the amount on top, then the Entscheidung and a Belegstand only when
- * it is not "belegt", then the project and the Kürzungsrisiko. Everything else is on the find page the row opens.
- */
-function PhoneRow({ row, withProject }: { row: FindRow; withProject: boolean }) {
-  const facts = [
-    ...(withProject ? [row.project.name] : []),
-    ...(row.risk ? [row.risk.alreadyCut ? `schon gekürzt ${row.risk.amount.text}` : `Kürzungsrisiko ${row.risk.amount.text}`] : []),
-  ];
-  return (
-    <Link href={row.href} className="flex flex-col gap-1.5 px-4 py-3 outline-none active:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent">
-      <span className="flex items-start gap-2">
-        <span className="mt-px flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{row.number}</span>
-        <span className="line-clamp-2 min-w-0 flex-1">{row.name}</span>
-        <span className="shrink-0 whitespace-nowrap tabular-nums">{row.amount.text}</span>
-      </span>
-      <span className="flex flex-wrap items-center gap-1.5 pl-9">
-        {row.belegstand && row.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[row.belegstand.state].colour}>{row.belegstand.text}</Tag>}
-        <Tag>{row.decision}</Tag>
-      </span>
-      {facts.length > 0 && <span className="truncate pl-9 text-xs text-fg-secondary">{facts.join(" · ")}</span>}
-    </Link>
-  );
-}
