@@ -2,7 +2,7 @@
 
 **As of:** Sunday, 25 October 2026, after step 7. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** the pull request of step 7 (branch `schritt-7-aufgaben-start`) is pushed and merged with Maxi S.'s go, CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows on Start "zusätzlich verrechenbar" 22.632,96 € and "Als Nächstes" F1 Wohnpark Mooshaim prüfen. If it is still open, push and merge it first with his go.
+**Precondition:** pull request #113 of step 7 (branch `schritt-7-aufgaben-start`, CI green, preview https://schritt-7-aufgaben-start-app-neu.tieout.workers.dev) is merged with Maxi S.'s go, CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows on Start "zusätzlich verrechenbar" 22.632,96 € and "Als Nächstes" F1 Wohnpark Mooshaim prüfen. If it is still open, ask for his go and merge it first (`gh pr merge 113 --merge`, as the earlier steps), then check app-neu online.
 
 ## Goal
 
@@ -14,6 +14,12 @@
 2. `docs/DESIGN.md` (tables, record pages, "Tasks and Start (step 7)"), `docs/SPEZIFIKATION.md` 3.3 (outputs), 4.2, 4.3, 4.4, 5.1, 7.2.
 3. Customer tests 1 and 2 in `../tieout-intern/docs/kundentests/`.
 4. Code: `app/src/lib/kern-data.ts` (builders over the core's result, `startView()` as the newest example), `app/src/lib/live.ts` and `kern-live.ts` (every figure that follows decisions goes through there), `app/src/app/berichte/`.
+
+## Good to know from the design review (end of step 7)
+
+- An independent review (Linear, Attio, Ramp as the bar) kept the ultramarine `#1D3BFF` of the brand but only for the one primary action of a screen, focus, a chosen source and the trace on "Übersicht". Internal links are `link-quiet` (ink, faint underline); a find is named by its number chip. New screens follow `docs/DESIGN.md` "Links" and "Phones": no blue text, no 44 px blocks on phones (32 px with an invisible 44 px tap), text colours at AA contrast (`fg-muted` 58 %, `state-red-edge` for red text).
+- Numbers of positions and Belege use `font-mono`, the brand's IBM Plex Mono (self-hosted, `@fontsource/ibm-plex-mono` 5.3.0).
+- Left from the review, not done: the greeting "Guten Abend, Kronfeld Haustechnik." greets a company, not a person; change it to the first name with sign-in (step 10). `npm install` reports audit warnings in the app's dependencies; not looked at, check them once before step 12.
 
 ## Good to know from step 7
 
