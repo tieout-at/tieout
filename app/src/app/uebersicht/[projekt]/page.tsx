@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Page } from "@/components/shell/page";
-import { Spur } from "@/components/uebersicht/spur";
+import { Zwilling } from "@/components/zwilling/zwilling";
 import { overviewProjects } from "../projects";
 
 type Props = { params: Promise<{ projekt: string }> };
@@ -30,7 +30,7 @@ export default async function UebersichtProjectPage({ params }: Props) {
   const { hit, all } = find((await params).projekt);
   return (
     <Page destination="uebersicht" heading={false} trail={[{ label: hit.view.project.name }]}>
-      <Spur key={hit.link.slug} view={hit.view} projects={all.map((x) => x.link)} />
+      <Zwilling key={hit.link.slug} view={hit.view} projects={all.map((x) => x.link)} />
     </Page>
   );
 }

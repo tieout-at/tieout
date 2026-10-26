@@ -1,16 +1,16 @@
 import { Page } from "@/components/shell/page";
-import { Spur } from "@/components/uebersicht/spur";
+import { Zwilling } from "@/components/zwilling/zwilling";
 import { overviewProjects } from "./projects";
 
 export const metadata = { title: "Übersicht" };
 
-// The view is computed from `kern/` while the page is built; the browser draws it and recomputes it after a decision.
+// The view is computed from `kern/` while the page is built; the browser only draws it and links it.
 export default function UebersichtPage() {
   const all = overviewProjects();
   const first = all[0];
   return (
     <Page destination="uebersicht" heading={false}>
-      <Spur key={first.link.slug} view={first.view} projects={all.map((x) => x.link)} />
+      <Zwilling key={first.link.slug} view={first.view} projects={all.map((x) => x.link)} />
     </Page>
   );
 }
