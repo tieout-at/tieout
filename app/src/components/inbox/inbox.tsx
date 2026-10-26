@@ -20,9 +20,9 @@ const GAP = { beleg_fehlt: "yellow", nachtrag_nicht_gelegt: "orange" } as const;
 /** One line per find the message proves: number, name, amount, and the gap if there is one. */
 function FindLine({ f }: { f: InboxFind }) {
   return (
-    <Link href={f.href} className="-mx-2 flex min-h-9 items-center gap-2 rounded-md px-2 py-1.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent max-md:min-h-11">
+    <Link href={f.href} className="-mx-2 flex min-h-9 flex-wrap items-center gap-x-2 gap-y-1 rounded-md px-2 py-1.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent max-md:min-h-11">
       <span className={chip}>{f.number}</span>
-      <span className="line-clamp-2 min-w-0 flex-1">{f.name}</span>
+      <span className="line-clamp-2 min-w-0 flex-1 basis-40">{f.name}</span>
       {f.belegstand && f.belegstand.state !== "belegt" && <Tag colour={GAP[f.belegstand.state]}>{f.belegstand.text}</Tag>}
       <span className="shrink-0 whitespace-nowrap tabular-nums">{f.amount}</span>
     </Link>

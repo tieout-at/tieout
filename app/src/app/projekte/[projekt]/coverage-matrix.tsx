@@ -6,6 +6,7 @@ import { createElement, useState } from "react";
 
 import { TaskDialog } from "@/components/aufgaben/task-dialog";
 import { belegIcon } from "@/components/fund/icons";
+import { OriginalLink } from "@/components/fund/original-sheet";
 import { Tag } from "@/components/table/tag";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { InfoTip } from "@/components/ui/info-tip";
@@ -33,9 +34,10 @@ function cellOf(r: PositionRow, k: CoverageKind): Cell {
     if (r.missing?.kind === k) return { state: "missing", colour: gapColour, count: 0, title: `${r.missing.text} fehlt` };
     return { state: "none", colour: null, count: 0, title: "kein Beleg" };
   }
-  const weak = items.find((x) => x.weak);
-  const title = items.map((x) => `${x.title}${x.weak ? `, ${x.weak}` : ""}`).join("; ");
-  if (weak) return { state: "weak", colour: gapColour ?? "red", count: items.length, title };
+  // weak: a Beleg there but not enough (not countersigned, not signed), or the Beleg a Kürzungsrisiko points to
+  const atRisk = (x: (typeof items)[number]) => !!x.weak || !!r.risk?.belegIds.includes(x.belegId);
+  const title = items.map((x) => `${x.title}${x.weak ? `, ${x.weak}` : r.risk?.belegIds.includes(x.belegId) ? `, ${r.risk.reason}` : ""}`).join("; ");
+  if (items.some(atRisk)) return { state: "weak", colour: gapColour ?? "red", count: items.length, title };
   return { state: "ok", colour: null, count: items.length, title };
 }
 
@@ -54,7 +56,7 @@ function Mark({ c }: { c: Cell }) {
 }
 
 /** The chain of a row in the panel: beauftragt, erbracht, verrechnet, each with its Belege, the weak and the missing one named. */
-function Chain({ r, target }: { r: PositionRow; target: TaskTarget | null }) {
+function Chain({ r, target, project }: { r: PositionRow; target: TaskTarget | null; project: string }) {
   const [task, setTask] = useState(false);
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -88,9 +90,17 @@ function Chain({ r, target }: { r: PositionRow; target: TaskTarget | null }) {
                 <span key={`${x.kind}-${x.belegId}`} className="flex flex-col">
                   <span className="flex items-center gap-2">
                     {createElement(COVERAGE_ICON[x.kind], { className: "size-4 shrink-0 text-fg-secondary", "aria-hidden": true })}
-                    <span className="min-w-0 flex-1 truncate">{x.title}</span>
+                    <OriginalLink project={project} belegId={x.belegId} label={x.title} className="min-w-0 flex-1 truncate">
+                      {x.title}
+                    </OriginalLink>
                     <span className="shrink-0 font-mono text-xs text-fg-muted">{x.date}</span>
                   </span>
+                  {!x.weak && r.risk?.belegIds.includes(x.belegId) && (
+                    <span className="flex items-center gap-1.5 pl-6 text-xs text-state-red-edge">
+                      <span aria-hidden className="size-2 rounded-full bg-state-red" />
+                      Kürzungsrisiko: {r.risk.reason}
+                    </span>
+                  )}
                   {x.weak && (
                     <span className={cn("flex items-center gap-1.5 pl-6 text-xs", r.belegstand?.state === "belegt" ? "text-state-red-edge" : "text-fg-secondary")}>
                       <span aria-hidden className={cn("size-2 rounded-full", r.belegstand?.state === "belegt" ? "bg-state-red" : "bg-state-yellow")} />
@@ -142,7 +152,7 @@ function Chain({ r, target }: { r: PositionRow; target: TaskTarget | null }) {
  * on 26.10.2026): "Ist alles belegt?" as one sentence, then a mark per kind of Beleg for each row, grouped as the website
  * table (beauftragt, erbracht, verrechnet). A click on a row opens its chain at the right (a sheet on phones).
  */
-export function CoverageMatrix({ rows, view, targets }: { rows: PositionRow[]; view: PositionsView; targets: Record<string, TaskTarget> }) {
+export function CoverageMatrix({ rows, view, targets, project }: { rows: PositionRow[]; view: PositionsView; targets: Record<string, TaskTarget>; project: string }) {
   const [open, setOpen] = useState<string | null>(null);
   const wide = useMediaQuery("(min-width: 768px)", true);
   const chosen = rows.find((r) => r.id === open) ?? view.rows.find((r) => r.id === open);
@@ -160,10 +170,10 @@ export function CoverageMatrix({ rows, view, targets }: { rows: PositionRow[]; v
               ({[a.belegFehlt && `Beleg fehlt ${a.belegFehlt}`, a.nachtrag && `Nachtrag nicht gelegt ${a.nachtrag}`].filter(Boolean).join(", ")})
             </span>
           )}
-          {a.weak > 0 && <span className="text-fg-secondary">{`, ${a.weak === 1 ? "1 Position" : `${a.weak} Positionen`} schwach belegt.`}</span>}
+          {a.risk > 0 && <span className="text-fg-secondary">{`, ${a.risk === 1 ? "1 Eintrag" : `${a.risk} Einträge`} mit Kürzungsrisiko.`}</span>}
         </span>
         <InfoTip label="Belegabdeckung">
-          Je Eintrag ein Zeichen pro Art von Beleg: grau ist da (die Zahl sagt, wie viele), rot ist da, aber schwach (Kürzungsrisiko), gelb oder orange ist schwach in einem Fund in Klärung, gestrichelt fehlt, ein Punkt heißt keiner. Ein Klick auf einen Eintrag zeigt die Belege von beauftragt bis verrechnet.
+          Je Eintrag ein Zeichen pro Art von Beleg: grau ist da (die Zahl sagt, wie viele), rot ist da, aber mit Kürzungsrisiko, gelb oder orange ist schwach in einem Fund in Klärung, gestrichelt fehlt, ein Punkt heißt keiner. Ein Klick auf einen Eintrag zeigt die Belege von beauftragt bis verrechnet, jeder führt zum Original.
         </InfoTip>
       </p>
 
@@ -201,7 +211,7 @@ export function CoverageMatrix({ rows, view, targets }: { rows: PositionRow[]; v
                     Offen
                   </span>
                 </th>
-                <th className="w-[200px] min-w-[200px] border-b border-line px-3 font-medium">Lücke</th>
+                <th className="w-[184px] min-w-[184px] border-b border-line px-3 font-medium">Lücke</th>
               </tr>
             </thead>
             <tbody>
@@ -228,7 +238,7 @@ export function CoverageMatrix({ rows, view, targets }: { rows: PositionRow[]; v
                   <td className="border-b border-line px-3 group-hover:bg-row-hover">
                     {r.belegstand && r.belegstand.state !== "belegt" ? (
                       <Tag colour={GAP[r.belegstand.state]}>{r.belegstand.text}</Tag>
-                    ) : r.check === "schwach" ? (
+                    ) : r.check === "risiko" ? (
                       <span className="flex items-center gap-1.5">
                         <span aria-hidden className="size-2 rounded-full bg-state-red" />
                         Kürzungsrisiko
@@ -285,6 +295,14 @@ export function CoverageMatrix({ rows, view, targets }: { rows: PositionRow[]; v
                     </span>
                   ))}
                 </span>
+                {r.belegstand && r.belegstand.state !== "belegt" ? (
+                  <Tag colour={GAP[r.belegstand.state]} className="self-start">{r.belegstand.text}</Tag>
+                ) : r.risk ? (
+                  <span className="flex items-center gap-1.5 text-xs">
+                    <span aria-hidden className="size-2 rounded-full bg-state-red" />
+                    Kürzungsrisiko: {r.risk.reason}
+                  </span>
+                ) : null}
               </button>
             </li>
           ))}
@@ -292,17 +310,32 @@ export function CoverageMatrix({ rows, view, targets }: { rows: PositionRow[]; v
         </ul>
       )}
 
-      <Sheet open={!!chosen} onOpenChange={(o) => !o && setOpen(null)}>
-        <SheetContent side={wide ? "right" : "bottom"} className={wide ? "w-[420px]" : "h-[85dvh]"}>
+      <Sheet open={!!chosen} onOpenChange={(o) => !o && setOpen(null)} modal={!wide}>
+        <SheetContent
+          side={wide ? "right" : "bottom"}
+          backdrop={!wide}
+          className={wide ? "w-[420px]" : "h-[85dvh]"}
+          onKeyDown={(k) => {
+            // as Attio's record panel: the arrows go to the row above or below without closing it
+            if (k.key !== "ArrowDown" && k.key !== "ArrowUp") return;
+            const i = rows.findIndex((x) => x.id === open);
+            const next = rows[i + (k.key === "ArrowDown" ? 1 : -1)];
+            if (next) {
+              k.preventDefault();
+              setOpen(next.id);
+            }
+          }}
+        >
           <SheetTitle>{chosen?.text}</SheetTitle>
           <div className="flex h-12 shrink-0 items-center gap-2 pr-2 pl-4 shadow-line-bottom">
             {createElement(belegIcon("leistungsverzeichnis"), { className: "size-4 text-fg-secondary", "aria-hidden": true })}
             <span className="flex-1 text-sm font-medium">Belegabdeckung</span>
+            {wide && <span className="text-xs text-fg-muted">Pfeiltasten: nächster Eintrag</span>}
             <button type="button" onClick={() => setOpen(null)} aria-label="Schließen" className="flex size-8 items-center justify-center rounded-md text-fg-secondary hover:bg-fill-hover max-md:size-11">
               <X className="size-4" aria-hidden />
             </button>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto">{chosen && <Chain r={chosen} target={chosen.find ? (targets[chosen.find.number] ?? null) : null} />}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto">{chosen && <Chain r={chosen} project={project} target={chosen.find ? (targets[chosen.find.number] ?? null) : null} />}</div>
         </SheetContent>
       </Sheet>
     </div>

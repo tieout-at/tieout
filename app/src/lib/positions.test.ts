@@ -17,7 +17,7 @@ function listed(text: string): string {
 
 describe("tab Positionen", () => {
   const view = positionsView("p1")!;
-  const open = applyFilters(view.rows, [{ column: "open", values: ["offen"] }], { open: { filterValue: (r) => (r.open ? "offen" : "nichts offen") } });
+  const open = applyFilters(view.rows, [{ column: "open", values: ["ja"] }], { open: { filterValue: (r) => (r.open ? "ja" : "nein") } });
 
   it("one row per row of the core's position table; the view Offen shows the 11 rows with something open", () => {
     expect(view.rows).toHaveLength(303);
@@ -31,7 +31,7 @@ describe("tab Positionen", () => {
 
   it("22.04.12B: the website row with its find, and the Belege that prove it", () => {
     const r = view.rows.find((x) => x.number === "22.04.12B")!;
-    expect([r.ordered, r.done, r.invoiced, r.open?.text, r.find?.number, r.note]).toEqual(["86 Stk", "100 Stk", "86 Stk", listed("4.009,60 €"), "F1", "über dem Leistungsverzeichnis"]);
+    expect([r.ordered, r.done, r.invoiced, r.open?.text, r.find?.number, r.note]).toEqual(["86 Stk", "100 Stk", "86 Stk", listed("4.009,60 €"), "F1", "mehr als beauftragt"]);
     expect(r.coverage.aufmass.map((b) => [b.title, b.weak])).toEqual([
       ["Aufmaßblatt 8", null],
       ["Aufmaßblatt 12", "nicht gegengezeichnet"],
@@ -52,8 +52,9 @@ describe("tab Positionen", () => {
     expect(sum?.text).toBe("7.971,55 €");
   });
 
-  it("Belegabdeckung: 3 gaps (2 Beleg fehlt, 1 Nachtrag), 4 rows weak, the missing Beleg named by its kind", () => {
-    expect(view.answer).toEqual({ gaps: 3, belegFehlt: 2, nachtrag: 1, weak: 4 });
+  it("Belegabdeckung: 3 gaps (2 Beleg fehlt, 1 Nachtrag), 5 rows with a Kürzungsrisiko (F1 four positions, F2 Regiebericht 9), the missing Beleg named by its kind", () => {
+    expect(view.answer).toEqual({ gaps: 3, belegFehlt: 2, nachtrag: 1, risk: 5 });
+    expect(view.rows.find((r) => r.id === "p1/regie:9")!.risk).toMatchObject({ reason: "Stunden weichen ab" });
     expect(view.rows.filter((r) => r.missing).map((r) => [r.find?.number, r.missing!.kind, r.missing!.text])).toEqual([
       ["F7", "regie", "Regiebericht"],
       ["F8", "rechnung", "Nachtrag mit Preis"],

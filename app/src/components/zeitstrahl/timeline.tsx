@@ -5,6 +5,7 @@ import { ArrowRight, Construction, ReceiptText, X } from "lucide-react";
 import { createElement, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { belegIcon } from "@/components/fund/icons";
+import { OriginalLink } from "@/components/fund/original-sheet";
 import { Tag } from "@/components/table/tag";
 import { buttonVariants } from "@/components/ui/button";
 import { InfoTip } from "@/components/ui/info-tip";
@@ -18,12 +19,12 @@ const chip = "inline-flex h-5 min-w-7 shrink-0 items-center justify-center round
 
 const day = (iso: string) => Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)));
 
-/** The colour of a site event: the gap of its find, or red where a weak Beleg puts a released amount at risk. */
+/** The colour of a site event: the gap of its find, or red where a weak Beleg or a Kürzungsrisiko puts its amount at risk. */
 function colourOf(e: TimelineEvent, finds: Record<string, TimelineFind>): "yellow" | "orange" | "red" | null {
   const f = e.finds[0] ? finds[e.finds[0]] : null;
   if (!f) return null;
   if (f.belegstand && f.belegstand.state !== "belegt") return GAP[f.belegstand.state];
-  return e.weak ? "red" : null;
+  return e.weak || e.risk ? "red" : null;
 }
 
 const FILL = { yellow: "bg-state-yellow shadow-[inset_0_0_0_1px_var(--color-state-yellow-edge)]", orange: "bg-state-orange shadow-[inset_0_0_0_1px_var(--color-state-orange-edge)]", red: "bg-state-red shadow-[inset_0_0_0_1px_var(--color-state-red-edge)]" };
@@ -42,6 +43,19 @@ function markClass(e: TimelineEvent, colour: keyof typeof FILL | null) {
   if (e.stand === "verrechnet") return "size-2 rounded-full bg-fg-faint";
   return "size-2 rounded-full bg-surface shadow-[inset_0_0_0_1.5px_var(--color-fg-faint)]";
 }
+
+/** The legend behind the info icon, drawn with the marks of the picture. */
+const LEGEND = [
+  { mark: "block size-3 rounded-full bg-fg", text: "fehlt in der Schlussrechnung" },
+  { mark: cn("block size-3 rounded-full", FILL.yellow), text: "fehlt, Beleg fehlt" },
+  { mark: cn("block size-3 rounded-full", FILL.orange), text: "fehlt, Nachtrag nicht gelegt" },
+  { mark: cn("block size-3 rounded-full", FILL.red), text: "fehlt, mit Kürzungsrisiko" },
+  { mark: "block size-2 rounded-full bg-fg-faint", text: "verrechnet" },
+  { mark: "block size-2 rounded-full bg-surface shadow-[inset_0_0_0_1.5px_var(--color-fg-faint)]", text: "nichts zu verrechnen" },
+  { mark: "block size-3 rounded-[3px] bg-fg", text: "Abschlagsrechnung, mit ihrem Betrag" },
+  { mark: "block size-2.5 rounded-[3px] bg-surface shadow-[inset_0_0_0_1.5px_var(--color-fg-secondary)]", text: "Zahlung" },
+  { mark: "block size-3 rounded-[3px] border-[1.5px] border-dashed border-fg-secondary bg-surface", text: "Entwurf, nicht gelegt" },
+];
 
 const standText = (e: TimelineEvent) =>
   e.stand === "fehlt" ? "fehlt in der Schlussrechnung" : e.stand === "verrechnet" ? "verrechnet" : e.stand === "naechste_abschlagsrechnung" ? "kommt in die nächste Abschlagsrechnung" : null;
@@ -67,7 +81,11 @@ function Detail({ e, view, onChoose }: { e: TimelineEvent; view: TimelineView; o
           {createElement(belegIcon(e.art as Parameters<typeof belegIcon>[0]) ?? Construction, { className: "size-3.5", "aria-hidden": true })}
           {e.lane === "baustelle" ? "Baustelle" : "Rechnung"}
         </span>
-        <h3 className="text-base font-semibold">{e.title}</h3>
+        <h3 className="text-base font-semibold">
+          <OriginalLink project={view.project} belegId={e.id} label={e.title}>
+            {e.title}
+          </OriginalLink>
+        </h3>
         <p className="text-fg-secondary">{e.text}</p>
         <dl className="mt-2 grid grid-cols-[104px_minmax(0,1fr)] gap-x-3 gap-y-1.5">
           {facts.map((x) => (
@@ -87,10 +105,10 @@ function Detail({ e, view, onChoose }: { e: TimelineEvent; view: TimelineView; o
           </span>
           <span className="mt-1.5 text-xl font-semibold whitespace-nowrap tabular-nums">{f.amount}</span>
           {f.belegstand && f.belegstand.state !== "belegt" && <Tag colour={GAP[f.belegstand.state]} className="self-start">{f.belegstand.text}</Tag>}
-          {e.weak && f.belegstand?.state === "belegt" && (
+          {(e.risk || e.weak) && f.belegstand?.state === "belegt" && (
             <span className="flex items-center gap-1.5">
               <span aria-hidden className="size-2 rounded-full bg-state-red" />
-              Kürzungsrisiko: {e.title} {e.weak}
+              Kürzungsrisiko: {e.risk ?? `${e.title} ${e.weak}`}
             </span>
           )}
           {f.remedy && (
@@ -129,25 +147,57 @@ function Chart({ view, shown, width, chosen, onChoose }: { view: TimelineView; s
   const [t0, t1] = [day(view.range.from), day(view.range.to)];
   const x = (iso: string) => X0 + ((day(iso) - t0) / (t1 - t0)) * (X1 - X0);
   const AXIS = 26, AR = 22, LANE = 30, ROW = 34, GAPY = 12;
+  // a row without any event of the project is left out (a closed project has no messages, a running one no Nachtrag)
+  const rows = TIMELINE_ROWS.filter((r) => view.events.some((e) => e.row === r.id));
   const rowsY: Record<string, number> = {};
   let y = AXIS + AR;
   const laneB = y;
   y += LANE;
-  for (const r of TIMELINE_ROWS.filter((r) => r.lane === "baustelle")) [rowsY[r.id], y] = [y, y + ROW];
+  for (const r of rows.filter((r) => r.lane === "baustelle")) [rowsY[r.id], y] = [y, y + ROW];
   y += GAPY;
   const laneR = y;
   y += LANE;
-  for (const r of TIMELINE_ROWS.filter((r) => r.lane === "rechnung")) [rowsY[r.id], y] = [y, y + ROW];
+  for (const r of rows.filter((r) => r.lane === "rechnung")) [rowsY[r.id], y] = [y, y + ROW];
   const bottom = y;
 
-  const months: { iso: string; label: string }[] = [];
+  const months: { iso: string; label: string | null }[] = [];
   for (let m = view.range.from; m < view.range.to; m = `${m.slice(5, 7) === "12" ? Number(m.slice(0, 4)) + 1 : m.slice(0, 4)}-${String((Number(m.slice(5, 7)) % 12) + 1).padStart(2, "0")}-01`)
     months.push({ iso: m, label: MONTHS[Number(m.slice(5, 7)) - 1] });
+  // a name needs about 72 px: on a long project every second or third month is named, the year with the first and every Jänner
+  const every = Math.max(1, Math.ceil(72 / ((X1 - X0) / months.length)));
+  let last = -every;
+  months.forEach((m, i) => {
+    const jaenner = m.iso.slice(5, 7) === "01";
+    const named = i - last >= every || (jaenner && i > 0 && i - last >= 2);
+    const year = months.length > 12 && (i === 0 || jaenner);
+    m.label = named ? (year ? `${m.label} ${m.iso.slice(0, 4)}` : m.label) : null;
+    if (named) last = i;
+  });
+  // the line an amount must not run into: the deadline (a dashed divider may run behind a label)
+  const walls = view.deadline ? [x(view.deadline.iso)] : [];
   const trace = new Set(view.events.find((e) => e.id === chosen)?.finds ?? []);
+  // marks closer than 12 px in one row step up and down, so each stays clickable (two e-mails four days apart)
+  const nudge = new Map<string, number>();
+  for (const r of rows) {
+    let last = -99;
+    let up = false;
+    let prev: string | null = null;
+    for (const e of shown.filter((e) => e.row === r.id).sort((a, b) => a.date.iso.localeCompare(b.date.iso))) {
+      const at = x(e.date.iso);
+      up = at - last < 12 ? !up : false;
+      if (up) {
+        // the earlier one steps up, this one down
+        nudge.set(e.id, 7);
+        if (prev && !nudge.has(prev)) nudge.set(prev, -7);
+      }
+      last = at;
+      prev = e.id;
+    }
+  }
 
   // labels: a find chip for the site, the printed amount for an invoice; right of the mark, else left, else above
   const labels: { id: string; left: number; top: number; node: React.ReactNode }[] = [];
-  for (const r of TIMELINE_ROWS) {
+  for (const r of rows) {
     const cy = rowsY[r.id] + ROW / 2;
     // oldest first, so the earlier mark gets the place at its right
     const marks = shown.filter((e) => e.row === r.id).map((e) => ({ e, x: x(e.date.iso) })).sort((a, b) => a.x - b.x);
@@ -165,7 +215,8 @@ function Chart({ view, shown, width, chosen, onChoose }: { view: TimelineView; s
         if (a < X0 - 4 || b > width - 4) continue;
         const hitsMark = marks.some((o) => o !== m && dy === 0 && o.x + 6 > a && o.x - 6 < b);
         const hitsLabel = taken.some(([p, q, ty]) => ty === dy && p < b + 4 && q > a - 4);
-        if (hitsMark || hitsLabel) continue;
+        const hitsWall = !isChip && walls.some((wx) => wx > a - 2 && wx < b + 2);
+        if (hitsMark || hitsLabel || hitsWall) continue;
         taken.push([a, b, dy]);
         if (isChip) lastChip = { ...lastChip, [text]: m.x };
         labels.push({
@@ -184,9 +235,11 @@ function Chart({ view, shown, width, chosen, onChoose }: { view: TimelineView; s
       {months.map((m) => (
         <div key={m.iso}>
           <div className="absolute w-px bg-line" style={{ left: x(m.iso), top: AXIS - 6, height: bottom - AXIS + 6 }} />
-          <div className="absolute text-xs text-fg-muted" style={{ left: x(m.iso) + 6, top: 4 }}>
-            {m.label}
-          </div>
+          {m.label && (
+            <div className="absolute text-xs whitespace-nowrap text-fg-muted" style={{ left: x(m.iso) + 6, top: 4 }}>
+              {m.label}
+            </div>
+          )}
         </div>
       ))}
       <div className="absolute flex items-center gap-1.5 font-semibold" style={{ top: laneB, height: LANE }}>
@@ -197,7 +250,7 @@ function Chart({ view, shown, width, chosen, onChoose }: { view: TimelineView; s
         <ReceiptText className="size-4 text-fg-secondary" aria-hidden />
         Rechnung
       </div>
-      {TIMELINE_ROWS.map((r) => (
+      {rows.map((r) => (
         <div key={r.id}>
           <div className="absolute flex items-center pl-[22px] text-fg-secondary" style={{ top: rowsY[r.id], height: ROW, width: LABEL }}>
             {r.title}
@@ -241,7 +294,20 @@ function Chart({ view, shown, width, chosen, onChoose }: { view: TimelineView; s
               isChosen && "outline-2 outline-offset-3 outline-accent outline-solid",
               traced && "outline-[1.5px] outline-offset-2 outline-accent outline-solid",
             )}
-            style={{ left: x(e.date.iso), top: rowsY[e.row] + ROW / 2 }}
+            tabIndex={isChosen ? 0 : -1}
+            onKeyDown={(k) => {
+              // the arrows walk along the time axis; Tab enters and leaves the picture at the chosen mark
+              if (k.key !== "ArrowRight" && k.key !== "ArrowLeft") return;
+              k.preventDefault();
+              const order = [...shown].sort((a, b) => a.date.iso.localeCompare(b.date.iso) || a.row.localeCompare(b.row));
+              const next = order[order.findIndex((o) => o.id === e.id) + (k.key === "ArrowRight" ? 1 : -1)];
+              if (next) {
+                onChoose(next.id);
+                requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-mark="${CSS.escape(next.id)}"]`)?.focus());
+              }
+            }}
+            data-mark={e.id}
+            style={{ left: x(e.date.iso), top: rowsY[e.row] + ROW / 2 + (nudge.get(e.id) ?? 0) }}
           />
         );
       })}
@@ -298,7 +364,8 @@ function PhoneList({ view, shown, onChoose }: { view: TimelineView; shown: Timel
  * only the site events of a find, "Alle" every one. The chosen event is in the address (`#w4`).
  */
 export function Timeline({ view }: { view: TimelineView }) {
-  const [all, setAll] = useState(false);
+  // a project without anything missing (a closed one) starts with every event
+  const [all, setAll] = useState(view.counts.missing === 0);
   const [chosen, setChosen] = useState<string | null>(null);
   const [sheet, setSheet] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -314,7 +381,7 @@ export function Timeline({ view }: { view: TimelineView }) {
   }, []);
   const wide = width >= 720;
 
-  const shown = useMemo(() => view.events.filter((e) => e.lane === "rechnung" || all || e.finds.length > 0), [view.events, all]);
+  const shown = useMemo(() => view.events.filter((e) => e.lane === "rechnung" || all || e.stand === "fehlt"), [view.events, all]);
   // first choice: the newest missing event whose find still has a gap, else the newest missing one
   const first = useMemo(() => {
     const missing = view.events.filter((e) => e.stand === "fehlt");
@@ -344,7 +411,7 @@ export function Timeline({ view }: { view: TimelineView }) {
       <div className="flex min-h-12 flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 shadow-line-bottom max-md:flex-col-reverse max-md:items-start max-md:px-4">
         <div role="group" aria-label="Ereignisse" className="flex items-center gap-1">
           {[
-            { on: false, title: "Mit Fund", count: c.withFind },
+            { on: false, title: "Fehlt", count: c.missing },
             { on: true, title: "Alle", count: c.site },
           ].map((t) => (
             <button
@@ -364,14 +431,24 @@ export function Timeline({ view }: { view: TimelineView }) {
             <span>
               <span className="font-semibold">{c.missing === 1 ? "1 Ereignis der Baustelle fehlt" : `${c.missing} Ereignisse der Baustelle fehlen`} in der Schlussrechnung.</span>{" "}
               <span className="text-fg-secondary">
-                Gefunden in {c.findCount === 1 ? "1 Fund" : `${c.findCount} Funden`}, {c.invoiced} verrechnet{c.next ? `, ${c.next} kommen in die nächste Abschlagsrechnung` : ""}.
+                Gefunden in {c.findCount === 1 ? "1 Fund" : `${c.findCount} Funden`}{c.next ? `, ${c.next} kommen in die nächste Abschlagsrechnung` : ""}.
               </span>
             </span>
           ) : (
             <span className="text-fg-secondary">Die Schlussrechnung ist gelegt: tieout gleicht hier nicht mehr ab.</span>
           )}
           <InfoTip label="Zeitstrahl">
-            Oben die Baustelle, unten die Rechnungen. Ein voller Punkt fehlt in der Schlussrechnung: gelb heißt Beleg fehlt, orange Nachtrag nicht gelegt, rot Kürzungsrisiko. Ein kleiner grauer Punkt ist verrechnet, ein leerer Kreis hat nichts zu verrechnen (Termine, Hinweise). Ein Klick zeigt das Ereignis und seinen Fund.
+            <span className="mb-2 block">Oben die Baustelle, unten die Rechnungen. Ein Klick zeigt das Ereignis und seinen Fund, die Pfeiltasten gehen weiter.</span>
+            <span className="grid grid-cols-[16px_1fr] items-center gap-x-2 gap-y-1.5">
+              {LEGEND.map((l) => (
+                <span key={l.text} className="contents">
+                  <span className="flex justify-center">
+                    <span aria-hidden className={l.mark} />
+                  </span>
+                  <span>{l.text}</span>
+                </span>
+              ))}
+            </span>
           </InfoTip>
         </p>
       </div>

@@ -4,12 +4,12 @@
  * deadline. The amounts are the core's: printed on the invoices, or the amount of a find. Nothing is added up here.
  */
 
-import { BELEGSTAND_TEXT, datumText, euro, zeitstrahl, type Belegstand, type Ereignisstand, type FirmenErgebnis } from "@tieout/kern";
+import { BELEGSTAND_TEXT, KUERZUNGSGRUND_TEXT, datumText, euro, zeitstrahl, type Belegstand, type Ereignisstand, type FirmenErgebnis } from "@tieout/kern";
 
-import { findSlug } from "./example";
+import { findSlug, projectSlug } from "./example";
 import { business, firm, nameAndFacts } from "./kern-data";
 
-/** The rows of the picture: six of the site, four of the invoices. */
+/** The rows of the picture: six of the site, five of the invoices; a row without any event is left out. */
 export const TIMELINE_ROWS = [
   { id: "whatsapp", lane: "baustelle", title: "WhatsApp-Meldungen", arts: ["whatsapp"] },
   { id: "regie", lane: "baustelle", title: "Regieberichte", arts: ["regiebericht"] },
@@ -17,7 +17,8 @@ export const TIMELINE_ROWS = [
   { id: "plan", lane: "baustelle", title: "Pläne", arts: ["plan"] },
   { id: "foto", lane: "baustelle", title: "Fotos", arts: ["foto", "fotodokumentation"] },
   { id: "aufmass", lane: "baustelle", title: "Aufmaßblätter", arts: ["aufmassblatt"] },
-  { id: "rechnung", lane: "rechnung", title: "Abschlagsrechnungen", arts: ["abschlagsrechnung", "schlussrechnung", "nachtrag"] },
+  { id: "rechnung", lane: "rechnung", title: "Abschlagsrechnungen", arts: ["abschlagsrechnung", "schlussrechnung"] },
+  { id: "nachtrag", lane: "rechnung", title: "Nachträge", arts: ["nachtrag"] },
   { id: "entwurf", lane: "rechnung", title: "Entwurf", arts: ["entwurf"] },
   { id: "zahlung", lane: "rechnung", title: "Zahlungen", arts: ["zahlungsavis"] },
   { id: "kuerzung", lane: "rechnung", title: "Kürzungen", arts: ["korrekturblatt", "abzugsschreiben"] },
@@ -38,6 +39,8 @@ export type TimelineEvent = {
   text: string;
   who: string | null;
   weak: string | null;
+  /** A Kürzungsrisiko of the Vorprüfung that points to this Beleg ("Stunden weichen ab"); only while it threatens. */
+  risk: string | null;
   positions: string[];
   stand: Ereignisstand | null;
   finds: string[];
@@ -49,6 +52,8 @@ export type TimelineEvent = {
 };
 
 export type TimelineView = {
+  /** Slug of the project, for its originals (`/originale/<projekt>.json`). */
+  project: string;
   events: TimelineEvent[];
   finds: Record<string, TimelineFind>;
   counts: { site: number; missing: number; invoiced: number; next: number; withFind: number; findCount: number };
@@ -72,6 +77,8 @@ export function timelineView(projektId: string, b: FirmenErgebnis = business()):
   const e = b.ergebnisse[projektId];
   if (!d || !e) return null;
   const z = zeitstrahl(d, e);
+  const risk = new Map<string, string>();
+  for (const r of e.vorpruefung?.risiken ?? []) if (r.zustand === "droht") for (const n of r.nachweise) if (!risk.has(n.quelle.belegId)) risk.set(n.quelle.belegId, KUERZUNGSGRUND_TEXT[r.grund]);
   const rowOf = (art: string) => TIMELINE_ROWS.find((r) => (r.arts as readonly string[]).includes(art))?.id;
 
   const events = z.ereignisse.flatMap((x): TimelineEvent[] => {
@@ -90,6 +97,7 @@ export function timelineView(projektId: string, b: FirmenErgebnis = business()):
         text: x.text,
         who: x.wer,
         weak: x.schwach,
+        risk: x.bahn === "baustelle" ? (risk.get(x.id) ?? null) : null,
         positions: x.positionen,
         stand: x.stand,
         finds: x.funde,
@@ -117,6 +125,7 @@ export function timelineView(projektId: string, b: FirmenErgebnis = business()):
   const deadline = d.projekt.schlussrechnungLegenBis;
   const days = [...events.map((x) => x.date.iso), ...(deadline ? [deadline] : [])].sort();
   return {
+    project: projectSlug(d.projekt.name),
     events,
     finds,
     counts: { site: z.zaehler.baustelle, missing: z.zaehler.fehlt, invoiced: z.zaehler.verrechnet, next: z.zaehler.naechste, withFind: z.zaehler.mitFund, findCount: e.abgleich.funde.length },

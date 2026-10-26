@@ -64,7 +64,7 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       id: "position",
       title: "Position",
       icon: ListOrdered,
-      width: 290,
+      width: 266,
       sortValue: (r) => r.order,
       cell: (r) => <PositionName r={r} />,
     },
@@ -77,17 +77,17 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       filterValue: (r) => (r.find ? "mit Fund" : "ohne Fund"),
       cell: (r) => r.find && <FindChip find={r.find} />,
     },
-    { id: "ordered", title: "Beauftragt", icon: ReceiptText, width: 118, align: "right", cell: (r) => <Quantity text={r.ordered} /> },
-    { id: "done", title: "Erbracht", icon: PackageCheck, width: 196, align: "right", sortValue: (r) => r.doneValue, cell: (r) => <Quantity text={r.done} /> },
-    { id: "invoiced", title: "Verrechnet", icon: ReceiptText, width: 140, align: "right", cell: (r) => <Quantity text={r.invoiced} /> },
+    { id: "ordered", title: "Beauftragt", icon: ReceiptText, width: 120, align: "right", cell: (r) => <Quantity text={r.ordered} /> },
+    { id: "done", title: "Erbracht", icon: PackageCheck, width: 206, align: "right", sortValue: (r) => r.doneValue, cell: (r) => <Quantity text={r.done} /> },
+    { id: "invoiced", title: "Verrechnet", icon: ReceiptText, width: 130, align: "right", cell: (r) => <Quantity text={r.invoiced} /> },
     {
       id: "open",
       title: "Offen",
       icon: Wallet,
-      width: 240,
+      width: 256,
       align: "right",
       sortValue: (r) => r.open?.cent ?? null,
-      filterValue: (r) => (r.open ? "offen" : "nichts offen"),
+      filterValue: (r) => (r.open ? "ja" : "nein"),
       calculations: calculations.open,
       cell: (r) => r.open?.text,
     },
@@ -95,7 +95,7 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       id: "belegstand",
       title: "Belegstand",
       icon: FileCheck,
-      width: 180,
+      width: 186,
       sortValue: (r) => (r.belegstand ? EVIDENCE[r.belegstand.state].rank : null),
       filterValue: (r) => r.belegstand?.text ?? null,
       calculations: calculations.belegstand,
@@ -106,10 +106,10 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       id: "note",
       title: "Auffällig",
       icon: TriangleAlert,
-      width: 280,
+      width: 192,
       sortValue: (r) => r.note,
       filterValue: (r) => (r.note ? r.note.split(",")[0] : null),
-      cell: (r) => r.note && <span className="truncate text-fg-secondary">{r.note}</span>,
+      cell: (r) => r.note && <span className="truncate text-fg-secondary" title={r.note}>{r.note}</span>,
     },
     {
       id: "group",
@@ -127,9 +127,9 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       title: "Belegabdeckung",
       icon: ScanSearch,
       width: 220,
-      sortValue: (r) => (r.check === "luecke" ? 0 : r.check === "schwach" ? 1 : 2),
+      sortValue: (r) => (r.check === "luecke" ? 0 : r.check === "risiko" ? 1 : 2),
       filterValue: (r) => (r.check || r.find ? "mit Fund oder Lücke" : "ohne Auffälligkeit"),
-      cell: (r) => (r.check === "luecke" ? "Lücke" : r.check === "schwach" ? "schwach belegt" : null),
+      cell: (r) => (r.check === "luecke" ? "Lücke" : r.check === "risiko" ? "Kürzungsrisiko" : null),
     },
     { id: "unit", title: "Einheit", icon: Hash, width: 110, sortValue: (r) => r.unit, filterValue: (r) => r.unit, cell: (r) => r.unit },
   ];
@@ -139,8 +139,13 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
   const calc = { open: "zusaetzlich", belegstand: "klaerung" };
   const lvOrder = { column: "position", direction: "asc" } as const;
   const views: View[] = [
-    { id: "offen", title: "Offen", state: { sort: lvOrder, filters: [{ column: "open", values: ["offen"] }], hidden, calculations: calc } },
-    { id: "auffaellig", title: "Auffällig", state: { sort: lvOrder, filters: [{ column: "note", values: ["über dem Leistungsverzeichnis", "nicht aufgemessen", "nach der letzten Abschlagsrechnung"] }], hidden, calculations: calc } },
+    // each view shows the column that answers it: Belegstand for what is open, the reason for what stands out
+    { id: "offen", title: "Offen", state: { sort: lvOrder, filters: [{ column: "open", values: ["ja"] }], hidden: [...hidden, "note"], calculations: calc } },
+    {
+      id: "auffaellig",
+      title: "Auffällig",
+      state: { sort: lvOrder, filters: [{ column: "note", values: ["mehr als beauftragt", "nicht aufgemessen", "nach der letzten Abschlagsrechnung"] }], hidden: [...hidden, "belegstand"], calculations: calc },
+    },
     { id: "alle", title: "Alle Positionen", state: { sort: lvOrder, filters: [], hidden, calculations: calc } },
     {
       id: "abdeckung",
@@ -159,7 +164,7 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       views={views}
       noun={{ one: "Eintrag", many: "Einträge", dative: "Einträgen" }}
       selectable={false}
-      board={(visible) => <CoverageMatrix rows={visible} view={view} targets={targets} />}
+      board={(visible) => <CoverageMatrix rows={visible} view={view} targets={targets} project={project} />}
       phoneRow={(r) => (
         <div className="flex flex-col gap-1 px-4 py-2.5">
           <span className="flex items-start gap-2">

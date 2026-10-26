@@ -7,6 +7,7 @@
 
 import {
   BELEGSTAND_TEXT,
+  KUERZUNGSGRUND_TEXT,
   NACHWEISARTEN,
   belegabdeckung,
   datumText,
@@ -59,14 +60,16 @@ export type PositionRow = Row & {
   open: Amount | null;
   belegstand: { state: Belegstand; text: string } | null;
   find: { number: string; href: string; name: string; amount: string; remedy: string | null } | null;
-  /** Only exceptions: "über dem Leistungsverzeichnis, +16,3 %", "nicht aufgemessen", "nach der letzten Abschlagsrechnung". */
+  /** Only exceptions: "mehr als beauftragt, +26,3 %", "nicht aufgemessen", "nach der letzten Abschlagsrechnung". */
   note: string | null;
   /** Which Beleg proves the row, per kind of evidence (Belegabdeckung). */
   coverage: Record<Nachweisart, CoverageItem[]>;
   /** The Beleg the row still lacks, by kind: a Regiebericht for hours without one, the priced Nachtrag for a notified change. */
   missing: { kind: Nachweisart; text: string } | null;
-  /** The Belegabdeckung names it: a gap ("Beleg fehlt", "Nachtrag nicht gelegt"), a weak Beleg, or nothing. */
-  check: "luecke" | "schwach" | null;
+  /** A Kürzungsrisiko of the Vorprüfung in the row's find, with the Belege it points to and what removes it. */
+  risk: { reason: string; remedy: string; belegIds: string[] } | null;
+  /** The Belegabdeckung names it: a gap ("Beleg fehlt", "Nachtrag nicht gelegt"), a Kürzungsrisiko, or nothing. */
+  check: "luecke" | "risiko" | null;
 };
 
 export type PositionsView = {
@@ -75,7 +78,7 @@ export type PositionsView = {
   /** How many rows have a Beleg of each kind. */
   perKind: Record<Nachweisart, number>;
   /** "Ist alles belegt?": rows with a gap, by Belegstand, and rows with a weak Beleg. */
-  answer: { gaps: number; belegFehlt: number; nachtrag: number; weak: number };
+  answer: { gaps: number; belegFehlt: number; nachtrag: number; risk: number };
 };
 
 /** The tab "Positionen" of an open project; null for a closed project (no Abgleich, no table). */
@@ -97,7 +100,7 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
     const aenderung = z.positionNr ? mengenHinweis.get(z.positionNr) : undefined;
     const note =
       z.art === "position" && ueber
-        ? `über dem Leistungsverzeichnis${aenderung ? `, +${prozentText(aenderung, 1)}` : ""}`
+        ? `mehr als beauftragt${aenderung ? `, +${prozentText(aenderung, 1)}` : ""}`
         : z.art === "position" && z.erbracht === 0 && z.einheit !== "psch"
           ? "nicht aufgemessen"
           : z.nachGrenze > 0
@@ -108,7 +111,8 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
       NACHWEISARTEN.map((k) => [k, (cover?.belege[k] ?? []).map((x) => ({ belegId: x.belegId, title: x.titel, date: datumText(x.datum), weak: x.schwach }))]),
     ) as Record<Nachweisart, CoverageItem[]>;
     const gap = z.offen > 0 && z.belegstand !== null && z.belegstand !== "belegt";
-    const weak = NACHWEISARTEN.some((k) => coverage[k].some((x) => x.weak));
+    const r = fund ? (e.vorpruefung?.risiken ?? []).find((x) => x.fundSchluessel === fund.schluessel && x.zustand === "droht") : undefined;
+    const risk = r ? { reason: KUERZUNGSGRUND_TEXT[r.grund], remedy: r.abhilfe, belegIds: r.nachweise.map((n) => n.quelle.belegId) } : null;
     const missing =
       gap && z.belegstand === "nachtrag_nicht_gelegt"
         ? { kind: "rechnung" as const, text: "Nachtrag mit Preis" }
@@ -132,11 +136,12 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
       doneValue: z.erbracht,
       open: z.offen > 0 ? { cent: z.offen, text: euro(z.offen) } : null,
       belegstand: z.offen > 0 && z.belegstand ? { state: z.belegstand, text: BELEGSTAND_TEXT[z.belegstand] } : null,
-      find: fund ? { number: fund.nr, href: `/funde/${findSlug(d.projekt.name, fund.nr)}/`, name: nameAndFacts(fund).name, amount: euro(fund.betrag), remedy: fund.abhilfe } : null,
+      find: fund ? { number: fund.nr, href: `/funde/${findSlug(d.projekt.name, fund.nr)}/`, name: nameAndFacts(fund).name, amount: euro(fund.betrag), remedy: fund.abhilfe ?? r?.abhilfe ?? null } : null,
       note,
       coverage,
       missing,
-      check: gap ? "luecke" : weak ? "schwach" : null,
+      risk,
+      check: gap ? "luecke" : risk ? "risiko" : null,
     };
   });
 
@@ -150,7 +155,7 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
     rows,
     calculations: { open: [extra, unclear], belegstand: [unclear] },
     perKind: counted,
-    answer: { gaps: gaps.length, belegFehlt: gaps.filter((r) => r.belegstand?.state === "beleg_fehlt").length, nachtrag: gaps.filter((r) => r.belegstand?.state === "nachtrag_nicht_gelegt").length, weak: rows.filter((r) => r.check === "schwach").length },
+    answer: { gaps: gaps.length, belegFehlt: gaps.filter((r) => r.belegstand?.state === "beleg_fehlt").length, nachtrag: gaps.filter((r) => r.belegstand?.state === "nachtrag_nicht_gelegt").length, risk: rows.filter((r) => r.check === "risiko").length },
   };
 }
 
