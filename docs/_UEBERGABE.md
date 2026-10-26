@@ -1,8 +1,9 @@
 # Handover: step 8b, Ihre Daten und Zwilling vollständig
 
-**As of:** Monday, 26 October 2026, after step 8a. Written by Claude for Maxi S.
+**As of:** Monday, 26 October 2026, after step 8a (#115 and #116 merged and checked live). Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** the pull requests of `schritt-8a-ruhige-seiten` (#115) and `schritt-8a-nacharbeit` are merged, CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows the project Wohnpark Mooshaim with one row of tabs and three figures led by 14.620,15 €, and "Übersicht" with "Was bringt der Abgleich?". If not, ask Maxi S. first. Create the branch `schritt-8b-daten-zwilling` from `main`.
+**Branch:** `schritt-8b-daten-zwilling` already exists locally with the status update after #116 (one commit, not pushed); continue on it.
+**Precondition:** #115 and #116 are merged (they are, 26.10.2026), CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows the project Wohnpark Mooshaim with one row of tabs and three figures led by 14.620,15 €, and "Übersicht" with "Was bringt der Abgleich?". If not, ask Maxi S. first.
 
 ## Goal
 
