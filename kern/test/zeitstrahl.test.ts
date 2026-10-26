@@ -136,3 +136,14 @@ describe("Belegabdeckung of Wohnpark Mooshaim", () => {
     expect(zeilenJeBeleg(a).get("ab-12")).toEqual(["22.03.02A", "22.04.12B", "22.05.03A", "22.05.06A"]);
   });
 });
+
+describe("one date for one Beleg", () => {
+  it("the Belegabdeckung dates a document as the Zeitstrahl does: by the date written on it", () => {
+    const a = belegabdeckung(p1, f.ergebnisse.p1);
+    const amZeitstrahl = new Map(z1.ereignisse.map((x) => [x.id, x.datum]));
+    const alle = a.zeilen.flatMap((z) => NACHWEISARTEN.flatMap((k) => z.belege[k]));
+    const verglichen = alle.filter((b) => amZeitstrahl.has(b.belegId));
+    expect(verglichen.length).toBeGreaterThan(100);
+    expect(verglichen.filter((b) => b.datum !== amZeitstrahl.get(b.belegId))).toEqual([]);
+  });
+});

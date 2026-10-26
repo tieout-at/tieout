@@ -79,7 +79,19 @@ const leer = (): Record<Nachweisart, AbdeckungsBeleg[]> => Object.fromEntries(NA
 
 export function belegabdeckung(d: Datensatz, e: ProjektErgebnis): Belegabdeckung {
   const doppelt = new Set(e.ordner.duplikatIds);
-  const datumJe = new Map<string, Datum>([...d.belege.map((b) => [b.id, b.datum] as const), ...d.meldungen.map((m) => [m.id, m.zeitpunkt.slice(0, 10)] as const)]);
+  // the date written on the document where the twin read one (as the Zeitstrahl shows it), else the file's date
+  const datumJe = new Map<string, Datum>([
+    ...d.belege.map((b) => [b.id, b.datum] as const),
+    ...d.aufmass.map((b) => [b.belegId, b.datum.wert] as const),
+    ...d.regie.map((rb) => [rb.belegId, rb.datum.wert] as const),
+    ...d.emails.map((m) => [m.belegId, m.datum.wert] as const),
+    ...d.plaene.map((p) => [p.belegId, p.datum.wert] as const),
+    ...d.fotos.map((f) => [f.belegId, f.zeitpunkt.wert.slice(0, 10)] as const),
+    ...d.fotodokumentationen.map((f) => [f.belegId, f.datum.wert] as const),
+    ...d.grosshaendlerrechnungen.map((g) => [g.belegId, g.datum.wert] as const),
+    ...[...d.abschlaege, ...(d.entwurf ? [d.entwurf] : [])].map((r) => [r.belegId, r.datum.wert] as const),
+    ...d.meldungen.map((m) => [m.id, m.zeitpunkt.slice(0, 10)] as const),
+  ]);
   const zeilen = new Map<string, AbdeckungsZeile>();
   for (const z of e.positionen.zeilen) zeilen.set(z.schluessel, { schluessel: z.schluessel, art: z.art, positionNr: z.positionNr, text: z.text, belege: leer(), fund: null });
 

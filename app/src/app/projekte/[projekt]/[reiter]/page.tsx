@@ -6,6 +6,8 @@ import { EmptyState } from "@/components/shell/empty-state";
 import { PROJECT_TABS, PROJECTS } from "@/lib/example";
 import { invoiceView } from "@/lib/invoice";
 import { positionsView } from "@/lib/positions";
+import { timelineView } from "@/lib/timeline";
+import { Timeline } from "@/components/zeitstrahl/timeline";
 import { belegRows, business, findCalculations, findRows } from "@/lib/kern-data";
 import { projectRecord } from "@/lib/records";
 import { BelegeTable } from "../../../belege/belege-table";
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `${PROJECT_TABS.find((t) => t.slug === reiter)!.title} · ${findProject(projekt).name}` };
 }
 
-// Belege, Positionen, Vertrag, Funde and Schlussrechnung come from `kern/` while the page is built; the other tabs follow in later steps.
+// Zeitstrahl, Belege, Positionen, Vertrag, Funde and Schlussrechnung come from `kern/` while the page is built; the other tabs follow in later steps.
 export default async function ProjectTabPage({ params }: Props) {
   const { projekt, reiter } = await params;
   const project = findProject(projekt);
@@ -36,6 +38,11 @@ export default async function ProjectTabPage({ params }: Props) {
   if (reiter === "funde") {
     const rows = findRows().filter((r) => r.project.slug === project.slug);
     if (rows.length) return <FindsTable rows={rows} calculations={findCalculations()} project={project.slug} />;
+  }
+
+  if (reiter === "zeitstrahl") {
+    const view = timelineView(project.id);
+    if (view?.events.length) return <Timeline view={view} />;
   }
 
   if (reiter === "positionen") {
