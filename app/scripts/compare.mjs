@@ -17,7 +17,6 @@ const PAIRS = [
   ["aufgaben-gefuellt", "tasks", "Aufgaben mit offenen Aufgaben ↔ Tasks"],
   ["aufgaben-neu", "tasks", "Aufgaben, Neue Aufgabe ↔ Tasks"],
   ["start-gefuellt", "home", "Start mit Aufgaben ↔ Home"],
-  ["berichte", "reports", "Berichte ↔ Reports"],
   ["berichte-geld", "dashboard", "Berichte, Geld je Projekt ↔ Dashboard"],
   ["berichte-luecken", "dashboard", "Berichte, Lücken in den Belegen ↔ Dashboard"],
   ["berichte-kuerzungen", "dashboard", "Berichte, Kürzungen und Abzüge ↔ Dashboard"],

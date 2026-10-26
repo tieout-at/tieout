@@ -54,6 +54,8 @@ export type FindLink = { number: string; project: Named; name: string; href: str
 export type ReportsView = {
   /** The day the twin was compared (`stichtag` of the core). */
   asOf: string;
+  /** "In Klärung" of the business, never added to "zusätzlich verrechenbar". */
+  unclear: Amount;
   extra: {
     total: Amount;
     risk: Amount;
@@ -63,8 +65,10 @@ export type ReportsView = {
   };
   evidence: {
     totals: Record<Belegstand, Amount & { finds: number; label: string }>;
-    rows: (Named & { finds: number; skipped: number; parts: Record<Belegstand, Amount & { finds: number }> })[];
+    rows: (Named & { finds: number; skipped: number; parts: Record<Belegstand, Amount & { finds: number }>; unclear: Amount })[];
   };
+  /** One statement per report, written from the core's figures (research of step 8: a sentence, not a paragraph). */
+  says: { extra: string; unclear: string; regie: string | null; cuts: { lead: Named & { total: Amount; projects: number }; text: string | null } | null; deductions: { lead: Named & { total: Amount; projects: number; kinds: string }; text: string | null } | null };
   regie: {
     finds: (FindLink & { kind: string; amount: Amount; remedy: string | null })[];
     /** "Beleg fehlt" of the core, only when these finds are all of it. */
@@ -117,10 +121,57 @@ export function reportsView(b: FirmenErgebnis = business()): ReportsView {
       }));
   });
 
+  const says = (): ReportsView["says"] => {
+    const atRisk = open.filter((p) => (b.ergebnisse[p.projektId].vorpruefung?.davonMitKuerzungsrisiko ?? 0) > 0);
+    const risk = euro(b.davonMitKuerzungsrisiko.betrag);
+    const extra = !atRisk.length
+      ? "Die Vorprüfung sieht bei keinem Fund ein Kürzungsrisiko."
+      : atRisk.length === 1
+        ? `${risk} davon können gekürzt werden, alles im ${atRisk[0].name}.`
+        : `${risk} davon können gekürzt werden, in ${atRisk.length} Projekten.`;
+    const unclear = [
+      b.geld.nachtragNichtGelegt.anzahl ? `${euro(b.geld.nachtragNichtGelegt.betrag)} warten auf einen Nachtrag` : null,
+      b.geld.belegFehlt.anzahl ? `${euro(b.geld.belegFehlt.betrag)} auf einen Beleg` : null,
+    ].filter(Boolean).join(", ");
+    const regieCut = b.historie.flatMap((h) => h.kuerzungen.filter((k) => k.grund === "regie_nicht_unterschrieben").map((k) => ({ h, k })))[0];
+    const byCuts = b.historie.filter((h) => h.kuerzungen.length).sort((x, y) => y.kuerzungenSumme - x.kuerzungenSumme)[0];
+    // the same reason in a running project of the same Auftraggeber, as "Gleicher Grund" on the find page
+    const same = byCuts
+      ? open
+          .filter((p) => p.auftraggeber.id === byCuts.auftraggeber.id)
+          .flatMap((p) => (b.ergebnisse[p.projektId].vorpruefung?.risiken ?? []).filter((r) => r.zustand === "droht").map((r) => ({ p, r, before: byCuts.kuerzungen.filter((k) => k.grund === r.grund && k.projektId !== p.projektId) })))
+          .find((x) => x.before.length)
+      : undefined;
+    const byDeductions = b.historie.filter((h) => h.abzuege.length).sort((x, y) => y.abzuegeSumme - x.abzuegeSumme)[0];
+    const next = byDeductions ? open.find((p) => p.auftraggeber.id === byDeductions.auftraggeber.id && (b.ergebnisse[p.projektId].rechnungsabschluss?.zeilen ?? []).some((z) => z.pruefung === "abzug_ohne_vertragspunkt")) : undefined;
+    const nextLine = next ? b.ergebnisse[next.projektId].rechnungsabschluss!.zeilen.find((z) => z.pruefung === "abzug_ohne_vertragspunkt")! : null;
+    return {
+      extra,
+      unclear: unclear ? `${unclear}.` : "Nichts ist in Klärung.",
+      regie: regieCut ? `${regieCut.h.auftraggeber.name} hat schon einmal ${euro(regieCut.k.betrag)} gekürzt, weil Regie nicht unterschrieben war.` : null,
+      cuts: byCuts
+        ? {
+            lead: { ...clientLink(byCuts.auftraggeber.name, byCuts.auftraggeber.kurzname), total: amount(byCuts.kuerzungenSumme), projects: byCuts.kuerzungenProjekte },
+            text: same
+              ? `${same.before.length === 1 ? `${euro(same.before[0].betrag)} davon` : `${same.before.length} Kürzungen`} mit dem Grund „${KUERZUNGSGRUND_TEXT[same.r.grund]}“. Im ${same.p.name} droht derselbe Grund bei ${euro(same.r.betrag)}.`
+              : null,
+          }
+        : null,
+      deductions: byDeductions
+        ? {
+            lead: { ...clientLink(byDeductions.auftraggeber.name, byDeductions.auftraggeber.kurzname), total: amount(byDeductions.abzuegeSumme), projects: byDeductions.abzuegeProjekte, kinds: [...new Set(byDeductions.abzuege.map((a) => ABZUG_TEXT[a.art]))].join(", ") },
+            text: next && nextLine ? `Für den ${next.name} ist der nächste schon angekündigt: ${nextLine.abzugArt ? ABZUG_TEXT[nextLine.abzugArt] : nextLine.bezeichnung} ${nextLine.satz === null ? "" : prozentText(nextLine.satz, 1)}, das sind ${euro(-nextLine.betrag)}.` : null,
+          }
+        : null,
+    };
+  };
+
   const erp = (x: AusserhalbErp) => ({ amount: amount(x.betrag), finds: x.anzahl, of: amount(x.vonBetrag), ofFinds: x.vonAnzahl });
 
   return {
     asOf: datumText(b.stichtag),
+    unclear: amount(b.summen.inKlaerung),
+    says: says(),
     extra: {
       total: amount(b.summen.zusaetzlichVerrechenbar),
       risk: amount(b.davonMitKuerzungsrisiko.betrag),
@@ -147,6 +198,7 @@ export function reportsView(b: FirmenErgebnis = business()): ReportsView {
           ...projectLink(p.name),
           finds: xs.length,
           skipped: b.ergebnisse[p.projektId].abgleich.funde.length - xs.length,
+          unclear: amount(p.inKlaerung!),
           parts: Object.fromEntries(STANDS.map((st) => [st, { ...amount(cent[st]), finds: xs.filter((f) => f.belegstand === st).length }])) as Record<Belegstand, Amount & { finds: number }>,
         };
       }),

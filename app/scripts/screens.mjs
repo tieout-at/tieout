@@ -24,8 +24,7 @@ const SIZES = [
 const SCREENS = [
   { name: "start", path: "/" },
   { name: "aufgaben", path: "/aufgaben/" },
-  { name: "berichte", path: "/berichte/" },
-  { name: "berichte-geld", path: "/berichte/geld-je-projekt/" },
+  { name: "berichte-geld", path: "/berichte/" },
   { name: "berichte-luecken", path: "/berichte/luecken-in-den-belegen/" },
   { name: "berichte-kuerzungen", path: "/berichte/kuerzungen-und-abzuege/" },
   { name: "ablaeufe", path: "/ablaeufe/" },

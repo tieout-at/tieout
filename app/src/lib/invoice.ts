@@ -58,7 +58,7 @@ export type SettlementLine = {
 export type InvoiceView = {
   project: { id: string; name: string; href: string; packagesHref: string; client: { name: string; href: string }; deadline: string | null };
   /** "Entwurf, nicht freigegeben" until every find is decided (SPEZIFIKATION.md 5.1). */
-  status: { finds: number; open: number; released: number; inInvoice: number; final: boolean };
+  status: { finds: number; open: number; released: number; inInvoice: number; final: boolean; all: InvoiceFind[] };
   changes: { entries: ChangeEntry[]; total: Amount; risk: Amount };
   /** Finds in Klärung: not in the Änderungsliste until the gap is closed. */
   pending: { find: InvoiceFind; stand: string; amount: Amount; remedy: string | null }[];
@@ -89,8 +89,8 @@ export type InvoiceView = {
 const amount = (cent: number): Amount => ({ cent, text: euro(cent) });
 
 const CHECK_TEXT: Record<Satzpruefung["pruefung"], string> = {
-  laut_vertrag: "laut Vertrag",
-  abweichung: "weicht vom Vertrag ab",
+  laut_vertrag: "Vertragspunkt",
+  abweichung: "weicht ab, Vertragspunkt",
   abzug_ohne_vertragspunkt: "Abzug ohne Vertragspunkt",
 };
 
@@ -149,7 +149,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
     kind: z.art,
     amount: amount(z.betrag),
     rate: z.satz === null ? null : prozentText(z.satz, 1),
-    check: z.pruefung ? { state: z.pruefung, text: z.vertragspunkt ? `${CHECK_TEXT[z.pruefung]}, Vertragspunkt ${z.vertragspunkt}` : CHECK_TEXT[z.pruefung] } : null,
+    check: z.pruefung ? { state: z.pruefung, text: z.vertragspunkt ? `${CHECK_TEXT[z.pruefung]} ${z.vertragspunkt}` : CHECK_TEXT[z.pruefung] } : null,
     find: linkOf(z.fundSchluessel),
   });
   const lines = ra.zeilen.map(line);
@@ -172,6 +172,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
       released: funde.filter((f) => f.entscheidung === "freigegeben").length,
       inInvoice: funde.filter((f) => f.entscheidung === "in_schlussrechnung").length,
       final: decided === funde.length,
+      all: funde.map(link),
     },
     changes: { entries, total: amount(e.abgleich.summen.zusaetzlichVerrechenbar), risk: amount(vp.davonMitKuerzungsrisiko) },
     pending: funde
