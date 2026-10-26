@@ -80,26 +80,9 @@ const SCREENS = [
     },
   },
   { name: "uebersicht", path: "/uebersicht/" },
-  {
-    // the trace of F1: hover on wide screens, the sheet on phones
-    name: "uebersicht-spur",
-    path: "/uebersicht/",
-    act: async (page) => {
-      const row = page.locator('[data-target="fund:F1"]').first();
-      if ((page.viewportSize()?.width ?? 0) < 768) await row.click();
-      else await row.hover();
-    },
-  },
-  {
-    // the money block "zusätzlich verrechenbar" with every finding it holds
-    name: "uebersicht-geld",
-    path: "/uebersicht/",
-    act: async (page) => {
-      const block = page.locator('[data-target="block:zusaetzlich"]').first();
-      if ((page.viewportSize()?.width ?? 0) < 768) await block.click();
-      else await block.hover();
-    },
-  },
+  // step 8a: the chosen find is in the address; F8 shows a find in Klärung, F2 a part of a find at risk
+  { name: "uebersicht-f8", path: "/uebersicht/#f8" },
+  { name: "uebersicht-f2", path: "/uebersicht/#f2" },
   { name: "uebersicht-kiefernau", path: "/uebersicht/buerohaus-kiefernau/" },
   // the find page: F1 with its first original, another Beleg chosen, the decision confirmed, a find in Klärung
   { name: "fundseite", path: "/funde/wohnpark-mooshaim-f1/" },

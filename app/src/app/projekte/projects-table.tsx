@@ -37,7 +37,7 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
       id: "client",
       title: "Auftraggeber",
       icon: Building2,
-      width: 130,
+      width: 150,
       sortValue: (r) => r.client,
       filterValue: (r) => r.client,
       cell: (r) => <span className="truncate">{r.client}</span>,
@@ -46,7 +46,7 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
       id: "extra",
       title: "Zusätzlich verrechenbar",
       icon: Wallet,
-      width: 180,
+      width: 190,
       align: "right",
       sortValue: (r) => r.extra?.cent ?? null,
       calculations: calculations.extra,
@@ -75,7 +75,7 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
       id: "date",
       title: "Datum",
       icon: CalendarDays,
-      width: 300,
+      width: 270,
       sortValue: (r) => r.date?.iso ?? null,
       cell: (r) =>
         r.date && (

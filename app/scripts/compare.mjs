@@ -30,7 +30,7 @@ const PAIRS = [
   ["auftraggeber", "companies", "Auftraggeber ↔ Companies (Tabelle)"],
   ["auftraggeber-hornfeld", "record", "Auftraggeber Hornfeld Bau ↔ Datensatz (Company)"],
   ["uebersicht", "record", "Übersicht (Digitaler Zwilling) ↔ Datensatz (Company)"],
-  ["uebersicht-spur", "record", "Übersicht, Spur auf F1 ↔ Datensatz (Company)"],
+  ["uebersicht-f8", "record", "Übersicht, F8 gewählt ↔ Datensatz (Company)"],
   ["projekte", "companies", "Projekte ↔ Companies (Tabelle)"],
   ["projekte-sortierung", "companies", "Projekte, Sortierung offen ↔ Companies"],
   ["projekt", "record", "Projekt Wohnpark Mooshaim, Überblick ↔ Datensatz (Company)"],
