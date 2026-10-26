@@ -35,7 +35,9 @@ describe("find page F1, Wohnpark Mooshaim", () => {
     // the Kürzungsrisiko is the section below the figures, said once (step 8a)
     expect(f1.highlights.map((h) => h.id)).toEqual(["betrag", "belegstand"]);
     expect(f1.name).toBe("14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr");
-    expect(f1.facts).toEqual(["Plan H-201 Index C → D", "Mehrmenge aus Planänderung"]);
+    // the Art stands once, in the sum row of the Rechenweg
+    expect(f1.facts).toEqual(["Plan H-201 Index C → D"]);
+    expect(f1.calc.total.label).toBe("Mehrmenge aus Planänderung");
     expect(f1.evidence.price.map((x) => x.title)).toEqual(["Leistungsverzeichnis"]);
     expect(f1.evidence.work.map((x) => x.title)).toContain("Aufmaßblatt 12");
     expect(f1.evidence.work).toHaveLength(6);

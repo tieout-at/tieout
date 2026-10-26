@@ -257,6 +257,8 @@ export function findRecord(slug: string): FindRecord {
     number: f.nr,
     title: f.titel,
     ...nameAndFacts(f),
+    // the Art is not said again under the name when the sum row of the Rechenweg already carries it (F7)
+    facts: nameAndFacts(f).facts.filter((x) => x !== total?.bezeichnung),
     project: { name: p.name, href: `/projekte/${projectSlug(p.name)}/` },
     client: { name: ag.name, href: `/auftraggeber/${clientSlug(ag.kurzname)}/` },
     amount: euro(f.betrag),

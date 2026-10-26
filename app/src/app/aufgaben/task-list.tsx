@@ -211,7 +211,7 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
           </div>
           <ul className="rounded-lg bg-surface shadow-ring">
             {proposals.map((t) => (
-              <li key={t.key} className="flex items-start gap-3 px-4 py-3 [&:not(:last-child)]:shadow-line-bottom max-md:flex-col max-md:gap-2">
+              <li key={t.key} className="relative flex items-start gap-3 px-4 py-3 [&:not(:last-child)]:shadow-line-bottom max-md:pr-14">
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span>{t.taskText}</span>
                   <Link href={t.href} className="flex w-fit items-center gap-1.5 rounded-xs text-xs text-fg-secondary outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
@@ -219,9 +219,18 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
                     {t.project}
                   </Link>
                 </div>
-                <Button variant="secondary" onClick={() => setProposal(t)} className="shrink-0">
+                <Button variant="secondary" onClick={() => setProposal(t)} className="shrink-0 max-md:hidden">
                   Als Aufgabe anlegen
                 </Button>
+                {/* phones: one quiet "+" beside the text instead of six full buttons */}
+                <button
+                  type="button"
+                  aria-label={`Als Aufgabe anlegen: ${t.taskText}`}
+                  onClick={() => setProposal(t)}
+                  className="absolute top-2 right-2 flex size-11 items-center justify-center rounded-md text-fg-secondary outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent md:hidden"
+                >
+                  <Plus className="size-4" aria-hidden />
+                </button>
               </li>
             ))}
           </ul>
@@ -420,10 +429,14 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
         </span>
       </div>
       {open.length === 0 || !today ? (
-        <SectionEmpty
-          title="Keine offenen Aufgaben"
-          text={proposed ? `${proposed} Vorschläge aus den Funden stehen unter Aufgaben.` : "Aus jeder Lücke wird eine Aufgabe mit Frist."}
-        />
+        proposed ? (
+          <Link href="/aufgaben/" className="flex min-h-11 items-center justify-between gap-2 rounded-md px-1 py-2 text-fg-secondary outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
+            Noch keine Aufgabe. {proposed} Vorschläge aus den Funden ansehen
+            <ChevronRight className="size-4 shrink-0" aria-hidden />
+          </Link>
+        ) : (
+          <SectionEmpty title="Keine offenen Aufgaben" text="Aus jeder Lücke wird eine Aufgabe mit Frist." />
+        )
       ) : (
         <ul className="flex flex-col">
           {open.slice(0, 3).map((t) => (

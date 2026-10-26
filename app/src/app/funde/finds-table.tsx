@@ -69,7 +69,7 @@ export function FindsTable({
       id: "find",
       title: "Fund",
       icon: SearchCheck,
-      width: project ? 440 : 270,
+      width: project ? 400 : 310,
       sortValue: (r) => r.name,
       cell: (r) => (
         <Link
@@ -99,7 +99,7 @@ export function FindsTable({
       id: "amount",
       title: "Betrag",
       icon: Wallet,
-      width: 260,
+      width: project ? 290 : 220,
       align: "right",
       sortValue: (r) => r.amount.cent,
       calculations: calculations.amount,
