@@ -16,7 +16,7 @@ import { OriginalPaper } from "./original-paper";
 const INTERNAL = new Set<string>(["entwurf", "preisbasis", "stundenzettel"]);
 
 /** Whether an Aufmaßblatt was entered into the own invoicing program is a note for the business, not for the Auftraggeber. */
-const outward = (text: string) => text.replace(/, (?:nie erfasst|erfasst am \d{2}\.\d{2}\.\d{4})/, "");
+const outward = (text: string) => text.replace(/, (?:nicht im Rechnungsprogramm erfasst|erfasst am \d{2}\.\d{2}\.\d{4})/, "");
 
 /**
  * "Beweispaket" of one find (SPEZIFIKATION.md 3.3 and 4.3), the evidence that goes with the Schlussrechnung to the

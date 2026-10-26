@@ -28,10 +28,12 @@ describe("find page F1, Wohnpark Mooshaim", () => {
     expect(f1.calc.check).toBe("K7 22.04.12B: 1,10 h × 58,60 € = 64,46 € Lohn + 221,94 € Sonstiges = 286,40 €");
   });
 
-  it("6 Belege and 1 WhatsApp-Meldung, the Leistungsverzeichnis as the proof of price", () => {
-    expect(f1.highlights.find((h) => h.id === "belegstand")).toMatchObject({ value: "belegt", lines: ["6 Belege, 1 WhatsApp-Meldung"] });
-    expect(f1.highlights.find((h) => h.id === "betrag")!.lines).toEqual(["zusätzlich verrechenbar", "netto, vor Nachlass"]);
-    expect(f1.highlights.find((h) => h.id === "risiko")!.lines).toEqual(["droht für 6.648,60 €"]);
+  it("7 Belege with 1 WhatsApp-Meldung, counted as the list counts them; the Leistungsverzeichnis as the proof of price", () => {
+    expect(f1.highlights.find((h) => h.id === "belegstand")).toMatchObject({ value: "belegt", lines: ["7 Belege, darunter 1 WhatsApp-Meldung"] });
+    expect(f1.evidence.work.length + f1.evidence.price.length).toBe(7);
+    expect(f1.highlights.find((h) => h.id === "betrag")!.lines).toEqual(["zusätzlich verrechenbar, netto, vor Nachlass"]);
+    // the Kürzungsrisiko is the section below the figures, said once (step 8a)
+    expect(f1.highlights.map((h) => h.id)).toEqual(["betrag", "belegstand"]);
     expect(f1.name).toBe("14 Wohnungen Typ C: Wohnküche geteilt, je 1 Heizkörper mehr");
     expect(f1.facts).toEqual(["Plan H-201 Index C → D", "Mehrmenge aus Planänderung"]);
     expect(f1.evidence.price.map((x) => x.title)).toEqual(["Leistungsverzeichnis"]);
@@ -61,7 +63,7 @@ describe("find page F1, Wohnpark Mooshaim", () => {
 
   it("Verlauf holds the correction of the e-mail date and the confirmed WhatsApp-Meldung; no decision yet", () => {
     expect(f1.activity.map((a) => a.text)).toEqual([
-      "korrigierte E-Mail: Wohnungstyp C Heizkörper, Kopf, Datum: 01.04.2026 auf 07.04.2026",
+      "korrigierte E-Mail: Wohnungstyp C Heizkörper, Datum: 01.04.2026 auf 07.04.2026",
       "bestätigte WhatsApp-Meldung W1: zusätzliche Heizkörper montiert",
     ]);
     expect(f1.decision).toBe("gefunden");
@@ -72,7 +74,8 @@ describe("find page F1, Wohnpark Mooshaim", () => {
 describe("finds in Klärung", () => {
   it("a find without Beleg is not in the Vorprüfung yet: no false all clear", () => {
     const f6 = findRecord("wohnpark-mooshaim-f6");
-    expect(f6.highlights.find((h) => h.id === "risiko")).toMatchObject({ value: "noch nicht geprüft", lines: ["erst mit Beleg in der Vorprüfung"] });
+    expect(f6.risk).toBeNull();
+    expect(f6.highlights.find((h) => h.id === "betrag")!.lines).toEqual(["in Klärung, netto, vor Nachlass"]);
     expect(f6.remedy).toBe("Regiebericht vom Polier unterschreiben lassen");
   });
 

@@ -39,6 +39,22 @@ export type Access<R> = {
   filterValue?: (r: R) => string | null;
 };
 
+/**
+ * Columns whose value is the same in every row (step 8a: a column that says the same 124 times says nothing). Compared
+ * by the label the filter offers, else by the sort value; a column with neither, or a table of one row, keeps them all.
+ */
+export function uniformColumns<R>(rows: R[], columns: ({ id: string } & Access<R>)[]): string[] {
+  if (rows.length < 2) return [];
+  return columns
+    .filter((c) => {
+      const value = c.filterValue ?? c.sortValue;
+      if (!value) return false;
+      const first = value(rows[0]);
+      return rows.every((r) => value(r) === first);
+    })
+    .map((c) => c.id);
+}
+
 export function applyFilters<R>(rows: R[], filters: Filter[], access: Record<string, Access<R>>): R[] {
   const active = filters.filter((f) => f.values.length && access[f.column]?.filterValue);
   if (!active.length) return rows;

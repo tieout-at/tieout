@@ -32,6 +32,7 @@ import {
   filterOptions,
   footerSum,
   readState,
+  uniformColumns,
   type Access,
   type Calculation,
   type Noun,
@@ -114,7 +115,11 @@ export function DataTable<R extends Row>({
 
   const access = useMemo(() => Object.fromEntries(columns.map((c) => [c.id, c])), [columns]);
   const visible = useMemo(() => applySort(applyFilters(rows, state.filters, access), state.sort, access), [rows, state.filters, state.sort, access]);
-  const shown = columns.filter((c, i) => i === 0 || !state.hidden.includes(c.id));
+  // a column with the same value in every row hides itself until it is asked for ("+" or "Ansicht")
+  const uniform = useMemo(() => uniformColumns(rows, columns.slice(1)), [rows, columns]);
+  const [forced, setForced] = useState<string[]>([]);
+  const hidden = [...state.hidden, ...uniform.filter((id) => !forced.includes(id) && !state.hidden.includes(id))];
+  const shown = columns.filter((c, i) => i === 0 || !hidden.includes(c.id));
   const isBoard = view.kind === "board" && board !== undefined;
 
   const switchView = (v: View) => {
@@ -122,7 +127,10 @@ export function DataTable<R extends Row>({
     setState(v.state);
     setSelected(new Set());
   };
-  const update = (patch: Partial<ViewState>) => setState((s) => ({ ...s, ...patch }));
+  const update = (patch: Partial<ViewState>) => {
+    if (patch.hidden) setForced(uniform.filter((id) => !patch.hidden!.includes(id)));
+    setState((s) => ({ ...s, ...patch }));
+  };
   const toggleRow = (id: string) =>
     setSelected((s) => {
       const next = new Set(s);
@@ -140,7 +148,7 @@ export function DataTable<R extends Row>({
         view={view}
         onView={switchView}
         columns={columns}
-        state={state}
+        state={{ ...state, hidden }}
         onState={update}
         onReset={() => setState(view.state)}
         board={isBoard}
@@ -228,7 +236,7 @@ export function DataTable<R extends Row>({
                   first={i === 0}
                   sort={state.sort?.column === c.id ? state.sort.direction : null}
                   onSort={(direction) => update({ sort: { column: c.id, direction } })}
-                  onHide={() => update({ hidden: [...state.hidden, c.id] })}
+                  onHide={() => update({ hidden: [...hidden, c.id] })}
                 >
                   {i === 0 && (
                     <Checkbox
@@ -240,7 +248,7 @@ export function DataTable<R extends Row>({
                 </HeaderCell>
               ))}
               <div role="columnheader" className="flex min-w-14 flex-1 items-center border-b border-line px-2">
-                <AddColumn columns={columns} hidden={state.hidden} onShow={(id) => update({ hidden: state.hidden.filter((h) => h !== id) })} />
+                <AddColumn columns={columns} hidden={hidden} onShow={(id) => update({ hidden: hidden.filter((h) => h !== id) })} />
               </div>
             </div>
           </div>

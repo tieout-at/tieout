@@ -14,15 +14,18 @@ describe("project page Wohnpark Mooshaim (SPEZIFIKATION.md 7.2)", () => {
   const r = projectRecord("p1");
   const card = (id: string) => r.highlights.find((h) => h.id === id)!;
 
-  it("shows the money words of the solution list, never added up", () => {
-    expect([card("zusaetzlich").value, card("zusaetzlich").lines]).toEqual([listed("14.620,15 €"), [`davon mit Kürzungsrisiko ${listed("6.843,00 €")}`]]);
+  it("shows the money words of the solution list, never added up, in three figures led by zusätzlich verrechenbar", () => {
+    expect(r.highlights.map((h) => h.id)).toEqual(["zusaetzlich", "klaerung", "restforderung"]);
+    expect([card("zusaetzlich").value, card("zusaetzlich").lines, card("zusaetzlich").says]).toEqual([listed("14.620,15 €"), ["aus 5 belegten Funden"], `davon mit Kürzungsrisiko ${listed("6.843,00 €")}`]);
+    expect(card("zusaetzlich").part).toBeCloseTo(684300 / 1462015);
     expect([card("klaerung").value, card("klaerung").lines]).toEqual([listed("8.073,59 €"), [`Beleg fehlt ${listed("1.119,99 €")}`, `Nachtrag nicht gelegt ${listed("6.953,60 €")}`]]);
-    expect(card("vorpruefung").value).toBe(listed("8.619,00 €"));
-    expect(card("vorpruefung").lines).toEqual(["3 Positionen", `davon schon gekürzt ${listed("1.776,00 €")}`]);
     expect([card("restforderung").value, card("restforderung").lines]).toEqual([listed("89.274,41 €"), [`laut Vertrag ${listed("92.882,45 €")}`]]);
-    expect([card("datum").title, card("datum").value, card("datum").status]).toEqual(["Schlussrechnung legen bis", "30.10.2026", "rot"]);
-    expect(card("funde").value).toBe("8");
     expect(r.highlights.map((h) => h.value)).not.toContain(listed("22.693,74 €"));
+  });
+
+  it("names the deadline once (in the head), not in Angaben; the Vertrag is one row that leads to its tab", () => {
+    expect(r.attributes.map((a) => a.label)).toEqual(["Auftraggeber", "Bauzeit", "Leistung", "Auftragssumme", "Vertrag"]);
+    expect(r.attributes.find((a) => a.label === "Vertrag")).toMatchObject({ value: "vom 12.11.2025", href: "/projekte/wohnpark-mooshaim/vertrag/" });
   });
 
   it("reads every contract value with its place in the Bauvertrag", () => {
@@ -33,7 +36,7 @@ describe("project page Wohnpark Mooshaim (SPEZIFIKATION.md 7.2)", () => {
     expect(by("Baustrom und Bauwasser").value).toBe("0,6 %");
     expect(by("Regiesatz Monteur").value).toBe(`${listed("64,80 €")} je Stunde`);
     expect(r.contract.every((a) => a.source?.startsWith("Bauvertrag, Seite ") && a.review)).toBe(true);
-    expect(r.attributes.find((a) => a.label === "Schlussrechnung legen bis")?.source).toMatch(/^Bauvertrag, Seite /);
+    expect(r.contract.find((a) => a.label === "Schlussrechnung legen bis")).toMatchObject({ value: "30.10.2026" });
   });
 
   it("keeps the Verlauf append only and newest first: 18 corrections and 4 confirmed WhatsApp-Meldungen", () => {
@@ -44,7 +47,7 @@ describe("project page Wohnpark Mooshaim (SPEZIFIKATION.md 7.2)", () => {
 
   it("shows the settlement of a closed project instead of finds", () => {
     const closed = projectRecord("p4");
-    expect(closed.highlights.map((h) => h.id)).toEqual(["auftragssumme", "schlussrechnung", "gekuerzt", "schlusszahlung", "einbehalten", "belege"]);
+    expect(closed.highlights.map((h) => h.id)).toEqual(["gekuerzt", "schlusszahlung", "einbehalten"]);
     expect(closed.highlights.find((h) => h.id === "gekuerzt")?.value).toBe(listed("2.655,20 €"));
   });
 });
@@ -66,7 +69,7 @@ describe("Auftraggeber Hornfeld Bau (SPEZIFIKATION.md 2.2 and 7.2)", () => {
       ["Wohnpark Mooshaim", "Aufmaß nicht gegengezeichnet", "Gleicher Grund bei diesem Auftraggeber schon im Wohnhof Erlenhain."],
       ["Wohnpark Mooshaim", "Bauschadensumlage: Abzug ohne Vertragspunkt", "Gleicher Grund bei diesem Auftraggeber schon im Wohnhof Erlenhain."],
     ]);
-    expect(c.sameReason.map((s) => s.earlier)).toEqual([`im Wohnhof Erlenhain: ${listed("2.575,20 €")}`, `im Wohnhof Erlenhain: ${listed("3.305,55 €")}`]);
+    expect(c.sameReason.map((s) => s.earlier)).toEqual([`im Wohnhof Erlenhain gekürzt: ${listed("2.575,20 €")}`, `im Wohnhof Erlenhain abgezogen: ${listed("3.305,55 €")}`]);
   });
 });
 

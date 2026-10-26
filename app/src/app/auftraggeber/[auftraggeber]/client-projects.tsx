@@ -30,8 +30,8 @@ export function ClientProjects({ rows: built }: { rows: ProjectRow[] }) {
         },
         { id: "status", title: "Status", className: "whitespace-nowrap", cell: (p) => <Tag colour={COLOUR[p.status.colour]}>{p.status.text}</Tag> },
         { id: "date", title: "Datum", cell: (p) => p.date && <span className="text-fg-secondary">{p.date.label} <span className="text-fg tabular-nums">{p.date.text}</span></span> },
-        { id: "extra", title: "Zusätzlich verrechenbar", align: "right", cell: (p) => p.extra?.text },
-        { id: "unclear", title: "In Klärung", align: "right", cell: (p) => p.unclear?.text },
+        { id: "extra", title: "Zusätzlich verrechenbar", align: "right", phoneTop: true, cell: (p) => p.extra?.text },
+        { id: "unclear", title: "In Klärung", align: "right", cell: (p) => (p.unclear?.cent ? p.unclear.text : p.unclear && <span className="text-fg-muted">nichts</span>) },
       ]}
     />
   );

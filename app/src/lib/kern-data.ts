@@ -309,7 +309,7 @@ export type BelegRow = Row & {
   project: { slug: string; name: string };
   date: Dated;
   pages: number;
-  /** "maschinell gelesen", "bestätigt", "korrigiert"; "Kopie" for a duplicate. */
+  /** "maschinell gelesen", "bestätigt", "korrigiert"; "doppelt" for a duplicate. */
   review: { state: "maschinell" | "bestaetigt" | "korrigiert" | "kopie"; text: string };
   fields: { read: number; corrected: number };
   /** Title of the file this one repeats. */
@@ -336,7 +336,7 @@ export function belegRows(): BelegRow[] {
       project,
       date: dated(x.datum),
       pages: x.seiten,
-      review: x.duplikatVon ? { state: "kopie", text: "Kopie" } : { state: x.pruefstand, text: PRUEFSTAND_TEXT[x.pruefstand] },
+      review: x.duplikatVon ? { state: "kopie", text: "doppelt" } : { state: x.pruefstand, text: PRUEFSTAND_TEXT[x.pruefstand] },
       fields: { read: x.felder.felder, corrected: x.felder.korrigiert },
       copyOf: x.duplikatVon ? (titel.get(x.duplikatVon) ?? null) : null,
       finds: x.funde,

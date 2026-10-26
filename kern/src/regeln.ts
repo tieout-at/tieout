@@ -49,7 +49,7 @@ const meldungNachweis = (m: WhatsAppMeldung): Nachweis => ({
 const blattNachweis = (k: Kontext, f: AufmassFund): Nachweis[] => {
   const b = f.blatt;
   const einheit = k.lv.get(f.zeile.positionNr.wert)?.einheit.wert;
-  const zustand = [b.gegengezeichnet.wert ? "gegengezeichnet" : "nicht gegengezeichnet", b.erfasstAm ? `erfasst am ${datumText(b.erfasstAm.wert)}` : "nie erfasst"].join(", ");
+  const zustand = [b.gegengezeichnet.wert ? "gegengezeichnet" : "nicht gegengezeichnet", b.erfasstAm ? `erfasst am ${datumText(b.erfasstAm.wert)}` : "nicht im Rechnungsprogramm erfasst"].join(", ");
   const grundlage = b.grundlageBelegId ? k.d.fotodokumentationen.find((x) => x.belegId === b.grundlageBelegId) : undefined;
   return [
     { titel: `Aufmaßblatt ${b.nr}`, text: `${menge(f.zeile.menge.wert, einheit)} aufgemessen, ${zustand}`, datum: b.datum.wert, quelle: f.zeile.menge.quelle, art: "aufmassblatt", rolle: "leistung", imErp: b.erfasstAm !== null },

@@ -173,16 +173,60 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
   const [showDone, setShowDone] = useState(false);
   const { note, show, hide } = useNote();
 
-  const dialog = <TaskDialog open={making} onOpenChange={setMaking} targets={targets} />;
+  const [proposal, setProposal] = useState<TaskTarget | null>(null);
+  const dialog = (
+    <>
+      <TaskDialog open={making} onOpenChange={setMaking} targets={targets} />
+      <TaskDialog open={proposal !== null} onOpenChange={(o) => !o && setProposal(null)} targets={proposal ? [proposal] : []} />
+    </>
+  );
   if (!tasks?.length || !today) {
+    // step 8a: an empty page that already knows work names it; the gaps with an Abhilfe are the first tasks
+    const proposals = targets.filter((t) => t.taskText);
+    if (!proposals.length) {
+      return (
+        <>
+          <EmptyState icon={SquareCheck} title="Aufgaben" text="Aus jeder Lücke wird eine Aufgabe, zum Beispiel „Regiebericht schreiben und vom Polier unterschreiben lassen“.">
+            <Button variant="primary" size="lg" onClick={() => setMaking(true)}>
+              <Plus aria-hidden />
+              Neue Aufgabe
+            </Button>
+          </EmptyState>
+          {dialog}
+        </>
+      );
+    }
     return (
       <>
-        <EmptyState icon={SquareCheck} title="Aufgaben" text="Aus jeder Lücke wird eine Aufgabe, zum Beispiel „Regiebericht schreiben und vom Polier unterschreiben lassen“.">
-          <Button variant="primary" size="lg" onClick={() => setMaking(true)}>
-            <Plus aria-hidden />
-            Neue Aufgabe
-          </Button>
-        </EmptyState>
+        <div className="mx-auto flex w-full max-w-[720px] flex-col gap-4 px-6 py-8 max-md:px-4 max-md:py-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-semibold">Noch keine Aufgabe</h2>
+              <p className="text-fg-secondary">
+                {proposals.length === 1 ? "Eine Lücke hat" : `${proposals.length} Lücken haben`} schon eine Abhilfe. Daraus wird mit einem Klick eine Aufgabe.
+              </p>
+            </div>
+            <Button variant="secondary" onClick={() => setMaking(true)} className="shrink-0">
+              <Plus aria-hidden />
+              Neue Aufgabe
+            </Button>
+          </div>
+          <ul className="rounded-lg bg-surface shadow-ring">
+            {proposals.map((t) => (
+              <li key={t.key} className="flex items-start gap-3 px-4 py-3 [&:not(:last-child)]:shadow-line-bottom max-md:flex-col max-md:gap-2">
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span>{t.taskText}</span>
+                  <Link href={t.href} className="link-quiet w-fit text-xs text-fg-secondary">
+                    {t.label}: {t.name}
+                  </Link>
+                </div>
+                <Button variant="secondary" onClick={() => setProposal(t)} className="shrink-0">
+                  Als Aufgabe anlegen
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
         {dialog}
       </>
     );

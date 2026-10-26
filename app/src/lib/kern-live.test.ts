@@ -65,8 +65,8 @@ describe("the core in the browser (step 6b)", () => {
     expect(matchingSum(l.findCalculations().amount[0], mooshaim(rows))?.text).toBe(rest("14.620,15 €"));
     expect(matchingSum(l.projectCalculations().extra[0], l.projectRows())?.text).toBe(rest("22.632,96 €"));
     expect(l.projectHighlights("p1").find((h) => h.id === "zusaetzlich")!.value).toBe(rest("14.620,15 €"));
-    expect(l.projectHighlights("p1").find((h) => h.id === "funde")!.lines[0]).toMatch(/1 nicht verrechnen$/);
-    expect(l.findHighlights(findSlug("Wohnpark Mooshaim", "F1"))!.find((h) => h.id === "betrag")!.lines[0]).toBe("zählt in keiner Summe");
+    expect(l.projectHighlights("p1").find((h) => h.id === "zusaetzlich")!.lines[0]).toMatch(/1 nicht verrechnet$/);
+    expect(l.findHighlights(findSlug("Wohnpark Mooshaim", "F1"))!.find((h) => h.id === "betrag")!.lines[0]).toBe("zählt in keiner Summe, netto, vor Nachlass");
     const twin = l.twinView("wohnpark-mooshaim")!;
     expect(twin.money.extra).toBe(rest("14.620,15 €"));
     expect(twin.finds.find((f) => f.number === "F1")!.bucket).toBe("nicht_verrechnen");

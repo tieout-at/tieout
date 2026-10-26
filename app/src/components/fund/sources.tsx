@@ -126,8 +126,19 @@ export function EvidenceList({ evidence, active, onOpen }: { evidence: EvidenceG
 }
 
 /** The weak spot of the find: the Vorprüfung line that lies in it, with its Abhilfe; or what a find "in Klärung" lacks. */
-export function WeakSpot({ record, active, onOpen }: { record: FindRecord; active: SourceRef | null; onOpen: OpenSource }) {
-  const r = record.risk;
+export function WeakSpot({ record, excluded, active, onOpen }: { record: FindRecord; excluded: boolean; active: SourceRef | null; onOpen: OpenSource }) {
+  // a find set to "Nicht verrechnen" is in no Entwurf, so its Kürzungsrisiko no longer applies
+  const r = excluded ? null : record.risk;
+  if (excluded && record.risk) {
+    return (
+      <section id="kuerzungsrisiko" aria-labelledby="kuerzungsrisiko-titel" className="scroll-mt-4">
+        <h2 id="kuerzungsrisiko-titel" className="mb-2 text-sm text-fg-secondary">
+          Kürzungsrisiko
+        </h2>
+        <p className="rounded-lg bg-surface px-3 py-2.5 text-fg-secondary shadow-ring">Entfällt, der Fund wird nicht verrechnet.</p>
+      </section>
+    );
+  }
   if (!r && !record.remedy && !record.notes.length) return null;
   return (
     <section id="kuerzungsrisiko" aria-labelledby="kuerzungsrisiko-titel" className="scroll-mt-4">
@@ -139,7 +150,10 @@ export function WeakSpot({ record, active, onOpen }: { record: FindRecord; activ
           <>
             <p className="flex items-start gap-2">
               <ShieldAlert className="mt-0.5 size-4 shrink-0 text-state-red" aria-hidden />
-              <span>{r.detail}.</span>
+              <span>
+                {r.alreadyCut ? "Schon gekürzt: " : ""}
+                {r.detail}.{r.amount !== record.amount && <span className="text-fg-secondary"> Betrifft {r.amount}.</span>}
+              </span>
             </p>
             <p className="pl-6">
               <span className="text-fg-secondary">Abhilfe: </span>

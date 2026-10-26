@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyFilters, applySort, columnSums, countText, filterOptions, footerSum, matchingSum, readState, type Access, type Calculation, type ViewState } from "./table";
+import { applyFilters, applySort, columnSums, countText, filterOptions, footerSum, matchingSum, readState, uniformColumns, type Access, type Calculation, type ViewState } from "./table";
 
 type R = { id: string; groups: string[]; project: string; stand: string | null; cent: number | null };
 
@@ -98,5 +98,25 @@ describe("table", () => {
     expect(columnSums([extra, unclear], [rows[0], rows[1], rows[2]])).toEqual([{ title: "zusätzlich verrechenbar", cut: true }, { title: "in Klärung", text: "Klärung" }]);
     expect(columnSums([extra, unclear], [rows[3]])).toEqual([{ title: "zusätzlich verrechenbar", cut: true }]);
     expect(columnSums([extra, unclear], [])).toEqual([]);
+  });
+});
+
+describe("uniformColumns (step 8a)", () => {
+  const rows = [
+    { id: "a", state: "Gefunden", amount: 1 },
+    { id: "b", state: "Gefunden", amount: 2 },
+  ];
+  const columns = [
+    { id: "state", filterValue: (r: (typeof rows)[number]) => r.state },
+    { id: "amount", sortValue: (r: (typeof rows)[number]) => r.amount },
+    { id: "plain" },
+  ];
+
+  it("hides a column that says the same in every row, never one without a value to compare", () => {
+    expect(uniformColumns(rows, columns)).toEqual(["state"]);
+  });
+
+  it("keeps every column of a table with one row", () => {
+    expect(uniformColumns(rows.slice(0, 1), columns)).toEqual([]);
   });
 });

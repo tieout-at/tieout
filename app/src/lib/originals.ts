@@ -38,7 +38,16 @@ export type OriginalPage = {
 };
 
 /** The place in the app's words: a line of a list is named by its position ("Position 22.04.12B"). */
-export const placeText = (stelle: string) => stelle.replace(/^Zeile /, "Position ");
+/**
+ * A place in the app's words: a line of a list is named by its position ("Position 22.04.12B"), the head of a letter
+ * by its field ("Kopf, Datum" is "Datum"), the data a camera stores with a photo as "Aufnahmedaten" (step 8a).
+ */
+export const placeText = (stelle: string) =>
+  stelle
+    .replace(/^Zeile /, "Position ")
+    .replace(/^Kopf, /, "")
+    .replace(/^Kopf$/, "Briefkopf")
+    .replace(/^EXIF$/, "Aufnahmedaten");
 
 /**
  * The place on the page to mark for a source: the part with exactly that place, else the part the place lies in
