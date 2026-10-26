@@ -2,7 +2,7 @@
 
 **As of:** Monday, 26 October 2026, night, after step 8d. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** the pull request of `schritt-8d-kompakt` is merged with the go of Maxi S., https://app.tieout.workers.dev shows the 8d pages (Start shows "Geld je Projekt" as a bar chart; the project page "Wo im Gebäude"), CI `App`, `Kern` and `Lösungsliste` green on `main`. If not, ask Maxi S. first.
+**Precondition:** step 8d is merged (#122) and live at https://app.tieout.workers.dev (checked 26.10.2026: 86 of 86 pages with the same amounts as the local build); CI `App`, `Kern` and `Lösungsliste` green on `main`. If something differs, ask Maxi S. first.
 
 ## Goal
 
@@ -11,15 +11,16 @@ The one thing v1 had and v2 lacks (comparison test of 8c, named by the Abrechner
 ## Read first
 
 1. `CLAUDE.md`, `docs/_STATUS.md` (row 8d and its open points), this file.
-2. `docs/SPEZIFIKATION.md` 3.3 (outputs: Excel and PDF now, ÖNORM A 2063 data carrier when a real customer needs it, BMD later) and `docs/DESIGN.md` (section "Compact and visual (step 8d)").
+2. `docs/DESIGN.md` "Principles for every new page" (the bar for every page, learned in 8d), `docs/SPEZIFIKATION.md` 3.3 (outputs: Excel and PDF now, ÖNORM A 2063 data carrier when a real customer needs it, BMD later) and `docs/DESIGN.md` (section "Compact and visual (step 8d)").
 3. v1's export for comparison: branch `v1`, `product/app` (an Excel file with five sheets: Schlussrechnung, Posten, Schlussbesprechung, Vorprüfung, Belege).
 
 ## Steps
 
-1. **Start with the short customer test of 8d** that was not run: the three roles (Abrechnerin, Geschäftsführer, Bauleiter) on the new pages, desktop and phone, the same four verdicts as before; every finding re-measured. Fix what is clearly wrong before the export.
-2. **Decide with Maxi S.** (two sentences each, his go): what the file holds (proposal: Änderungsliste with position, quantity, Einheitspreis, amount and the Beweispaket reference; Rechnungsabschluss; Vorprüfung; Schlussbesprechungs-Blatt marked internal) and the format (proposal: one .xlsx built in the browser from the core's figures, no server).
-3. Build it on the tab Schlussrechnung next to "Drucken", amounts only from `kern/` (the amount audit must stay green), words as in the app, internal sheets marked; test the file by opening it.
-4. Review and status as usual.
+1. **Review what 8d built** (not done in 8d, now part of done, rule 9 of CLAUDE.md): a bug review and a security review of the 8d diff (`git diff 99f3ba4..b5f4a6c`, about 4.000 lines in `app/src` and `kern/`), and a speed check (bundle size per page from the build output, the first load of Start, Projekt and Zeitstrahl at 390 px on a slow line); every finding re-measured and fixed in its own pull request.
+2. **Then the short customer test of 8d** that was not run: the three roles (Abrechnerin, Geschäftsführer, Bauleiter) on the new pages, desktop and phone, the same four verdicts as before; every finding re-measured. Fix what is clearly wrong before the export.
+3. **Decide with Maxi S.** (two sentences each, his go): what the file holds (proposal: Änderungsliste with position, quantity, Einheitspreis, amount and the Beweispaket reference; Rechnungsabschluss; Vorprüfung; Schlussbesprechungs-Blatt marked internal) and the format (proposal: one .xlsx built in the browser from the core's figures, no server).
+4. Build it on the tab Schlussrechnung next to "Drucken", amounts only from `kern/` (the amount audit must stay green), words as in the app, internal sheets marked; test the file by opening it.
+5. Review (bug, security, speed) and status as usual; follow "Principles for every new page" in `docs/DESIGN.md`.
 
 ## Decisions waiting for Maxi S. (from 8d)
 
@@ -41,4 +42,4 @@ The one thing v1 had and v2 lacks (comparison test of 8c, named by the Abrechner
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 8e, Export. Lies `CLAUDE.md` und `docs/_UEBERGABE.md`. Zuerst der kurze Kundentest der drei Rollen auf den neuen Seiten von 8d, dann der Export ins Rechnungsprogramm: schlag mir Inhalt und Format vor, bevor du baust. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Push, Merge, Cloudflare). Beträge nur aus dem Kern. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 8e, Export. Lies `CLAUDE.md` und `docs/_UEBERGABE.md`. Zuerst Bug-, Security- und Tempo-Prüfung von 8d und der kurze Kundentest der drei Rollen auf den neuen Seiten, dann der Export ins Rechnungsprogramm: schlag mir Inhalt und Format vor, bevor du baust. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Push, Merge, Cloudflare). Beträge nur aus dem Kern. Deutsch, einfach, Ergebnis zuerst.
