@@ -1,5 +1,12 @@
 import type { LucideIcon } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+
+/** A fact under the name; a dot only when its state is an exception ("Frist nah"), named for screen readers. */
+export type Fact = string | { text: string; dot: "rot" | "gelb"; label: string };
+
+const DOT = { rot: "bg-state-red", gelb: "bg-state-yellow" } as const;
+
 /** Name block of a record page (Attio: 18 px semibold name with its object chip, one line of facts below). */
 export function RecordHead({
   icon: Icon,
@@ -12,7 +19,7 @@ export function RecordHead({
   icon: LucideIcon;
   title: string;
   badge?: string;
-  facts: string[];
+  facts: Fact[];
   /** Let a long name take two lines instead of cutting it (the name of a find carries its meaning at the end). */
   wrap?: boolean;
   children?: React.ReactNode;
@@ -33,13 +40,21 @@ export function RecordHead({
       </div>
       <p className="flex flex-wrap gap-x-2 pl-9 text-fg-secondary max-md:flex-col">
         {facts.map((fact, i) => (
-          <span key={fact} className="flex items-center gap-2">
+          <span key={typeof fact === "string" ? fact : fact.text} className="flex items-center gap-2">
             {i > 0 && (
               <span aria-hidden className="text-fg-faint max-md:hidden">
                 ·
               </span>
             )}
-            {fact}
+            {typeof fact === "string" ? (
+              fact
+            ) : (
+              <span className="flex items-center gap-1.5">
+                <span aria-hidden className={cn("size-2 shrink-0 rounded-full", DOT[fact.dot])} />
+                {fact.text}
+                <span className="sr-only">, {fact.label}</span>
+              </span>
+            )}
           </span>
         ))}
       </p>

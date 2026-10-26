@@ -164,23 +164,26 @@ export function findSearchEntries(): { id: string; title: string; hint: string; 
 }
 
 /**
- * "Auf einen Blick" of a find: the Betrag with the money word it counts in, the Belegstand and the Kürzungsrisiko of the
- * Vorprüfung. A find set to "Nicht verrechnen" counts in no money word and is in no Entwurf, so it has no Kürzungsrisiko.
+ * "Auf einen Blick" of a find: the Betrag with the money word it counts in, and the Belegstand counted as the list
+ * "Belege" below counts (step 8a: one number for one thing). The Kürzungsrisiko is the section below, not a card as well;
+ * the page adds the Entscheidung. A find set to "Nicht verrechnen" counts in no money word.
  */
-function highlightsOf({ f, d, e }: ReturnType<typeof allFinds>[number]): Highlight[] {
+function highlightsOf({ f, d }: ReturnType<typeof allFinds>[number]): Highlight[] {
   const excluded = f.entscheidung === "nicht_verrechnen";
-  const risk = excluded ? null : ((e.vorpruefung?.risiken ?? []).find((r) => r.fundSchluessel === f.schluessel) ?? null);
   const money = excluded ? "zählt in keiner Summe" : f.belegstand === null ? null : f.belegstand === "belegt" ? "zusätzlich verrechenbar" : "in Klärung";
   const messages = new Set(d.meldungen.map((m) => m.id));
-  const files = new Set(f.nachweise.filter((n) => !messages.has(n.quelle.belegId)).map((n) => n.quelle.belegId)).size;
-  const fromMessages = new Set(f.nachweise.filter((n) => messages.has(n.quelle.belegId)).map((n) => n.quelle.belegId)).size;
-  const count = [files ? `${files} ${files === 1 ? "Beleg" : "Belege"}` : "", fromMessages ? `${fromMessages} ${fromMessages === 1 ? "WhatsApp-Meldung" : "WhatsApp-Meldungen"}` : ""].filter(Boolean).join(", ");
+  const all = f.nachweise.length;
+  const fromMessages = f.nachweise.filter((n) => messages.has(n.quelle.belegId)).length;
+  const messageText = (n: number) => (n === 1 ? "1 WhatsApp-Meldung" : `${n} WhatsApp-Meldungen`);
+  // a find proven only by WhatsApp-Meldungen says so, not "1 Beleg, darunter 1 WhatsApp-Meldung"
+  const count =
+    all === 0 ? "kein Beleg" : fromMessages === all ? messageText(all) : [`${all} ${all === 1 ? "Beleg" : "Belege"}`, fromMessages ? `darunter ${messageText(fromMessages)}` : ""].filter(Boolean).join(", ");
   return [
     {
       id: "betrag",
       title: "Betrag",
       value: euro(f.betrag),
-      lines: [money ?? "zählt erst nach einer Entscheidung", "netto, vor Nachlass"],
+      lines: [`${money ?? "zählt erst nach einer Entscheidung"}, netto, vor Nachlass`],
     },
     {
       id: "belegstand",
@@ -188,17 +191,6 @@ function highlightsOf({ f, d, e }: ReturnType<typeof allFinds>[number]): Highlig
       value: f.belegstand ? BELEGSTAND_TEXT[f.belegstand] : "keiner",
       lines: [count],
       status: f.belegstand === "belegt" ? "gruen" : f.belegstand === "beleg_fehlt" ? "gelb" : f.belegstand ? "orange" : undefined,
-    },
-    {
-      id: "risiko",
-      title: "Kürzungsrisiko",
-      // a find in Klärung is not in the Entwurf yet, so the Vorprüfung has not looked at it
-      value: risk ? KUERZUNGSGRUND_TEXT[risk.grund] : excluded ? "entfällt" : f.belegstand === "belegt" ? "keines" : "noch nicht geprüft",
-      lines: risk
-        ? [risk.zustand === "droht" ? `droht für ${euro(risk.betrag)}` : `schon gekürzt ${euro(risk.betrag)}`]
-        : [excluded ? "der Fund wird nicht verrechnet" : f.belegstand === "belegt" ? "die Vorprüfung meldet hier nichts" : "erst mit Beleg in der Vorprüfung"],
-      status: risk ? "rot" : undefined,
-      href: risk ? "#kuerzungsrisiko" : undefined,
     },
   ];
 }
@@ -265,6 +257,8 @@ export function findRecord(slug: string): FindRecord {
     number: f.nr,
     title: f.titel,
     ...nameAndFacts(f),
+    // the Art is not said again under the name when the sum row of the Rechenweg already carries it (F7)
+    facts: nameAndFacts(f).facts.filter((x) => x !== total?.bezeichnung),
     project: { name: p.name, href: `/projekte/${projectSlug(p.name)}/` },
     client: { name: ag.name, href: `/auftraggeber/${clientSlug(ag.kurzname)}/` },
     amount: euro(f.betrag),

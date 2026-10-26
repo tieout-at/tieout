@@ -24,7 +24,7 @@ function Value({ a }: { a: Attribute }) {
           <span className="min-w-0 tabular-nums">{a.value}</span>
         )}
       </span>
-      {a.detail && <span className="text-xs text-fg-secondary">{a.detail}</span>}
+      {a.detail && <span className={cn("text-xs text-fg-secondary", a.source && /^Punkt /.test(a.detail) && "max-md:hidden")}>{a.detail}</span>}
     </span>
   );
   if (!a.source) return body;

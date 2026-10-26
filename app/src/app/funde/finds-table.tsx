@@ -20,8 +20,8 @@ const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: Ta
 };
 
 /**
- * "Funde" (SPEZIFIKATION.md 3.2 and 4.2): every find of the open projects with Art, Belegstand, Betrag, Kürzungsrisiko
- * from the Vorprüfung and Entscheidung. The footer keeps "zusätzlich verrechenbar" and "in Klärung" in two columns.
+ * "Funde" (SPEZIFIKATION.md 3.2 and 4.2): every find of the open projects with Betrag, Kürzungsrisiko from the
+ * Vorprüfung, Belegstand (only a gap is named) and Entscheidung (hidden while every find has the same one). The footer keeps "zusätzlich verrechenbar" and "in Klärung" in two columns.
  * The view "Nach Entscheidung" shows the same finds as a board (Attio's "Pipeline"), where moving a card decides.
  */
 export function FindsTable({
@@ -69,7 +69,7 @@ export function FindsTable({
       id: "find",
       title: "Fund",
       icon: SearchCheck,
-      width: 270,
+      width: project ? 400 : 310,
       sortValue: (r) => r.name,
       cell: (r) => (
         <Link
@@ -86,7 +86,7 @@ export function FindsTable({
       id: "project",
       title: "Projekt",
       icon: Construction,
-      width: 180,
+      width: 170,
       sortValue: (r) => r.project.name,
       filterValue: (r) => r.project.name,
       cell: (r) => (
@@ -99,11 +99,21 @@ export function FindsTable({
       id: "amount",
       title: "Betrag",
       icon: Wallet,
-      width: 260,
+      width: project ? 290 : 220,
       align: "right",
       sortValue: (r) => r.amount.cent,
       calculations: calculations.amount,
       cell: (r) => r.amount.text,
+    },
+    {
+      id: "risk",
+      title: "Kürzungsrisiko",
+      icon: ShieldAlert,
+      width: 250,
+      sortValue: (r) => r.risk?.amount.cent ?? null,
+      filterValue: (r) => r.risk?.reason ?? null,
+      calculations: calculations.risk,
+      cell: (r) => r.risk && <RiskText risk={r.risk} amount={r.amount} label={false} />,
     },
     {
       id: "belegstand",
@@ -113,7 +123,8 @@ export function FindsTable({
       sortValue: (r) => (r.belegstand ? EVIDENCE[r.belegstand.state].rank : null),
       filterValue: (r) => r.belegstand?.text ?? null,
       calculations: calculations.belegstand,
-      cell: (r) => r.belegstand && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>,
+      // "belegt" is the rule; only a gap is named (step 8a)
+      cell: (r) => r.belegstand && r.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>,
     },
     {
       id: "decision",
@@ -123,16 +134,6 @@ export function FindsTable({
       sortValue: (r) => r.decision,
       filterValue: (r) => r.decision,
       cell: (r) => <Tag>{r.decision}</Tag>,
-    },
-    {
-      id: "risk",
-      title: "Kürzungsrisiko",
-      icon: ShieldAlert,
-      width: 270,
-      sortValue: (r) => r.risk?.amount.cent ?? null,
-      filterValue: (r) => r.risk?.reason ?? null,
-      calculations: calculations.risk,
-      cell: (r) => r.risk && <RiskText risk={r.risk} amount={r.amount} label={false} />,
     },
     {
       id: "kind",
@@ -202,7 +203,7 @@ export function FindsTable({
       columns={columns}
       views={views}
       noun={{ one: "Fund", many: "Funde", dative: "Funden" }}
-      phoneRow={(r) => <PhoneRow row={r} withProject={!project} decision={r.decision} reason={stateOf(r) === "nicht_verrechnen" ? reasonOf(r) : null} />}
+      phoneRow={(r) => <PhoneRow row={r} withProject={!project} decision={stateOf(r) === "gefunden" ? undefined : r.decision} reason={stateOf(r) === "nicht_verrechnen" ? reasonOf(r) : null} />}
       board={(visible) => (
         <FindsBoard
           rows={visible}

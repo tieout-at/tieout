@@ -7,7 +7,6 @@
 import {
   ABZUG_TEXT,
   AUFTRAGGEBER_ART_TEXT,
-  BELEGSTAND_TEXT,
   KUERZUNGSGRUND_TEXT,
   PRUEFSTAND_TEXT,
   belegTitel,
@@ -24,6 +23,7 @@ import {
 } from "@tieout/kern";
 
 import { projectSlug } from "./example";
+import { placeText as stelleText } from "./originals";
 import { business, clientSlug, firm, projectRows, type ProjectRow, type StatusColour } from "./kern-data";
 
 /** One row of "Angaben": the value with the place in the original it was read from. */
@@ -40,7 +40,19 @@ export type Attribute = {
 };
 
 /** A card of the highlights grid (Attio: 3 columns). */
-export type Highlight = { id: string; title: string; value: string; lines: string[]; status?: StatusColour | "orange"; href?: string };
+export type Highlight = {
+  id: string;
+  title: string;
+  value: string;
+  lines: string[];
+  status?: StatusColour | "orange";
+  href?: string;
+  /** The lead figure only: one statement written from the core's figures, and the share of its part (the Kürzungsrisiko) for one thin bar. */
+  says?: string;
+  part?: number;
+  /** The rule behind the figure, behind an info icon. */
+  info?: string;
+};
 
 export type ActivityEntry = { id: string; time: string; timeText: string; who: string; text: string; kind: "korrektur" | "meldung" | "entscheidung" | "aufgabe" | "erledigt" };
 
@@ -55,8 +67,9 @@ export type ProjectRecord = {
   activity: ActivityEntry[];
 };
 
-/** The place in a document in the app's words: a line of a list is named by its position ("Position 22.04.12B"). */
-const stelleText = (stelle: string) => stelle.replace(/^Zeile /, "Position ");
+
+/** A name like "ÖNORM B 2110" never breaks inside. */
+const keepTogether = (text: string) => text.replace(/ /g, " ");
 
 const zeitText = (z: string) => `${datumText(z.slice(0, 10))}, ${z.slice(11, 16)}`;
 
@@ -76,26 +89,30 @@ const dataset = (projektId: string) => {
   return d;
 };
 
-/** Angaben of a project: Auftraggeber, stage, status, deadline, Bauzeit, what is built. */
+/**
+ * Angaben of a project: Auftraggeber, Bauzeit, what is built, and the Vertrag in one row that leads to its tab. The
+ * stage, the deadline and its state stand in the head of every tab (step 8a: each fact once).
+ */
 function projectAttributes(d: Datensatz, row: ProjectRow, client: { name: string; kind: string; href: string }): Attribute[] {
-  const legenBis = d.vertrag.schlussrechnungLegenBis;
+  const v = d.vertrag;
   return [
     { label: "Auftraggeber", value: client.name, detail: client.kind, href: client.href },
-    { label: "Stufe", value: row.stage },
-    { label: "Status", value: row.status.text, status: row.status.colour },
-    ...(row.date ? [{ label: row.date.label, value: row.date.text, ...(row.date.label === "Schlussrechnung legen bis" && legenBis ? sourceOf(d, legenBis) : {}) }] : []),
     ...(d.projekt.bauzeit ? [{ label: "Bauzeit", value: `${datumText(d.projekt.bauzeit.von)} bis ${datumText(d.projekt.bauzeit.bis)}` }] : []),
     // the trade is the business's own (Heizung, Klima, Lüftung, Sanitär), so the project names only what is built
     { label: "Leistung", value: d.projekt.langname.replace(`${d.projekt.name}, `, "").replace(/,? ?HKLS$/, "") },
+    { label: "Auftragssumme", value: euro(v.auftragssumme.wert), ...sourceOf(d, v.auftragssumme) },
+    { label: "Vertrag", value: `vom ${datumText(v.datum.wert)}`, detail: `${v.vertragsart.wert}, ${keepTogether(v.norm.wert)}`, href: `/projekte/${row.slug}/vertrag/` },
   ];
 }
 
 /** The Vertrag item by item, each value with its Vertragspunkt and place in the Bauvertrag. */
 function contractAttributes(d: Datensatz): Attribute[] {
   const v = d.vertrag;
+  const legenBis = v.schlussrechnungLegenBis;
   return [
-    { label: "Vertrag vom", value: datumText(v.datum.wert), detail: `${v.vertragsart.wert}, ${v.norm.wert}`, ...sourceOf(d, v.datum) },
+    { label: "Vertrag vom", value: datumText(v.datum.wert), detail: `${v.vertragsart.wert}, ${keepTogether(v.norm.wert)}`, ...sourceOf(d, v.datum) },
     { label: "Auftragssumme", value: euro(v.auftragssumme.wert), ...sourceOf(d, v.auftragssumme) },
+    ...(legenBis ? [{ label: "Schlussrechnung legen bis", value: datumText(legenBis.wert), ...sourceOf(d, legenBis) }] : []),
     ...v.saetze.map((s) => ({
       label: ABZUG_TEXT[s.art],
       value: satzText(s.satz.wert),
@@ -114,7 +131,9 @@ function contractAttributes(d: Datensatz): Attribute[] {
 }
 
 /**
- * Highlights by stage: the money words of an open project (SPEZIFIKATION.md 7.2), the settlement of a closed one.
+ * Highlights by stage, at most three (step 8a): an open project leads with "zusätzlich verrechenbar" and its part with a
+ * Kürzungsrisiko, then "in Klärung" and the Restforderung (or the Auftragssumme before a Schlussrechnung is drafted); a
+ * closed one leads with what the Auftraggeber cut. The deadline is in the head, the Vorprüfung and the finds have their tabs.
  * Takes the core's result, so the browser can show them again with the decisions recorded there (`live.ts`).
  */
 export function projectHighlights(projektId: string, b: FirmenErgebnis = business()): Highlight[] {
@@ -128,16 +147,23 @@ export function projectHighlights(projektId: string, b: FirmenErgebnis = busines
 
   if (!e.abgleich.laeuft) {
     const ab = b.abrechnungen[projektId];
-    const status: Highlight = { id: "status", title: "Status", value: row.status.text, lines: [row.stage], status: row.status.colour };
-    const belege: Highlight = { id: "belege", title: "Belege", value: String(e.ordner.belege), lines: ["aus Ordner importiert"], href: `/projekte/${row.slug}/belege/` };
-    if (!ab) return [contract, status];
+    if (!ab) return [contract];
+    const invoice = ab.zeilen.find((z) => z.art === "rechnung")!.betrag;
+    const h = b.historie.find((x) => x.kuerzungen.some((k) => k.projektId === projektId) || x.abzuege.some((a) => a.projektId === projektId));
+    const reasons = [
+      ...(h?.kuerzungen.filter((k) => k.projektId === projektId).map((k) => `${KUERZUNGSGRUND_TEXT[k.grund]} ${euro(k.betrag)}`) ?? []),
+      ...(h?.abzuege.filter((a) => a.projektId === projektId).map((a) => `dazu abgezogen: ${ABZUG_TEXT[a.art]} ${euro(a.betrag)}`) ?? []),
+    ];
     return [
-      contract,
-      { id: "schlussrechnung", title: "Schlussrechnung", value: euro(ab.zeilen.find((z) => z.art === "rechnung")!.betrag), lines: d.schlussrechnung ? [`gelegt am ${datumText(d.schlussrechnung.datum.wert)}`] : [] },
-      { id: "gekuerzt", title: "Gekürzt", value: euro(ab.gekuerzt), lines: ["laut Korrekturblatt"] },
-      { id: "schlusszahlung", title: "Schlusszahlung", value: euro(ab.schlusszahlung.betrag), lines: [`am ${datumText(ab.schlusszahlung.datum)}, nach ${ab.schlusszahlung.tage} Tagen`] },
+      {
+        id: "gekuerzt",
+        title: "Gekürzt",
+        value: euro(ab.gekuerzt),
+        lines: [`von der Schlussrechnung ${euro(invoice)}`, ...reasons],
+        part: invoice ? ab.gekuerzt / invoice : undefined,
+      },
+      { id: "schlusszahlung", title: "Schlusszahlung", value: euro(ab.schlusszahlung.betrag), lines: [`nach ${ab.schlusszahlung.tage} Tagen`] },
       { id: "einbehalten", title: "Haftrücklass einbehalten", value: euro(ab.einbehalten), lines: ["laut Zahlungsavis"] },
-      belege,
     ];
   }
 
@@ -145,38 +171,39 @@ export function projectHighlights(projektId: string, b: FirmenErgebnis = busines
   // a find set to "Nicht verrechnen" counts in no money word and is named apart
   const count = (stand: Belegstand) => e.abgleich.funde.filter((f) => f.belegstand === stand && f.entscheidung !== "nicht_verrechnen").length;
   const excluded = e.abgleich.funde.filter((f) => f.entscheidung === "nicht_verrechnen").length;
-  const cards: Highlight[] = [
+  const risk = e.vorpruefung?.davonMitKuerzungsrisiko ?? 0;
+  const proven = count("belegt");
+  const pending = count("beleg_fehlt") + count("nachtrag_nicht_gelegt");
+  return [
     {
       id: "zusaetzlich",
       title: "Zusätzlich verrechenbar",
       value: euro(s.zusaetzlichVerrechenbar),
-      lines: e.vorpruefung ? [`davon mit Kürzungsrisiko ${euro(e.vorpruefung.davonMitKuerzungsrisiko)}`] : [`${count("belegt")} ${count("belegt") === 1 ? "Fund" : "Funde"} belegt`],
+      lines: [[`aus ${proven} ${proven === 1 ? "belegtem Fund" : "belegten Funden"}`, excluded ? `${excluded} nicht verrechnet` : ""].filter(Boolean).join(", ")],
+      part: risk && s.zusaetzlichVerrechenbar ? risk / s.zusaetzlichVerrechenbar : undefined,
+      says: risk ? `davon mit Kürzungsrisiko ${euro(risk)}` : undefined,
       href: findsHref,
     },
     {
       id: "klaerung",
       title: "In Klärung",
-      value: euro(s.inKlaerung),
-      lines: s.inKlaerung ? [`Beleg fehlt ${euro(s.belegFehlt)}`, `Nachtrag nicht gelegt ${euro(s.nachtragNichtGelegt)}`] : ["nichts in Klärung"],
-      href: findsHref,
+      value: s.inKlaerung ? euro(s.inKlaerung) : "nichts",
+      lines: s.inKlaerung ? [`Beleg fehlt ${euro(s.belegFehlt)}`, `Nachtrag nicht gelegt ${euro(s.nachtragNichtGelegt)}`] : [],
+      href: pending ? findsHref : undefined,
     },
+    ...(e.rechnungsabschluss
+      ? [
+          {
+            id: "restforderung",
+            title: "Restforderung",
+            value: euro(e.rechnungsabschluss.restforderung),
+            lines: [`laut Vertrag ${euro(e.rechnungsabschluss.lautVertrag.restforderung)}`],
+            info: "Was nach dem Entwurf der Schlussrechnung, den Zahlungen und den Abzügen des Auftraggebers offen bleibt. „Laut Vertrag“ rechnet ohne die Abzüge, für die der Vertrag keinen Punkt nennt.",
+            href: invoiceHref,
+          },
+        ]
+      : []),
   ];
-  if (e.vorpruefung) {
-    const vp = e.vorpruefung;
-    cards.push({ id: "vorpruefung", title: "Vorprüfung", value: euro(vp.summe), lines: [`${vp.risiken.length} Positionen`, `davon schon gekürzt ${euro(vp.schonGekuerzt)}`], href: invoiceHref });
-  }
-  if (row.date) cards.push({ id: "datum", title: row.date.label, value: row.date.text, lines: [row.status.text], status: row.status.colour });
-  cards.push(
-    e.rechnungsabschluss
-      ? { id: "restforderung", title: "Restforderung", value: euro(e.rechnungsabschluss.restforderung), lines: [`laut Vertrag ${euro(e.rechnungsabschluss.lautVertrag.restforderung)}`], href: invoiceHref }
-      : contract,
-  );
-  const parts = [
-    ...(["belegt", "beleg_fehlt", "nachtrag_nicht_gelegt"] as const).filter((x) => count(x)).map((x) => `${count(x)} ${BELEGSTAND_TEXT[x]}`),
-    ...(excluded ? [`${excluded} nicht verrechnen`] : []),
-  ];
-  cards.push({ id: "funde", title: "Funde", value: String(e.abgleich.funde.length), lines: [parts.join(", ")], href: findsHref });
-  return cards;
 }
 
 /** Verlauf: what humans changed in the twin (corrections, confirmed WhatsApp-Meldungen), newest first, append only. */
@@ -227,8 +254,8 @@ export type ClientRecord = {
   name: string;
   attributes: Attribute[];
   highlights: Highlight[];
-  /** "Gleicher Grund bei diesem Auftraggeber schon im …", per open project and reason. */
-  sameReason: { id: string; project: { name: string; href: string }; reason: string; text: string; earlier: string }[];
+  /** "Gleicher Grund bei diesem Auftraggeber schon im …", per open project and reason; `earlier` says what it cost there. */
+  sameReason: { id: string; project: { name: string; href: string }; reason: string; text: string; earlier: string; deducted: boolean }[];
   cuts: HistoryLine[];
   deductions: HistoryLine[];
   changeOrders: { id: string; project: string; number: string; title: string; amount: string; accepted: boolean }[];
@@ -248,7 +275,6 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
   const attributes: Attribute[] = [
     { label: "Art", value: AUFTRAGGEBER_ART_TEXT[ag.art] },
     { label: "Projekte", value: String(h.projekte), detail: h.abgeschlossen ? `${h.abgeschlossen} abgeschlossen` : undefined },
-    ...(n.angeboten ? [{ label: "Nachträge beauftragt", value: `${n.beauftragt} von ${n.angeboten}`, detail: n.quote === null ? undefined : `${prozentText(n.quote, 1)} des Betrags` }] : []),
     ...h.schlusszahlung.map((s) => ({ label: "Tage bis Schlusszahlung", value: String(s.tage), detail: s.projekt })),
   ];
 
@@ -269,7 +295,7 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
       id: "nachtraege",
       title: "Nachträge beauftragt",
       value: n.angeboten ? `${n.beauftragt} von ${n.angeboten}` : "keine",
-      lines: n.angeboten ? [`${euro(n.betragBeauftragt)} von ${euro(n.betrag)}`] : ["kein Nachtrag angeboten"],
+      lines: n.angeboten ? [`${euro(n.betragBeauftragt)} von ${euro(n.betrag)}${n.quote === null ? "" : `, ${prozentText(n.quote, 1)} des Betrags`}`] : ["kein Nachtrag angeboten"],
     },
   ];
 
@@ -289,7 +315,8 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
           project: { name: dataset(projektId).projekt.name, href: href(projektId) },
           reason,
           text: x.text,
-          earlier: `${imProjekt(dataset(x.projektId).projekt.name)}: ${earlier.join(", ")}`,
+          deducted: !risk,
+          earlier: `${imProjekt(dataset(x.projektId).projekt.name)} ${risk ? "gekürzt" : "abgezogen"}: ${earlier.join(", ")}`,
         };
       });
     });
@@ -322,4 +349,22 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
       .flatMap((d) => d.nachtraege.map((x) => ({ id: `${d.projekt.id}-${x.nr.wert}`, project: d.projekt.name, number: x.nr.wert, title: x.titel.wert, amount: euro(x.betrag.wert), accepted: x.beauftragt.wert }))),
     projects,
   };
+}
+
+export type ContractRow = { id: string; project: { name: string; href: string }; client: string; date: string; kind: string; sum: string };
+
+/** "Verträge" of the business (Ebene 1, SPEZIFIKATION.md 2.2): one row per project, each leading to its tab "Vertrag". */
+export function contractRows(): ContractRow[] {
+  const b = business();
+  return firm().projekte.map((d) => {
+    const v = d.vertrag;
+    return {
+      id: d.projekt.id,
+      project: { name: d.projekt.name, href: `/projekte/${projectSlug(d.projekt.name)}/vertrag/` },
+      client: b.projekte.find((p) => p.projektId === d.projekt.id)!.auftraggeber.name,
+      date: datumText(v.datum.wert),
+      kind: `${v.vertragsart.wert}, ${v.norm.wert}`,
+      sum: euro(v.auftragssumme.wert),
+    };
+  });
 }

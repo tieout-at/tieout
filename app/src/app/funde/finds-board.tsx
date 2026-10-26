@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type DragEvent, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { Ban, CircleCheck, CircleCheckBig, CircleDashed, Ellipsis, ListTodo, ReceiptText, type LucideIcon } from "lucide-react";
 
 import { TaskDialog } from "@/components/aufgaben/task-dialog";
@@ -63,6 +63,9 @@ type Pending = { row: FindRow; move: Move };
  * and one step at a time, never in bulk; until it is confirmed a dashed card marks the target. The menu on each card
  * offers the same moves for the keyboard and for phones. Below 768 px the board is a list grouped by Entscheidung.
  */
+/** Cards a group shows before "weitere zeigen" (a run of one more is shown whole). */
+const FOLD = 4;
+
 export function FindsBoard({
   rows,
   calculations,
@@ -120,14 +123,21 @@ export function FindsBoard({
     if (row) ask(row, to);
   };
 
-  const card = (r: FindRow, lane: DecisionState) => (
+  // step 8a: on the board of the business a column names each project once, with its cards below, and folds a long run
+  const [unfolded, setUnfolded] = useState<Set<string>>(new Set());
+  const groupsOf = (cards: FindRow[]) =>
+    withProject
+      ? [...new Set(cards.map((r) => r.project.name))].map((name) => ({ name, cards: cards.filter((r) => r.project.name === name) }))
+      : [{ name: "", cards }];
+
+  const card = (r: FindRow, lane: DecisionState, inGroup = false) => (
     <Card
       row={r}
       moves={moves(stateOf(r))}
       tasks={tasksOf(r)}
       reason={lane === "nicht_verrechnen" ? reasonOf(r) : null}
       about={about(r)}
-      withProject={withProject}
+      withProject={withProject && !inGroup}
       dragging={dragging?.id === r.id}
       onDragStart={(e) => {
         e.dataTransfer.setData("text/plain", r.id);
@@ -213,9 +223,34 @@ export function FindsBoard({
                           <span className="text-xs text-fg-secondary">wartet auf Bestätigung</span>
                         </li>
                       )}
-                      {cards.map((r) => (
-                        <li key={r.id}>{card(r, lane.state)}</li>
-                      ))}
+                      {groupsOf(cards).map((g) => {
+                        const key = `${lane.state}|${g.name}`;
+                        const open = !g.name || unfolded.has(key) || g.cards.length <= FOLD + 1;
+                        return (
+                          <Fragment key={key}>
+                            {g.name && (
+                              <li className="flex items-center gap-1.5 px-1 pt-1 text-xs text-fg-secondary first:pt-0">
+                                <span className="truncate">{g.name}</span>
+                                <span className="text-fg-muted tabular-nums">{g.cards.length}</span>
+                              </li>
+                            )}
+                            {(open ? g.cards : g.cards.slice(0, FOLD)).map((r) => (
+                              <li key={r.id}>{card(r, lane.state, g.name !== "")}</li>
+                            ))}
+                            {!open && (
+                              <li>
+                                <button
+                                  type="button"
+                                  onClick={() => setUnfolded((u) => new Set(u).add(key))}
+                                  className="flex h-8 w-full items-center justify-center rounded-md text-fg-secondary outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent"
+                                >
+                                  {g.cards.length - FOLD} weitere zeigen
+                                </button>
+                              </li>
+                            )}
+                          </Fragment>
+                        );
+                      })}
                       {cards.length === 0 && !waiting && !(dragging && target) && <li className="px-2 py-2 text-center text-fg-muted">{lane.empty}</li>}
                     </ul>
                   </div>

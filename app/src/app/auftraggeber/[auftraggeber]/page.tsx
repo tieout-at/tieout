@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Briefcase, History } from "lucide-react";
+import { Briefcase } from "lucide-react";
 
 import { AttributeList } from "@/components/record/attribute-list";
 import { Highlights } from "@/components/record/highlights";
@@ -8,6 +8,7 @@ import { MiniTable } from "@/components/record/mini-table";
 import { Page } from "@/components/shell/page";
 import { RecordHead } from "@/components/shell/record-head";
 import { Tag } from "@/components/table/tag";
+import { InfoTip } from "@/components/ui/info-tip";
 import { clientRows } from "@/lib/kern-data";
 import { clientRecord } from "@/lib/records";
 import { ClientProjects } from "./client-projects";
@@ -32,48 +33,56 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 
 const projectLink = (p: { name: string; href: string }) => (
-  <Link href={p.href} className="rounded-xs outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent">
+  <Link href={p.href} className="link-quiet">
     {p.name}
   </Link>
 );
 
 /**
  * An Auftraggeber in Attio's record layout (SPEZIFIKATION.md 2.2 and 7.2): Angaben left; right the history from the
- * documents of every project, "Gleicher Grund" notes for the running project, and the projects. Facts only.
+ * documents of every project, led by "Gleicher Grund" (what was cut before and stands again in the running project, said
+ * once), then the three figures and the projects. Facts only.
  */
 export default async function AuftraggeberRecordPage({ params }: Props) {
   const r = find((await params).auftraggeber);
   const kind = r.attributes.find((a) => a.label === "Art")!.value;
   const projects = r.attributes.find((a) => a.label === "Projekte")!;
+  // the head says the kind and the projects; Angaben keeps what it alone says
+  const details = r.attributes.filter((a) => a.label !== "Art" && a.label !== "Projekte");
   return (
     <Page destination="auftraggeber" trail={[{ label: r.name }]}>
       <RecordHead icon={Briefcase} title={r.name} facts={[kind, `${projects.value} Projekte${projects.detail ? `, ${projects.detail}` : ""}`]} />
       <div className="flex flex-1 shadow-[inset_0_1px_0_0_var(--color-line)] max-lg:flex-col">
         <aside className="w-[374px] shrink-0 shadow-[inset_-1px_0_0_0_var(--color-line)] max-lg:order-2 max-lg:w-full max-lg:shadow-[inset_0_1px_0_0_var(--color-line)]">
-          <AttributeList title="Angaben" attributes={r.attributes} />
+          <AttributeList title="Angaben" attributes={details} />
         </aside>
         <div className="flex min-w-0 flex-1 flex-col gap-6 px-6 py-5 max-md:px-4 max-lg:order-1">
-          <Highlights items={r.highlights} title="Aus allen Projekten" />
-
           {r.sameReason.length > 0 && (
-            <section aria-label="Gleicher Grund">
-              <h2 className="mb-2 text-sm text-fg-secondary">Gleicher Grund</h2>
-              <ul className="rounded-lg shadow-ring">
+            <section aria-labelledby="gleicher-grund">
+              <h2 id="gleicher-grund" className="mb-2 flex items-center gap-1.5 text-sm text-fg-secondary">
+                Gleicher Grund wie in einem früheren Projekt
+                <InfoTip label="Gleicher Grund">
+                  Was {r.name} in einem abgeschlossenen Projekt gekürzt oder abgezogen hat und im laufenden Projekt wieder als Kürzungsrisiko steht. Die Abhilfe steht beim Fund.
+                </InfoTip>
+              </h2>
+              <ul className="rounded-lg bg-surface shadow-ring">
                 {r.sameReason.map((s) => (
-                  <li key={s.id} className="flex items-start gap-2.5 px-3 py-2.5 [&:not(:last-child)]:shadow-line-bottom">
-                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-xs bg-fill-hover text-fg-secondary shadow-ring" aria-hidden>
-                      <History className="size-3" />
-                    </span>
+                  <li key={s.id} className="flex items-start gap-2.5 px-4 py-3 [&:not(:last-child)]:shadow-line-bottom">
+                    <span className="mt-1.5 size-2 shrink-0 rounded-full bg-state-red" aria-hidden />
                     <p className="min-w-0">
-                      <span className="font-medium">{s.reason}</span> <span className="text-fg-secondary">in {projectLink(s.project)}.</span>{" "}
-                      <span className="text-fg-secondary">{s.text}</span>
-                      <span className="block text-xs text-fg-muted tabular-nums">{s.earlier.charAt(0).toUpperCase() + s.earlier.slice(1)}</span>
+                      <span className="font-semibold">{s.reason}</span>{" "}
+                      <span className="text-fg-secondary">
+                        {s.deducted ? "auch in" : "droht in"} {projectLink(s.project)}.
+                      </span>
+                      <span className="block text-fg-secondary tabular-nums">{(s.earlier.charAt(0).toUpperCase() + s.earlier.slice(1)).replace(/ €/g, " €")}.</span>
                     </p>
                   </li>
                 ))}
               </ul>
             </section>
           )}
+
+          <Highlights items={r.highlights} title="Aus allen Projekten" />
 
           <ClientProjects rows={r.projects} />
 

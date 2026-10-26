@@ -37,7 +37,7 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
       id: "client",
       title: "Auftraggeber",
       icon: Building2,
-      width: 200,
+      width: 150,
       sortValue: (r) => r.client,
       filterValue: (r) => r.client,
       cell: (r) => <span className="truncate">{r.client}</span>,
@@ -46,7 +46,7 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
       id: "extra",
       title: "Zusätzlich verrechenbar",
       icon: Wallet,
-      width: 220,
+      width: 190,
       align: "right",
       sortValue: (r) => r.extra?.cent ?? null,
       calculations: calculations.extra,
@@ -56,11 +56,11 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
       id: "unclear",
       title: "In Klärung",
       icon: Hourglass,
-      width: 180,
+      width: 130,
       align: "right",
       sortValue: (r) => r.unclear?.cent ?? null,
       calculations: calculations.unclear,
-      cell: (r) => r.unclear?.text,
+      cell: (r) => (r.unclear?.cent ? r.unclear.text : r.unclear && <span className="text-fg-muted">nichts</span>),
     },
     {
       id: "status",
@@ -75,7 +75,7 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
       id: "date",
       title: "Datum",
       icon: CalendarDays,
-      width: 290,
+      width: 270,
       sortValue: (r) => r.date?.iso ?? null,
       cell: (r) =>
         r.date && (
@@ -125,5 +125,31 @@ export function ProjectsTable({ rows: built, calculations: builtCalculations }: 
     },
   ];
 
-  return <DataTable name="projekte" rows={rows} columns={columns} views={views} noun={{ one: "Projekt", many: "Projekte", dative: "Projekten" }} />;
+  return (
+    <DataTable
+      name="projekte"
+      rows={rows}
+      columns={columns}
+      views={views}
+      noun={{ one: "Projekt", many: "Projekte", dative: "Projekten" }}
+      phoneRow={(r) => (
+        <Link href={`/projekte/${r.slug}/`} className="flex flex-col gap-1 px-4 py-3 outline-none active:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent">
+          <span className="flex items-start gap-2">
+            <Construction className="mt-0.5 size-4 shrink-0 text-fg-secondary" aria-hidden />
+            <span className="min-w-0 flex-1">{r.name}</span>
+            {r.extra && <span className="shrink-0 tabular-nums">{r.extra.text}</span>}
+          </span>
+          <span className="flex flex-wrap items-center gap-x-2 gap-y-1 pl-6 text-xs text-fg-secondary">
+            <span>{r.client}</span>
+            {r.date && (
+              <span>
+                {r.date.label} <span className="text-fg tabular-nums">{r.date.text}</span>
+              </span>
+            )}
+            {r.unclear && r.unclear.cent > 0 && <span>in Klärung <span className="text-fg tabular-nums">{r.unclear.text}</span></span>}
+          </span>
+        </Link>
+      )}
+    />
+  );
 }
