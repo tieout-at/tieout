@@ -22,8 +22,8 @@ function Frame({ children, finds }: { children: React.ReactNode; finds: SearchFi
   const { collapsed, mobileOpen, setMobileOpen } = useShell();
   return (
     <>
-      <div className="flex h-dvh overflow-hidden">
-        <aside className={cn("hidden w-[var(--sidebar-width)] shrink-0 border-r border-line md:block", collapsed && "md:hidden")}>
+      <div className="flex h-dvh overflow-hidden print:block print:h-auto print:overflow-visible">
+        <aside className={cn("hidden w-[var(--sidebar-width)] shrink-0 border-r border-line md:block print:hidden", collapsed && "md:hidden")}>
           <Sidebar />
         </aside>
         <main className="flex min-w-0 flex-1 flex-col">{children}</main>

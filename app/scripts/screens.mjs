@@ -24,7 +24,9 @@ const SIZES = [
 const SCREENS = [
   { name: "start", path: "/" },
   { name: "aufgaben", path: "/aufgaben/" },
-  { name: "berichte", path: "/berichte/" },
+  { name: "berichte-geld", path: "/berichte/" },
+  { name: "berichte-luecken", path: "/berichte/luecken-in-den-belegen/" },
+  { name: "berichte-kuerzungen", path: "/berichte/kuerzungen-und-abzuege/" },
   { name: "ablaeufe", path: "/ablaeufe/" },
   { name: "belege", path: "/belege/" },
   { name: "e-mails", path: "/e-mails/" },
@@ -123,6 +125,10 @@ const SCREENS = [
   },
   { name: "fundseite-f7", path: "/funde/wohnpark-mooshaim-f7/" },
   { name: "schlussrechnungen", path: "/schlussrechnungen/" },
+  { name: "projekt-schlussrechnung", path: "/projekte/wohnpark-mooshaim/schlussrechnung/" },
+  { name: "projekt-schlussrechnung-laufend", path: "/projekte/buerohaus-kiefernau/schlussrechnung/" },
+  { name: "beweispaket", path: "/funde/wohnpark-mooshaim-f1/beweispaket/" },
+  { name: "beweispakete", path: "/schlussrechnungen/wohnpark-mooshaim/beweispakete/" },
   { name: "nicht-gefunden", path: "/gibt-es-nicht/", expect404: true },
   {
     name: "suche",

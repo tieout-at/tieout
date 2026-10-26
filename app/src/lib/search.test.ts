@@ -62,4 +62,9 @@ describe("score", () => {
     const other = score("Funde", ["Schlussrechnungen", "Funde der Vorprüfung"]);
     expect(funde).toBeGreaterThan(other);
   });
+
+  it("finds a date typed as numbers only, as on the title of a find (customer test 3)", () => {
+    expect(score("08.09", ["F7 WhatsApp-Meldung 08.09.2026, Heizkörper Top 9 versetzt"])).toBeGreaterThan(0);
+    expect(score("08.09", ["Belege"])).toBe(0);
+  });
 });

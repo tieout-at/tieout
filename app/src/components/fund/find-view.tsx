@@ -140,6 +140,9 @@ export function FindView({ record }: { record: FindRecord }) {
           <WeakSpot record={record} active={source} onOpen={open} />
           <CalcPath calc={record.calc} active={source} onOpen={open} />
           <EvidenceList evidence={record.evidence} active={source} onOpen={open} />
+          <Link href={`/funde/${record.slug}/beweispaket/`} className="link-quiet w-fit text-fg-secondary">
+            Beweispaket ansehen und drucken
+          </Link>
           <Activity entries={activity} />
         </div>
       </div>

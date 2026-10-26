@@ -50,7 +50,8 @@ function words(text: string): string[] {
 
 /**
  * How well a query matches a destination, from 0 (no match) to 1. `terms[0]` is the title, the rest are keywords.
- * Every word of the query must be found; plain numbers are optional, because pages have no numbers yet.
+ * Every word of the query must be found; plain numbers are optional, because pages have no numbers yet. A query of
+ * numbers only ("08.09", a date) must find every one of them (customer test 3).
  */
 export function score(query: string, terms: string[]): number {
   const wanted = words(expand(query).text);
@@ -59,6 +60,7 @@ export function score(query: string, terms: string[]): number {
   const hay = terms.flatMap(words);
   let sum = 0;
   let counted = 0;
+  const numbers: number[] = [];
   for (const w of wanted) {
     let best = 0;
     for (const h of hay) {
@@ -66,12 +68,15 @@ export function score(query: string, terms: string[]): number {
       else if (h.startsWith(w)) best = Math.max(best, 0.8);
       else if (h.includes(w)) best = Math.max(best, 0.5);
     }
-    if (/^\d+$/.test(w)) continue;
+    if (/^\d+$/.test(w)) {
+      numbers.push(best);
+      continue;
+    }
     if (best === 0) return 0;
     sum += best;
     counted += 1;
   }
-  if (counted === 0) return 0;
+  if (counted === 0) return numbers.length && numbers.every((b) => b > 0) ? 0.7 * (numbers.reduce((a, b) => a + b, 0) / numbers.length) : 0;
   const average = sum / counted;
   return title.startsWith(normalise(expand(query).text.trim())) ? Math.min(1, average + 0.1) : average * 0.9;
 }
