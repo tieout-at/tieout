@@ -4,7 +4,7 @@ import { Page } from "@/components/shell/page";
 import { RecordHead, type Fact } from "@/components/shell/record-head";
 import { StepBar } from "@/components/shell/step-bar";
 import { PROJECTS } from "@/lib/example";
-import { projectRows } from "@/lib/kern-data";
+import { belegRows, findRows, projectRows } from "@/lib/kern-data";
 import { findProject } from "./project-tabs";
 
 export const dynamicParams = false;
@@ -26,7 +26,7 @@ export default async function ProjectLayout({ children, params }: { children: Re
   return (
     <Page destination="projekte" trail={[{ label: project.name }]}>
       <RecordHead icon={Construction} title={project.name} facts={facts} />
-      <StepBar project={project} />
+      <StepBar project={project} counts={{ belege: belegRows().filter((r) => r.project.slug === project.slug).length, funde: findRows().filter((r) => r.project.slug === project.slug).length }} />
       <div className="flex-1">{children}</div>
     </Page>
   );

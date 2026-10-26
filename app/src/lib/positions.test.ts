@@ -112,3 +112,13 @@ describe("tab Zeitstrahl", () => {
     expect(t.finds.F7.remedy).toBeTruthy();
   });
 });
+
+describe("Kürzungsrisiko in the Positionen (step 8d)", () => {
+  it("names the part amount where the risk is only a part of the find (Regiebericht 9: 194,40 € of 1.787,49 €)", () => {
+    const rows = positionsView("p1")!.rows;
+    const rb9 = rows.find((r) => r.find?.number === "F2")!;
+    expect(rb9.risk).toMatchObject({ reason: "Stunden weichen ab", amount: "194,40 €", part: true });
+    const radiator = rows.find((r) => r.number === "22.04.12B")!;
+    expect(radiator.risk).toMatchObject({ reason: "Aufmaß nicht gegengezeichnet", part: false });
+  });
+});

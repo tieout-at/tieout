@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CalendarDays, Construction, FileCheck, FolderInput, Gavel, ShieldAlert, Shapes, SearchCheck, Text, Wallet } from "lucide-react";
 
-import { DataTable, type Column } from "@/components/table/data-table";
+import { DataTable, type Column, type QuickFilter } from "@/components/table/data-table";
+import { SideWindow, toggleOpen } from "@/components/ui/side-window";
 import { Tag, type TagColour } from "@/components/table/tag";
 import { currentState, decide, DECISION_TEXT, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
@@ -12,6 +13,7 @@ import { useLive } from "@/lib/live";
 import type { Calculation, View } from "@/lib/table";
 import { useTasks } from "@/lib/use-tasks";
 import { FindsBoard, PhoneRow, RiskText } from "./finds-board";
+import { FindPeek, STAND_COLOUR } from "./find-peek";
 
 const EVIDENCE: Record<NonNullable<FindRow["belegstand"]>["state"], { colour: TagColour; rank: number }> = {
   belegt: { colour: "green", rank: 0 },
@@ -36,6 +38,7 @@ export function FindsTable({
 }) {
   // decisions recorded in this browser replace the core's state after the first paint (stage 0, until the backend)
   const [decisions, setDecisions] = useState<Decision[]>([]);
+  const [peek, setPeek] = useState<string | null>(null);
   const tasks = useTasks() ?? [];
   useEffect(() => {
     const load = () => setDecisions(readDecisions());
@@ -77,7 +80,7 @@ export function FindsTable({
           title={r.title}
           className="-mx-1 flex min-w-0 items-center gap-1.5 rounded-md px-1 py-0.5 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent"
         >
-          <span className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">{r.number}</span>
+          <FindNumber number={r.number} place={project ? null : placeOf(r.project.name)} />
           <span className="truncate">{r.name}</span>
         </Link>
       ),
@@ -103,6 +106,7 @@ export function FindsTable({
       align: "right",
       sortValue: (r) => r.amount.cent,
       calculations: calculations.amount,
+      alsoSum: "klaerung",
       cell: (r) => r.amount.text,
     },
     {
@@ -113,6 +117,7 @@ export function FindsTable({
       sortValue: (r) => r.risk?.amount.cent ?? null,
       filterValue: (r) => r.risk?.reason ?? null,
       calculations: calculations.risk,
+      sumUnder: "amount",
       cell: (r) => r.risk && <RiskText risk={r.risk} amount={r.amount} label={false} />,
     },
     {
@@ -123,8 +128,8 @@ export function FindsTable({
       sortValue: (r) => (r.belegstand ? EVIDENCE[r.belegstand.state].rank : null),
       filterValue: (r) => r.belegstand?.text ?? null,
       calculations: calculations.belegstand,
-      // "belegt" is the rule; only a gap is named (step 8a)
-      cell: (r) => r.belegstand && r.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>,
+      // every Belegstand written with its dot (step 8d), so the column reads without colour too
+      cell: (r) => r.belegstand && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>,
     },
     {
       id: "decision",
@@ -173,7 +178,8 @@ export function FindsTable({
     },
   ];
 
-  const sums = { amount: "zusaetzlich", belegstand: "klaerung", risk: "risiko" };
+  // the footer is one row: "zusätzlich verrechenbar", its part with Kürzungsrisiko, then "in Klärung, nicht addiert" (sumsBelow)
+  const sums = { amount: "zusaetzlich", belegstand: null, risk: "risiko" };
   // the table shows what a decision needs; Art, Beschreibung, Belegquelle and Arbeitsdatum come back through "Ansicht" or "+"
   const hidden = project ? ["kind", "detail", "sources", "workDate", "project"] : ["kind", "detail", "sources", "workDate"];
   const views: View[] = [
@@ -196,8 +202,23 @@ export function FindsTable({
     },
   ];
 
+  // quick filters with counts (step 8d) on top of the view: the money words never together, the risk apart
+  const quick: QuickFilter<FindRow>[] = [
+    { id: "alle", title: "Alle", match: () => true },
+    { id: "zusaetzlich", title: "zusätzlich verrechenbar", dot: STAND_COLOUR.belegt, match: (r) => r.belegstand?.state === "belegt" && r.countedGroups.length > 0 },
+    // both colours of "in Klärung" in one dot (Beleg fehlt and Nachtrag nicht gelegt), so yellow does not stand for orange too
+    { id: "klaerung", title: "in Klärung", dot: `linear-gradient(90deg, ${STAND_COLOUR.beleg_fehlt} 50%, ${STAND_COLOUR.nachtrag_nicht_gelegt} 50%)`, match: (r) => !!r.belegstand && r.belegstand.state !== "belegt" && r.countedGroups.length > 0 },
+    { id: "risiko", title: "mit Kürzungsrisiko", dot: "var(--color-data-risk)", match: (r) => !!r.risk && !r.risk.alreadyCut && r.countedGroups.length > 0 },
+  ];
+  const peeked = shown.find((r) => r.id === peek) ?? null;
+
   return (
+    <>
     <DataTable
+      quick={quick}
+      sumsBelow
+      onOpen={(r) => setPeek((cur) => toggleOpen(cur, r.id, (a, b) => a === b))}
+      openId={peek}
       name={project ? `funde.${project}` : "funde"}
       rows={shown}
       columns={columns}
@@ -226,6 +247,23 @@ export function FindsTable({
         />
       )}
     />
+    <SideWindow open={peeked !== null} onClose={() => setPeek(null)} title="Fund" width={400}>
+      {peeked && <FindPeek row={peeked} decision={DECISION_TEXT[stateOf(peeked)]} onClose={() => setPeek(null)} />}
+    </SideWindow>
+    </>
   );
 }
 
+
+/** "Wohnpark Mooshaim" → "Mooshaim": on the list of every project the place tells F1 to F3 of the projects apart. */
+const placeOf = (name: string) => name.split(" ").at(-1) ?? name;
+
+/** The number chip of a find, with the place of its project where the list spans projects ("F1 Mooshaim"). */
+function FindNumber({ number, place }: { number: string; place: string | null }) {
+  return (
+    <span className="flex h-5 shrink-0 items-center gap-1 rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">
+      <span className="min-w-5 text-center">{number}</span>
+      {place && <span className="text-fg-muted">{place}</span>}
+    </span>
+  );
+}

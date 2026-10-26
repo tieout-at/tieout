@@ -54,7 +54,10 @@ export interface BelegZeile {
   art: BelegArt;
   titel: string;
   dateiname: string;
+  /** The date written on the Beleg where the twin read one (as Zeitstrahl and Belegabdeckung show it), else the file date. */
   datum: Datum;
+  /** The date of the file in the folder. */
+  dateidatum: Datum;
   seiten: number;
   gruppe: Belegsgruppe;
   /** Id of the earlier file with the same checksum; null if the file is no copy. */
@@ -235,6 +238,25 @@ export function gelesen(d: Datensatz, belegId: string): GelesenerWert[] {
     .sort((a, b) => a.seite - b.seite);
 }
 
+/**
+ * The date of each Beleg as written on it, where the twin read one, else the date of its file: the one date every list,
+ * the Zeitstrahl and the Belegabdeckung show (Aufmaßblatt 13 is dated 24.09.2026, though its file is from 20.10.2026).
+ */
+export function belegDatum(d: Datensatz): Map<string, Datum> {
+  return new Map<string, Datum>([
+    ...d.belege.map((b) => [b.id, b.datum] as const),
+    ...d.aufmass.map((b) => [b.belegId, b.datum.wert] as const),
+    ...d.regie.map((rb) => [rb.belegId, rb.datum.wert] as const),
+    ...d.emails.map((m) => [m.belegId, m.datum.wert] as const),
+    ...d.plaene.map((p) => [p.belegId, p.datum.wert] as const),
+    ...d.fotos.map((f) => [f.belegId, f.zeitpunkt.wert.slice(0, 10)] as const),
+    ...d.fotodokumentationen.map((f) => [f.belegId, f.datum.wert] as const),
+    ...d.grosshaendlerrechnungen.map((g) => [g.belegId, g.datum.wert] as const),
+    ...[...d.abschlaege, ...(d.entwurf ? [d.entwurf] : [])].map((r) => [r.belegId, r.datum.wert] as const),
+    ...d.meldungen.map((m) => [m.id, m.zeitpunkt.slice(0, 10)] as const),
+  ]);
+}
+
 /** The Belege of the folder in date order, with their group, review state, duplicate and finds. */
 export function belegListe(d: Datensatz, e: ProjektErgebnis): BelegZeile[] {
   const stand = new Map<string, Feldstand>();
@@ -254,22 +276,28 @@ export function belegListe(d: Datensatz, e: ProjektErgebnis): BelegZeile[] {
 
   const erstesJe = new Map<string, string>();
   const doppelt = new Set(e.ordner.duplikatIds);
-  const sortiert = [...d.belege].sort((a, b) => a.datum.localeCompare(b.datum) || a.id.localeCompare(b.id));
-  for (const b of sortiert) if (!doppelt.has(b.id) && !erstesJe.has(b.inhaltHash)) erstesJe.set(b.inhaltHash, b.id);
+  const nachDatei = [...d.belege].sort((a, b) => a.datum.localeCompare(b.datum) || a.id.localeCompare(b.id));
+  for (const b of nachDatei) if (!doppelt.has(b.id) && !erstesJe.has(b.inhaltHash)) erstesJe.set(b.inhaltHash, b.id);
+  // a copy carries the date of the Beleg it repeats
+  const geschrieben = belegDatum(d);
+  const original = (b: (typeof d.belege)[number]) => (doppelt.has(b.id) ? (erstesJe.get(b.inhaltHash) ?? null) : null);
+  const datumVon = (b: (typeof d.belege)[number]) => geschrieben.get(original(b) ?? b.id) ?? b.datum;
+  const sortiert = [...d.belege].sort((a, b) => datumVon(a).localeCompare(datumVon(b)) || a.id.localeCompare(b.id));
 
   return sortiert.map((b) => {
     const s = stand.get(b.id) ?? { felder: 0, bestaetigt: 0, korrigiert: 0 };
-    const original = doppelt.has(b.id) ? (erstesJe.get(b.inhaltHash) ?? null) : null;
+    const kopieVon = original(b);
     return {
       id: b.id,
       art: b.art,
       // a copy carries no fields of its own; it is named after the file it repeats
-      titel: belegTitel(d, original ?? b.id),
+      titel: belegTitel(d, kopieVon ?? b.id),
       dateiname: b.dateiname,
-      datum: b.datum,
+      datum: datumVon(b),
+      dateidatum: b.datum,
       seiten: b.seiten,
       gruppe: BELEG_GRUPPE[b.art].gruppe,
-      duplikatVon: original,
+      duplikatVon: kopieVon,
       felder: s,
       pruefstand: s.korrigiert > 0 ? "korrigiert" : s.felder > 0 && s.bestaetigt === s.felder ? "bestaetigt" : "maschinell",
       funde: [...(fundeJe.get(b.id) ?? [])].sort((x, y) => x.localeCompare(y, "de", { numeric: true })),

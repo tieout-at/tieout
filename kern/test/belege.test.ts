@@ -3,6 +3,7 @@
 
 import { describe, expect, it } from "vitest";
 import { belegListe, BELEG_GRUPPE, gelesen, korrekturen } from "../src/belege";
+import { zeitstrahl as zeitstrahlVon } from "../src/zeitstrahl";
 import { beispielFirma } from "../src/beispiel";
 import { pruefeFirma } from "../src/firma";
 import type { BelegArt } from "../src/modell";
@@ -24,6 +25,15 @@ describe("Belege of Wohnpark Mooshaim", () => {
       expect(original.art).toBe(k.art);
       expect(k.titel).toBe(original.titel);
     }
+  });
+
+  it("one date per Beleg: the date written on it, as Zeitstrahl and Belegabdeckung show it; the file date apart", () => {
+    const ab13 = liste.find((b) => b.titel === "Aufmaßblatt 13")!;
+    expect(ab13.datum).toBe("2026-09-24");
+    expect(ab13.dateidatum).toBe("2026-10-20");
+    const zeitstrahl = new Map(zeitstrahlVon(p1, f.ergebnisse.p1).ereignisse.map((x) => [x.id, x.datum]));
+    for (const b of liste) if (zeitstrahl.has(b.id)) expect(b.datum).toBe(zeitstrahl.get(b.id));
+    for (const k of liste.filter((b) => b.duplikatVon)) expect(k.datum).toBe(liste.find((b) => b.id === k.duplikatVon)!.datum);
   });
 
   it("18 corrected fields, the same number 'Ordner lesen' counts, each with the value before and after", () => {

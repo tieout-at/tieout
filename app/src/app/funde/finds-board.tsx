@@ -353,7 +353,8 @@ export function FindsBoard({
  * of a "Nicht verrechnen". Everything else is on the find page the row opens.
  */
 export function PhoneRow({ row, withProject, decision, reason, menuSpace }: { row: FindRow; withProject: boolean; decision?: string; reason?: string | null; menuSpace?: boolean }) {
-  const tags = decision || (row.belegstand && row.belegstand.state !== "belegt");
+  // the Belegstand always written with its dot (step 8d), "belegt" too, as in the table
+  const tags = decision || row.belegstand;
   return (
     <Link href={row.href} className="flex flex-col gap-1.5 px-4 py-3 outline-none active:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent">
       <span className="flex items-start gap-2">
@@ -363,7 +364,7 @@ export function PhoneRow({ row, withProject, decision, reason, menuSpace }: { ro
       </span>
       {tags && (
         <span className="flex flex-wrap items-center gap-1.5 pl-9">
-          {row.belegstand && row.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[row.belegstand.state]}>{row.belegstand.text}</Tag>}
+          {row.belegstand && <Tag colour={EVIDENCE[row.belegstand.state]}>{row.belegstand.text}</Tag>}
           {decision && <Tag>{decision}</Tag>}
         </span>
       )}

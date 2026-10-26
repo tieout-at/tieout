@@ -1,56 +1,44 @@
-# Handover: step 8d, Kompakt und klar
+# Handover: step 8e, Export
 
-**As of:** Monday, 26 October 2026, afternoon, after step 8c. Written by Claude for Maxi S.
+**As of:** Monday, 26 October 2026, night, after step 8d. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** the pull request of `schritt-8c-umschalten` is merged, https://app.tieout.workers.dev shows v2 (Start says "zusätzlich verrechenbar 22.632,96 €"), https://app-v1.tieout.workers.dev shows v1, CI `App`, `Kern` and `Lösungsliste` are green on `main`. If not, ask Maxi S. first.
-**Setup (Maxi S., 26.10.2026):** a chat of its own with full focus, the strongest model, an advisor, a high token budget and a board. Quality before speed.
+**Precondition:** the pull request of `schritt-8d-kompakt` is merged with the go of Maxi S., https://app.tieout.workers.dev shows the 8d pages (Start shows "Geld je Projekt" as a bar chart; the project page "Wo im Gebäude"), CI `App`, `Kern` and `Lösungsliste` green on `main`. If not, ask Maxi S. first.
 
 ## Goal
 
-Every page of the app compact, clear at a glance, refined, visual and interactive like Linear and Attio: the picture first, details on a click. No page that reads like a book, no long scrolling, no small text walls (his words: "Text, Text, Text, kleine Schrift" is what to avoid). And before that, one question of principle about the sample data and the core.
+The one thing v1 had and v2 lacks (comparison test of 8c, named by the Abrechnerin and the Geschäftsführer): an export to the invoicing program. A file the business can open or import, made from the Änderungsliste of the Schlussrechnung, marked "Entwurf, nicht freigegeben" until every find is decided. No button before it works (SPEZIFIKATION.md 3.3).
 
 ## Read first
 
-1. `CLAUDE.md`, `docs/_STATUS.md` (rows 8a to 8d, open points of 8b and 8c), this file.
-2. `docs/DESIGN.md` (the whole file; it holds every measured value and the design language of steps 8 and 8a: one question, one figure, one statement, explanations behind an info icon, only exceptions marked).
-3. `docs/SPEZIFIKATION.md` sections 3, 4 and 7.1 and `docs/Demo_Faelle.md` (solution list v3) for the question of principle.
-4. `../tieout-intern/docs/kundentests/2026-10-26_kundentest-4_vergleich-v1-v2.md` (the comparison test of 8c) and the reports of tests 2 and 3 next to it.
-5. The playbook of Maxi S. (`C:\Users\maxis\OneDrive - WU Wien\B Claude\_setup\Playbook.md`), the parts on design and UI.
+1. `CLAUDE.md`, `docs/_STATUS.md` (row 8d and its open points), this file.
+2. `docs/SPEZIFIKATION.md` 3.3 (outputs: Excel and PDF now, ÖNORM A 2063 data carrier when a real customer needs it, BMD later) and `docs/DESIGN.md` (section "Compact and visual (step 8d)").
+3. v1's export for comparison: branch `v1`, `product/app` (an Excel file with five sheets: Schlussrechnung, Posten, Schlussbesprechung, Vorprüfung, Belege).
 
 ## Steps
 
-1. **Question of principle, answer before anything is built.** Are the sample data and the calculation core too complex for a realistic first customer? The first customers will have small projects, not a 750.000 € Wohnpark with 77 Belege and 286 positions. Should data and core become fundamentally simpler, shorter and more realistic, not only smaller? Give options (for example: keep, trim the main project, a small main project plus the large one as a second example, a new simpler model) with what each costs (solution list, `kern/` tests, amount audit, pages) and a recommendation. Weigh one finding of 8c against it: the Geschäftsführer and the Abrechnerin both said that part of their wish to buy came from the larger amounts of the sample data, and that a project with 3.000 € to 5.000 € extra hardly pays for the service. Simpler must not mean "not worth buying". Sample data, solution list, core and amounts change only with a go of Maxi S.
-2. **Board of all pages, before and after.** Every page at 1440 px and 390 px as it is (`npm run screens`), next to a draft of how it becomes compact and visual; references from Linear and Attio (and Mercury, Ramp, Rillet where they fit). Show it to Maxi S. as a board and get his choice per page before building. He chose the picture over a calmer list twice in 8b and wanted the step 4 Übersicht back: a reviewer's score for "Ruhe" is not his bar on its own.
-3. **Build page by page** after his go, shared parts first (project head, tabs, cards, tables), then the pages. Amounts compared page by page with `main` after each part.
-4. **Review:** an independent reviewer per round at 1440 and 390 px, every finding re-measured; then a short customer test with the three roles on the new pages.
+1. **Start with the short customer test of 8d** that was not run: the three roles (Abrechnerin, Geschäftsführer, Bauleiter) on the new pages, desktop and phone, the same four verdicts as before; every finding re-measured. Fix what is clearly wrong before the export.
+2. **Decide with Maxi S.** (two sentences each, his go): what the file holds (proposal: Änderungsliste with position, quantity, Einheitspreis, amount and the Beweispaket reference; Rechnungsabschluss; Vorprüfung; Schlussbesprechungs-Blatt marked internal) and the format (proposal: one .xlsx built in the browser from the core's figures, no server).
+3. Build it on the tab Schlussrechnung next to "Drucken", amounts only from `kern/` (the amount audit must stay green), words as in the app, internal sheets marked; test the file by opening it.
+4. Review and status as usual.
 
-## Starting points
+## Decisions waiting for Maxi S. (from 8d)
 
-From step 8b and the comparison test of 8c (re-measured):
-
-- **Start:** answers "how much in how many projects" only under Berichte; v1 showed the sum per project as bars right on the start page, the Geschäftsführer named that the best part of v1.
-- **Positionen at 1440 px:** eight number columns, position texts cut; idea from 8b: one small bar per row for beauftragt, erbracht, verrechnet.
-- **Phones:** the project head and tabs take 360 of 844 px, the tabs Vertrag, Funde and Schlussrechnung lie outside the screen at 390 px; fold the head to one line while scrolling.
-- **Zeitstrahl:** the axis shows months only; the Bauleiter wants to see the order of WhatsApp, Regiebericht and Stundenzettel by day at a glance (v1's Zeitachse had day and time per event).
-- **Berichte:** the card "Wer hat bisher gekürzt?" shows the largest Auftraggeber's sum as its figure, read as the total.
-- **Projekt:** the pair Restforderung 89.274,41 € and "laut Vertrag 92.882,45 €" is not understood; its info icon only jumps to the Schlussrechnung.
-- **Fund:** the Rechenweg line repeats "126 m"; find numbers F1 to F3 repeat across projects (a project short name in front?).
-- **Belege:** shown as rebuilt field lists, not as a sheet; looks less real than v1's viewer (real scans come with step 10).
-
-Not in 8d: export to the invoicing program (a small step of its own after 8d, v1 had an Excel file), persons, roles and shared decisions (step 10), a reason per correction (step 10).
+- Project status colours: red "Frist nah" and yellow "offen" still mark deadlines; the council wants red only for Kürzungsrisiko and yellow only for Beleg fehlt (proposal: deadline neutral with a clock icon, the word stays).
+- The red mark at the Bauschadensumlage "Abzug ohne Vertragspunkt" on the Schlussrechnung (keep red as a risk, or neutral).
+- The Übersicht keeps its thin bars under the money figures (his word: it stays as it is); the council asks him to confirm.
+- The dates of the Nachträge N1 to N3 (in the core's sample data, not in the solution list): add to the solution list or leave unshown.
 
 ## Good to know
 
-- **Tools:** `npm run screens` photographs every page at five widths with the local Edge; the amount audit of 8b builds `main` in a folder of its own and compares every euro amount of every exported page (description in the 8b handover in git history, `git show c92c0b9:docs/_UEBERGABE.md`); on Git Bash pass URL paths with `MSYS_NO_PATHCONV=1`.
-- **Cloudflare since 8c:** `app` builds `/app` from `main` (previews per branch), `app-v1` is frozen (builds off), `app-neu` is frozen at the last build before the switch (builds off; delete with a go). Way back to v1 on the public link: Deployments of `app`, roll back to version 4f4d1872.
-- **Open from 8b:** one date per Beleg everywhere (the Belege list uses the file date).
+- **Tools:** `npm run screens` (app served from `out/` with `node scripts/serve-out.mjs 3103`) photographs 61 screens at five widths and reports anything wider than its column. The amount audit of 8d builds `main` in a folder of its own (git archive of `app`, `kern`, `docs`; `app/node_modules` as junctions to the repository's packages except `@tieout/kern`, which points to the copy's `kern`; `turbopack.root` set to `C:/Users/maxis`) and compares every euro amount of every exported page against `docs/Demo_Faelle.md`. Write the scripts again in the session's scratchpad if needed; pass URL paths with `MSYS_NO_PATHCONV=1` on Git Bash.
+- A `next dev` of another process may hold port 3100 and does not pick up new exports from client files; check pages in the build (`npm run build`, then the server on 3103).
+- `app/qa-shots/board/` holds the board of drafts (`index.html`) and the result board (`ergebnis.html`) of 8d; git-ignored, never publish them (Attio and Linear pictures).
 
 ## Done when
 
-- The answer to the question of principle and the board of all pages before and after are accepted by Maxi S.
-- The pages are built as chosen, every page at least as good as before in an independent review at 1440 and 390 px, amounts unchanged unless he gave a go, check and amount audit green, checked live.
-- `_STATUS.md` updated, this file rewritten for the next step.
+- Customer test of 8d run and its findings handled; the export decided with Maxi S., built, opened and checked; amounts unchanged; check and amount audit green; checked live after the merge go.
+- `_STATUS.md` updated, this file rewritten for step 9 (Abläufe).
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 8d, Kompakt und klar, mit vollem Fokus. Lies `CLAUDE.md` und `docs/_UEBERGABE.md`. Zuerst die Grundsatzfrage: Sind Beispieldaten und Rechenkern zu komplex für einen realistischen ersten Kunden? Gib mir Optionen mit Aufwand und eine Empfehlung, bevor du etwas baust. Dann ein Board aller Seiten vorher und nachher, ich wähle je Seite. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Push, Merge, Cloudflare). Beispieldaten, Lösungsliste, Kern und Beträge nur mit meinem Go. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 8e, Export. Lies `CLAUDE.md` und `docs/_UEBERGABE.md`. Zuerst der kurze Kundentest der drei Rollen auf den neuen Seiten von 8d, dann der Export ins Rechnungsprogramm: schlag mir Inhalt und Format vor, bevor du baust. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Push, Merge, Cloudflare). Beträge nur aus dem Kern. Deutsch, einfach, Ergebnis zuerst.

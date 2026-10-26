@@ -42,3 +42,30 @@ const ICON: Partial<Record<TwinBeleg["art"], LucideIcon>> = {
 export function belegIcon(art: TwinBeleg["art"]): LucideIcon {
   return ICON[art] ?? FileText;
 }
+
+/** The kind's icon from its German name as the lists show it ("Aufmaßblatt", "E-Mail"), for rows that carry only the name. */
+const BY_TEXT: Record<string, TwinBeleg["art"]> = {
+  Vertrag: "vertrag",
+  Leistungsverzeichnis: "leistungsverzeichnis",
+  Preisbasis: "preisbasis",
+  Aufmaßblatt: "aufmassblatt",
+  Regiebericht: "regiebericht",
+  Stundenzettel: "stundenzettel",
+  Abschlagsrechnung: "abschlagsrechnung",
+  Zahlungsavis: "zahlungsavis",
+  Korrekturblatt: "korrekturblatt",
+  Abzugsschreiben: "abzugsschreiben",
+  Entwurf: "entwurf",
+  Schlussrechnung: "schlussrechnung",
+  Nachtrag: "nachtrag",
+  Großhändlerrechnung: "grosshaendlerrechnung",
+  "E-Mail": "email",
+  Foto: "foto",
+  Fotodokumentation: "fotodokumentation",
+  Plan: "plan",
+  Indexblatt: "indexblatt",
+};
+
+export function belegIconByText(kind: string): LucideIcon {
+  return BY_TEXT[kind] ? belegIcon(BY_TEXT[kind]) : FileText;
+}

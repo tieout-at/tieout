@@ -21,33 +21,12 @@ import {
 } from "@tieout/kern";
 
 import { findSlug, projectSlug } from "./example";
-import { business, clientSlug, nameAndFacts, type Amount } from "./kern-data";
-
-export type Dashboard = { slug: string; title: string; description: string; reports: string[] };
-
-/** The three dashboards of the list, in their order; each groups the reports that answer one question. */
-export const DASHBOARDS: Dashboard[] = [
-  {
-    slug: "geld-je-projekt",
-    title: "Geld je Projekt",
-    description: "Was in den offenen Projekten zusätzlich verrechenbar ist und wie gut es belegt ist.",
-    reports: ["Zusätzlich verrechenbar je Projekt", "Belegstand je Projekt"],
-  },
-  {
-    slug: "luecken-in-den-belegen",
-    title: "Lücken in den Belegen",
-    description: "Regie ohne Unterschrift und Leistung, die Ihr ERP nicht kennt.",
-    reports: ["Regieberichte ohne Unterschrift", "Nur außerhalb ERP"],
-  },
-  {
-    slug: "kuerzungen-und-abzuege",
-    title: "Kürzungen und Abzüge",
-    description: "Was jeder Auftraggeber bisher gekürzt und abgezogen hat, aus den Belegen aller Projekte.",
-    reports: ["Kürzungen je Auftraggeber", "Abzüge ohne Vertragspunkt je Auftraggeber"],
-  },
-];
+import { business, clientSlug, firm, nameAndFacts, type Amount } from "./kern-data";
 
 type Named = { name: string; href: string };
+
+/** One Regiebericht of a project for the waffle on "Berichte": its number and where it stands. */
+export type RegieCell = { nr: string; name: string; state: "verrechnet" | "offen" | "ohne_unterschrift" | "spaeter"; href: string | null };
 
 export type FindLink = { number: string; project: Named; name: string; href: string };
 
@@ -73,7 +52,7 @@ export type ReportsView = {
     finds: (FindLink & { kind: string; amount: Amount; remedy: string | null })[];
     /** "Beleg fehlt" of the core, only when these finds are all of it. */
     total: Amount | null;
-    projects: (Named & { all: number; invoiced: number; signedOpen: number; unsigned: number; later: number })[];
+    projects: (Named & { all: number; invoiced: number; signedOpen: number; unsigned: number; later: number; cells: RegieCell[] })[];
     /** Cuts for unsigned Regie in earlier projects, from the Korrekturblätter. */
     cutBefore: { client: Named; project: string; amount: Amount }[];
   };
@@ -84,6 +63,8 @@ export type ReportsView = {
   };
   cuts: (Named & { total: Amount | null; projects: number; items: { project: string; invoice: string; date: string; position: string; reason: string; amount: Amount }[] })[];
   deductions: (Named & { total: Amount | null; projects: number; items: { project: string; kind: string; invoices: string; amount: Amount }[] })[];
+  /** Project name to the full name of its Auftraggeber (every project), so one project can light its Auftraggeber. */
+  clientOf: Record<string, string>;
   /** Deductions without contract item the Auftraggeber announced for a Schlussrechnung still to come. */
   announced: { client: Named; project: Named; kind: string; rate: string; amount: Amount }[];
 };
@@ -92,6 +73,31 @@ const amount = (cent: number): Amount => ({ cent, text: euro(cent) });
 const projectLink = (name: string): Named => ({ name, href: `/projekte/${projectSlug(name)}/` });
 const clientLink = (name: string, short: string): Named => ({ name, href: `/auftraggeber/${clientSlug(short)}/` });
 const STANDS: Belegstand[] = ["belegt", "beleg_fehlt", "nachtrag_nicht_gelegt"];
+
+/**
+ * Every Regiebericht of a project with its state, read from the documents as the core reads them: invoiced when a line of
+ * the Entwurf (or, without one, of the Abschlagsrechnungen) names it; otherwise a find of the core says whether it is
+ * signed and open or without signature; the rest lies after the last Abschlagsrechnung. The counts equal the core's
+ * (tested), so the cells only name what the core counts.
+ */
+function regieCells(projektId: string, projectName: string, b: FirmenErgebnis): RegieCell[] {
+  const d = firm().projekte.find((x) => x.projekt.id === projektId);
+  if (!d) return [];
+  const sorted = [...d.abschlaege].sort((x, y) => x.datum.wert.localeCompare(y.datum.wert));
+  const lastCumulative = sorted.findLastIndex((r) => r.kumuliert);
+  const invoices = d.entwurf ? [d.entwurf] : lastCumulative >= 0 ? sorted.slice(lastCumulative) : sorted;
+  const invoiced = new Set(invoices.flatMap((r) => r.zeilen.flatMap((z) => (z.typ === "regie" ? [z.regieberichtNr.wert] : []))));
+  const finds = b.ergebnisse[projektId].abgleich.funde;
+  return [...d.regie]
+    .sort((x, y) => Number(x.nr) - Number(y.nr))
+    .map((r) => {
+      const name = `Regiebericht ${r.nr}`;
+      if (invoiced.has(r.nr)) return { nr: r.nr, name, state: "verrechnet" as const, href: null };
+      const f = finds.find((x) => x.schluessel === `regie:${r.nr}`);
+      if (f) return { nr: r.nr, name, state: f.belegstand === "belegt" ? ("offen" as const) : ("ohne_unterschrift" as const), href: `/funde/${findSlug(projectName, f.nr)}/` };
+      return { nr: r.nr, name, state: "spaeter" as const, href: null };
+    });
+}
 
 export function reportsView(b: FirmenErgebnis = business()): ReportsView {
   const open = b.projekte.filter((p) => p.zusaetzlichVerrechenbar !== null);
@@ -170,6 +176,7 @@ export function reportsView(b: FirmenErgebnis = business()): ReportsView {
 
   return {
     asOf: datumText(b.stichtag),
+    clientOf: Object.fromEntries(b.projekte.map((p) => [p.name, p.auftraggeber.name])),
     unclear: amount(b.summen.inKlaerung),
     says: says(),
     extra: {
@@ -208,7 +215,7 @@ export function reportsView(b: FirmenErgebnis = business()): ReportsView {
       total: regieFinds.length === b.geld.belegFehlt.anzahl ? amount(b.geld.belegFehlt.betrag) : null,
       projects: open.map((p) => {
         const r = b.ergebnisse[p.projektId].abgleich.regie;
-        return { ...projectLink(p.name), all: r.gesamt, invoiced: r.verrechnet, signedOpen: r.unterschriebenNichtVerrechnet, unsigned: r.nichtUnterschrieben, later: r.nachGrenze };
+        return { ...projectLink(p.name), all: r.gesamt, invoiced: r.verrechnet, signedOpen: r.unterschriebenNichtVerrechnet, unsigned: r.nichtUnterschrieben, later: r.nachGrenze, cells: regieCells(p.projektId, p.name, b) };
       }),
       cutBefore: b.historie.flatMap((h) =>
         h.kuerzungen.filter((k) => k.grund === "regie_nicht_unterschrieben").map((k) => ({ client: clientLink(h.auftraggeber.name, h.auftraggeber.kurzname), project: k.projekt, amount: amount(k.betrag) })),

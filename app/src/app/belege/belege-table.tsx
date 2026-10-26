@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { createElement, useState } from "react";
 import { BookOpen, CalendarDays, Construction, File, FileText, Layers, ScanText, SearchCheck, Shapes } from "lucide-react";
 
-import { DataTable, type Column } from "@/components/table/data-table";
+import { belegIconByText } from "@/components/fund/icons";
+import { loadOriginals, OriginalWindow } from "@/components/fund/original-sheet";
+import { DataTable, type Column, type QuickFilter } from "@/components/table/data-table";
+import type { OriginalPage } from "@/lib/originals";
 import { Tag, type TagColour } from "@/components/table/tag";
 import type { BelegRow } from "@/lib/kern-data";
 import type { View } from "@/lib/table";
@@ -15,17 +19,26 @@ const REVIEW: Record<BelegRow["review"]["state"], { colour?: TagColour; rank: nu
   maschinell: { rank: 3 },
 };
 
-/** The number chips of the finds a Beleg proves. */
-function FindChips({ finds }: { finds: string[] }) {
+/** The number chips of the finds a Beleg proves; on a list of all projects with the project's place name ("F3 Kiefernau"), since F1 to F3 exist in every project. */
+function FindChips({ finds, project }: { finds: string[]; project?: string }) {
   return (
     <span className="flex min-w-0 gap-1">
       {finds.map((f) => (
-        <span key={f} className="flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">
+        <span key={f} className="flex h-5 min-w-7 shrink-0 items-center justify-center gap-1 rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring">
           {f}
+          {project && <span className="text-fg-muted">{project}</span>}
         </span>
       ))}
     </span>
   );
+}
+
+/** "Wohnpark Mooshaim" → "Mooshaim": the place name tells the projects apart. */
+const placeOf = (name: string) => name.split(" ").at(-1) ?? name;
+
+/** The icon of the Beleg's kind, as on the find page. */
+function KindIcon({ kind, className }: { kind: string; className?: string }) {
+  return createElement(belegIconByText(kind), { className, "aria-hidden": true });
 }
 
 /** What a human did with the Beleg; nothing for one only read by the machine, which is most of them (step 8a). */
@@ -52,6 +65,23 @@ const GROUPS = ["Systeme", "Dokumente", "Kommunikation"];
  * review state of the fields read from it and the finds it proves. `project` hides the project column on a project page.
  */
 export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: string }) {
+  // a click on a row opens the Beleg's first page in the window at the right; again, closes it (step 8d)
+  const [open, setOpen] = useState<BelegRow | null>(null);
+  const [pages, setPages] = useState<Record<string, OriginalPage> | null>(null);
+  const openRow = (r: BelegRow) => {
+    setOpen((cur) => (cur?.id === r.id ? null : r));
+    setPages(null);
+    void loadOriginals(r.project.slug).then(setPages);
+  };
+  // quick filters by kind, the kinds with the most Belege first (step 8d)
+  const kinds = [...rows.reduce((m, r) => m.set(r.kind, (m.get(r.kind) ?? 0) + 1), new Map<string, number>())].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const top = new Set(kinds.map(([k]) => k));
+  const quick: QuickFilter<BelegRow>[] = [
+    { id: "alle", title: "Alle", match: () => true },
+    ...kinds.map(([k]) => ({ id: k, title: k, match: (r: BelegRow) => r.kind === k })),
+    // every other kind in one chip, so no Beleg is out of reach of the chips
+    ...(rows.some((r) => !top.has(r.kind)) ? [{ id: "weitere", title: "Weitere", match: (r: BelegRow) => !top.has(r.kind) }] : []),
+  ];
   const columns: Column<BelegRow>[] = [
     {
       id: "beleg",
@@ -61,7 +91,7 @@ export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: str
       sortValue: (r) => r.title,
       cell: (r) => (
         <span className="flex min-w-0 items-center gap-1.5" title={r.title}>
-          <FileText className="size-4 shrink-0 text-fg-secondary" aria-hidden />
+          <KindIcon kind={r.kind} className="size-4 shrink-0 text-fg-secondary" />
           <span className="truncate">{r.title}</span>
         </span>
       ),
@@ -70,10 +100,10 @@ export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: str
       id: "finds",
       title: "Funde",
       icon: SearchCheck,
-      width: 140,
+      width: project ? 140 : 190,
       sortValue: (r) => (r.finds.length ? r.finds.join(" ") : null),
       filterValue: (r) => (r.finds.length ? "mit Fund" : "ohne Fund"),
-      cell: (r) => <FindChips finds={r.finds} />,
+      cell: (r) => <FindChips finds={r.finds} project={project ? undefined : placeOf(r.project.name)} />,
     },
     {
       id: "kind",
@@ -142,25 +172,31 @@ export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: str
     },
   ];
 
-  // Art mostly repeats the name and Herkunft is the website's group: both one click away in "Ansicht" (step 8a)
+  // Art mostly repeats the name and Herkunft is the website's group: both one click away in "Ansicht" (step 8a); Prüfung is
+  // empty for most Belege, so it shows in the view "Korrigiert" and comes back with "+" elsewhere (step 8d)
   const hidden = project ? ["kind", "group", "project", "file"] : ["kind", "group", "file"];
   const views: View[] = [
-    { id: "alle", title: "Alle Belege", state: { sort: { column: "date", direction: "desc" }, filters: [], hidden, calculations: {} } },
-    { id: "funde", title: "Belege mit Funden", state: { sort: { column: "finds", direction: "asc" }, filters: [{ column: "finds", values: ["mit Fund"] }], hidden, calculations: {} } },
+    { id: "alle", title: "Alle Belege", state: { sort: { column: "date", direction: "desc" }, filters: [], hidden: [...hidden, "review"], calculations: {} } },
+    { id: "funde", title: "Belege mit Funden", state: { sort: { column: "finds", direction: "asc" }, filters: [{ column: "finds", values: ["mit Fund"] }], hidden: [...hidden, "review"], calculations: {} } },
     { id: "korrigiert", title: "Korrigiert", state: { sort: { column: "date", direction: "desc" }, filters: [{ column: "review", values: ["korrigiert"] }], hidden, calculations: {} } },
   ];
 
+  const belegId = open ? open.id.slice(open.id.indexOf("/") + 1) : "";
   return (
+    <>
     <DataTable
+      quick={quick}
+      onOpen={openRow}
+      openId={open?.id ?? null}
       name={project ? `belege.${project}` : "belege"}
       rows={rows}
       columns={columns}
       views={views}
       noun={{ one: "Beleg", many: "Belege", dative: "Belegen" }}
       phoneRow={(r) => (
-        <div className="flex flex-col gap-1 px-4 py-2.5">
+        <button type="button" onClick={() => openRow(r)} className="flex w-full flex-col gap-1 px-4 py-2.5 text-left outline-none active:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent">
           <span className="flex items-start gap-2">
-            <FileText className="mt-0.5 size-4 shrink-0 text-fg-secondary" aria-hidden />
+            <KindIcon kind={r.kind} className="mt-0.5 size-4 shrink-0 text-fg-secondary" />
             <span className="line-clamp-2 min-w-0 flex-1">{r.title}</span>
             <FindChips finds={r.finds} />
           </span>
@@ -169,8 +205,16 @@ export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: str
             {!project && <span>{r.project.name}</span>}
             <Review r={r} />
           </span>
-        </div>
+        </button>
       )}
     />
+    <OriginalWindow
+      open={open !== null}
+      onClose={() => setOpen(null)}
+      pages={open?.copyOf ? {} : pages}
+      pageKey={`${belegId}:1`}
+      label={open ? (open.copyOf ? `${open.title}, doppelt, gleich wie ${open.copyOf}` : open.title) : "Beleg"}
+    />
+    </>
   );
 }

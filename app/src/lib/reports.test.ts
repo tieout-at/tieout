@@ -2,15 +2,26 @@ import { describe, expect, it } from "vitest";
 import type { Decision } from "./decisions";
 import { findRows } from "./kern-data";
 import { live } from "./kern-live";
-import { DASHBOARDS, reportsView } from "./reports";
+import { reportsView } from "./reports";
 
 // Amounts of the solution list v3 (docs/Demo_Faelle.md, "Amounts that must not change" and section "Berichte").
 const v = reportsView();
 const text = (xs: { name: string; amount: { text: string } }[]) => Object.fromEntries(xs.map((x) => [x.name, x.amount.text]));
 
 describe("Berichte (step 8)", () => {
-  it("has three dashboards with two reports each", () => {
-    expect(DASHBOARDS.map((d) => d.reports.length)).toEqual([2, 2, 2]);
+  it("names every Regiebericht, and its states count as the core counts", () => {
+    for (const p of v.regie.projects) {
+      const n = (s: string) => p.cells.filter((c) => c.state === s).length;
+      expect([p.cells.length, n("verrechnet"), n("offen"), n("ohne_unterschrift"), n("spaeter")]).toEqual([p.all, p.invoiced, p.signedOpen, p.unsigned, p.later]);
+    }
+    const p1 = v.regie.projects[0].cells;
+    expect(p1.filter((c) => c.state !== "verrechnet").map((c) => `${c.name} ${c.state}`)).toEqual(["Regiebericht 9 offen", "Regiebericht 12 ohne_unterschrift", "Regiebericht 15 offen"]);
+    expect(p1.find((c) => c.nr === "12")?.href).toBe("/funde/wohnpark-mooshaim-f6/");
+  });
+
+  it("knows the Auftraggeber of every project", () => {
+    expect(v.clientOf["Wohnhof Erlenhain"]).toBe("Hornfeld Bau GmbH");
+    expect(Object.keys(v.clientOf)).toHaveLength(5);
   });
 
   it("shows zusätzlich verrechenbar per open project with davon mit Kürzungsrisiko", () => {

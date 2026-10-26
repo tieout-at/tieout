@@ -112,3 +112,21 @@ describe("every find page", () => {
     }
   });
 });
+
+describe("Rechenweg quantities (step 8d)", () => {
+  it("each position step of F1 carries the core's quantities for its bar; the difference is written once, in the formula", () => {
+    const f1 = findRecord("wohnpark-mooshaim-f1");
+    const pipe = f1.calc.steps.find((s) => s.title.startsWith("22.03.02A"))!;
+    expect(pipe.quantities).toMatchObject({ invoicedText: "1.512 m", doneText: "1.638 m", lvText: "1.512 m", diffText: "126 m" });
+    expect(pipe.formula).toBe("126 m × 13,90 €");
+    expect(f1.calc.steps.every((s) => s.quantities !== null)).toBe(true);
+  });
+
+  it("Regie steps have no quantity bar", () => {
+    const f2 = findRecord("wohnpark-mooshaim-f2");
+    expect(f2.calc.steps.every((s) => s.quantities === null)).toBe(true);
+    // the Kürzungsrisiko of F2 is a part of the find, named with its own amount
+    expect(f2.risk).toMatchObject({ reason: "Stunden weichen ab", amount: "194,40 €" });
+    expect(f2.amount).toBe("1.787,49 €");
+  });
+});

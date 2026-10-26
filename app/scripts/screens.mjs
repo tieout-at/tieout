@@ -24,9 +24,7 @@ const SIZES = [
 const SCREENS = [
   { name: "start", path: "/" },
   { name: "aufgaben", path: "/aufgaben/" },
-  { name: "berichte-geld", path: "/berichte/" },
-  { name: "berichte-luecken", path: "/berichte/luecken-in-den-belegen/" },
-  { name: "berichte-kuerzungen", path: "/berichte/kuerzungen-und-abzuege/" },
+  { name: "berichte", path: "/berichte/" },
   { name: "ablaeufe", path: "/ablaeufe/" },
   { name: "belege", path: "/belege/" },
   { name: "e-mails", path: "/e-mails/" },
@@ -91,14 +89,17 @@ const SCREENS = [
     name: "fundseite-plan",
     path: "/funde/wohnpark-mooshaim-f1/",
     act: async (page) => {
-      await page.getByRole("button", { name: /Plan H-201, Index D/ }).click();
+      // phones fold the Belege; open the fold first when it is there
+      const fold = page.getByRole("button", { name: /^Belege/ });
+      if (await fold.first().isVisible().catch(() => false)) await fold.first().click().catch(() => {});
+      await page.getByRole("button", { name: /Plan H-201, Index D/ }).first().click({ timeout: 5000 }).catch(() => {});
     },
   },
   {
     name: "fundseite-signatur",
     path: "/funde/wohnpark-mooshaim-f1/",
     act: async (page) => {
-      await page.locator("#kuerzungsrisiko").getByRole("button", { name: /Aufmaßblatt 12/ }).click();
+      await page.getByRole("button", { name: /Aufmaßblatt 12/ }).first().click({ timeout: 5000 }).catch(() => {});
     },
   },
   {

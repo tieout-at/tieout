@@ -66,7 +66,7 @@ export type InvoiceView = {
   settlement: {
     lines: SettlementLine[];
     restforderung: Amount;
-    contract: { restforderung: Amount; difference: SettlementLine[] };
+    contract: { restforderung: Amount; difference: SettlementLine[]; lines: SettlementLine[] };
     payments: { invoice: string; date: string; amount: Amount; cut: Amount; paid: Amount; paidOn: string; ok: boolean }[];
     /** Rates without a contract item the Auftraggeber already withheld on the Abschlagsrechnungen (history of the core). */
     withheld: { kind: string; invoices: string; amount: Amount }[];
@@ -184,6 +184,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
       restforderung: amount(ra.restforderung),
       contract: {
         restforderung: amount(ra.lautVertrag.restforderung),
+        lines: contractLines,
         // what "laut Vertrag" leaves out: the deductions without a contract item
         difference: lines.filter((l) => l.check?.state === "abzug_ohne_vertragspunkt" && !contractLines.some((c) => c.label === l.label && c.kind === l.kind)),
       },
