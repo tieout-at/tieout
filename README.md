@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://tieout-at.pages.dev">Website</a> ·
-  <a href="https://app.tieout.workers.dev">Demo app (v1)</a> ·
+  <a href="https://app.tieout.workers.dev">Demo app</a> ·
   <a href="https://www.linkedin.com/company/tieout-at/">LinkedIn</a>
 </p>
 
@@ -19,8 +19,8 @@
 
 ## Status
 
-- **v1 is live** at [app.tieout.workers.dev](https://app.tieout.workers.dev): a synthetic contractor with eight projects, findings with original documents, two-step approval, calculation core tested to the cent. Its code is frozen under the tag `v1-archiv` ([app code](https://github.com/tieout-at/tieout/tree/v1-archiv/product/app), architecture and tech stack in the [v1 README](https://github.com/tieout-at/tieout/blob/v1-archiv/README.md#architecture)).
-- **v2 is being rebuilt from zero** on `main` since 23 October 2026: same promise, clearer screens. Plan and progress in [`docs/_STATUS.md`](docs/_STATUS.md).
+- **The demo app is live** at [app.tieout.workers.dev](https://app.tieout.workers.dev), no sign-in: a synthetic building services contractor (Kronfeld Haustechnik) with five projects. Each find (Fund) shows its amount, its calculation and its original documents; a person checks and releases it, and released finds go into the final invoice (Schlussrechnung) with an evidence package. Rebuilt from zero since 23 October 2026 (v2); plan and progress in [`docs/_STATUS.md`](docs/_STATUS.md).
+- **The hackathon version (v1)** is archived at [app-v1.tieout.workers.dev](https://app-v1.tieout.workers.dev). Its code is frozen under the tag `v1-archiv` ([app code](https://github.com/tieout-at/tieout/tree/v1-archiv/product/app), architecture and tech stack in the [v1 README](https://github.com/tieout-at/tieout/blob/v1-archiv/README.md#architecture)).
 
 ## The problem
 

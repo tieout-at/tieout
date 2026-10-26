@@ -1,9 +1,10 @@
-// Cloudflare: worker "app-neu", online at https://app-neu.tieout.workers.dev from step 1 until the switch-over (step 12),
-// when the worker "app" (https://app.tieout.workers.dev, v1, frozen) gets this app.
+// Cloudflare: worker "app", online at https://app.tieout.workers.dev since the switch-over (step 8c, 26.10.2026).
+// Until then this app ran as the worker "app-neu" and "app" served v1; v1 is now frozen at https://app-v1.tieout.workers.dev
+// (worker "app-v1", built once from the branch `v1`, builds off).
 // Static files only, no script: the build output `out/`. Cloudflare builds on every push (Workers Builds, root directory
 // `app`, build command `npm run build`): `main` goes online, every other branch gets its own preview address.
 {
-  "name": "app-neu",
+  "name": "app",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./out",
