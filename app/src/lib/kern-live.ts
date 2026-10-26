@@ -11,6 +11,7 @@ import type { Decision } from "./decisions";
 import { findHighlights } from "./finds";
 import { findCalculations, findRows, firm, projectCalculations, projectRows, startView } from "./kern-data";
 import { projectHighlights } from "./records";
+import { positionsView } from "./positions";
 import { reportsView } from "./reports";
 import { invoiceList, invoiceView } from "./invoice";
 import { twinProjects, twinView } from "./twin";
@@ -47,6 +48,8 @@ export function live(decisions: readonly Decision[]) {
     invoiceView: perKey((projektId) => invoiceView(projektId, b)),
     /** The highlights of a project's "Überblick", by the core's project id. */
     projectHighlights: perKey((projektId) => projectHighlights(projektId, b)),
+    /** The tab "Positionen" of an open project, by the core's project id. */
+    positionsView: perKey((projektId) => positionsView(projektId, b)),
     /** "Auf einen Blick" of a find page, by its slug. */
     findHighlights: perKey((slug) => findHighlights(slug, b)),
     /** The "Übersicht" of an open project, by its slug. */

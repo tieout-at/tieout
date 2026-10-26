@@ -67,6 +67,7 @@ export function DataTable<R extends Row>({
   noun,
   board,
   phoneRow,
+  selectable = true,
 }: {
   /** Key under which the browser remembers the view. */
   name: string;
@@ -78,6 +79,8 @@ export function DataTable<R extends Row>({
   board?: (visible: R[]) => ReactNode;
   /** Below 768 px the rows become a list, each row drawn by the page, instead of the wide grid (customer test 2). */
   phoneRow?: (r: R) => ReactNode;
+  /** false for a table without any action on a selection (Positionen): no checkboxes, more room for the columns. */
+  selectable?: boolean;
 }) {
   const storageKey = `tieout.tabelle.${name}`;
   const ids = columns.map((c) => c.id);
@@ -239,7 +242,7 @@ export function DataTable<R extends Row>({
                   onSort={(direction) => update({ sort: { column: c.id, direction } })}
                   onHide={() => update({ hidden: [...hidden, c.id] })}
                 >
-                  {i === 0 && (
+                  {i === 0 && selectable && (
                     <Checkbox
                       checked={allSelected ? true : someSelected ? "mixed" : false}
                       label="Alle auswählen"
@@ -270,7 +273,7 @@ export function DataTable<R extends Row>({
                         c.align === "right" && "justify-end text-right tabular-nums",
                       )}
                     >
-                      {i === 0 && <Checkbox checked={isSelected} label="Auswählen" onChange={() => toggleRow(r.id)} />}
+                      {i === 0 && selectable && <Checkbox checked={isSelected} label="Auswählen" onChange={() => toggleRow(r.id)} />}
                       {c.cell(r)}
                     </div>
                   ))}

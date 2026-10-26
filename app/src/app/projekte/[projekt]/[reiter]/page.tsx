@@ -5,10 +5,12 @@ import { InvoiceView } from "@/components/schlussrechnung/invoice-view";
 import { EmptyState } from "@/components/shell/empty-state";
 import { PROJECT_TABS, PROJECTS } from "@/lib/example";
 import { invoiceView } from "@/lib/invoice";
+import { positionsView } from "@/lib/positions";
 import { belegRows, business, findCalculations, findRows } from "@/lib/kern-data";
 import { projectRecord } from "@/lib/records";
 import { BelegeTable } from "../../../belege/belege-table";
 import { FindsTable } from "../../../funde/finds-table";
+import { PositionsTable } from "../positions-table";
 import { findProject, TAB_EMPTY } from "../project-tabs";
 
 type Props = { params: Promise<{ projekt: string; reiter: string }> };
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `${PROJECT_TABS.find((t) => t.slug === reiter)!.title} · ${findProject(projekt).name}` };
 }
 
-// Belege, Vertrag, Funde and Schlussrechnung come from `kern/` while the page is built; the other tabs follow in later steps.
+// Belege, Positionen, Vertrag, Funde and Schlussrechnung come from `kern/` while the page is built; the other tabs follow in later steps.
 export default async function ProjectTabPage({ params }: Props) {
   const { projekt, reiter } = await params;
   const project = findProject(projekt);
@@ -34,6 +36,12 @@ export default async function ProjectTabPage({ params }: Props) {
   if (reiter === "funde") {
     const rows = findRows().filter((r) => r.project.slug === project.slug);
     if (rows.length) return <FindsTable rows={rows} calculations={findCalculations()} project={project.slug} />;
+  }
+
+  if (reiter === "positionen") {
+    const view = positionsView(project.id);
+    if (view) return <PositionsTable built={view} projektId={project.id} project={project.slug} />;
+    return <EmptyState icon={TAB_EMPTY.positionen.icon} title="Positionen" text={`Die Schlussrechnung von ${project.name} ist gelegt, tieout gleicht hier nicht mehr ab. Was ${project.client} gekürzt und bezahlt hat, steht im Überblick.`} />;
   }
 
   if (reiter === "vertrag") {
