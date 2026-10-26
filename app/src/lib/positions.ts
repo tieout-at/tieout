@@ -35,7 +35,7 @@ const KIND: Record<Positionszeile["art"], string> = {
   pauschale: "Pauschale",
 };
 
-const blank = (cell: string) => (cell === "2013" ? "" : cell);
+const blank = (cell: string) => (cell === "–" ? "" : cell);
 
 export type CoverageItem = { belegId: string; title: string; date: string; weak: string | null };
 

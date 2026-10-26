@@ -35,6 +35,11 @@ describe("tab Positionen", () => {
     ]);
   });
 
+  it("a service without a position leaves Beauftragt empty instead of a dash", () => {
+    const r = view.rows.find((x) => x.id === "p1/regie:9")!;
+    expect([r.ordered, r.done, r.invoiced]).toEqual(["", "12 h Monteur, 12 h Helfer", "0 h"]);
+  });
+
   it("a find set to Nicht verrechnen leaves the sum; the core's sum without it still fits the rows", () => {
     const l = live([{ fundSchluessel: "p1/plan:H-201:D", zeit: "2026-10-26T10:00", wer: "Abrechnung", stand: "nicht_verrechnen", grund: "Test" }]);
     const v = l.positionsView("p1")!;
