@@ -2,11 +2,12 @@
 
 **As of:** Monday, 26 October 2026, after step 8. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
+**Branch:** `schritt-8a-ruhige-seiten` already exists locally with the plan update for step 8c (one commit, not pushed); continue on it.
 **Precondition:** the pull request of `schritt-8-berichte-schlussrechnung` is merged, CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows "Berichte" as three tabs and the tab "Schlussrechnung" of Wohnpark Mooshaim with "Kann die Rechnung raus? 0 von 8 entschieden". If not, ask Maxi S. first.
 
 ## Goal
 
-Step 8 found the screens crammed and fixed two of them (Berichte, Schlussrechnung) after a design round. Step 8a brings the same design language to every other page. It was decided with Maxi S. on 26.10.2026 to do this as its own step before 8b (Zeitstrahl, Positionen, WhatsApp-Meldungen, E-Mails).
+Step 8 found the screens crammed and fixed two of them (Berichte, Schlussrechnung) after a design round. Step 8a brings the same design language to every other page. It was decided with Maxi S. on 26.10.2026 to do this as its own step before 8b (Zeitstrahl, Positionen, WhatsApp-Meldungen, E-Mails). Right after 8b comes 8c, the switch-over of the jury link app.tieout.workers.dev to the new app (moved forward from step 12, see `_STATUS.md`): keep that in mind, every screen of 8a is what the jury will see.
 
 **The design language (DESIGN.md, step 8):** one question per surface, one big figure with its reference, one statement written from the core's figures; part of a whole as one thin bar; the rule behind a figure behind an info icon (`components/ui/info-tip.tsx`); progress as "x von y"; long lists folded; a state named only when it is an exception; amounts only from `kern/`.
 
@@ -45,7 +46,7 @@ Fix once, in the shared components: project head in one row of tabs grouped by s
 ## Done when
 
 - Every page above scores at least 7 / 7 in a second independent review; word counts lower without losing a fact; no amount changed against `main`; checks and CI green; screens at 1440 and 390 px shown to Maxi S.
-- `_STATUS.md` updated, this file rewritten for step 8b, pull request merged with his go.
+- `_STATUS.md` updated, this file rewritten for step 8b (with 8c, the switch-over, as the step after it), pull request merged with his go.
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
