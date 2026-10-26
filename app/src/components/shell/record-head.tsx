@@ -25,7 +25,7 @@ export function RecordHead({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1 px-6 pt-5 pb-4 max-md:px-4">
+    <div className="flex flex-col gap-1 px-6 pt-5 pb-4 max-md:gap-0.5 max-md:px-4 max-md:pt-3 max-md:pb-2.5">
       <div className={wrap ? "flex items-start gap-2 [&>span]:mt-0.5" : "flex items-center gap-2"}>
         {/* one chip, as Attio: the number of a find stands for its object, else the object's icon */}
         {badge ? (
@@ -38,11 +38,11 @@ export function RecordHead({
         <h1 className={wrap ? "line-clamp-2 min-w-0 text-lg font-semibold max-sm:line-clamp-3" : "truncate text-lg font-semibold max-md:line-clamp-2 max-md:whitespace-normal"}>{title}</h1>
         {children}
       </div>
-      <p className="flex flex-wrap gap-x-2 pl-9 text-fg-secondary max-md:flex-col">
+      <p className="flex flex-wrap gap-x-2 pl-9 text-fg-secondary max-md:gap-x-1.5 max-md:pl-0 max-md:text-xs">
         {facts.map((fact, i) => (
           <span key={typeof fact === "string" ? fact : fact.text} className="flex items-center gap-2">
             {i > 0 && (
-              <span aria-hidden className="text-fg-faint max-md:hidden">
+              <span aria-hidden className="text-fg-faint">
                 ·
               </span>
             )}

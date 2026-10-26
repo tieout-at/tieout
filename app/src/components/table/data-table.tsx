@@ -41,6 +41,9 @@ import {
   type ViewState,
 } from "@/lib/table";
 
+/** A quick filter of a table: a word, an optional dot colour (a CSS colour or variable) and which rows it keeps. */
+export type QuickFilter<R> = { id: string; title: string; dot?: string; match: (r: R) => boolean };
+
 export type Column<R> = Access<R> & {
   id: string;
   title: string;
@@ -51,6 +54,12 @@ export type Column<R> = Access<R> & {
   cell: (r: R) => ReactNode;
   /** Fixed sums from `kern/` this column's footer can show. */
   calculations?: Calculation[];
+  /** A second fixed sum shown under the chosen one in the same footer cell, never added to it ("in Klärung" under
+   * "zusätzlich verrechenbar"); shown only when the rows in view have it. */
+  alsoSum?: string;
+  /** The column whose first sum this column's sum is a part of ("davon mit Kürzungsrisiko" under "zusätzlich
+   * verrechenbar"): in the phone list it stands right under that sum, indented, before any sum that is not added. */
+  sumUnder?: string;
 };
 
 /**
@@ -68,6 +77,10 @@ export function DataTable<R extends Row>({
   board,
   phoneRow,
   selectable = true,
+  quick,
+  onOpen,
+  openId = null,
+  sumsBelow = false,
 }: {
   /** Key under which the browser remembers the view. */
   name: string;
@@ -81,6 +94,14 @@ export function DataTable<R extends Row>({
   phoneRow?: (r: R) => ReactNode;
   /** false for a table without any action on a selection (Positionen): no checkboxes, more room for the columns. */
   selectable?: boolean;
+  /** Quick filters as one segmented row with counts (step 8d), on top of the view's own filters; the first shows all. */
+  quick?: QuickFilter<R>[];
+  /** A click on a row opens its peek (the page draws it in a SideWindow) instead of leaving the page; links in it still lead on. */
+  onOpen?: (r: R) => void;
+  /** The row whose peek is open, marked like a selected row. */
+  openId?: string | null;
+  /** The footer sums in one row over the full width (label beside amount) instead of in their narrow columns. */
+  sumsBelow?: boolean;
 }) {
   const storageKey = `tieout.tabelle.${name}`;
   const ids = columns.map((c) => c.id);
@@ -88,6 +109,7 @@ export function DataTable<R extends Row>({
   const view = views.find((v) => v.id === viewId) ?? views[0];
   const [state, setState] = useState<ViewState>(view.state);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [quickId, setQuickId] = useState<string | null>(null);
   const loaded = useRef(false);
 
   // The static page renders the view's own state; a saved one replaces it after the first paint.
@@ -117,7 +139,9 @@ export function DataTable<R extends Row>({
   }, [storageKey, viewId, state]);
 
   const access = useMemo(() => Object.fromEntries(columns.map((c) => [c.id, c])), [columns]);
-  const visible = useMemo(() => applySort(applyFilters(rows, state.filters, access), state.sort, access), [rows, state.filters, state.sort, access]);
+  const filtered = useMemo(() => applySort(applyFilters(rows, state.filters, access), state.sort, access), [rows, state.filters, state.sort, access]);
+  const quickOn = quick?.find((q) => q.id === quickId) ?? null;
+  const visible = useMemo(() => (quickOn ? filtered.filter(quickOn.match) : filtered), [filtered, quickOn]);
   // a column with the same value in every row hides itself until it is asked for ("+" or "Ansicht")
   const uniform = useMemo(() => uniformColumns(rows, columns.slice(1)), [rows, columns]);
   const [forced, setForced] = useState<string[]>([]);
@@ -157,6 +181,9 @@ export function DataTable<R extends Row>({
         board={isBoard}
         selected={selected.size}
         onClearSelection={() => setSelected(new Set())}
+        quick={quick?.map((q) => ({ id: q.id, title: q.title, dot: q.dot, count: filtered.filter(q.match).length }))}
+        quickId={quickOn?.id ?? quick?.[0]?.id ?? null}
+        onQuick={(id) => setQuickId(id === quick?.[0]?.id ? null : id)}
       />
       <SortFilterBar rows={rows} columns={columns} state={state} onState={update} />
 
@@ -189,13 +216,28 @@ export function DataTable<R extends Row>({
 
   // the phone list: one row per entry as the page draws it, then the counter and the fixed sums the footer would show
   function list(row: (r: R) => ReactNode) {
-    const sums = shown.flatMap((c): { id: string; title: string; text: string | null }[] => {
+    type PhoneSum = { id: string; title: string; text: string | null; part?: boolean };
+    const firsts = new Map<string, PhoneSum>();
+    const alsos: PhoneSum[] = [];
+    for (const c of shown) {
       const result = c.calculations?.length ? footerSum(c.calculations, state.calculations[c.id] ?? null, visible) : null;
-      if (!result) return [];
+      if (!result) continue;
       const chosen = c.calculations!.find((x) => x.id === state.calculations[c.id])?.title ?? c.title;
       // without the column head above it, a plain "Summe" says which column it adds up
-      return "cut" in result ? [{ id: c.id, title: chosen, text: null }] : [{ id: c.id, title: result.calculation.title === "Summe" ? c.title : result.calculation.title, text: result.sum.text }];
-    });
+      firsts.set(c.id, "cut" in result ? { id: c.id, title: chosen, text: null } : { id: c.id, title: result.calculation.title === "Summe" ? c.title : result.calculation.title, text: result.sum.text });
+      const also = alsoResult(c, state.calculations[c.id] ?? null, visible);
+      if (also) alsos.push({ id: `${c.id}-also`, title: `${also.calculation.title}, nicht addiert`, text: also.sum.text });
+    }
+    // a part stands right under the sum it belongs to; the sums that are not added come last
+    const parts = new Set(shown.filter((c) => c.sumUnder && firsts.has(c.id) && firsts.has(c.sumUnder)).map((c) => c.id));
+    const sums: PhoneSum[] = [
+      ...shown.flatMap((c) => {
+        if (!firsts.has(c.id) || parts.has(c.id)) return [];
+        const under = shown.filter((p) => parts.has(p.id) && p.sumUnder === c.id).map((p) => ({ ...firsts.get(p.id)!, part: true }));
+        return [firsts.get(c.id)!, ...under];
+      }),
+      ...alsos,
+    ];
     return (
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:hidden">
         <ul aria-label={view.title}>
@@ -210,7 +252,7 @@ export function DataTable<R extends Row>({
         <div className="sticky bottom-0 flex flex-col gap-0.5 bg-surface px-4 py-2 shadow-[inset_0_1px_0_var(--color-line)]">
           <span className="text-fg-secondary">{countText(visible.length, rows.length, noun)}</span>
           {sums.map((s) => (
-            <span key={s.id} className="flex items-baseline justify-between gap-3">
+            <span key={s.id} className={cn("flex items-baseline justify-between gap-3", s.part && "pl-3")}>
               <span className="text-xs text-fg-secondary">{s.title}</span>
               {s.text ? <span className="tabular-nums">{s.text}</span> : <span className="text-xs text-fg-muted">nicht gerechnet</span>}
             </span>
@@ -261,7 +303,15 @@ export function DataTable<R extends Row>({
             {visible.map((r) => {
               const isSelected = selected.has(r.id);
               return (
-                <div key={r.id} role="row" aria-selected={isSelected} className={cn("group flex h-9 max-md:h-11", isSelected && "is-selected")}>
+                <div
+                  key={r.id}
+                  role="row"
+                  aria-selected={isSelected || openId === r.id}
+                  tabIndex={onOpen ? 0 : undefined}
+                  onClick={onOpen ? (e) => !(e.target as HTMLElement).closest("a,button,input,label") && onOpen(r) : undefined}
+                  onKeyDown={onOpen ? (e) => e.key === "Enter" && e.target === e.currentTarget && onOpen(r) : undefined}
+                  className={cn("group flex h-9 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent max-md:h-11", (isSelected || openId === r.id) && "is-selected", onOpen && "cursor-pointer")}
+                >
                   {shown.map((c, i) => (
                     <div
                       key={c.id}
@@ -287,8 +337,34 @@ export function DataTable<R extends Row>({
           <div className="flex-1" />
 
           <div role="rowgroup" className="sticky bottom-0 z-20 bg-surface">
-            <div role="row" className="flex h-9 shadow-[inset_0_1px_0_var(--color-line)] max-md:h-11">
-              {shown.map((c, i) =>
+            <div role="row" className="flex min-h-9 shadow-[inset_0_1px_0_var(--color-line)] max-md:min-h-11">
+              {sumsBelow ? (
+                <>
+                  <div role="cell" className="sticky left-0 z-10 flex w-[132px] shrink-0 items-center justify-end border-r border-line bg-surface px-3 text-fg-secondary md:w-[var(--first-column)]">
+                    <span aria-live="polite">{countText(visible.length, rows.length, noun)}</span>
+                  </div>
+                  <div role="cell" className="flex min-w-0 flex-1 flex-wrap items-center gap-x-6 gap-y-1 px-3 py-1">
+                    {/* each sum, a part right after the sum it belongs to, the sums that are not added last */}
+                    {shown
+                      .filter((c) => c.calculations?.length && !(c.sumUnder && shown.some((u) => u.id === c.sumUnder)))
+                      .flatMap((c) => [c, ...shown.filter((p) => p.sumUnder === c.id && p.calculations?.length)])
+                      // only sums that are chosen: an empty "+ Summe" would leave a gap in the row
+                      .filter((c) => footerSum(c.calculations!, state.calculations[c.id] ?? null, visible))
+                      .map((c) => (
+                        <FooterSum key={c.id} inline noAlso column={c} chosen={state.calculations[c.id] ?? null} visible={visible} onChoose={(id) => update({ calculations: { ...state.calculations, [c.id]: id } })} />
+                      ))}
+                    {shown.map((c) => {
+                      const also = alsoResult(c, state.calculations[c.id] ?? null, visible);
+                      return also ? (
+                        <span key={`${c.id}-also`} className="px-2">
+                          <SumLine inline title={`${also.calculation.title}, nicht addiert`} text={also.sum.text} />
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                </>
+              ) : (
+                shown.map((c, i) =>
                 i === 0 ? (
                   <div
                     key={c.id}
@@ -309,8 +385,9 @@ export function DataTable<R extends Row>({
                     ) : null}
                   </div>
                 ),
+                )
               )}
-              <div role="cell" className="min-w-14 flex-1" />
+              {!sumsBelow && <div role="cell" className="min-w-14 flex-1" />}
             </div>
           </div>
         </div>
@@ -330,6 +407,9 @@ function ViewBar<R>({
   board,
   selected,
   onClearSelection,
+  quick,
+  quickId,
+  onQuick,
 }: {
   views: View[];
   view: View;
@@ -341,10 +421,13 @@ function ViewBar<R>({
   board: boolean;
   selected: number;
   onClearSelection: () => void;
+  quick?: { id: string; title: string; dot?: string; count: number }[];
+  quickId: string | null;
+  onQuick: (id: string) => void;
 }) {
   const changed = JSON.stringify(state) !== JSON.stringify(view.state);
   return (
-    <div className="flex h-12 shrink-0 items-center gap-2 px-3 max-md:h-auto max-md:flex-wrap max-md:py-2">
+    <div className="flex h-12 shrink-0 items-center gap-2 px-3 max-xl:h-auto max-xl:min-h-12 max-xl:flex-wrap max-xl:py-2">
       <DropdownMenu>
         <DropdownMenuTrigger className={barButton}>
           <span className="flex size-4 items-center justify-center rounded-xs bg-fg text-white" aria-hidden>
@@ -402,6 +485,29 @@ function ViewBar<R>({
             </button>
           </PopoverContent>
         </Popover>
+      )}
+
+      {quick && quick.length > 0 && !board && (
+        // a segmented control from 1280 px; below that chips that wrap (nothing hidden at the edge), each with a 44 px tap
+        <div role="radiogroup" aria-label="Schnellfilter" className="flex h-8 max-w-full items-center gap-0.5 rounded-lg bg-fill-hover p-0.5 max-xl:order-last max-xl:h-auto max-xl:w-full max-xl:flex-wrap max-xl:gap-1.5 max-xl:bg-transparent max-xl:p-0">
+          {quick.map((q) => (
+            <button
+              key={q.id}
+              type="button"
+              role="radio"
+              aria-checked={quickId === q.id}
+              onClick={() => onQuick(q.id)}
+              className={cn(
+                "flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2 whitespace-nowrap outline-none transition-colors focus-visible:outline-2 focus-visible:outline-accent max-xl:relative max-xl:h-9 max-xl:rounded-lg max-xl:px-2.5 max-xl:before:absolute max-xl:before:-inset-y-1 max-xl:before:inset-x-0",
+                quickId === q.id ? "bg-surface text-fg shadow-button max-xl:shadow-[inset_0_0_0_1.5px_var(--color-fg)]" : "text-fg-secondary hover:text-fg max-xl:bg-fill-subtle max-xl:shadow-ring",
+              )}
+            >
+              {q.dot && <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: q.dot }} />}
+              {q.title}
+              <span className="text-xs text-fg-muted tabular-nums">{q.count}</span>
+            </button>
+          ))}
+        </div>
       )}
 
       {selected > 0 && (
@@ -712,38 +818,55 @@ function AddColumn<R>({ columns, hidden, onShow }: { columns: Column<R>[]; hidde
   );
 }
 
-function FooterSum<R extends Row>({ column, chosen, visible, onChoose }: { column: Column<R>; chosen: string | null; visible: R[]; onChoose: (id: string | null) => void }) {
+/** The second sum of a column (`alsoSum`), when it is not the chosen one and the rows in view have it. */
+function alsoResult<R extends Row>(column: Column<R>, chosen: string | null, visible: R[]) {
+  if (!column.alsoSum || column.alsoSum === chosen || !column.calculations?.length) return null;
+  const r = footerSum(column.calculations, column.alsoSum, visible);
+  return r && !("cut" in r) && r.calculation.id === column.alsoSum ? r : null;
+}
+
+/** One sum in a footer cell: its money word above the amount, never cut (it wraps), so it is never read as another sum. */
+function SumLine({ title, text, inline = false }: { title: string; text: string | null; inline?: boolean }) {
+  if (inline)
+    return (
+      <span className="flex items-baseline gap-2 whitespace-nowrap">
+        <span className="text-xs text-fg-secondary">{title}</span>
+        {text ? <span className="text-sm text-fg tabular-nums">{text}</span> : <span className="text-xs text-fg-muted">nicht gerechnet</span>}
+      </span>
+    );
+  return (
+    <span className="flex flex-col items-end text-right leading-4">
+      <span className="text-xs text-balance text-fg-secondary">{title}</span>
+      {text ? <span className="text-sm text-fg tabular-nums whitespace-nowrap">{text}</span> : <span className="text-xs whitespace-nowrap text-fg-muted">nicht gerechnet</span>}
+    </span>
+  );
+}
+
+function FooterSum<R extends Row>({ column, chosen, visible, onChoose, inline = false, noAlso = false }: { column: Column<R>; chosen: string | null; visible: R[]; onChoose: (id: string | null) => void; inline?: boolean; noAlso?: boolean }) {
   const result = footerSum(column.calculations ?? [], chosen, visible);
+  const also = noAlso ? null : alsoResult(column, chosen, visible);
   return (
     <Popover>
       <PopoverTrigger
-        className="group/sum flex h-full min-w-0 flex-1 items-center justify-end gap-1.5 px-3 text-fg-muted outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover"
-        title={
-          result && "cut" in result
-            ? "Für genau diese Einträge liefert der Rechenkern keine Summe: ein Filter teilt die Gruppe."
-            : result
-              ? `${result.calculation.title} ${result.sum.text}`
-              : undefined
-        }
+        className={cn(
+          "group/sum flex h-full min-w-0 justify-center text-fg-muted outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent data-popup-open:bg-fill-hover",
+          inline ? "flex-row items-center gap-5 rounded-md px-2 py-1" : "flex-1 flex-col items-end gap-1 px-3 py-1.5",
+        )}
+        title={result && "cut" in result ? "Für genau diese Einträge liefert der Rechenkern keine Summe: ein Filter teilt die Gruppe." : undefined}
       >
         {result ? (
           "cut" in result ? (
-            <>
-              <span className="min-w-0 truncate text-xs text-fg-secondary">{column.calculations?.find((c) => c.id === chosen)?.title}</span>
-              <span className="shrink-0 text-xs whitespace-nowrap">nicht gerechnet</span>
-            </>
+            <SumLine inline={inline} title={column.calculations?.find((c) => c.id === chosen)?.title ?? ""} text={null} />
           ) : (
-            <>
-              <span className="min-w-0 truncate text-xs text-fg-secondary">{result.calculation.title}</span>
-              <span className="shrink-0 whitespace-nowrap text-fg tabular-nums">{result.sum.text}</span>
-            </>
+            <SumLine inline={inline} title={result.calculation.title} text={result.sum.text} />
           )
         ) : (
-          <>
+          <span className="flex items-center gap-1.5">
             <Plus className="size-4 opacity-0 group-hover/sum:opacity-100" aria-hidden />
             <span className="opacity-0 group-hover/sum:opacity-100 group-focus-visible/sum:opacity-100">Summe</span>
-          </>
+          </span>
         )}
+        {also && <SumLine inline={inline} title={`${also.calculation.title}, nicht addiert`} text={also.sum.text} />}
       </PopoverTrigger>
       <PopoverContent align="end" side="top" className="w-64">
         <PopoverTitle>Summe {column.title}</PopoverTitle>

@@ -5,6 +5,7 @@ import { ArrowUpDown, CalendarDays, Check, ChevronRight, Construction, ListFilte
 import { useEffect, useRef, useState } from "react";
 
 import { TaskDialog } from "@/components/aufgaben/task-dialog";
+import { Ring } from "@/components/charts/ring";
 import { EmptyState, SectionEmpty } from "@/components/shell/empty-state";
 import { barButton, CheckMark, menuItem } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -396,12 +397,16 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
   );
 }
 
-/** The open tasks on Start (Attio's "Tasks" on Home): the three due first, each with its circle, and "+" for a new one. */
+/**
+ * The open tasks on Start (Attio's "Tasks" on Home), as a card next to "Als Nächstes" (step 8d): the three due first,
+ * each with its circle, a small ring of done against open tasks in the head, and "+" for a new one.
+ */
 export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
   const tasks = useTasks();
   const today = useToday();
   const [making, setMaking] = useState(false);
   const open = (tasks ?? []).filter((t) => !t.done).toSorted(byDue);
+  const done = (tasks ?? []).length - open.length;
   // before the first task, the finds whose Abhilfe is known are the proposals on "Aufgaben"
   const proposed = (tasks ?? []).length === 0 ? targets.filter((t) => t.taskText).length : 0;
   return (
@@ -410,6 +415,15 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
         <h2 id="aufgaben" className="flex items-center gap-1.5 text-fg-secondary">
           Aufgaben
           {open.length > 0 && <span className="text-fg-muted tabular-nums">{open.length}</span>}
+          {(tasks ?? []).length > 0 && (
+            <Ring
+              size={18}
+              thickness={3}
+              label={`${done} von ${(tasks ?? []).length} Aufgaben erledigt`}
+              total={(tasks ?? []).length}
+              parts={[{ id: "erledigt", label: "erledigt", value: done, tone: "money" }]}
+            />
+          )}
         </h2>
         <span className="flex items-center gap-1">
           <Link
@@ -428,39 +442,43 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
           </button>
         </span>
       </div>
-      {open.length === 0 || !today ? (
-        proposed ? (
-          <Link href="/aufgaben/" className="flex min-h-11 items-center justify-between gap-2 rounded-md px-1 py-2 text-fg-secondary outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
-            Noch keine Aufgabe. {proposed} Vorschläge aus den Funden ansehen
-            <ChevronRight className="size-4 shrink-0" aria-hidden />
-          </Link>
+      <div className="flex flex-1 flex-col rounded-lg bg-surface p-1 shadow-ring">
+        {open.length === 0 || !today ? (
+          proposed ? (
+            <Link href="/aufgaben/" className="flex min-h-11 items-center justify-between gap-2 rounded-md px-2 py-2.5 text-fg-secondary outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
+              Noch keine Aufgabe. {proposed} Vorschläge aus den Funden ansehen
+              <ChevronRight className="size-4 shrink-0" aria-hidden />
+            </Link>
+          ) : (
+            <div className="py-3">
+              <SectionEmpty title="Keine offenen Aufgaben" text="Aus jeder Lücke wird eine Aufgabe mit Frist." />
+            </div>
+          )
         ) : (
-          <SectionEmpty title="Keine offenen Aufgaben" text="Aus jeder Lücke wird eine Aufgabe mit Frist." />
-        )
-      ) : (
-        <ul className="flex flex-col">
-          {open.slice(0, 3).map((t) => (
-            <li key={t.id} className="flex min-h-11 items-start gap-2.5 rounded-md px-1 py-2">
-              <span className="pt-0.5">
-                <TaskCircle task={t} onChange={(done) => checkTask(t, done)} />
-              </span>
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="line-clamp-3">{t.text}</span>
-                <span className="flex flex-wrap items-center gap-x-1.5 text-xs text-fg-secondary">
-                  <span>{t.zustaendig}</span>
-                  <span aria-hidden className="text-fg-faint">
-                    ·
-                  </span>
-                  <FindLink task={t} small />
+          <ul className="flex flex-col">
+            {open.slice(0, 3).map((t) => (
+              <li key={t.id} className="flex min-h-11 items-start gap-2.5 rounded-md px-2 py-2.5 [&:not(:last-child)]:shadow-line-bottom">
+                <span className="pt-0.5">
+                  <TaskCircle task={t} onChange={(done) => checkTask(t, done)} />
                 </span>
-              </span>
-              <span className="shrink-0 pt-px text-xs">
-                <Due task={t} today={today} word />
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="line-clamp-3">{t.text}</span>
+                  <span className="flex flex-wrap items-center gap-x-1.5 text-xs text-fg-secondary">
+                    <span>{t.zustaendig}</span>
+                    <span aria-hidden className="text-fg-faint">
+                      ·
+                    </span>
+                    <FindLink task={t} small />
+                  </span>
+                </span>
+                <span className="shrink-0 pt-px text-xs">
+                  <Due task={t} today={today} word />
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <TaskDialog open={making} onOpenChange={setMaking} targets={targets} />
     </section>
   );

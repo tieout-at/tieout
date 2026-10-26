@@ -10,9 +10,7 @@ export default function BetriebLayout({ children }: { children: React.ReactNode 
   return (
     <Page destination="betrieb" heading={false}>
       <RecordHead icon={Building2} title={BUSINESS.name} facts={[BUSINESS.trade, BUSINESS.place, "Beispieldaten"]} />
-      <div className="no-scrollbar overflow-x-auto px-6 pb-2 shadow-line-bottom max-md:px-4">
-        <TabLinks label="Bereiche des Betriebs" tabs={BUSINESS_TABS.map((t) => ({ title: t.title, href: `/betrieb/${t.slug ? `${t.slug}/` : ""}` }))} />
-      </div>
+      <TabLinks label="Bereiche des Betriebs" tabs={BUSINESS_TABS.map((t) => ({ title: t.title, href: `/betrieb/${t.slug ? `${t.slug}/` : ""}` }))} />
       <div className="flex-1">{children}</div>
     </Page>
   );

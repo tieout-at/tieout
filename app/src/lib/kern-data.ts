@@ -355,10 +355,36 @@ export type NextStep = {
   deadline: string | null;
 };
 
+export type StartProject = {
+  id: string;
+  name: string;
+  href: string;
+  client: string;
+  date: ProjectRow["date"];
+  status: ProjectRow["status"];
+  /** The core's money words of the project, the Kürzungsrisiko inside the first and the two parts of the second. */
+  extra: Amount;
+  risk: Amount;
+  unclear: Amount;
+  gap: Amount;
+  change: Amount;
+};
+
 export type StartView = {
   extra: Amount;
   risk: Amount;
   unclear: Amount;
+  /** The parts of "in Klärung" for the business: Beleg fehlt and Nachtrag nicht gelegt. */
+  gap: Amount;
+  change: Amount;
+  /** Money per open project (step 8d, the chart on Start), in the order of the project list. */
+  projects: StartProject[];
+  /** Projects the core no longer compares (closed or Schlussrechnung submitted). */
+  closed: number;
+  /** The day the twin was compared ('Stand'), the same date on every page. */
+  asOf: string;
+  /** How many finds stand behind each money word (counted, no amount). */
+  finds: { extra: number; unclear: number };
   /** The next check and the next release, in the project whose Schlussrechnung is due first; empty once all are decided. */
   next: NextStep[];
 };
@@ -385,6 +411,29 @@ export function startView(b: FirmenErgebnis = business()): StartView {
     extra: amount(b.summen.zusaetzlichVerrechenbar),
     risk: amount(b.davonMitKuerzungsrisiko.betrag),
     unclear: amount(b.summen.inKlaerung),
+    gap: amount(b.geld.belegFehlt.betrag),
+    change: amount(b.geld.nachtragNichtGelegt.betrag),
+    projects: projectRows(b)
+      .filter((p) => p.extra !== null)
+      .map((p) => {
+        const e = b.ergebnisse[p.id];
+        return {
+          id: p.id,
+          name: p.name,
+          href: `/projekte/${p.slug}/`,
+          client: p.client,
+          date: p.date,
+          status: p.status,
+          extra: amount(e.abgleich.summen.zusaetzlichVerrechenbar),
+          risk: amount(e.vorpruefung?.davonMitKuerzungsrisiko ?? 0),
+          unclear: amount(e.abgleich.summen.inKlaerung),
+          gap: amount(e.abgleich.summen.belegFehlt),
+          change: amount(e.abgleich.summen.nachtragNichtGelegt),
+        };
+      }),
+    closed: projectRows(b).filter((p) => p.extra === null).length,
+    asOf: datumText(b.stichtag),
+    finds: { extra: b.summen.fundeZusaetzlich, unclear: b.geld.belegFehlt.anzahl + b.geld.nachtragNichtGelegt.anzahl },
     next: [step("gefunden", "Prüfen", "Abrechnung"), step("geprueft", "Freigeben", "Geschäftsführung")].filter((s): s is NextStep => s !== null),
   };
 }

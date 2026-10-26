@@ -32,7 +32,7 @@
   /* Colours: ink and ultramarine from the brand; greys and alphas as measured in Attio. */
   --color-fg: #0a1020;
   --color-fg-secondary: rgb(10 16 32 / 0.63);
-  --color-fg-help: rgb(10 16 32 / 0.55);
+  --color-fg-help: rgb(10 16 32 / 0.6);
   /* Attio's 50 % reaches only 3.55:1 on white; 58 % reaches 4.67:1 (AA), for screens read on site */
   --color-fg-muted: rgb(10 16 32 / 0.58);
   --color-fg-faint: rgb(10 16 32 / 0.3);
@@ -48,23 +48,43 @@
   --color-accent-soft: rgb(29 59 255 / 0.08);
   --color-grid: #e8ecf2;
 
-  /* State colours, only as the dot of a tag (status colour of a project, Belegstand of a find). */
-  --color-state-red: #e5484d;
-  --color-state-yellow: #f0b429;
-  --color-state-orange: #f2762e;
-  --color-state-green: #2f9e66;
+  /* State colours (softer set of step 8d, 26.10.2026: chroma down by a quarter to a third; green lighter than orange and
+     red darker, so the pairs shown together stay apart under red-green colour blindness). Dots, cells, chart fills. */
+  --color-state-red: #b24745; /* Kürzungsrisiko only; 5.41:1 on white */
+  --color-state-yellow: #e7be68; /* Beleg fehlt; 1.76:1, always with its edge or a label */
+  --color-state-orange: #d07940; /* Nachtrag nicht gelegt; 3.24:1 */
+  --color-state-green: #4ead85; /* belegt; 2.75:1, coloured cells keep the 1 px edge */
   --color-state-grey: rgb(10 16 32 / 0.3);
   /* Übersicht (Digitaler Zwilling): a cell of the Abgleich, and the 1 px contour that lifts every coloured cell to
      at least 3:1 against white; the fill stays the state colour, so lines and cells share one yellow. */
   --color-cell: #e6e9ef;
   --color-cell-edge: rgb(10 16 32 / 0.28);
-  --color-state-green-edge: #1f7a4f;
-  --color-state-yellow-edge: #a87a00;
-  --color-state-orange-edge: #c0521a;
-  /* red as text (an overdue date): 5.49:1 on white, where the dot red has 3.91:1 */
-  --color-state-red-edge: #c4312f;
+  --color-state-green-edge: #277354; /* 5.73:1 */
+  --color-state-yellow-edge: #8a6419; /* 5.36:1 */
+  --color-state-orange-edge: #9f5021; /* 5.76:1 */
+  /* red as text (an overdue date) and its 1 px contour */
+  --color-state-red-edge: #9d3c3a; /* 6.69:1 */
   /* The light that travels along a traced line. */
   --color-sweep: #a9b6ff;
+  /* Charts (step 8d): the colours of the Übersicht carry the money everywhere (green belegt, yellow Beleg fehlt,
+     orange Nachtrag nicht gelegt, red Kürzungsrisiko); neutral bars for what is invoiced or paid; a wash of each. */
+  --color-data-money: var(--color-state-green);
+  --color-data-risk: var(--color-state-red);
+  --color-data-gap: var(--color-state-yellow);
+  --color-data-change: var(--color-state-orange);
+  --color-bar: rgb(10 16 32 / 0.18);
+  --color-bar-strong: rgb(10 16 32 / 0.42);
+  --color-track: rgb(10 16 32 / 0.06);
+  /* washes behind pills and find cards; the edge colour on top reaches at least 4.9:1 */
+  --color-money-soft: #e8f8f0;
+  --color-gap-soft: #fef4dd;
+  --color-supplement-soft: #fdeee5;
+  --color-risk-soft: #fdedeb;
+  /* identity of a project or an Auftraggeber in a chart: no status hue, away from the accent; validated all pairs
+     (dataviz); series 3 is below 3:1, so it is always labelled directly */
+  --color-series-1: #1a588f;
+  --color-series-2: #a16bae;
+  --color-series-3: #3fb8c1;
   --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
   /* Table lines and the checkbox ring, as measured in Attio's tables. */
   --color-check: rgb(0 0 0 / 0.09);

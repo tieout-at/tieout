@@ -4,7 +4,12 @@ import Link from "next/link";
 import { CircleCheck, CircleCheckBig } from "lucide-react";
 import { useSyncExternalStore } from "react";
 
+import { HBarChart } from "@/components/charts/axis-charts";
+import { KpiRow } from "@/components/charts/kpi";
+import { Legend } from "@/components/charts/legend";
 import { SectionEmpty } from "@/components/shell/empty-state";
+import { InfoTip } from "@/components/ui/info-tip";
+import { cn } from "@/lib/utils";
 import { BUSINESS } from "@/lib/example";
 import type { StartView } from "@/lib/kern-data";
 import { useLive } from "@/lib/live";
@@ -37,33 +42,118 @@ export function Greeting() {
   );
 }
 
-export function Today() {
-  const now = useNow();
-  if (!now) return null;
-  const label = new Intl.DateTimeFormat("de-AT", { weekday: "long", day: "numeric", month: "long" }).format(now);
-  return <span className="text-xs text-fg-secondary">Heute, {label}</span>;
+/** The day the twin was compared, the same "Stand" as on every other page (not the day of the visit). */
+export function AsOf({ text }: { text: string }) {
+  return <span className="text-xs text-fg-muted tabular-nums">Stand {text}, Beispieldaten</span>;
 }
 
-/** The money of the business, from the core; after a decision in this browser the core's sums over it (live.ts). */
+/**
+ * The money of the business (step 8d): two figures with a ring for their parts instead of a thin bar, never added.
+ * From the core; after a decision in this browser the core's sums over it (live.ts).
+ */
 export function StartMoney({ built }: { built: StartView }) {
   const view = useLive()?.startView() ?? built;
-  const cards = [
-    { title: "zusätzlich verrechenbar", amount: view.extra, line: view.risk.cent ? `davon mit Kürzungsrisiko ${view.risk.text}` : null },
-    { title: "in Klärung", amount: view.unclear, line: "Beleg fehlt oder Nachtrag nicht gelegt" },
-  ];
   return (
-    <section aria-label="Ergebnis" className="grid grid-cols-2 gap-2">
-      {cards.map((c) => (
-        <Link
-          key={c.title}
-          href="/funde/"
-          className="flex flex-col gap-1 rounded-lg bg-surface px-4 py-3 shadow-ring outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent"
-        >
-          <span className="text-xs text-fg-secondary">{c.title}</span>
-          <span className="text-xl font-semibold tabular-nums">{c.amount.text}</span>
-          {c.line && <span className="text-xs text-fg-muted">{c.line.replace(/ €/g, "\u00a0€")}</span>}
-        </Link>
-      ))}
+    <KpiRow
+      items={[
+        {
+          id: "extra",
+          label: "zusätzlich verrechenbar",
+          value: view.extra.text,
+          lead: true,
+          href: "/funde/",
+          lines: view.risk.cent ? [{ text: `davon mit Kürzungsrisiko ${view.risk.text}`, tone: "risk" }] : [{ text: "ohne Kürzungsrisiko" }],
+        },
+        {
+          id: "unclear",
+          label: "in Klärung, nicht addiert",
+          value: view.unclear.text,
+          lead: true,
+          href: "/funde/",
+          lines: [
+            ...(view.gap.cent ? [{ text: `Beleg fehlt ${view.gap.text}`, tone: "gap" as const }] : []),
+            ...(view.change.cent ? [{ text: `Nachtrag nicht gelegt ${view.change.text}`, tone: "change" as const }] : []),
+          ],
+        },
+      ]}
+    />
+  );
+}
+
+const DOT_COLOUR = { rot: "bg-state-red", gelb: "bg-state-yellow", gruen: "bg-state-green", grau: "bg-state-grey" } as const;
+
+/**
+ * "Geld je Projekt" (step 8d, asked for by the Geschäftsführer in test 8c): one row per open project on a real axis,
+ * "zusätzlich verrechenbar" with its Kürzungsrisiko hatched, and under it, apart, "in Klärung" in its two parts.
+ */
+export function ProjectMoney({ built }: { built: StartView }) {
+  const view = useLive()?.startView() ?? built;
+  return (
+    <section aria-labelledby="geld-je-projekt" className="flex flex-col rounded-xl bg-surface shadow-ring">
+      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 pt-4 pb-1">
+        <h2 id="geld-je-projekt" className="flex items-center gap-1.5 text-fg-secondary">
+          Geld je Projekt
+          <InfoTip label="Geld je Projekt">Je offenem Projekt die belegten Funde (zusätzlich verrechenbar) und darunter, getrennt, was noch in Klärung ist. Die beiden werden nie addiert. Schraffiert: der Teil mit Kürzungsrisiko.</InfoTip>
+        </h2>
+        <Legend
+          items={[
+            { tone: "money", label: "zusätzlich verrechenbar" },
+            { tone: "risk", label: "davon mit Kürzungsrisiko", hatched: true },
+            { tone: "gap", label: "Beleg fehlt" },
+            { tone: "change", label: "Nachtrag nicht gelegt" },
+          ]}
+        />
+      </header>
+      <div className="px-3 pt-2 pb-3">
+        <HBarChart
+          label="Geld je Projekt"
+          groups={view.projects.map((p) => ({
+            id: p.id,
+            name: p.name,
+            href: p.href,
+            sub: p.date ? (
+              <span className="flex items-center gap-1.5">
+                {(p.status.colour === "rot" || p.status.colour === "gelb") && <span aria-hidden className={cn("size-1.5 shrink-0 rounded-full", DOT_COLOUR[p.status.colour])} />}
+                {p.date.label === "Schlussrechnung legen bis" ? `Schlussrechnung legen bis ${p.date.text}` : `${p.date.label} ${p.date.text}`}
+              </span>
+            ) : (
+              p.client
+            ),
+            bars: [
+              {
+                id: "extra",
+                label: "zusätzlich verrechenbar",
+                text: p.extra.text,
+                parts: [
+                  { id: "risk", label: "mit Kürzungsrisiko", cent: p.risk.cent, text: p.risk.text, tone: "risk", hatched: true },
+                  { id: "money", label: "ohne Kürzungsrisiko", cent: Math.max(0, p.extra.cent - p.risk.cent), text: "", tone: "money" },
+                ],
+              },
+              ...(p.unclear.cent
+                ? [
+                    {
+                      id: "unclear",
+                      label: "in Klärung",
+                      text: p.unclear.text,
+                      parts: [
+                        { id: "gap", label: "Beleg fehlt", cent: p.gap.cent, text: p.gap.text, tone: "gap" as const },
+                        { id: "change", label: "Nachtrag nicht gelegt", cent: p.change.cent, text: p.change.text, tone: "change" as const },
+                      ],
+                    },
+                  ]
+                : []),
+            ],
+          }))}
+        />
+      </div>
+      {view.closed > 0 && (
+        <footer className="px-5 py-2.5 text-xs text-fg-secondary shadow-[inset_0_1px_0_0_var(--color-line)]">
+          <Link href="/projekte/" className="link-quiet">
+            {view.closed === 1 ? "1 abgeschlossenes Projekt" : `${view.closed} abgeschlossene Projekte`}
+          </Link>
+          , dort gleicht tieout nicht mehr ab.
+        </footer>
+      )}
     </section>
   );
 }
@@ -98,7 +188,7 @@ export function NextSteps({ built }: { built: StartView }) {
                       <span className="line-clamp-3">{s.find.name}</span>
                     </span>
                     <span className="text-xs text-fg-secondary">
-                      {s.who} {s.step === "Prüfen" ? "prüft" : "gibt frei"} · {s.find.project.name}
+                      {s.who} {s.step === "Prüfen" ? "prüft" : "gibt frei"} · {s.find.project.name}{s.deadline ? `, ${s.deadline}` : ""}
                       {others > 0 ? `, danach ${others} ${others === 1 ? "weiterer Fund" : "weitere Funde"}` : ""}
                     </span>
                   </span>

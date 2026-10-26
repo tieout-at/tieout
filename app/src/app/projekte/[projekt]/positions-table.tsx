@@ -3,13 +3,18 @@
 import Link from "next/link";
 import { Coins, FileCheck, Grid3x3, Hash, Layers, ListOrdered, PackageCheck, ReceiptText, ScanSearch, SearchCheck, Shapes, TriangleAlert, Wallet } from "lucide-react";
 
+import { useState } from "react";
+
 import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
 import { useLive } from "@/lib/live";
 import type { PositionRow, PositionsView } from "@/lib/positions-shared";
 import type { View } from "@/lib/table";
 import type { TaskTarget } from "@/lib/tasks";
-import { CoverageMatrix } from "./coverage-matrix";
+import { cn } from "@/lib/utils";
+import { CoverageMatrix, PositionWindow } from "./coverage-matrix";
+
+const DOT = { belegt: "bg-data-money", beleg_fehlt: "bg-data-gap", nachtrag_nicht_gelegt: "bg-data-change" } as const;
 
 const EVIDENCE: Record<NonNullable<PositionRow["belegstand"]>["state"], { colour: TagColour; rank: number }> = {
   belegt: { colour: "green", rank: 0 },
@@ -41,9 +46,9 @@ function PositionName({ r }: { r: PositionRow }) {
   );
 }
 
-/** A quantity cell; hours of a Regiebericht are long, so a cut one keeps its full text on hover. */
+/** A quantity cell; the hours of a Regiebericht are long, so they take the small size instead of being cut. */
 const Quantity = ({ text }: { text: string }) => (
-  <span className="truncate" title={text}>
+  <span className={cn("truncate", text.length > 14 && "text-xs")} title={text}>
     {text}
   </span>
 );
@@ -58,13 +63,14 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
   const live = useLive();
   const view = (live && live.positionsView(projektId)) || built;
   const { rows, calculations } = view;
+  const [peek, setPeek] = useState<string | null>(null);
 
   const columns: Column<PositionRow>[] = [
     {
       id: "position",
       title: "Position",
       icon: ListOrdered,
-      width: 250,
+      width: 274,
       sortValue: (r) => r.order,
       cell: (r) => <PositionName r={r} />,
     },
@@ -77,30 +83,55 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       filterValue: (r) => (r.find ? "mit Fund" : "ohne Fund"),
       cell: (r) => r.find && <FindChip find={r.find} />,
     },
-    { id: "ordered", title: "Beauftragt", icon: ReceiptText, width: 116, align: "right", cell: (r) => <Quantity text={r.ordered} /> },
-    { id: "done", title: "Erbracht", icon: PackageCheck, width: 190, align: "right", sortValue: (r) => r.doneValue, cell: (r) => <Quantity text={r.done} /> },
-    { id: "invoiced", title: "Verrechnet", icon: ReceiptText, width: 116, align: "right", cell: (r) => <Quantity text={r.invoiced} /> },
+    // widths so that at 1440 px every head and value of the view "Offen" fits without cutting (step 8d)
+    { id: "ordered", title: "Beauftragt", icon: ReceiptText, width: 112, align: "right", cell: (r) => <Quantity text={r.ordered} /> },
+    { id: "done", title: "Erbracht", icon: PackageCheck, width: 156, align: "right", sortValue: (r) => r.doneValue, cell: (r) => <Quantity text={r.done} /> },
+    { id: "invoiced", title: "Verrechnet", icon: ReceiptText, width: 112, align: "right", cell: (r) => <Quantity text={r.invoiced} /> },
     {
       id: "open",
       title: "Offen",
       icon: Wallet,
-      width: 250,
+      width: 128,
       align: "right",
       sortValue: (r) => r.open?.cent ?? null,
       filterValue: (r) => (r.open ? "ja" : "nein"),
       calculations: calculations.open,
+      alsoSum: "klaerung",
       cell: (r) => r.open?.text,
+    },
+    {
+      id: "risk",
+      title: "Kürzungsrisiko",
+      icon: TriangleAlert,
+      width: 130,
+      align: "right",
+      sortValue: (r) => (r.risk ? 0 : 1),
+      filterValue: (r) => r.risk?.reason ?? null,
+      // the part amount where only a part of the row is at risk (Regiebericht 9), else the whole row; the reason on hover and in the window
+      cell: (r) =>
+        r.risk && (
+          <span className="flex items-center gap-1.5 whitespace-nowrap" title={`Kürzungsrisiko: ${r.risk.reason}`}>
+            <span aria-hidden className="size-2 shrink-0 rounded-full bg-data-risk" />
+            <span className={cn("tabular-nums", !r.risk.part && "text-fg-secondary")}>{r.risk.part ? r.risk.amount : "ganze Position"}</span>
+          </span>
+        ),
     },
     {
       id: "belegstand",
       title: "Belegstand",
       icon: FileCheck,
-      width: 186,
+      width: 188,
       sortValue: (r) => (r.belegstand ? EVIDENCE[r.belegstand.state].rank : null),
       filterValue: (r) => r.belegstand?.text ?? null,
       calculations: calculations.belegstand,
-      // "belegt" is the rule; only a gap is named (step 8a)
-      cell: (r) => r.belegstand && r.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>,
+      // every Belegstand written with its dot, never cut; the Kürzungsrisiko has its own column
+      cell: (r) =>
+        r.belegstand && (
+          <span className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
+            <span aria-hidden className={cn("size-2 rounded-full", DOT[r.belegstand.state])} />
+            {r.belegstand.text}
+          </span>
+        ),
     },
     {
       id: "note",
@@ -136,7 +167,7 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
 
   // the find is a chip in the row's name; its column stays for sorting and the filter "mit Fund"
   const hidden = ["find", "group", "kind", "price", "unit", "check"];
-  const calc = { open: "zusaetzlich", belegstand: "klaerung" };
+  const calc = { open: "zusaetzlich", belegstand: null };
   const lvOrder = { column: "position", direction: "asc" } as const;
   // the number of entries stands in the view's name, so the answer shows before the click
   const count = (f: (r: PositionRow) => boolean) => rows.filter(f).length;
@@ -159,16 +190,26 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
   ];
 
   return (
+    <>
     <DataTable
+      onOpen={(r) => setPeek((cur) => (cur === r.id ? null : r.id))}
+      openId={peek}
       name={`positionen.${project}`}
       rows={rows}
       columns={columns}
       views={views}
       noun={{ one: "Eintrag", many: "Einträge", dative: "Einträgen" }}
       selectable={false}
+      sumsBelow
       board={(visible) => <CoverageMatrix rows={visible} view={view} targets={targets} project={project} />}
       phoneRow={(r) => (
-        <div className="flex flex-col gap-1 px-4 py-2.5">
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={(e) => !(e.target as HTMLElement).closest("a") && setPeek(r.id)}
+          onKeyDown={(e) => e.key === "Enter" && setPeek(r.id)}
+          className="flex flex-col gap-1 px-4 py-2.5 outline-none active:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
+        >
           <span className="flex items-start gap-2">
             <span className="line-clamp-2 min-w-0 flex-1">
               {r.number && <span className="mr-1.5 font-mono text-xs text-fg-secondary">{r.number}</span>}
@@ -181,11 +222,20 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
             {r.ordered && <span>beauftragt {r.ordered}</span>}
             {r.done && <span>erbracht {r.done}</span>}
             {r.invoiced && <span>verrechnet {r.invoiced}</span>}
-            {r.belegstand && r.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>}
+            {r.belegstand && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>}
+            {/* the reason once in the window, not four times down the list of one find */}
+            {r.risk && (
+              <span className="flex items-center gap-1">
+                <span aria-hidden className="size-2 rounded-full bg-data-risk" />
+                Kürzungsrisiko{r.risk.part ? ` ${r.risk.amount}` : ""}
+              </span>
+            )}
             {r.note && <span>{r.note}</span>}
           </span>
         </div>
       )}
     />
+    <PositionWindow rows={rows} chosen={rows.find((r) => r.id === peek) ?? null} onOpen={setPeek} targets={targets} project={project} />
+    </>
   );
 }

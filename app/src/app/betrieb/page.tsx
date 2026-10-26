@@ -11,7 +11,8 @@ export default function VertraegePage() {
   // a kind every Vertrag shares is said once above the table, not in every row (step 8a)
   const shared = rows.every((r) => r.kind === rows[0].kind) ? rows[0].kind : null;
   return (
-    <div className="mx-auto flex w-full max-w-[880px] flex-col gap-2 px-6 py-6 max-md:px-4 max-md:py-4">
+    // left-aligned under the tabs, as the other record pages
+    <div className="flex w-full max-w-[960px] flex-col gap-2 px-6 py-6 max-md:px-4 max-md:py-4">
       <MiniTable
         title="Verträge"
         rows={rows}

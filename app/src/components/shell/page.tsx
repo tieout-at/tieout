@@ -20,7 +20,7 @@ export function Page({
   return (
     <>
       <PageHeader destination={destination} title={title} trail={trail} heading={heading} />
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto print:overflow-visible" data-scroll-area>
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto pr-[var(--side-window,0px)] transition-[padding] duration-300 ease-soft motion-reduce:transition-none print:overflow-visible print:pr-0" data-scroll-area>
         {children}
       </div>
     </>

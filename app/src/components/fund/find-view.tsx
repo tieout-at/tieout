@@ -2,39 +2,49 @@
 
 import Link from "next/link";
 import { ChevronDown, ChevronUp, SearchCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { Kpi, type KpiItem } from "@/components/charts/kpi";
 import { Activity } from "@/components/record/activity";
-import { Highlights } from "@/components/record/highlights";
 import { RecordHead } from "@/components/shell/record-head";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { useMediaQuery } from "@/components/ui/use-media";
-import { currentState, decide, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
+import { SideWindow, toggleOpen } from "@/components/ui/side-window";
+import { currentState, decide, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision, type DecisionState } from "@/lib/decisions";
 import type { FindRecord, SourceRef } from "@/lib/finds";
 import { useLive } from "@/lib/live";
-import type { ActivityEntry, Highlight } from "@/lib/records";
+import type { ActivityEntry } from "@/lib/records";
 import { taskWords } from "@/lib/tasks";
 import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
 import { DecisionBar } from "./decision-bar";
 import { OriginalViewer } from "./original-viewer";
-import { CalcPath, EvidenceList, WeakSpot } from "./sources";
+import { CalcPath, EvidenceTiles, WeakSpot } from "./sources";
 
 const zeitText = (z: string) => `${z.slice(8, 10)}.${z.slice(5, 7)}.${z.slice(0, 4)}, ${z.slice(11, 16)}`;
+const sameSource = (a: SourceRef, b: SourceRef) => a.page === b.page && a.place === b.place;
+/** Euro text to cents, only to size the ring of a partial Kürzungsrisiko (never shown). */
+const cents = (t: string) => Number(t.replace(/[^\d,]/g, "").replace(",", ".")) * 100;
 
 const navButton =
   "flex size-7 items-center justify-center rounded-md text-fg-secondary shadow-button outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent max-md:size-11";
 
+const STAND_TONE: Record<string, "money" | "gap" | "change" | undefined> = { belegt: "money", beleg_fehlt: "gap", nachtrag_nicht_gelegt: "change" };
+
+const STEPS: { id: DecisionState; title: string }[] = [
+  { id: "gefunden", title: "Gefunden" },
+  { id: "geprueft", title: "Geprüft" },
+  { id: "freigegeben", title: "Freigegeben" },
+  { id: "in_schlussrechnung", title: "In der Schluss­rechnung" },
+];
+
 /**
- * The find page (SPEZIFIKATION.md 4.2 and 7.3): Attio's record layout with the chat panel turned into the original.
- * Left: name, decision bar, highlights, weak spot, Rechenweg, Belege, Verlauf. Right (from 1024 px): the original of the
- * chosen source with its place marked; below 1024 px the original opens as a panel when a source is tapped.
+ * The find page (SPEZIFIKATION.md 4.2 and 7.3, calmer in step 8d): name, decision bar, then one column with the figures
+ * (Betrag with a ring for a partial Kürzungsrisiko, Belegstand, the decision as four steps), the weak spot as one
+ * quiet line that opens, the Rechenweg with the quantities in words, the Belege as one list and the Verlauf. The original
+ * is no longer built into the page: a source opens it in a window at the right, a second click on the same source, its X or Escape
+ * closes it.
  */
 export function FindView({ record }: { record: FindRecord }) {
-  const [source, setSource] = useState<SourceRef | null>(record.first);
-  const [sheet, setSheet] = useState(false);
-  const wide = useMediaQuery("(min-width: 1024px)", true);
-  const phone = useMediaQuery("(max-width: 767px)", false);
+  const [source, setSource] = useState<SourceRef | null>(null);
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const tasks = useTasks() ?? [];
   // with a decision in this browser the core runs here too (live.ts): the money word and the Kürzungsrisiko follow it
@@ -54,14 +64,7 @@ export function FindView({ record }: { record: FindRecord }) {
   const openTasks = myTasks.filter((t) => !t.done);
   const state = currentState(decisions, keys, record.decision);
   const last = mine.toSorted((a, b) => a.zeit.localeCompare(b.zeit)).at(-1);
-
-  const decisionCard: Highlight = {
-    id: "entscheidung",
-    title: "Entscheidung",
-    value: record.decisionText[state],
-    lines: last ? [`${last.wer}, ${zeitText(last.zeit)}`, ...(last.grund && last.stand === "nicht_verrechnen" ? [last.grund] : [])] : ["noch nicht geprüft"],
-    status: state === "nicht_verrechnen" ? "grau" : state === "gefunden" ? undefined : "gruen",
-  };
+  const excluded = state === "nicht_verrechnen";
 
   const activity: ActivityEntry[] = [
     ...mine.map((d, i) => ({
@@ -94,71 +97,132 @@ export function FindView({ record }: { record: FindRecord }) {
     ...record.activity,
   ].sort((x, y) => y.time.localeCompare(x.time) || y.id.localeCompare(x.id));
 
-  const open = (s: SourceRef) => {
-    setSource(s);
-    if (!wide) setSheet(true);
-  };
+  // a click opens the original, a second click on the same source closes it again
+  const open = useCallback((s: SourceRef) => setSource((cur) => toggleOpen(cur, s, sameSource)), []);
+  const close = useCallback(() => setSource(null), []);
+
+  const betrag = highlights.find((h) => h.id === "betrag");
+  const stand = highlights.find((h) => h.id === "belegstand");
+  const risk = record.risk && !record.risk.alreadyCut && !excluded ? record.risk : null;
+  const partial = risk && risk.amount !== record.amount;
+  const figures: KpiItem[] = [
+    {
+      id: "betrag",
+      label: "Betrag",
+      value: betrag?.value ?? record.amount,
+      lead: true,
+      lines: [
+        ...(betrag?.lines ?? []).map((text) => ({ text })),
+        ...(risk ? [{ text: partial ? `davon mit Kürzungsrisiko ${risk.amount}` : "ganz mit Kürzungsrisiko", tone: "risk" as const }] : []),
+      ],
+      // the ring only where the risk is a part of the amount (F2); a find wholly at risk says so in its line
+      ring: partial
+        ? {
+            label: `Betrag ${record.amount}, davon mit Kürzungsrisiko ${risk.amount}`,
+            parts: [
+              { id: "risk", label: "mit Kürzungsrisiko", value: cents(risk.amount), tone: "risk", hatched: true },
+              { id: "rest", label: "ohne Kürzungsrisiko", value: Math.max(0, cents(record.amount) - cents(risk.amount)), tone: "money" },
+            ],
+          }
+        : undefined,
+    },
+    {
+      id: "belegstand",
+      label: "Belegstand",
+      value: stand?.value ?? "keiner",
+      lines: (stand?.lines ?? []).map((text) => ({ text, tone: STAND_TONE[record.belegstand?.state ?? ""] })),
+    },
+  ];
 
   return (
-    // shrink-0: the row grows with its content, so the original can stick to the top while the page scrolls
-    <div className="flex min-h-full shrink-0">
-      <div className="flex min-w-0 flex-1 flex-col">
-        <RecordHead icon={SearchCheck} badge={record.number} title={record.name} facts={record.facts} wrap>
-          <span className="ml-auto flex shrink-0 items-center gap-1.5 pl-2 text-xs text-fg-secondary tabular-nums max-sm:hidden">
-            <span className="whitespace-nowrap">
-              {record.nav.index} von {record.nav.count}
-            </span>
-            {[
-              { slug: record.nav.prev, label: "Voriger Fund", Icon: ChevronUp },
-              { slug: record.nav.next, label: "Nächster Fund", Icon: ChevronDown },
-            ].map(({ slug, label, Icon }) =>
-              slug ? (
-                <Link key={label} href={`/funde/${slug}/`} aria-label={label} className={navButton}>
-                  <Icon className="size-4" aria-hidden />
-                </Link>
-              ) : (
-                <span key={label} aria-hidden className={cn(navButton, "opacity-40")}>
-                  <Icon className="size-4" />
-                </span>
-              ),
-            )}
+    // head, decision bar and content share one width, so "1 von 8" ends where the content ends
+    <div className="flex min-h-full w-full max-w-[1000px] flex-col">
+      <RecordHead icon={SearchCheck} badge={record.number} title={record.name} facts={[record.project.name, ...record.facts]} wrap>
+        <span className="ml-auto flex shrink-0 items-center gap-1.5 pl-2 text-xs text-fg-secondary tabular-nums max-sm:hidden">
+          <span className="whitespace-nowrap">
+            {record.nav.index} von {record.nav.count}
           </span>
-        </RecordHead>
-        <DecisionBar
-          state={state}
-          amount={record.amount}
-          target={{ key: record.key, label: `${record.number} ${record.project.name}`, name: record.name, href: `/funde/${record.slug}/`, project: record.project.name, taskText: record.taskText, deadline: record.deadline }}
-          open={[
-            ...(gapBeforeRelease(record.belegstand?.state) ? [gapBeforeRelease(record.belegstand?.state)!] : []),
-            ...(record.risk && !record.risk.alreadyCut ? [`Kürzungsrisiko ${record.risk.reason}, ${record.risk.amount}`] : []),
-            ...(record.remedy ? [record.remedy] : []),
-            ...openTasks.map((t) => `Aufgabe für ${t.zustaendig}: ${t.text}`),
-          ]}
-          onDecide={(stand, wer, grund) => setDecisions(decide(keys, record.decision, { fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }).list)}
-        />
-        <div className="flex flex-col gap-6 px-6 pt-1 pb-10 max-md:px-4">
-          <Highlights items={state === "gefunden" ? highlights : [...highlights, decisionCard]} title="Auf einen Blick" />
-          <WeakSpot record={record} excluded={state === "nicht_verrechnen"} active={source} onOpen={open} />
-          <CalcPath calc={record.calc} active={source} onOpen={open} />
-          <EvidenceList evidence={record.evidence} active={source} onOpen={open} />
-          <Link href={`/funde/${record.slug}/beweispaket/`} className="link-quiet w-fit text-fg-secondary">
-            Beweispaket ansehen und drucken
-          </Link>
-          <Activity entries={activity} />
-        </div>
+          {[
+            { slug: record.nav.prev, label: "Voriger Fund", Icon: ChevronUp },
+            { slug: record.nav.next, label: "Nächster Fund", Icon: ChevronDown },
+          ].map(({ slug, label, Icon }) =>
+            slug ? (
+              <Link key={label} href={`/funde/${slug}/`} aria-label={label} className={navButton}>
+                <Icon className="size-4" aria-hidden />
+              </Link>
+            ) : (
+              <span key={label} aria-hidden className={cn(navButton, "opacity-40")}>
+                <Icon className="size-4" />
+              </span>
+            ),
+          )}
+        </span>
+      </RecordHead>
+      <DecisionBar
+        state={state}
+        amount={record.amount}
+        target={{ key: record.key, label: `${record.number} ${record.project.name}`, name: record.name, href: `/funde/${record.slug}/`, project: record.project.name, taskText: record.taskText, deadline: record.deadline }}
+        open={[
+          ...(gapBeforeRelease(record.belegstand?.state) ? [gapBeforeRelease(record.belegstand?.state)!] : []),
+          ...(record.risk && !record.risk.alreadyCut ? [`Kürzungsrisiko ${record.risk.reason}, ${record.risk.amount}`] : []),
+          ...(record.remedy ? [record.remedy] : []),
+          ...openTasks.map((t) => `Aufgabe für ${t.zustaendig}: ${t.text}`),
+        ]}
+        onDecide={(stand, wer, grund) => setDecisions(decide(keys, record.decision, { fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }).list)}
+      />
+      <div className="flex w-full flex-col gap-6 px-6 pt-2 pb-12 max-md:gap-5 max-md:px-4">
+        <section aria-label="Auf einen Blick">
+          <ul className="grid overflow-hidden rounded-xl bg-surface shadow-ring md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1.5fr)]">
+            {figures.map((k) => (
+              <li key={k.id} className="min-w-0 shadow-[inset_-1px_-1px_0_0_var(--color-line)]">
+                <Kpi k={k} />
+              </li>
+            ))}
+            <li className="min-w-0 shadow-[inset_0_-1px_0_0_var(--color-line)]">
+              <Steps state={state} who={last ? `${last.wer}, ${zeitText(last.zeit)}` : null} reason={last?.stand === "nicht_verrechnen" ? (last.grund ?? null) : null} />
+            </li>
+          </ul>
+        </section>
+        <WeakSpot record={record} excluded={excluded} active={source} onOpen={open} />
+        <CalcPath calc={record.calc} active={source} onOpen={open} />
+        <EvidenceTiles evidence={record.evidence} active={source} onOpen={open} />
+        <Link href={`/funde/${record.slug}/beweispaket/`} className="link-quiet w-fit text-fg-secondary">
+          Beweispaket ansehen und drucken
+        </Link>
+        <Activity entries={activity} />
       </div>
 
-      {source && (
-        <aside className="sticky top-0 h-[calc(100dvh-var(--header-height))] w-[400px] shrink-0 self-start shadow-[inset_1px_0_0_0_var(--color-line)] max-lg:hidden">
-          <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} />
-        </aside>
+      <SideWindow open={source !== null} onClose={close} title="Original">
+        {source && <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} onClose={close} />}
+      </SideWindow>
+    </div>
+  );
+}
+
+/** Where the decision stands: four steps, the reached ones filled, the current one in ink; "Nicht verrechnen" apart. */
+function Steps({ state, who, reason }: { state: DecisionState; who: string | null; reason: string | null }) {
+  const at = STEPS.findIndex((s) => s.id === state);
+  return (
+    <div className="flex h-full flex-col justify-center gap-2 px-4 py-3.5">
+      <span className="text-xs text-fg-secondary">Entscheidung</span>
+      {state === "nicht_verrechnen" ? (
+        <span className="flex items-center gap-1.5 font-medium">
+          <span aria-hidden className="size-2 rounded-full bg-state-grey" />
+          Nicht verrechnen
+        </span>
+      ) : (
+        <ol aria-label="Entscheidung" className="grid grid-cols-4">
+          {STEPS.map((s, i) => (
+            <li key={s.id} aria-current={i === at ? "step" : undefined} className="relative flex min-w-0 flex-col gap-1.5">
+              {/* a stepper: a dot per step, joined by a hairline, the reached steps filled */}
+              {i < STEPS.length - 1 && <span aria-hidden className={cn("absolute top-[5px] left-3 right-0 h-px", i < at ? "bg-data-money" : "bg-line")} />}
+              <span aria-hidden className={cn("relative size-2.5 rounded-full", i < at ? "bg-data-money" : i === at ? "bg-surface ring-2 ring-fg" : "bg-surface ring-1 ring-fg-faint")} />
+              <span className={cn("pr-1 text-xs leading-4 [overflow-wrap:anywhere] hyphens-manual", i === at ? "font-medium text-fg" : "text-fg-muted")}>{s.title}</span>
+            </li>
+          ))}
+        </ol>
       )}
-      <Sheet open={!wide && sheet} onOpenChange={setSheet}>
-        <SheetContent side={phone ? "bottom" : "right"} className={phone ? "h-[85dvh]" : ""}>
-          <SheetTitle>Original</SheetTitle>
-          {source && <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} onClose={() => setSheet(false)} />}
-        </SheetContent>
-      </Sheet>
+      <span className="text-xs text-fg-muted">{reason ?? who ?? "noch nicht geprüft"}</span>
     </div>
   );
 }

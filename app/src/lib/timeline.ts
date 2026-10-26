@@ -62,9 +62,25 @@ export type TimelineView = {
   deadline: { iso: string; text: string } | null;
   /** false once the Schlussrechnung is submitted: no Abgleich, no states. */
   running: boolean;
+  /** The day the twin was compared ("Stand"); the calendar's "today". */
+  asOf: { iso: string; text: string };
+  /** Where missing work belongs: the Schlussrechnung once its Entwurf is in the folder, else the next Abschlagsrechnung. */
+  target: InvoiceTarget;
 };
 
-const AMOUNT_WORD: Partial<Record<string, string>> = { zahlungsavis: "bezahlt", korrekturblatt: "gekürzt", entwurf: "nicht gelegt" };
+export type InvoiceTarget = "schlussrechnung" | "abschlagsrechnung";
+
+/** A project whose own Entwurf of the Schlussrechnung is in the folder settles there; a running one in its next Abschlagsrechnung. */
+export const invoiceTarget = (d: { entwurf: unknown }): InvoiceTarget => (d.entwurf ? "schlussrechnung" : "abschlagsrechnung");
+
+/** The words for work that is done and missing, by where it belongs (never "Schlussrechnung" in a running project). */
+export const MISSING_TEXT: Record<InvoiceTarget, string> = {
+  schlussrechnung: "fehlt in der Schlussrechnung",
+  abschlagsrechnung: "fehlt, gehört in die nächste Abschlagsrechnung",
+};
+
+// the word an amount carries in every list, so it never reads as the amount of the document title next to it
+const AMOUNT_WORD: Partial<Record<string, string>> = { abschlagsrechnung: "verrechnet", schlussrechnung: "verrechnet", zahlungsavis: "bezahlt", korrekturblatt: "gekürzt", entwurf: "nicht gelegt" };
 
 const monthStart = (iso: string) => `${iso.slice(0, 7)}-01`;
 const nextMonth = (iso: string) => {
@@ -132,5 +148,7 @@ export function timelineView(projektId: string, b: FirmenErgebnis = business()):
     range: { from: monthStart(days[0]), to: nextMonth(days.at(-1)!) },
     deadline: deadline ? { iso: deadline, text: datumText(deadline) } : null,
     running: e.abgleich.laeuft,
+    asOf: { iso: b.stichtag, text: datumText(b.stichtag) },
+    target: invoiceTarget(d),
   };
 }

@@ -67,7 +67,7 @@ export type PositionRow = Row & {
   /** The Beleg the row still lacks, by kind: a Regiebericht for hours without one, the priced Nachtrag for a notified change. */
   missing: { kind: Nachweisart; text: string } | null;
   /** A Kürzungsrisiko of the Vorprüfung in the row's find, with the Belege it points to and what removes it. */
-  risk: { reason: string; remedy: string; belegIds: string[] } | null;
+  risk: { reason: string; remedy: string; belegIds: string[]; amount: string; part: boolean } | null;
   /** The Belegabdeckung names it: a gap ("Beleg fehlt", "Nachtrag nicht gelegt"), a Kürzungsrisiko, or nothing. */
   check: "luecke" | "risiko" | null;
 };
@@ -112,7 +112,7 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
     ) as Record<Nachweisart, CoverageItem[]>;
     const gap = z.offen > 0 && z.belegstand !== null && z.belegstand !== "belegt";
     const r = fund ? (e.vorpruefung?.risiken ?? []).find((x) => x.fundSchluessel === fund.schluessel && x.zustand === "droht") : undefined;
-    const risk = r ? { reason: KUERZUNGSGRUND_TEXT[r.grund], remedy: r.abhilfe, belegIds: r.nachweise.map((n) => n.quelle.belegId) } : null;
+    const risk = r && fund ? { reason: KUERZUNGSGRUND_TEXT[r.grund], remedy: r.abhilfe, belegIds: r.nachweise.map((n) => n.quelle.belegId), amount: euro(r.betrag), part: r.betrag !== fund.betrag } : null;
     const missing =
       gap && z.belegstand === "nachtrag_nicht_gelegt"
         ? { kind: "rechnung" as const, text: "Nachtrag mit Preis" }

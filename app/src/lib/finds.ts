@@ -16,6 +16,7 @@ import {
   euro,
   korrekturen,
   menge,
+  type BelegArt,
   type Belegstand,
   type Datensatz,
   type Einheit,
@@ -43,6 +44,8 @@ export type SourceRef = {
   detail: string;
   /** Text of the chip: "Aufmaßblatt 12", "Leistungsverzeichnis, Seite 9" (the page only for a long Beleg). */
   short: string;
+  /** Kind of the Beleg ("aufmassblatt", "whatsapp" …), for the icon on its chip. */
+  kind?: BelegArt | "whatsapp";
 };
 
 export type CalcStep = {
@@ -54,7 +57,12 @@ export type CalcStep = {
   derivation: string | null;
   amount: string;
   sources: SourceRef[];
+  /** The quantities of the step's position as the core holds them (hundredths), for its bar; null for Regie and others. */
+  quantities: StepQuantities | null;
 };
+
+/** Ordered (Leistungsverzeichnis), measured and invoiced quantity of one position, and the difference the step bills. */
+export type StepQuantities = { lv: number; done: number; invoiced: number; lvText: string; doneText: string; invoicedText: string; diffText: string };
 
 export type EvidenceGroups = { work: EvidenceItem[]; price: EvidenceItem[] };
 
@@ -110,7 +118,8 @@ function sourceRef(d: Datensatz, q: Quelle): SourceRef {
   const message = d.meldungen.some((m) => m.id === q.belegId);
   const label = belegTitel(d, q.belegId);
   const long = (d.belege.find((b) => b.id === q.belegId)?.seiten ?? 1) > 4;
-  return { page: `${q.belegId}:${q.seite}`, place: q.stelle ?? null, label, detail: message && q.stelle ? q.stelle : detailText(q), short: long ? `${label}, Seite ${q.seite}` : label };
+  const kind = message ? ("whatsapp" as const) : (d.belege.find((b) => b.id === q.belegId)?.art ?? "vertrag");
+  return { page: `${q.belegId}:${q.seite}`, place: q.stelle ?? null, label, detail: message && q.stelle ? q.stelle : detailText(q), short: long ? `${label}, Seite ${q.seite}` : label, kind };
 }
 
 /** Every find of the open projects with its project, in the order of the core. */
@@ -141,6 +150,9 @@ function steps(d: Datensatz, f: Fund): CalcStep[] {
         derivation: pos ? `${menge(pos.differenz, einheit)} = ${menge(pos.aufmassMenge, einheit)} aufgemessen − ${menge(pos.verrechnetMenge, einheit)} verrechnet` : null,
         amount: s.betrag === undefined ? "" : euro(s.betrag),
         sources: (s.quellen ?? []).map((q) => sourceRef(d, q)),
+        quantities: pos
+          ? { lv: pos.lvMenge, done: pos.aufmassMenge, invoiced: pos.verrechnetMenge, lvText: menge(pos.lvMenge, einheit), doneText: menge(pos.aufmassMenge, einheit), invoicedText: menge(pos.verrechnetMenge, einheit), diffText: menge(pos.differenz, einheit) }
+          : null,
       };
     });
 }

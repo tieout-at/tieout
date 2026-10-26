@@ -8,6 +8,7 @@
 import { BELEGSTAND_TEXT, EMAIL_KATEGORIE_TEXT, EREIGNISSTAND_TEXT, datumText, euro, stunden, zeitstrahl, type Belegstand, type Ereignisstand, type FirmenErgebnis } from "@tieout/kern";
 
 import { findSlug, projectSlug } from "./example";
+import { invoiceTarget, MISSING_TEXT } from "./timeline";
 import { business, firm, nameAndFacts } from "./kern-data";
 import { originalPage, type OriginalPage } from "./originals";
 
@@ -35,6 +36,8 @@ export type InboxItem = {
   /** What the original below does not show already (each fact once). */
   facts: { label: string; value: string }[];
   stand: { state: Ereignisstand; text: string } | null;
+  /** What a missing message means where its project stands ("fehlt in der Schlussrechnung", or the next Abschlagsrechnung). */
+  missing: string;
   finds: InboxFind[];
   rechtsfrage: boolean;
   /** Further copies of the same file in the folder. */
@@ -81,6 +84,7 @@ export function whatsappView(b: FirmenErgebnis = business()): InboxView {
           { label: "Bestätigt", value: `${m.bestaetigt.rolle}, ${datumText(m.bestaetigt.zeitpunkt.slice(0, 10))}, ${m.bestaetigt.zeitpunkt.slice(11, 16)}` },
         ],
         stand: x?.stand ? { state: x.stand, text: EREIGNISSTAND_TEXT[x.stand] } : null,
+        missing: MISSING_TEXT[invoiceTarget(d)],
         finds: x ? findsOf(b, d.projekt.id, d.projekt.name, x.funde) : [],
         rechtsfrage: false,
         copies: 0,
@@ -123,6 +127,7 @@ export function emailView(b: FirmenErgebnis = business()): InboxView {
             ...(a ? [{ label: "Angemeldet", value: a.gegenstand.wert }, { label: "Nachtrag", value: a.nachtragGelegt.wert ? "gelegt" : "nicht gelegt" }] : []),
           ],
           stand: x?.stand ? { state: x.stand, text: EREIGNISSTAND_TEXT[x.stand] } : null,
+          missing: MISSING_TEXT[invoiceTarget(d)],
           finds: x ? findsOf(b, d.projekt.id, d.projekt.name, x.funde) : [],
           rechtsfrage: x?.rechtsfrage ?? false,
           copies,

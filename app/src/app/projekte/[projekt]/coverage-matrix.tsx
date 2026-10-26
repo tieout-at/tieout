@@ -10,8 +10,9 @@ import { OriginalLink } from "@/components/fund/original-sheet";
 import { Tag } from "@/components/table/tag";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { InfoTip } from "@/components/ui/info-tip";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { SideWindow } from "@/components/ui/side-window";
 import { useMediaQuery } from "@/components/ui/use-media";
+import { useEffect } from "react";
 import { COVERAGE_ICON, COVERAGE_KINDS, type CoverageKind, type PositionRow, type PositionsView } from "@/lib/positions-shared";
 import type { TaskTarget } from "@/lib/tasks";
 import { cn } from "@/lib/utils";
@@ -70,7 +71,7 @@ function Chain({ r, target, project }: { r: PositionRow; target: TaskTarget | nu
           <span className="flex flex-wrap items-center gap-2">
             <span className="text-lg font-semibold whitespace-nowrap tabular-nums">{r.open.text}</span>
             <span className="text-fg-secondary">offen</span>
-            {r.belegstand && r.belegstand.state !== "belegt" && <Tag colour={GAP[r.belegstand.state]}>{r.belegstand.text}</Tag>}
+            {r.belegstand && <Tag colour={r.belegstand.state === "belegt" ? "green" : GAP[r.belegstand.state]}>{r.belegstand.text}</Tag>}
           </span>
         )}
         {(r.ordered || r.done || r.invoiced) && (
@@ -93,12 +94,13 @@ function Chain({ r, target, project }: { r: PositionRow; target: TaskTarget | nu
                     <OriginalLink project={project} belegId={x.belegId} label={x.title} className="min-w-0 flex-1 truncate">
                       {x.title}
                     </OriginalLink>
-                    <span className="shrink-0 font-mono text-xs text-fg-muted">{x.date}</span>
+                    <span className="shrink-0 text-xs text-fg-muted tabular-nums">{x.date}</span>
                   </span>
                   {!x.weak && r.risk?.belegIds.includes(x.belegId) && (
                     <span className="flex items-center gap-1.5 pl-6 text-xs text-state-red-edge">
                       <span aria-hidden className="size-2 rounded-full bg-state-red" />
                       Kürzungsrisiko: {r.risk.reason}
+                      {r.risk.part && <span className="whitespace-nowrap tabular-nums">, {r.risk.amount}</span>}
                     </span>
                   )}
                   {x.weak && (
@@ -216,9 +218,9 @@ export function CoverageMatrix({ rows, view, targets, project }: { rows: Positio
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} onClick={() => setOpen(r.id)} className="group h-10 cursor-pointer">
+                <tr key={r.id} onClick={(e) => !(e.target as HTMLElement).closest("button,a") && setOpen((cur) => (cur === r.id ? null : r.id))} className="group h-10 cursor-pointer">
                   <th scope="row" className="sticky left-0 z-10 border-r border-b border-line bg-surface px-3 text-left font-medium group-hover:bg-row-hover">
-                    <button type="button" onClick={() => setOpen(r.id)} className="flex w-[254px] min-w-0 items-center gap-2 text-left outline-none focus-visible:outline-2 focus-visible:outline-accent">
+                    <button type="button" onClick={() => setOpen((cur) => (cur === r.id ? null : r.id))} className="flex w-[254px] min-w-0 items-center gap-2 text-left outline-none focus-visible:outline-2 focus-visible:outline-accent">
                       {r.number && <span className="shrink-0 font-mono text-xs text-fg-secondary">{r.number}</span>}
                       <span className="min-w-0 flex-1 truncate">{r.text}</span>
                       {r.find && <span className={chip}>{r.find.number}</span>}
@@ -269,7 +271,7 @@ export function CoverageMatrix({ rows, view, targets, project }: { rows: Positio
         <ul className="flex flex-col">
           {rows.map((r) => (
             <li key={r.id}>
-              <button type="button" onClick={() => setOpen(r.id)} className="flex w-full flex-col gap-1.5 px-4 py-2.5 text-left shadow-line-bottom outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent">
+              <button type="button" onClick={() => setOpen((cur) => (cur === r.id ? null : r.id))} className="flex w-full flex-col gap-1.5 px-4 py-2.5 text-left shadow-line-bottom outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent">
                 <span className="flex items-start gap-2">
                   <span className="line-clamp-2 min-w-0 flex-1">
                     {r.number && <span className="mr-1.5 font-mono text-xs text-fg-secondary">{r.number}</span>}
@@ -310,34 +312,44 @@ export function CoverageMatrix({ rows, view, targets, project }: { rows: Positio
         </ul>
       )}
 
-      <Sheet open={!!chosen} onOpenChange={(o) => !o && setOpen(null)} modal={!wide}>
-        <SheetContent
-          side={wide ? "right" : "bottom"}
-          backdrop={!wide}
-          className={wide ? "w-[420px]" : "h-[85dvh]"}
-          onKeyDown={(k) => {
-            // as Attio's record panel: the arrows go to the row above or below without closing it
-            if (k.key !== "ArrowDown" && k.key !== "ArrowUp") return;
-            const i = rows.findIndex((x) => x.id === open);
-            const next = rows[i + (k.key === "ArrowDown" ? 1 : -1)];
-            if (next) {
-              k.preventDefault();
-              setOpen(next.id);
-            }
-          }}
-        >
-          <SheetTitle>{chosen?.text}</SheetTitle>
-          <div className="flex h-12 shrink-0 items-center gap-2 pr-2 pl-4 shadow-line-bottom">
-            {createElement(belegIcon("leistungsverzeichnis"), { className: "size-4 text-fg-secondary", "aria-hidden": true })}
-            <span className="flex-1 text-sm font-medium">Belegabdeckung</span>
-            {wide && <span className="text-xs text-fg-muted">Pfeiltasten: nächster Eintrag</span>}
-            <button type="button" onClick={() => setOpen(null)} aria-label="Schließen" className="flex size-8 items-center justify-center rounded-md text-fg-secondary hover:bg-fill-hover max-md:size-11">
-              <X className="size-4" aria-hidden />
-            </button>
-          </div>
-          <div className="min-h-0 flex-1 overflow-y-auto">{chosen && <Chain r={chosen} project={project} target={chosen.find ? (targets[chosen.find.number] ?? null) : null} />}</div>
-        </SheetContent>
-      </Sheet>
+      <PositionWindow rows={rows} chosen={chosen ?? null} onOpen={setOpen} targets={targets} project={project} />
     </div>
+  );
+}
+
+/**
+ * The chain of one position in the window at the right (step 8d, from the Belegabdeckung and from the table): the
+ * header with "Belegabdeckung" and the close button, then the chain. The arrows go to the row above or below without
+ * closing it, as in Attio's record panel; Escape or the X closes it.
+ */
+export function PositionWindow({ rows, chosen, onOpen, targets, project }: { rows: PositionRow[]; chosen: PositionRow | null; onOpen: (id: string | null) => void; targets: Record<string, TaskTarget>; project: string }) {
+  const wide = useMediaQuery("(min-width: 1024px)", true);
+  useEffect(() => {
+    if (!chosen || !wide) return;
+    const key = (k: KeyboardEvent) => {
+      if (k.key !== "ArrowDown" && k.key !== "ArrowUp") return;
+      if ((k.target as HTMLElement).closest("input,textarea,[role=dialog]")) return;
+      const i = rows.findIndex((x) => x.id === chosen.id);
+      const next = rows[i + (k.key === "ArrowDown" ? 1 : -1)];
+      if (next) {
+        k.preventDefault();
+        onOpen(next.id);
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [chosen, rows, wide, onOpen]);
+  return (
+    <SideWindow open={!!chosen} onClose={() => onOpen(null)} title={chosen?.text ?? "Position"} width={420}>
+      <div className="flex h-12 shrink-0 items-center gap-2 pr-2 pl-4 shadow-line-bottom">
+        {createElement(belegIcon("leistungsverzeichnis"), { className: "size-4 text-fg-secondary", "aria-hidden": true })}
+        <span className="flex-1 text-sm font-medium">Belegabdeckung</span>
+        {wide && <span className="text-xs text-fg-muted">Pfeiltasten: nächster Eintrag</span>}
+        <button type="button" onClick={() => onOpen(null)} aria-label="Schließen" className="flex size-8 items-center justify-center rounded-md text-fg-secondary hover:bg-fill-hover max-md:size-11">
+          <X className="size-4" aria-hidden />
+        </button>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">{chosen && <Chain r={chosen} project={project} target={chosen.find ? (targets[chosen.find.number] ?? null) : null} />}</div>
+    </SideWindow>
   );
 }
