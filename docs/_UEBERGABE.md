@@ -1,41 +1,52 @@
-# Handover: step 8b, Ihre Daten and the twin complete
+# Handover: step 8a, calmer screens
 
-**As of:** Sunday, 25 October 2026, after step 8. Written by Claude for Maxi S.
+**As of:** Monday, 26 October 2026, after step 8. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** the branch `schritt-8-berichte-schlussrechnung` is pushed, its pull request merged with Maxi S.'s go, CI `App`, `Kern` and `Lösungsliste` green on `main`, and app-neu shows "Berichte" (three dashboards) and the tab "Schlussrechnung" of Wohnpark Mooshaim with the Restforderung 89.274,41 €. If the pull request is still open, ask for his go and merge it first (`gh pr merge <nr> --merge`), then check app-neu online.
+**Precondition:** the pull request of `schritt-8-berichte-schlussrechnung` is merged, CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows "Berichte" as three tabs and the tab "Schlussrechnung" of Wohnpark Mooshaim with "Kann die Rechnung raus? 0 von 8 entschieden". If not, ask Maxi S. first.
 
 ## Goal
 
-The parts of "Ihre Daten" and "Digitaler Zwilling" that are still empty, decided with Maxi S. in step 8 (the third customer test skipped them, all three testers named the empty pages):
+Step 8 found the screens crammed and fixed two of them (Berichte, Schlussrechnung) after a design round. Step 8a brings the same design language to every other page. It was decided with Maxi S. on 26.10.2026 to do this as its own step before 8b (Zeitstrahl, Positionen, WhatsApp-Meldungen, E-Mails).
 
-1. Project tab **"Positionen"** (`SPEZIFIKATION.md` 2.3 and 4.3): every position of the Leistungsverzeichnis as "beauftragt", "erbracht", "verrechnet", "offen", with the rows of `SPEZIFIKATION.md` 7.2 (22.04.12B 4.009,60 € and the others); `kern/` already has `positionstabelle()`. Explain the 182 Thermostatköpfe at 100 Heizkörper (customer test 2).
-2. **Belegabdeckung** (candidate B of 4.4) with the positions: which kinds of evidence prove each position. Needs `kern/` to know which Beleg proves which position (today only the last Aufmaßblatt of a position is named); decide with Maxi S. how far to go.
-3. Project tab **"Zeitstrahl"** (`SPEZIFIKATION.md` 4.3 and 7.3 at 0:20): lane "Baustelle" against lane "Schlussrechnung", "verrechnet" or "fehlt", a missing one with "gefunden" and its find.
-4. Pages **"WhatsApp-Meldungen"** and **"E-Mails"** (Attio's Calls and Emails, references in `app/qa-shots/attio/`): read only, each linked to its finds; the search finds a message by its date.
+**The design language (DESIGN.md, step 8):** one question per surface, one big figure with its reference, one statement written from the core's figures; part of a whole as one thin bar; the rule behind a figure behind an info icon (`components/ui/info-tip.tsx`); progress as "x von y"; long lists folded; a state named only when it is an exception; amounts only from `kern/`.
+
+## What the review of 26.10.2026 found (re-measured by the main chat)
+
+Independent design and text reviews of every page not rebuilt in step 8 (screens at 1440 and 390 px). Scores are overview / calm, 1 to 10.
+
+| Page | Score | Main finding |
+|---|---|---|
+| Projekt Überblick | 4 / 4 | six equally loud cards, the deadline three times, 17 contract fields; the money does not win |
+| Belege | 2 / 4 | "maschinell gelesen" on 102 of 124 rows, column Art repeats the name, column Funde far right |
+| Projekt Belege | 3 / 4 | 835 words, same table problems |
+| Übersicht | 4 / 3 | 286 cells and lines; no entry for the eye (a page Maxi S. chose after two design rounds: show drafts first) |
+| Funde | 5 / 6 | "Gefunden" 14 times, titles cut, column Kürzungsrisiko at the right edge |
+| Funde, board | 4 / 6 | all 14 finds in the first column |
+| Auftraggeber Hornfeld Bau | 5 / 5 | "Gleicher Grund", the strongest statement, comes second and repeats itself |
+| Fund F1 | 6 / 5 | the Kürzungsrisiko twice (card and section), 6.648,60 € three times, "6 Belege, 1 WhatsApp-Meldung" against "Belege 7" |
+| Aufgaben, Betrieb | empty | although there are gaps with an Abhilfe and five Verträge |
+| Start, Projekte, Vertrag, Schlussrechnungen | 6 to 9 | fine |
+
+Fix once, in the shared components: project head in one row of tabs grouped by step, without the empty "offen" chips of the run steps; at most three highlight cards, one big; tables hide a column whose value is the same in every row and mark only exceptions; Verlauf summarised and folded ("5 Korrekturen am 19.10. durch Abrechnung"); finds named with their project where several projects show. Words a craftsman stumbles over: "Ausgaben" (reads as costs), "Prüfstand", "EXIF", "Kopf" (of an e-mail), "Kopie" (use "doppelt"), "Preisbasis", "nie erfasst". Phone: tables "Projekte", "Belege" and the Auftraggeber page cut names to a few letters.
 
 ## Read first
 
-1. `CLAUDE.md`, `docs/_STATUS.md` (open points of step 8), this file.
-2. `docs/DESIGN.md` (tables, record pages, step 8), `docs/SPEZIFIKATION.md` 2.3, 4.3, 4.4, 7.2, 7.3.
-3. Customer test 3 in `../tieout-intern/docs/kundentests/2026-10-25_kundentest-3_ordner-bis-rechnung.md`.
-4. Code: `app/src/lib/invoice.ts` and `reports.ts` (the newest builders over the core's result, live through `kern-live.ts`), `kern/src/positionen.ts`.
+1. `CLAUDE.md`, `docs/_STATUS.md`, this file.
+2. `docs/DESIGN.md`, section "Berichte, Schlussrechnung and Beweispaket (step 8)", and the record pages, tables and find page sections.
+3. The rebuilt code as the example: `app/src/app/berichte/report-cards.tsx`, `app/src/components/schlussrechnung/invoice-view.tsx`, `app/src/lib/reports.ts` (`says`).
 
-## Good to know from step 8
+## Good to know
 
-- **Berichte:** `lib/reports.ts` (`DASHBOARDS`, `reportsView()`), cards in `app/berichte/report-cards.tsx`. Bars are pictures only, every figure stands in letters; Belegstand is counted in finds, never a sum of both money words.
-- **Schlussrechnung:** `lib/invoice.ts` (`invoiceView()`, `invoiceList()`), view in `components/schlussrechnung/invoice-view.tsx`. "In der Schlussrechnung" is set only there (`takeIntoInvoice()` in `lib/decisions.ts`), for released finds.
-- **Beweispaket:** `components/fund/evidence-package.tsx` is what goes to the Auftraggeber: no Kürzungsrisiko, Abhilfe, Gegenprobe, decision, and no pages of the Entwurf, the Preisbasis or the Stundenzettel (customer test 3). Keep it that way for anything new that could land in it.
-- **Print:** sidebar, header, step bar and buttons carry `print:hidden`; check a print with `page.emulateMedia({ media: "print" })` in Playwright (no PDF renderer on this machine).
-- **Amount check against `main`:** build `main` and the branch, compare the euro amounts of every exported page (a small script did it in step 8: 72 pages, 70 equal, the 2 others were empty before).
-- **Dev server:** after building `main` in the same folder, restart the dev server, or it reports a hydration mismatch that is not in the code.
-- **Customer testers** cannot write files in their folder with the editor tool; they return the report as text.
+- **Working method of step 8 that Maxi S. liked:** say in two sentences what happens, let independent subagents review (layout and text separately), measure every finding yourself, for a page with real design choices build three drafts with the core's figures (a data pack as JSON, standalone HTML, screenshots at 1165 and 390 px), let an independent judge score them, show the options side by side as a board, build what Maxi S. chooses.
+- **Checks:** `npm run check` in `app/` and `kern/`, `node docs/demo_faelle_check.mjs`; compare the euro amounts of every exported page with `main` (build both, compare); every amount on a changed page must be one of the core's.
+- **Screens:** `npm run screens` (app served on 3103 by the launch configuration `app-build`, or the dev server on 3100); restart the dev server after building another branch in the same folder.
+- **Open from step 8 for Maxi S.:** should the release dialog say that a find "Beleg fehlt" stays out of the Änderungsliste? Keep "Zusammen, mit in Klärung" on the Schlussbesprechungs-Blatt? A "realistic" payment expectation next to the Restforderung would need a figure `kern/` does not have.
 
 ## Done when
 
-- Typecheck, lint, tests, build of `app/` and `kern/` green; CI green; `node docs/demo_faelle_check.mjs` green; amounts on every page unchanged against `main` unless Maxi S. gave a go.
-- Positionen, Zeitstrahl, WhatsApp-Meldungen and E-Mails with real data, screens at 1440 and 390 px next to Attio shown to Maxi S.
-- `_STATUS.md` updated, this file rewritten for step 9 (Abläufe, with "Nachtrag legen" and the signature sheet from customer test 3 as candidates), pull request merged with his go.
+- Every page above scores at least 7 / 7 in a second independent review; word counts lower without losing a fact; no amount changed against `main`; checks and CI green; screens at 1440 and 390 px shown to Maxi S.
+- `_STATUS.md` updated, this file rewritten for step 8b, pull request merged with his go.
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 8b, Positionen, Zeitstrahl, WhatsApp-Meldungen und E-Mails. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 8b. Alle Beträge aus `kern/`, kein Betrag ändert sich ohne mein Go. Sag mir vor jedem Teil in zwei Sätzen, was passiert, zeig mir die Screens neben Attio und hol dir mein Go vor dem Push und vor dem Merge. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 8a, ruhige Seiten. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 8a: die Designsprache aus Schritt 8 auf alle übrigen Seiten, zuerst die gemeinsamen Bausteine, für die Übersicht erst Entwürfe. Kein Betrag ändert sich ohne mein Go. Sag mir vor jedem Teil in zwei Sätzen, was passiert, zeig mir die Screens neben Attio und hol dir mein Go vor dem Push und vor dem Merge. Deutsch, einfach, Ergebnis zuerst.
