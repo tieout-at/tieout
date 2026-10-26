@@ -5,6 +5,21 @@
 
 **Sources:** *measured* means read from the computed styles of app.attio.com in Maxi S.'s workspace (23.10.2026, `../tieout-intern/docs/Plan_Neustart.md` "Gemessene Vorlage", and again on 23.10.2026 at night for this file); *brand* means `brand/README.md` and `website/app/globals.css`; *ours* means decided in this step, with the reason.
 
+## Principles for every new page (learned in step 8d)
+
+Maxi S.'s bar, confirmed on the 8d board and by three council rounds. Check each point before a page counts as done.
+
+1. **Clear at a glance, not packed.** One question per page and per card, one figure that answers it, one statement; explanations behind the info icon. A figure appears once per screen. Cards take the height of their content; two columns stack on their own instead of stretching to each other.
+2. **The picture first, details on a click.** Prefer a real chart that answers the question (axis, ring for a share, cells, a schema) over a list of numbers, and a plain row over a chart that answers nothing. No thin bars under figures; at most one ring per page; no decoration that carries no meaning (the council counted 13 rings once and called it the new filler).
+3. **The extra where it fits.** One deliberate wow per area, built from real data and labelled honestly (the travelling light of the Übersicht, the isometric building schema "kein Plan"). Never a copy of another page, never a faked feature.
+4. **Interactive instead of static where it is clearer.** Details, originals and rows open in the closable `SideWindow`; switches change figures in place ("Laut Vertrag"); hovering lights the same thing across a page. Everything shown on hover also shows on focus and on a tap. Where a static row is the most intuitive form, keep it static.
+5. **Scalable.** Every layout is tested with the sample data and with large and empty data (as the Übersicht's layout tests do with 2.000 Belege): long names, many finds, a project without finds, a closed project. Charts compute their scale; labels never collide (measure, spread, or fold "4 Funde").
+6. **Fit for onboarding.** A first customer with one small project and few Belege must see a calm, meaningful page, not empty charts: empty states say what comes, rings and charts appear only where there is something to show, words are the ones of the business (Vocabulary, SPEZIFIKATION.md 6), and nothing needs explaining that a label could say.
+7. **Colour and money rules.** Tones only through `components/charts/tones.ts`; green belegt, yellow Beleg fehlt, orange Nachtrag nicht gelegt, red Kürzungsrisiko only, neutral for invoiced, paid or cut; state never by colour alone (shape, word, edge). Every amount from `kern/`; the two money words never added, a part named as "davon"; money words in sums never cut.
+8. **Phones are a form of their own.** Money first, charts as rows without axis, no rotated text, chips that wrap or fade at the edge, 44 px taps, sheets from the bottom, nothing wider than the screen (the screens script checks five widths).
+9. **Speed, security and bugs are part of done.** Charts are own SVG (no chart library); the core loads as its own chunk only where it computes; a new dependency needs a reason. Each step ends with a bug review of its diff and a security review (no secrets, no `dangerouslySetInnerHTML` with data, no user data in URLs; with the backend of step 10 also access per company and input validation). Measure before calling something slow.
+10. **Show, then build.** Big changes start as real pages with the core's figures next to references (Linear, Attio, Mercury, Ramp, Pigment), judged by independent reviewers who get pictures and rules, not the author's opinion; Maxi S. chooses per page; every finding is re-measured before it is fixed.
+
 ## Typeface
 
 Inter (variable, self-hosted from `@fontsource-variable/inter`, no request to Google). Attio sets every piece of UI text in weight 500 and tightens the larger sizes. Numbers of positions, Belege and dates in the readouts of "Übersicht" use `font-mono`, the brand's IBM Plex Mono 400 and 500 (self-hosted from `@fontsource/ibm-plex-mono`), never a system mono.
