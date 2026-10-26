@@ -65,7 +65,7 @@ describe("Auftraggeber Hornfeld Bau (SPEZIFIKATION.md 2.2 and 7.2)", () => {
 
   it("history from the documents: cuts, deductions without contract item, Nachträge, days to final payment", () => {
     expect(c.highlights.map((h) => h.value)).toEqual([listed("4.431,20 €"), listed("6.628,41 €"), "2 von 3"]);
-    expect(c.highlights[2].lines).toEqual([`${listed("8.820,00 €")} von ${listed("10.680,00 €")}, 82,6 % des Betrags`]);
+    expect(c.highlights[2].lines).toEqual([`${listed("8.820,00 €")} von ${listed("10.680,00 €")}, 82,6 %`]);
     expect(c.cuts.map((x) => [x.project.name, x.reason, x.amount])).toContainEqual(["Wohnhof Erlenhain", "Aufmaß nicht gegengezeichnet", listed("2.575,20 €")]);
     expect(c.deductions.map((x) => [x.project.name, x.what, x.amount])).toContainEqual(["Wohnhof Erlenhain", "Bauschadensumlage", listed("3.305,55 €")]);
     expect(c.attributes.find((a) => a.label === "Tage bis Schlusszahlung")).toMatchObject({ value: "90", detail: "Wohnhof Erlenhain" });

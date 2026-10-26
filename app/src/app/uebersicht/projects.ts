@@ -1,4 +1,4 @@
-import type { ProjectLink } from "@/components/zwilling/zwilling";
+import type { ProjectLink } from "@/components/uebersicht/project-head";
 import { twinProjects, twinView, type TwinView } from "@/lib/twin";
 
 /**

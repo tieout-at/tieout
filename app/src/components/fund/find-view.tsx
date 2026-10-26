@@ -8,8 +8,8 @@ import { Activity } from "@/components/record/activity";
 import { Highlights } from "@/components/record/highlights";
 import { RecordHead } from "@/components/shell/record-head";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { useMediaQuery } from "@/components/zwilling/use-media";
-import { currentState, decide, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
+import { useMediaQuery } from "@/components/ui/use-media";
+import { currentState, decide, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
 import type { FindRecord, SourceRef } from "@/lib/finds";
 import { useLive } from "@/lib/live";
 import type { ActivityEntry, Highlight } from "@/lib/records";
@@ -129,6 +129,7 @@ export function FindView({ record }: { record: FindRecord }) {
           amount={record.amount}
           target={{ key: record.key, label: `${record.number} ${record.project.name}`, name: record.name, href: `/funde/${record.slug}/`, project: record.project.name, taskText: record.taskText, deadline: record.deadline }}
           open={[
+            ...(gapBeforeRelease(record.belegstand?.state) ? [gapBeforeRelease(record.belegstand?.state)!] : []),
             ...(record.risk && !record.risk.alreadyCut ? [`Kürzungsrisiko ${record.risk.reason}, ${record.risk.amount}`] : []),
             ...(record.remedy ? [record.remedy] : []),
             ...openTasks.map((t) => `Aufgabe für ${t.zustaendig}: ${t.text}`),

@@ -3,7 +3,7 @@
 import { ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
-import { belegIcon } from "@/components/zwilling/icons";
+import { belegIcon } from "./icons";
 import type { EvidenceGroups, EvidenceItem, FindRecord, SourceRef } from "@/lib/finds";
 import { cn } from "@/lib/utils";
 

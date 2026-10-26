@@ -295,7 +295,7 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
       id: "nachtraege",
       title: "Nachträge beauftragt",
       value: n.angeboten ? `${n.beauftragt} von ${n.angeboten}` : "keine",
-      lines: n.angeboten ? [`${euro(n.betragBeauftragt)} von ${euro(n.betrag)}${n.quote === null ? "" : `, ${prozentText(n.quote, 1)} des Betrags`}`] : ["kein Nachtrag angeboten"],
+      lines: n.angeboten ? [`${euro(n.betragBeauftragt)} von ${euro(n.betrag)}${n.quote === null ? "" : `, ${prozentText(n.quote, 1)}`}`] : ["kein Nachtrag angeboten"],
     },
   ];
 

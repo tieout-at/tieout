@@ -390,7 +390,7 @@ function anmeldungen(k: Kontext): RohFund[] {
         art: "aenderung_angemeldet" as const,
         belegstand: "nachtrag_nicht_gelegt" as const,
         titel: a.gegenstand.wert,
-        untertitel: `angemeldet mit E-Mail vom ${datumText(m.datum.wert)}, nie bepreist`,
+        untertitel: `angemeldet mit E-Mail vom ${datumText(m.datum.wert)}, noch ohne Preis`,
         nachweise,
         abhilfe: "Nachtrag mit Preis legen",
       };

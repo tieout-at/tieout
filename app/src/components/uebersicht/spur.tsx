@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { SectionEmpty } from "@/components/shell/empty-state";
 import { InfoTip } from "@/components/ui/info-tip";
-import { ProjectHead, type ProjectLink } from "@/components/zwilling/project-head";
+import { ProjectHead, type ProjectLink } from "./project-head";
 import { useLive } from "@/lib/live";
 import type { TwinCell, TwinFind, TwinView } from "@/lib/twin";
 import { cn } from "@/lib/utils";
@@ -39,6 +39,12 @@ function cellClass(c: TwinCell, finds: TwinFind[]): string {
     return f?.belegstand ? STAND_DOT[f.belegstand.state] : "bg-fg/35";
   }
   return c.state === "menge_abweichend" ? "bg-fg/35" : c.state === "pauschale" ? "bg-fg/[0.07]" : "bg-fg/[0.14]";
+}
+
+/** The title without the short name the list already shows, unless the rest would start mid-sentence ("zweiter Pufferspeicher …"). */
+function titleOf(f: TwinFind): string {
+  const rest = f.title.startsWith(`${f.label}: `) ? f.title.slice(f.label.length + 2) : null;
+  return rest && /^[p{Lu}d]/u.test(rest) ? rest : f.title;
 }
 
 /** The name of a cell in a chip: the position number, or the Beleg of a service without position ("Regiebericht 9"). */
@@ -212,7 +218,7 @@ function Trace({ find, view, cells }: { find: TwinFind; view: TwinView; cells: T
         </h3>
         <p className="flex items-start gap-2">
           <span className="mt-px flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 font-mono text-xs text-count shadow-ring">{find.number}</span>
-          <span className="text-base font-semibold">{find.title.startsWith(`${find.label}: `) ? find.title.slice(find.label.length + 2) : find.title}</span>
+          <span className="text-base font-semibold">{titleOf(find)}</span>
         </p>
       </div>
       <ol>
@@ -245,7 +251,7 @@ function Trace({ find, view, cells }: { find: TwinFind; view: TwinView; cells: T
           {/* every service of the Abgleich as one thin part of one bar; the parts of this find stand up in ultramarine */}
           <div aria-hidden className="flex h-7 items-end">
             {cells.map((x) => (
-              <span key={x.id} className={cn("min-w-0 flex-1", mine.has(x.id) ? "h-7 bg-accent" : cn("h-3.5", cellClass(x, view.finds)))} />
+              <span key={x.id} className={cn("min-w-0 flex-1", mine.has(x.id) ? "h-7 min-w-[3px] bg-accent" : cn("h-3.5", cellClass(x, view.finds)))} />
             ))}
           </div>
           <p className="sr-only">

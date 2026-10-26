@@ -9,6 +9,7 @@ import { Page } from "@/components/shell/page";
 import { RecordHead } from "@/components/shell/record-head";
 import { Tag } from "@/components/table/tag";
 import { InfoTip } from "@/components/ui/info-tip";
+import { cn } from "@/lib/utils";
 import { clientRows } from "@/lib/kern-data";
 import { clientRecord } from "@/lib/records";
 import { ClientProjects } from "./client-projects";
@@ -49,14 +50,21 @@ export default async function AuftraggeberRecordPage({ params }: Props) {
   const projects = r.attributes.find((a) => a.label === "Projekte")!;
   // the head says the kind and the projects; Angaben keeps what it alone says
   const details = r.attributes.filter((a) => a.label !== "Art" && a.label !== "Projekte");
+  // a single fact left is said in the head, not in a column of its own
+  const inHead = details.length <= 1;
+  const headFacts = inHead
+    ? details.map((a) => (a.label === "Tage bis Schlusszahlung" ? `Schlusszahlung nach ${a.value} Tagen${a.detail ? `, ${a.detail}` : ""}` : `${a.label} ${a.value}`))
+    : [];
   return (
     <Page destination="auftraggeber" trail={[{ label: r.name }]}>
-      <RecordHead icon={Briefcase} title={r.name} facts={[kind, `${projects.value} Projekte${projects.detail ? `, ${projects.detail}` : ""}`]} />
+      <RecordHead icon={Briefcase} title={r.name} facts={[kind, `${projects.value} Projekte${projects.detail ? `, ${projects.detail}` : ""}`, ...headFacts]} />
       <div className="flex flex-1 shadow-[inset_0_1px_0_0_var(--color-line)] max-lg:flex-col">
-        <aside className="w-[374px] shrink-0 shadow-[inset_-1px_0_0_0_var(--color-line)] max-lg:order-2 max-lg:w-full max-lg:shadow-[inset_0_1px_0_0_var(--color-line)]">
-          <AttributeList title="Angaben" attributes={details} />
-        </aside>
-        <div className="flex min-w-0 flex-1 flex-col gap-6 px-6 py-5 max-md:px-4 max-lg:order-1">
+        {!inHead && (
+          <aside className="w-[374px] shrink-0 shadow-[inset_-1px_0_0_0_var(--color-line)] max-lg:order-2 max-lg:w-full max-lg:shadow-[inset_0_1px_0_0_var(--color-line)]">
+            <AttributeList title="Angaben" attributes={details} />
+          </aside>
+        )}
+        <div className={cn("flex min-w-0 flex-1 flex-col gap-6 px-6 py-5 max-md:px-4 max-lg:order-1", inHead && "max-w-[1120px]")}>
           {r.sameReason.length > 0 && (
             <section aria-labelledby="gleicher-grund">
               <h2 id="gleicher-grund" className="mb-2 flex items-center gap-1.5 text-sm text-fg-secondary">

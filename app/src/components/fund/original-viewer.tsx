@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { createElement, useLayoutEffect, useRef, useState } from "react";
 
-import { belegIcon } from "@/components/zwilling/icons";
+import { belegIcon } from "./icons";
 import type { SourceRef } from "@/lib/finds";
 import { markOf, placeText, type OriginalPage } from "@/lib/originals";
 import { OriginalPaper } from "./original-paper";
