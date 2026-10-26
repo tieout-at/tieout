@@ -35,6 +35,8 @@ const KIND: Record<Positionszeile["art"], string> = {
   pauschale: "Pauschale",
 };
 
+const blank = (cell: string) => (cell === "2013" ? "" : cell);
+
 export type CoverageItem = { belegId: string; title: string; date: string; weak: string | null };
 
 export type PositionRow = Row & {
@@ -49,6 +51,7 @@ export type PositionRow = Row & {
   group: string;
   unit: string | null;
   price: Amount | null;
+  /** Empty where the core has no value (a service without a position has no "beauftragt"). */
   ordered: string;
   done: string;
   invoiced: string;
@@ -108,9 +111,10 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
       group: lg ? `${lg} ${LEISTUNGSGRUPPE[lg] ?? "Leistungsgruppe"}` : "Ohne Position",
       unit: z.einheit,
       price: z.ep === null ? null : { cent: z.ep, text: euro(z.ep) },
-      ordered: z.zellen.beauftragt,
-      done: z.zellen.erbracht,
-      invoiced: z.zellen.verrechnet,
+      // the core writes a dash for a cell without a value; the table leaves it empty
+      ordered: blank(z.zellen.beauftragt),
+      done: blank(z.zellen.erbracht),
+      invoiced: blank(z.zellen.verrechnet),
       doneValue: z.erbracht,
       open: z.offen > 0 ? { cent: z.offen, text: euro(z.offen) } : null,
       belegstand: z.offen > 0 && z.belegstand ? { state: z.belegstand, text: BELEGSTAND_TEXT[z.belegstand] } : null,

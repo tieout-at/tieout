@@ -138,7 +138,7 @@ export function PositionsTable({ built, projektId, project }: { built: Positions
       rows={rows}
       columns={columns}
       views={views}
-      noun={{ one: "Zeile", many: "Zeilen", dative: "Zeilen" }}
+      noun={{ one: "Eintrag", many: "Einträge", dative: "Einträgen" }}
       selectable={false}
       phoneRow={(r) => (
         <div className="flex flex-col gap-1 px-4 py-2.5">
@@ -151,9 +151,9 @@ export function PositionsTable({ built, projektId, project }: { built: Positions
             {r.open && <span className="shrink-0 whitespace-nowrap tabular-nums">{r.open.text}</span>}
           </span>
           <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-secondary">
-            <span>beauftragt {r.ordered}</span>
-            <span>erbracht {r.done}</span>
-            <span>verrechnet {r.invoiced}</span>
+            {r.ordered && <span>beauftragt {r.ordered}</span>}
+            {r.done && <span>erbracht {r.done}</span>}
+            {r.invoiced && <span>verrechnet {r.invoiced}</span>}
             {r.belegstand && r.belegstand.state !== "belegt" && <Tag colour={EVIDENCE[r.belegstand.state].colour}>{r.belegstand.text}</Tag>}
             {r.note && <span>{r.note}</span>}
           </span>
