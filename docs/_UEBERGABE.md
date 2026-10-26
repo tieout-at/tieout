@@ -1,34 +1,41 @@
-# Handover: step 8b, Ihre Daten und Zwilling vollständig
+# Handover: step 8c, Umschalten
 
-**As of:** Monday, 26 October 2026, after step 8a (#115 and #116 merged and checked live). Written by Claude for Maxi S.
+**As of:** Monday, 26 October 2026, night, after step 8b. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Branch:** `schritt-8b-daten-zwilling` already exists locally with the status update after #116 (one commit, not pushed); continue on it.
-**Precondition:** #115 and #116 are merged (they are, 26.10.2026), CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows the project Wohnpark Mooshaim with one row of tabs and three figures led by 14.620,15 €, and "Übersicht" with "Was bringt der Abgleich?". If not, ask Maxi S. first.
+**Precondition:** the pull requests of `schritt-8b-daten-zwilling` (step 8b) and `uebersicht-zurueck` (the step 4 Übersicht back) are merged with the go of Maxi S., CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows the tabs Zeitstrahl and Positionen of Wohnpark Mooshaim, the pages WhatsApp-Meldungen and E-Mails, and the Übersicht with the three columns and the lines from Beleg to euro. If not, ask Maxi S. first.
 
 ## Goal
 
-Build the pages v1 has and v2 still lacks, so that the switch-over (step 8c, right after this step) shows no page worse than v1: the project tabs "Zeitstrahl" and "Positionen", the pages "WhatsApp-Meldungen" and "E-Mails", and the Belegabdeckung with the positions (which Beleg proves which position; `kern/` does not hold it yet, see `_STATUS.md`, open points). Every screen in the design language of steps 8 and 8a, since the jury will see it.
+The public link `app.tieout.workers.dev` shows the new app; v1 stays reachable at an archive address of its own. Moved forward from step 12 (Maxi S., 26.10.2026): v2 now has every page v1 had (Positionen, Zeitachse as Zeitstrahl, WhatsApp) and the jury needs no sign-in.
 
 ## Read first
 
-1. `CLAUDE.md`, `docs/_STATUS.md`, this file.
-2. `docs/DESIGN.md`: "Berichte, Schlussrechnung and Beweispaket (step 8)", "Calmer pages (step 8a)" and the new "Übersicht".
-3. `docs/SPEZIFIKATION.md`: the tabs Zeitstrahl and Positionen (4.1 to 4.4), the vocabulary (section 6).
-4. The v1 pages as the content to beat: tag `v1-archiv`, live at https://app.tieout.workers.dev (Positionen, Zeitachse, WhatsApp).
+1. `CLAUDE.md`, `docs/_STATUS.md` (row 8c, open points), this file.
+2. `docs/DESIGN.md`: "Zeitstrahl, Positionen, Belegabdeckung, messages (step 8b)" and the "Übersicht".
+3. `_STATUS.md` "Where we stand" on the Cloudflare workers `app` (v1, frozen, builds off, stores the old repository name) and `app-neu` (v2).
+
+## Steps
+
+1. **Comparison test** v1 against v2 with the three roles (Abrechnerin, Geschäftsführer, Bauleiter; fresh agents, README, address, one task each). Passed when no verdict is worse than v1. Report into `../tieout-intern/docs/kundentests/`.
+2. **v1 to its archive address:** a worker of its own (for example `app-v1`) built from the tag `v1-archiv` or the branch `v1`; check it live.
+3. **`app` builds the new app:** renew the GitHub connection of the worker `app` in Cloudflare (it still names `schlusswerk/schlusswerk`), root `/app`, build `npm run build`, deploy `npx wrangler deploy`, production branch `main`. Reversible: `app` can build from branch `v1` again.
+4. **README** of the repository points to the new app; the small correction named in `_STATUS.md` (open points) with it.
+5. **Live check** of every page at 1440 and 390 px on the public link, amounts as the solution list.
+
+Every outward step (Cloudflare, README, push) only with a go of Maxi S.
 
 ## Good to know
 
-- **The shared parts of 8a to use:** `Highlights` (at most three figures, the first big, `part` for the thin bar, `info` for the rule), `MiniTable` (phone blocks, `phoneTop`), `DataTable` (hides a column that is the same in every row, `phoneRow` for a list on phones), `Activity` (groups by kind, day and role), `InfoTip`, `StepBar`. A state is named only when it is an exception; a zero is "nichts"; an amount never breaks before its euro sign.
-- **Working method that Maxi S. liked (steps 8 and 8a):** two sentences before each part; for a page with real design choices three drafts with the core's figures (data pack from `kern/` as JSON, standalone HTML with the images embedded in the board, screenshots at 1165 and 390 px), an independent judge, a board side by side, build what Maxi S. chooses; an independent reviewer scores every page (overview / calm, 1 to 10, at 1440 and 390 px) until each is at least 7; every finding re-measured, findings that break a product rule are named and not taken.
-- **Amount audit across pages:** build `main` and the branch in folders of their own (a copy with `node_modules` as a junction, `turbopack.root` set to a common parent folder) and compare the amounts of every exported page; every amount on a page must be the core's. The script of 8a was in the session's scratchpad; write it again, about 20 lines.
-- **Screens:** `npm run screens` (dev server on 3100); `node scripts/compare.mjs <dir>` with the Attio pictures copied into `<dir>/attio` (they stay local).
-- **Open from 8a for Maxi S.:** keep the yellow dot for the project status "offen" (yellow means "Beleg fehlt" elsewhere)? Open from step 8: keep "Zusammen, mit in Klärung" on the Schlussbesprechungs-Blatt; a "realistic" payment expectation next to the Restforderung would need a figure `kern/` does not have.
+- **Taste of Maxi S. (26.10.2026), for every page from now on:** compact, clear at a glance, refined, visual (diagrams), interactive like Linear and Attio (a click gives the details); no page that reads like a book, no long scrolling, no small text walls. He chose draft A (the picture) over the reviewer's calmer list twice in step 8b and wanted the step 4 Übersicht back. A reviewer's score for "Ruhe" is not his bar on its own.
+- **Step 8d "Kompakt und klar"** follows 8c (row in `_STATUS.md`): rethink the sample data (smaller first customers), the core and the solution list with them, and every page; many tokens, an advisor, a board of all pages; amounts change only with his go.
+- **Tools from step 8b (in the session's scratchpad, write them again if needed):** the amount audit builds `main` in a folder of its own (git archive of `app`, `kern`, `docs`; `app/node_modules` as junctions to the repository's packages except `@tieout/kern`, which points to the copy's `kern`; `turbopack.root` set to `C:/Users/maxis`) and compares every euro amount of every exported page; on Git Bash pass URL paths with `MSYS_NO_PATHCONV=1`.
+- **Open from 8b:** one date per Beleg everywhere (the Belege list uses the file date); position texts cut at 1440 px in Positionen.
 
 ## Done when
 
-- Zeitstrahl and Positionen of Wohnpark Mooshaim, WhatsApp-Meldungen and E-Mails built from `kern/`, Belegabdeckung with the positions (with tests in `kern/`); every new page at least 7 / 7 in an independent review; no amount changed against `main`; checks and CI green; screens at 1440 and 390 px shown to Maxi S. next to Attio and v1.
-- `_STATUS.md` updated, this file rewritten for step 8c (the switch-over), pull request merged with his go.
+- The public link shows v2, v1 is at its archive address, no role's verdict is worse than v1, README updated, checked live.
+- `_STATUS.md` updated, this file rewritten for step 8d.
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 8b, Ihre Daten und Zwilling vollständig. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 8b: Zeitstrahl, Positionen, WhatsApp-Meldungen, E-Mails und die Belegabdeckung, in der Designsprache aus 8 und 8a. Kein Betrag ändert sich ohne mein Go. Sag mir vor jedem Teil in zwei Sätzen, was passiert, zeig mir die Screens neben Attio und v1 und hol dir mein Go vor dem Push und vor dem Merge. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 8c, Umschalten. Lies `CLAUDE.md` und `docs/_UEBERGABE.md` und mach Schritt 8c: Vergleichstest v1 gegen v2 mit den drei Rollen, v1 auf eine eigene Archivadresse, der öffentliche Link zeigt die neue App. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Cloudflare, README, Push, Merge). Deutsch, einfach, Ergebnis zuerst.
