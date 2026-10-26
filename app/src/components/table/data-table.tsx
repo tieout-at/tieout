@@ -348,7 +348,7 @@ function ViewBar<R>({
       <DropdownMenu>
         <DropdownMenuTrigger className={barButton}>
           <span className="flex size-4 items-center justify-center rounded-xs bg-fg text-white" aria-hidden>
-            {board ? <Kanban className="size-3" /> : <Table className="size-3" />}
+            {view.icon ? <view.icon className="size-3" /> : board ? <Kanban className="size-3" /> : <Table className="size-3" />}
           </span>
           <span className="max-w-56 truncate">{view.title}</span>
           <ChevronDown className="size-4 text-fg-secondary" aria-hidden />
@@ -358,7 +358,7 @@ function ViewBar<R>({
             <DropdownMenuLabel>Ansichten</DropdownMenuLabel>
             {views.map((v) => (
               <DropdownMenuItem key={v.id} onClick={() => onView(v)}>
-                {v.kind === "board" ? <Kanban /> : <Table />}
+                {v.icon ? <v.icon /> : v.kind === "board" ? <Kanban /> : <Table />}
                 <span className="flex-1">{v.title}</span>
                 {v.id === view.id && <Check aria-label="gewählt" />}
               </DropdownMenuItem>

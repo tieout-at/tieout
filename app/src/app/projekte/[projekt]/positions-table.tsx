@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Coins, FileCheck, Hash, Layers, ListOrdered, PackageCheck, ReceiptText, SearchCheck, Shapes, TriangleAlert, Wallet } from "lucide-react";
+import { Coins, FileCheck, Grid3x3, Hash, Layers, ListOrdered, PackageCheck, ReceiptText, ScanSearch, SearchCheck, Shapes, TriangleAlert, Wallet } from "lucide-react";
 
 import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
 import { useLive } from "@/lib/live";
-import type { PositionRow, PositionsView } from "@/lib/positions";
+import type { PositionRow, PositionsView } from "@/lib/positions-shared";
 import type { View } from "@/lib/table";
+import type { TaskTarget } from "@/lib/tasks";
+import { CoverageMatrix } from "./coverage-matrix";
 
 const EVIDENCE: Record<NonNullable<PositionRow["belegstand"]>["state"], { colour: TagColour; rank: number }> = {
   belegt: { colour: "green", rank: 0 },
@@ -52,9 +54,10 @@ const Quantity = ({ text }: { text: string }) => (
  * measured; "Alle Positionen" is the whole Leistungsverzeichnis. The footer keeps "zusätzlich verrechenbar" and
  * "in Klärung" apart, both the core's.
  */
-export function PositionsTable({ built, projektId, project }: { built: PositionsView; projektId: string; project: string }) {
+export function PositionsTable({ built, projektId, project, targets }: { built: PositionsView; projektId: string; project: string; targets: Record<string, TaskTarget> }) {
   const live = useLive();
-  const { rows, calculations } = (live && live.positionsView(projektId)) || built;
+  const view = (live && live.positionsView(projektId)) || built;
+  const { rows, calculations } = view;
 
   const columns: Column<PositionRow>[] = [
     {
@@ -119,17 +122,33 @@ export function PositionsTable({ built, projektId, project }: { built: Positions
     },
     { id: "kind", title: "Art", icon: Shapes, width: 180, sortValue: (r) => r.kind, filterValue: (r) => r.kind, cell: (r) => <span className="truncate">{r.kind}</span> },
     { id: "price", title: "Einheitspreis", icon: Coins, width: 160, align: "right", sortValue: (r) => r.price?.cent ?? null, cell: (r) => r.price?.text },
+    {
+      id: "check",
+      title: "Belegabdeckung",
+      icon: ScanSearch,
+      width: 220,
+      sortValue: (r) => (r.check === "luecke" ? 0 : r.check === "schwach" ? 1 : 2),
+      filterValue: (r) => (r.check || r.find ? "mit Fund oder Lücke" : "ohne Auffälligkeit"),
+      cell: (r) => (r.check === "luecke" ? "Lücke" : r.check === "schwach" ? "schwach belegt" : null),
+    },
     { id: "unit", title: "Einheit", icon: Hash, width: 110, sortValue: (r) => r.unit, filterValue: (r) => r.unit, cell: (r) => r.unit },
   ];
 
   // the find is a chip in the row's name; its column stays for sorting and the filter "mit Fund"
-  const hidden = ["find", "group", "kind", "price", "unit"];
+  const hidden = ["find", "group", "kind", "price", "unit", "check"];
   const calc = { open: "zusaetzlich", belegstand: "klaerung" };
   const lvOrder = { column: "position", direction: "asc" } as const;
   const views: View[] = [
     { id: "offen", title: "Offen", state: { sort: lvOrder, filters: [{ column: "open", values: ["offen"] }], hidden, calculations: calc } },
     { id: "auffaellig", title: "Auffällig", state: { sort: lvOrder, filters: [{ column: "note", values: ["über dem Leistungsverzeichnis", "nicht aufgemessen", "nach der letzten Abschlagsrechnung"] }], hidden, calculations: calc } },
     { id: "alle", title: "Alle Positionen", state: { sort: lvOrder, filters: [], hidden, calculations: calc } },
+    {
+      id: "abdeckung",
+      title: "Belegabdeckung",
+      kind: "board",
+      icon: Grid3x3,
+      state: { sort: lvOrder, filters: [{ column: "check", values: ["mit Fund oder Lücke"] }], hidden, calculations: calc },
+    },
   ];
 
   return (
@@ -140,6 +159,7 @@ export function PositionsTable({ built, projektId, project }: { built: Positions
       views={views}
       noun={{ one: "Eintrag", many: "Einträge", dative: "Einträgen" }}
       selectable={false}
+      board={(visible) => <CoverageMatrix rows={visible} view={view} targets={targets} />}
       phoneRow={(r) => (
         <div className="flex flex-col gap-1 px-4 py-2.5">
           <span className="flex items-start gap-2">

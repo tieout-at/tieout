@@ -3,7 +3,10 @@ import { describe, expect, it } from "vitest";
 import { emailView, whatsappView } from "./inbox";
 import { live } from "./kern-live";
 import { positionsView } from "./positions";
+import { COVERAGE_KINDS } from "./positions-shared";
 import { applyFilters, matchingSum } from "./table";
+import { timelineView } from "./timeline";
+import { NACHWEISARTEN } from "@tieout/kern";
 
 // Expected amounts must stand in the solution list (docs/Demo_Faelle.md), as in kern/test.
 const list = readFileSync(new URL("../../../docs/Demo_Faelle.md", import.meta.url), "utf8");
@@ -49,6 +52,16 @@ describe("tab Positionen", () => {
     expect(sum?.text).toBe("7.971,55 €");
   });
 
+  it("Belegabdeckung: 3 gaps (2 Beleg fehlt, 1 Nachtrag), 4 rows weak, the missing Beleg named by its kind", () => {
+    expect(view.answer).toEqual({ gaps: 3, belegFehlt: 2, nachtrag: 1, weak: 4 });
+    expect(view.rows.filter((r) => r.missing).map((r) => [r.find?.number, r.missing!.kind, r.missing!.text])).toEqual([
+      ["F7", "regie", "Regiebericht"],
+      ["F8", "rechnung", "Nachtrag mit Preis"],
+    ]);
+    expect(view.rows.find((r) => r.find?.number === "F6")!.coverage.regie[0]).toMatchObject({ title: "Regiebericht 12", weak: "nicht unterschrieben", date: "24.06.2026" });
+    expect(COVERAGE_KINDS.map((k) => k.id)).toEqual([...NACHWEISARTEN]);
+  });
+
   it("a closed project has no table", () => {
     expect(positionsView("p4")).toBeNull();
   });
@@ -75,5 +88,26 @@ describe("WhatsApp-Meldungen and E-Mails", () => {
     const f1 = e.items.find((i) => i.id === "mail-0407")!;
     expect([f1.category, f1.finds[0].number, f1.finds[0].amount, f1.side]).toEqual(["Anweisung", "F1", listed("6.648,60 €"), null]);
     expect(e.items.find((i) => i.id === "mail-0513")!.side).toBe("für Hornfeld Bau");
+  });
+});
+
+describe("tab Zeitstrahl", () => {
+  const t = timelineView("p1")!;
+
+  it("the answer: 16 of 61 site events missing, in 8 finds, 24 invoiced; the picture runs Jänner to the month after the deadline", () => {
+    expect(t.counts).toEqual({ site: 61, missing: 16, invoiced: 24, next: 0, withFind: 17, findCount: 8 });
+    expect([t.range.from, t.range.to, t.deadline?.text]).toEqual(["2026-01-01", "2026-11-01", "30.10.2026"]);
+  });
+
+  it("every event has a row of the picture; the invoices carry the amounts printed on them", () => {
+    expect(t.events).toHaveLength(70);
+    const ar = t.events.filter((e) => e.row === "rechnung").map((e) => e.short);
+    expect(ar).toEqual([listed("241.600,00 €"), listed("276.900,00 €"), listed("168.400,00 €")]);
+    expect(t.events.find((e) => e.art === "zahlungsavis")!.amount).toBe(`bezahlt ${listed("218.566,83 €")}`);
+  });
+
+  it("the find of an event with its amount and remedy, for the panel", () => {
+    expect(t.finds.F7).toMatchObject({ amount: listed("476,00 €"), belegstand: { text: "Beleg fehlt" } });
+    expect(t.finds.F7.remedy).toBeTruthy();
   });
 });

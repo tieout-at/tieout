@@ -10,6 +10,7 @@ import { timelineView } from "@/lib/timeline";
 import { Timeline } from "@/components/zeitstrahl/timeline";
 import { belegRows, business, findCalculations, findRows } from "@/lib/kern-data";
 import { projectRecord } from "@/lib/records";
+import { targetOf } from "@/lib/tasks";
 import { BelegeTable } from "../../../belege/belege-table";
 import { FindsTable } from "../../../funde/finds-table";
 import { PositionsTable } from "../positions-table";
@@ -47,7 +48,8 @@ export default async function ProjectTabPage({ params }: Props) {
 
   if (reiter === "positionen") {
     const view = positionsView(project.id);
-    if (view) return <PositionsTable built={view} projektId={project.id} project={project.slug} />;
+    const targets = Object.fromEntries(findRows().filter((r) => r.project.slug === project.slug).map((r) => [r.number, targetOf(r)]));
+    if (view) return <PositionsTable built={view} projektId={project.id} project={project.slug} targets={targets} />;
     return <EmptyState icon={TAB_EMPTY.positionen.icon} title="Positionen" text={`Die Schlussrechnung von ${project.name} ist gelegt, tieout gleicht hier nicht mehr ab. Was ${project.client} gekürzt und bezahlt hat, steht im Überblick.`} />;
   }
 

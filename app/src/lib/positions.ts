@@ -7,10 +7,9 @@
 
 import {
   BELEGSTAND_TEXT,
-  NACHWEISART_SPALTE,
-  NACHWEISART_TEXT,
   NACHWEISARTEN,
   belegabdeckung,
+  datumText,
   euro,
   prozentText,
   type Belegstand,
@@ -20,7 +19,7 @@ import {
 } from "@tieout/kern";
 
 import { findSlug, projectSlug } from "./example";
-import { business, firm, type Amount } from "./kern-data";
+import { business, firm, nameAndFacts, type Amount } from "./kern-data";
 import type { Calculation, Row } from "./table";
 
 /** Names of the Leistungsgruppen of an HKLS Leistungsverzeichnis, by their number. */
@@ -59,11 +58,15 @@ export type PositionRow = Row & {
   doneValue: number | null;
   open: Amount | null;
   belegstand: { state: Belegstand; text: string } | null;
-  find: { number: string; href: string } | null;
+  find: { number: string; href: string; name: string; amount: string; remedy: string | null } | null;
   /** Only exceptions: "über dem Leistungsverzeichnis, +16,3 %", "nicht aufgemessen", "nach der letzten Abschlagsrechnung". */
   note: string | null;
   /** Which Beleg proves the row, per kind of evidence (Belegabdeckung). */
   coverage: Record<Nachweisart, CoverageItem[]>;
+  /** The Beleg the row still lacks, by kind: a Regiebericht for hours without one, the priced Nachtrag for a notified change. */
+  missing: { kind: Nachweisart; text: string } | null;
+  /** The Belegabdeckung names it: a gap ("Beleg fehlt", "Nachtrag nicht gelegt"), a weak Beleg, or nothing. */
+  check: "luecke" | "schwach" | null;
 };
 
 export type PositionsView = {
@@ -71,9 +74,9 @@ export type PositionsView = {
   calculations: Record<"open" | "belegstand", Calculation[]>;
   /** How many rows have a Beleg of each kind. */
   perKind: Record<Nachweisart, number>;
+  /** "Ist alles belegt?": rows with a gap, by Belegstand, and rows with a weak Beleg. */
+  answer: { gaps: number; belegFehlt: number; nachtrag: number; weak: number };
 };
-
-export const COVERAGE_KINDS = NACHWEISARTEN.map((k) => ({ id: k, title: NACHWEISART_TEXT[k], column: NACHWEISART_SPALTE[k] }));
 
 /** The tab "Positionen" of an open project; null for a closed project (no Abgleich, no table). */
 export function positionsView(projektId: string, b: FirmenErgebnis = business()): PositionsView | null {
@@ -101,6 +104,17 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
             ? "nach der letzten Abschlagsrechnung"
             : null;
     const cover = abdeckung.get(z.schluessel);
+    const coverage = Object.fromEntries(
+      NACHWEISARTEN.map((k) => [k, (cover?.belege[k] ?? []).map((x) => ({ belegId: x.belegId, title: x.titel, date: datumText(x.datum), weak: x.schwach }))]),
+    ) as Record<Nachweisart, CoverageItem[]>;
+    const gap = z.offen > 0 && z.belegstand !== null && z.belegstand !== "belegt";
+    const weak = NACHWEISARTEN.some((k) => coverage[k].some((x) => x.weak));
+    const missing =
+      gap && z.belegstand === "nachtrag_nicht_gelegt"
+        ? { kind: "rechnung" as const, text: "Nachtrag mit Preis" }
+        : gap && !coverage.regie.length && (z.art === "meldung" || z.art === "regie")
+          ? { kind: "regie" as const, text: "Regiebericht" }
+          : null;
     return {
       id: `${projektId}/${z.schluessel}`,
       groups,
@@ -118,11 +132,11 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
       doneValue: z.erbracht,
       open: z.offen > 0 ? { cent: z.offen, text: euro(z.offen) } : null,
       belegstand: z.offen > 0 && z.belegstand ? { state: z.belegstand, text: BELEGSTAND_TEXT[z.belegstand] } : null,
-      find: fund ? { number: fund.nr, href: `/funde/${findSlug(d.projekt.name, fund.nr)}/` } : null,
+      find: fund ? { number: fund.nr, href: `/funde/${findSlug(d.projekt.name, fund.nr)}/`, name: nameAndFacts(fund).name, amount: euro(fund.betrag), remedy: fund.abhilfe } : null,
       note,
-      coverage: Object.fromEntries(
-        NACHWEISARTEN.map((k) => [k, (cover?.belege[k] ?? []).map((x) => ({ belegId: x.belegId, title: x.titel, date: x.datum, weak: x.schwach }))]),
-      ) as Record<Nachweisart, CoverageItem[]>,
+      coverage,
+      missing,
+      check: gap ? "luecke" : weak ? "schwach" : null,
     };
   });
 
@@ -131,7 +145,13 @@ export function positionsView(projektId: string, b: FirmenErgebnis = business())
   const extra: Calculation = { id: "zusaetzlich", title: "zusätzlich verrechenbar", sums: [{ group: "zusaetzlich", ids: ids("zusaetzlich"), text: euro(s.zusaetzlichVerrechenbar) }] };
   const unclear: Calculation = { id: "klaerung", title: "in Klärung", sums: [{ group: "klaerung", ids: ids("klaerung"), text: euro(s.inKlaerung) }] };
   const counted = Object.fromEntries(NACHWEISARTEN.map((k) => [k, rows.filter((r) => r.coverage[k].length).length])) as Record<Nachweisart, number>;
-  return { rows, calculations: { open: [extra, unclear], belegstand: [unclear] }, perKind: counted };
+  const gaps = rows.filter((r) => r.check === "luecke");
+  return {
+    rows,
+    calculations: { open: [extra, unclear], belegstand: [unclear] },
+    perKind: counted,
+    answer: { gaps: gaps.length, belegFehlt: gaps.filter((r) => r.belegstand?.state === "beleg_fehlt").length, nachtrag: gaps.filter((r) => r.belegstand?.state === "nachtrag_nicht_gelegt").length, weak: rows.filter((r) => r.check === "schwach").length },
+  };
 }
 
 /** Slugs of the projects whose tab "Positionen" has a table. */
