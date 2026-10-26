@@ -143,7 +143,7 @@ export function WeakSpot({ record, excluded, active, onOpen }: { record: FindRec
   return (
     <section id="kuerzungsrisiko" aria-labelledby="kuerzungsrisiko-titel" className="scroll-mt-4">
       <h2 id="kuerzungsrisiko-titel" className="mb-2 text-sm text-fg-secondary">
-        {r ? "Kürzungsrisiko" : record.remedy ? "Was fehlt" : "Hinweis"}
+        {r ? "Kürzungsrisiko" : record.remedy ? "Abhilfe" : "Hinweis"}
       </h2>
       <div className="flex flex-col gap-2 rounded-lg bg-surface px-3 py-2.5 shadow-ring">
         {r && (
@@ -174,12 +174,7 @@ export function WeakSpot({ record, excluded, active, onOpen }: { record: FindRec
             </div>
           </>
         )}
-        {!r && record.remedy && (
-          <p>
-            <span className="text-fg-secondary">Abhilfe: </span>
-            {record.remedy}
-          </p>
-        )}
+        {!r && record.remedy && <p>{record.remedy}</p>}
         {record.notes.map((n) => (
           <p key={n.id} className="text-xs text-fg-secondary">
             <span className="text-fg">{n.title}:</span> {n.text}

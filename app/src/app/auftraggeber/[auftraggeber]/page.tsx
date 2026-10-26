@@ -47,12 +47,14 @@ export default async function AuftraggeberRecordPage({ params }: Props) {
   const r = find((await params).auftraggeber);
   const kind = r.attributes.find((a) => a.label === "Art")!.value;
   const projects = r.attributes.find((a) => a.label === "Projekte")!;
+  // the head says the kind and the projects; Angaben keeps what it alone says
+  const details = r.attributes.filter((a) => a.label !== "Art" && a.label !== "Projekte");
   return (
     <Page destination="auftraggeber" trail={[{ label: r.name }]}>
       <RecordHead icon={Briefcase} title={r.name} facts={[kind, `${projects.value} Projekte${projects.detail ? `, ${projects.detail}` : ""}`]} />
       <div className="flex flex-1 shadow-[inset_0_1px_0_0_var(--color-line)] max-lg:flex-col">
         <aside className="w-[374px] shrink-0 shadow-[inset_-1px_0_0_0_var(--color-line)] max-lg:order-2 max-lg:w-full max-lg:shadow-[inset_0_1px_0_0_var(--color-line)]">
-          <AttributeList title="Angaben" attributes={r.attributes} />
+          <AttributeList title="Angaben" attributes={details} />
         </aside>
         <div className="flex min-w-0 flex-1 flex-col gap-6 px-6 py-5 max-md:px-4 max-lg:order-1">
           {r.sameReason.length > 0 && (
@@ -68,8 +70,11 @@ export default async function AuftraggeberRecordPage({ params }: Props) {
                   <li key={s.id} className="flex items-start gap-2.5 px-4 py-3 [&:not(:last-child)]:shadow-line-bottom">
                     <span className="mt-1.5 size-2 shrink-0 rounded-full bg-state-red" aria-hidden />
                     <p className="min-w-0">
-                      <span className="font-semibold">{s.reason}</span> <span className="text-fg-secondary">droht in {projectLink(s.project)}.</span>
-                      <span className="block text-fg-secondary tabular-nums">{s.earlier.charAt(0).toUpperCase() + s.earlier.slice(1)}.</span>
+                      <span className="font-semibold">{s.reason}</span>{" "}
+                      <span className="text-fg-secondary">
+                        {s.deducted ? "auch in" : "droht in"} {projectLink(s.project)}.
+                      </span>
+                      <span className="block text-fg-secondary tabular-nums">{(s.earlier.charAt(0).toUpperCase() + s.earlier.slice(1)).replace(/ €/g, " €")}.</span>
                     </p>
                   </li>
                 ))}

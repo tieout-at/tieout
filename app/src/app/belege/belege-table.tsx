@@ -9,8 +9,8 @@ import type { BelegRow } from "@/lib/kern-data";
 import type { View } from "@/lib/table";
 
 const REVIEW: Record<BelegRow["review"]["state"], { colour?: TagColour; rank: number }> = {
-  korrigiert: { colour: "green", rank: 0 },
-  bestaetigt: { colour: "green", rank: 1 },
+  korrigiert: { rank: 0 },
+  bestaetigt: { rank: 1 },
   kopie: { rank: 2 },
   maschinell: { rank: 3 },
 };
@@ -118,7 +118,7 @@ export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: str
       id: "review",
       title: "Prüfung",
       icon: ScanText,
-      width: 240,
+      width: 190,
       sortValue: (r) => REVIEW[r.review.state].rank,
       filterValue: (r) => r.review.text,
       cell: (r) => <Review r={r} />,
@@ -145,9 +145,9 @@ export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: str
   // Art mostly repeats the name and Herkunft is the website's group: both one click away in "Ansicht" (step 8a)
   const hidden = project ? ["kind", "group", "project", "file"] : ["kind", "group", "file"];
   const views: View[] = [
-    { id: "alle", title: "Alle Belege", state: { sort: { column: "date", direction: "asc" }, filters: [], hidden, calculations: {} } },
+    { id: "alle", title: "Alle Belege", state: { sort: { column: "date", direction: "desc" }, filters: [], hidden, calculations: {} } },
     { id: "funde", title: "Belege mit Funden", state: { sort: { column: "finds", direction: "asc" }, filters: [{ column: "finds", values: ["mit Fund"] }], hidden, calculations: {} } },
-    { id: "korrigiert", title: "Korrigiert", state: { sort: { column: "date", direction: "asc" }, filters: [{ column: "review", values: ["korrigiert"] }], hidden, calculations: {} } },
+    { id: "korrigiert", title: "Korrigiert", state: { sort: { column: "date", direction: "desc" }, filters: [{ column: "review", values: ["korrigiert"] }], hidden, calculations: {} } },
   ];
 
   return (

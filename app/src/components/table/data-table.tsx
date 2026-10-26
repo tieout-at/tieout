@@ -190,7 +190,8 @@ export function DataTable<R extends Row>({
       const result = c.calculations?.length ? footerSum(c.calculations, state.calculations[c.id] ?? null, visible) : null;
       if (!result) return [];
       const chosen = c.calculations!.find((x) => x.id === state.calculations[c.id])?.title ?? c.title;
-      return "cut" in result ? [{ id: c.id, title: chosen, text: null }] : [{ id: c.id, title: result.calculation.title, text: result.sum.text }];
+      // without the column head above it, a plain "Summe" says which column it adds up
+      return "cut" in result ? [{ id: c.id, title: chosen, text: null }] : [{ id: c.id, title: result.calculation.title === "Summe" ? c.title : result.calculation.title, text: result.sum.text }];
     });
     return (
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:hidden">

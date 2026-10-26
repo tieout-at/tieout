@@ -50,6 +50,8 @@ export type Highlight = {
   /** The lead figure only: one statement written from the core's figures, and the share of its part (the Kürzungsrisiko) for one thin bar. */
   says?: string;
   part?: number;
+  /** The rule behind the figure, behind an info icon. */
+  info?: string;
 };
 
 export type ActivityEntry = { id: string; time: string; timeText: string; who: string; text: string; kind: "korrektur" | "meldung" | "entscheidung" | "aufgabe" | "erledigt" };
@@ -65,6 +67,9 @@ export type ProjectRecord = {
   activity: ActivityEntry[];
 };
 
+
+/** A name like "ÖNORM B 2110" never breaks inside. */
+const keepTogether = (text: string) => text.replace(/ /g, " ");
 
 const zeitText = (z: string) => `${datumText(z.slice(0, 10))}, ${z.slice(11, 16)}`;
 
@@ -96,7 +101,7 @@ function projectAttributes(d: Datensatz, row: ProjectRow, client: { name: string
     // the trade is the business's own (Heizung, Klima, Lüftung, Sanitär), so the project names only what is built
     { label: "Leistung", value: d.projekt.langname.replace(`${d.projekt.name}, `, "").replace(/,? ?HKLS$/, "") },
     { label: "Auftragssumme", value: euro(v.auftragssumme.wert), ...sourceOf(d, v.auftragssumme) },
-    { label: "Vertrag", value: `vom ${datumText(v.datum.wert)}`, detail: `${v.vertragsart.wert}, ${v.norm.wert}`, href: `/projekte/${row.slug}/vertrag/` },
+    { label: "Vertrag", value: `vom ${datumText(v.datum.wert)}`, detail: `${v.vertragsart.wert}, ${keepTogether(v.norm.wert)}`, href: `/projekte/${row.slug}/vertrag/` },
   ];
 }
 
@@ -105,7 +110,7 @@ function contractAttributes(d: Datensatz): Attribute[] {
   const v = d.vertrag;
   const legenBis = v.schlussrechnungLegenBis;
   return [
-    { label: "Vertrag vom", value: datumText(v.datum.wert), detail: `${v.vertragsart.wert}, ${v.norm.wert}`, ...sourceOf(d, v.datum) },
+    { label: "Vertrag vom", value: datumText(v.datum.wert), detail: `${v.vertragsart.wert}, ${keepTogether(v.norm.wert)}`, ...sourceOf(d, v.datum) },
     { label: "Auftragssumme", value: euro(v.auftragssumme.wert), ...sourceOf(d, v.auftragssumme) },
     ...(legenBis ? [{ label: "Schlussrechnung legen bis", value: datumText(legenBis.wert), ...sourceOf(d, legenBis) }] : []),
     ...v.saetze.map((s) => ({
@@ -144,15 +149,20 @@ export function projectHighlights(projektId: string, b: FirmenErgebnis = busines
     const ab = b.abrechnungen[projektId];
     if (!ab) return [contract];
     const invoice = ab.zeilen.find((z) => z.art === "rechnung")!.betrag;
+    const h = b.historie.find((x) => x.kuerzungen.some((k) => k.projektId === projektId) || x.abzuege.some((a) => a.projektId === projektId));
+    const reasons = [
+      ...(h?.kuerzungen.filter((k) => k.projektId === projektId).map((k) => `${KUERZUNGSGRUND_TEXT[k.grund]} ${euro(k.betrag)}`) ?? []),
+      ...(h?.abzuege.filter((a) => a.projektId === projektId).map((a) => `dazu abgezogen: ${ABZUG_TEXT[a.art]} ${euro(a.betrag)}`) ?? []),
+    ];
     return [
       {
         id: "gekuerzt",
         title: "Gekürzt",
         value: euro(ab.gekuerzt),
-        lines: [`von der Schlussrechnung ${euro(invoice)}${d.schlussrechnung ? `, gelegt am ${datumText(d.schlussrechnung.datum.wert)}` : ""}`],
+        lines: [`von der Schlussrechnung ${euro(invoice)}`, ...reasons],
         part: invoice ? ab.gekuerzt / invoice : undefined,
       },
-      { id: "schlusszahlung", title: "Schlusszahlung", value: euro(ab.schlusszahlung.betrag), lines: [`am ${datumText(ab.schlusszahlung.datum)}, nach ${ab.schlusszahlung.tage} Tagen`] },
+      { id: "schlusszahlung", title: "Schlusszahlung", value: euro(ab.schlusszahlung.betrag), lines: [`nach ${ab.schlusszahlung.tage} Tagen`] },
       { id: "einbehalten", title: "Haftrücklass einbehalten", value: euro(ab.einbehalten), lines: ["laut Zahlungsavis"] },
     ];
   }
@@ -177,13 +187,22 @@ export function projectHighlights(projektId: string, b: FirmenErgebnis = busines
     {
       id: "klaerung",
       title: "In Klärung",
-      value: euro(s.inKlaerung),
-      lines: s.inKlaerung ? [`Beleg fehlt ${euro(s.belegFehlt)}`, `Nachtrag nicht gelegt ${euro(s.nachtragNichtGelegt)}`] : ["nichts in Klärung"],
+      value: s.inKlaerung ? euro(s.inKlaerung) : "nichts",
+      lines: s.inKlaerung ? [`Beleg fehlt ${euro(s.belegFehlt)}`, `Nachtrag nicht gelegt ${euro(s.nachtragNichtGelegt)}`] : [],
       href: pending ? findsHref : undefined,
     },
-    e.rechnungsabschluss
-      ? { id: "restforderung", title: "Restforderung", value: euro(e.rechnungsabschluss.restforderung), lines: [`laut Vertrag ${euro(e.rechnungsabschluss.lautVertrag.restforderung)}`], href: invoiceHref }
-      : contract,
+    ...(e.rechnungsabschluss
+      ? [
+          {
+            id: "restforderung",
+            title: "Restforderung",
+            value: euro(e.rechnungsabschluss.restforderung),
+            lines: [`laut Vertrag ${euro(e.rechnungsabschluss.lautVertrag.restforderung)}`],
+            info: "Was nach dem Entwurf der Schlussrechnung, den Zahlungen und den Abzügen des Auftraggebers offen bleibt. „Laut Vertrag“ rechnet ohne die Abzüge, für die der Vertrag keinen Punkt nennt.",
+            href: invoiceHref,
+          },
+        ]
+      : []),
   ];
 }
 
@@ -236,7 +255,7 @@ export type ClientRecord = {
   attributes: Attribute[];
   highlights: Highlight[];
   /** "Gleicher Grund bei diesem Auftraggeber schon im …", per open project and reason; `earlier` says what it cost there. */
-  sameReason: { id: string; project: { name: string; href: string }; reason: string; text: string; earlier: string }[];
+  sameReason: { id: string; project: { name: string; href: string }; reason: string; text: string; earlier: string; deducted: boolean }[];
   cuts: HistoryLine[];
   deductions: HistoryLine[];
   changeOrders: { id: string; project: string; number: string; title: string; amount: string; accepted: boolean }[];
@@ -256,7 +275,6 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
   const attributes: Attribute[] = [
     { label: "Art", value: AUFTRAGGEBER_ART_TEXT[ag.art] },
     { label: "Projekte", value: String(h.projekte), detail: h.abgeschlossen ? `${h.abgeschlossen} abgeschlossen` : undefined },
-    ...(n.angeboten ? [{ label: "Nachträge beauftragt", value: `${n.beauftragt} von ${n.angeboten}`, detail: n.quote === null ? undefined : `${prozentText(n.quote, 1)} des Betrags` }] : []),
     ...h.schlusszahlung.map((s) => ({ label: "Tage bis Schlusszahlung", value: String(s.tage), detail: s.projekt })),
   ];
 
@@ -277,7 +295,7 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
       id: "nachtraege",
       title: "Nachträge beauftragt",
       value: n.angeboten ? `${n.beauftragt} von ${n.angeboten}` : "keine",
-      lines: n.angeboten ? [`${euro(n.betragBeauftragt)} von ${euro(n.betrag)}`] : ["kein Nachtrag angeboten"],
+      lines: n.angeboten ? [`${euro(n.betragBeauftragt)} von ${euro(n.betrag)}${n.quote === null ? "" : `, ${prozentText(n.quote, 1)} des Betrags`}`] : ["kein Nachtrag angeboten"],
     },
   ];
 
@@ -297,6 +315,7 @@ export function clientRecord(auftraggeberId: string): ClientRecord {
           project: { name: dataset(projektId).projekt.name, href: href(projektId) },
           reason,
           text: x.text,
+          deducted: !risk,
           earlier: `${imProjekt(dataset(x.projektId).projekt.name)} ${risk ? "gekürzt" : "abgezogen"}: ${earlier.join(", ")}`,
         };
       });

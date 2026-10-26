@@ -102,6 +102,7 @@ export function Activity({ entries, first = 4 }: { entries: ActivityEntry[]; fir
   const [all, setAll] = useState(false);
   const groups = groupActivity(entries);
   const shown = all ? groups : groups.slice(0, first);
+  if (entries.length === 0) return null;
   return (
     <section aria-label="Verlauf">
       <div className="mb-2 flex items-center justify-between">
@@ -118,8 +119,7 @@ export function Activity({ entries, first = 4 }: { entries: ActivityEntry[]; fir
           </button>
         )}
       </div>
-      {entries.length === 0 && <p className="rounded-lg px-3 py-2.5 text-fg-muted shadow-ring">Noch keine Änderung von Hand.</p>}
-      <ol className={entries.length ? "rounded-lg bg-surface px-1 py-1 shadow-ring" : "hidden"}>
+      <ol className="rounded-lg bg-surface px-1 py-1 shadow-ring">
         {shown.map((g) => (
           <GroupRow key={g.id} g={g} />
         ))}

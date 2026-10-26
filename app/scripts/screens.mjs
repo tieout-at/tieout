@@ -72,6 +72,8 @@ const SCREENS = [
   {
     name: "projekte-spalte",
     path: "/projekte/",
+    // phones show the projects as a list (step 8a), without the "+" of the grid
+    desktopOnly: true,
     act: async (page) => {
       await page.getByRole("button", { name: "Spalte hinzufügen" }).click();
       await page.getByRole("dialog").waitFor();

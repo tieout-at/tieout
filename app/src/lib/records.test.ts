@@ -49,6 +49,14 @@ describe("project page Wohnpark Mooshaim (SPEZIFIKATION.md 7.2)", () => {
     const closed = projectRecord("p4");
     expect(closed.highlights.map((h) => h.id)).toEqual(["gekuerzt", "schlusszahlung", "einbehalten"]);
     expect(closed.highlights.find((h) => h.id === "gekuerzt")?.value).toBe(listed("2.655,20 €"));
+    // the cut by reason, so it meets the Auftraggeber page (2.575,20 € there is one of the reasons)
+    expect(closed.highlights.find((h) => h.id === "gekuerzt")?.lines).toContain(`Aufmaß nicht gegengezeichnet ${listed("2.575,20 €")}`);
+    expect(closed.highlights.find((h) => h.id === "gekuerzt")?.lines).toContain(`dazu abgezogen: Bauschadensumlage ${listed("3.305,55 €")}`);
+  });
+
+  it("says nothing in Klärung once, and shows no Auftragssumme card while Angaben has it", () => {
+    const running = projectRecord("p2");
+    expect(running.highlights.map((h) => [h.id, h.value])).toEqual([["zusaetzlich", listed("4.852,73 €")], ["klaerung", "nichts"]]);
   });
 });
 
@@ -57,7 +65,7 @@ describe("Auftraggeber Hornfeld Bau (SPEZIFIKATION.md 2.2 and 7.2)", () => {
 
   it("history from the documents: cuts, deductions without contract item, Nachträge, days to final payment", () => {
     expect(c.highlights.map((h) => h.value)).toEqual([listed("4.431,20 €"), listed("6.628,41 €"), "2 von 3"]);
-    expect(c.highlights[2].lines).toEqual([`${listed("8.820,00 €")} von ${listed("10.680,00 €")}`]);
+    expect(c.highlights[2].lines).toEqual([`${listed("8.820,00 €")} von ${listed("10.680,00 €")}, 82,6 % des Betrags`]);
     expect(c.cuts.map((x) => [x.project.name, x.reason, x.amount])).toContainEqual(["Wohnhof Erlenhain", "Aufmaß nicht gegengezeichnet", listed("2.575,20 €")]);
     expect(c.deductions.map((x) => [x.project.name, x.what, x.amount])).toContainEqual(["Wohnhof Erlenhain", "Bauschadensumlage", listed("3.305,55 €")]);
     expect(c.attributes.find((a) => a.label === "Tage bis Schlusszahlung")).toMatchObject({ value: "90", detail: "Wohnhof Erlenhain" });

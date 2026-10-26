@@ -61,7 +61,7 @@ export function StartMoney({ built }: { built: StartView }) {
         >
           <span className="text-xs text-fg-secondary">{c.title}</span>
           <span className="text-xl font-semibold tabular-nums">{c.amount.text}</span>
-          {c.line && <span className="text-xs text-fg-muted">{c.line}</span>}
+          {c.line && <span className="text-xs text-fg-muted">{c.line.replace(/ €/g, "\u00a0€")}</span>}
         </Link>
       ))}
     </section>
@@ -98,7 +98,7 @@ export function NextSteps({ built }: { built: StartView }) {
                       <span className="line-clamp-3">{s.find.name}</span>
                     </span>
                     <span className="text-xs text-fg-secondary">
-                      {s.step}, {s.who} · {s.find.project.name}
+                      {s.who} {s.step === "Prüfen" ? "prüft" : "gibt frei"} · {s.find.project.name}
                       {others > 0 ? `, danach ${others} ${others === 1 ? "weiterer Fund" : "weitere Funde"}` : ""}
                     </span>
                   </span>

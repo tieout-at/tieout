@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
+import { InfoTip } from "@/components/ui/info-tip";
 import type { Highlight } from "@/lib/records";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +25,10 @@ export function Highlights({ items, title = "Auf einen Blick" }: { items: Highli
           const body = (
             <>
               <span className="flex items-center justify-between gap-2 text-xs text-fg-secondary">
-                <span className="truncate">{h.title}</span>
+                <span className="flex min-w-0 items-center gap-1.5">
+                  <span className="truncate">{h.title}</span>
+                  {h.info && <InfoTip label={h.title}>{h.info}</InfoTip>}
+                </span>
                 {h.href && !h.href.startsWith("#") && <ChevronRight aria-hidden className="size-3.5 shrink-0 text-fg-faint" />}
               </span>
               <span className={cn("flex items-center gap-1.5 font-semibold tabular-nums", lead ? "mt-1 text-[28px] leading-9 tracking-tight max-md:text-2xl" : "mt-1.5 text-xl")}>

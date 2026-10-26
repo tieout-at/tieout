@@ -69,7 +69,7 @@ export function FindsTable({
       id: "find",
       title: "Fund",
       icon: SearchCheck,
-      width: 300,
+      width: project ? 440 : 270,
       sortValue: (r) => r.name,
       cell: (r) => (
         <Link
@@ -86,7 +86,7 @@ export function FindsTable({
       id: "project",
       title: "Projekt",
       icon: Construction,
-      width: 180,
+      width: 170,
       sortValue: (r) => r.project.name,
       filterValue: (r) => r.project.name,
       cell: (r) => (
@@ -109,7 +109,7 @@ export function FindsTable({
       id: "risk",
       title: "Kürzungsrisiko",
       icon: ShieldAlert,
-      width: 230,
+      width: 250,
       sortValue: (r) => r.risk?.amount.cent ?? null,
       filterValue: (r) => r.risk?.reason ?? null,
       calculations: calculations.risk,
@@ -119,7 +119,7 @@ export function FindsTable({
       id: "belegstand",
       title: "Belegstand",
       icon: FileCheck,
-      width: 180,
+      width: 200,
       sortValue: (r) => (r.belegstand ? EVIDENCE[r.belegstand.state].rank : null),
       filterValue: (r) => r.belegstand?.text ?? null,
       calculations: calculations.belegstand,
@@ -203,7 +203,7 @@ export function FindsTable({
       columns={columns}
       views={views}
       noun={{ one: "Fund", many: "Funde", dative: "Funden" }}
-      phoneRow={(r) => <PhoneRow row={r} withProject={!project} decision={r.decision} reason={stateOf(r) === "nicht_verrechnen" ? reasonOf(r) : null} />}
+      phoneRow={(r) => <PhoneRow row={r} withProject={!project} decision={stateOf(r) === "gefunden" ? undefined : r.decision} reason={stateOf(r) === "nicht_verrechnen" ? reasonOf(r) : null} />}
       board={(visible) => (
         <FindsBoard
           rows={visible}

@@ -201,10 +201,8 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
         <div className="mx-auto flex w-full max-w-[720px] flex-col gap-4 px-6 py-8 max-md:px-4 max-md:py-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <h2 className="text-xl font-semibold">Noch keine Aufgabe</h2>
-              <p className="text-fg-secondary">
-                {proposals.length === 1 ? "Eine Lücke hat" : `${proposals.length} Lücken haben`} schon eine Abhilfe. Daraus wird mit einem Klick eine Aufgabe.
-              </p>
+              <h2 className="text-xl font-semibold">{proposals.length === 1 ? "1 Vorschlag aus den Funden" : `${proposals.length} Vorschläge aus den Funden`}</h2>
+              <p className="text-fg-secondary">Für diese Funde steht die Abhilfe schon fest. Noch keine Aufgabe angelegt.</p>
             </div>
             <Button variant="secondary" onClick={() => setMaking(true)} className="shrink-0">
               <Plus aria-hidden />
@@ -216,8 +214,9 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
               <li key={t.key} className="flex items-start gap-3 px-4 py-3 [&:not(:last-child)]:shadow-line-bottom max-md:flex-col max-md:gap-2">
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <span>{t.taskText}</span>
-                  <Link href={t.href} className="link-quiet w-fit text-xs text-fg-secondary">
-                    {t.label}: {t.name}
+                  <Link href={t.href} className="flex w-fit items-center gap-1.5 rounded-xs text-xs text-fg-secondary outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
+                    <span className="flex h-5 min-w-7 items-center justify-center rounded-xs bg-fill-hover px-1 text-count shadow-ring">{t.label.split(" ")[0]}</span>
+                    {t.project}
                   </Link>
                 </div>
                 <Button variant="secondary" onClick={() => setProposal(t)} className="shrink-0">
@@ -394,6 +393,8 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
   const today = useToday();
   const [making, setMaking] = useState(false);
   const open = (tasks ?? []).filter((t) => !t.done).toSorted(byDue);
+  // before the first task, the finds whose Abhilfe is known are the proposals on "Aufgaben"
+  const proposed = (tasks ?? []).length === 0 ? targets.filter((t) => t.taskText).length : 0;
   return (
     <section aria-labelledby="aufgaben" className="flex flex-col gap-2">
       <div className="flex h-7 items-center justify-between px-1">
@@ -419,7 +420,10 @@ export function TaskPreview({ targets }: { targets: TaskTarget[] }) {
         </span>
       </div>
       {open.length === 0 || !today ? (
-        <SectionEmpty title="Keine offenen Aufgaben" text="Aus jeder Lücke wird eine Aufgabe mit Frist." />
+        <SectionEmpty
+          title="Keine offenen Aufgaben"
+          text={proposed ? `${proposed} Vorschläge aus den Funden stehen unter Aufgaben.` : "Aus jeder Lücke wird eine Aufgabe mit Frist."}
+        />
       ) : (
         <ul className="flex flex-col">
           {open.slice(0, 3).map((t) => (

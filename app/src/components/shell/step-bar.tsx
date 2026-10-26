@@ -24,7 +24,7 @@ export function StepBar({ project }: { project: Project }) {
   }, [path]);
   const groups = [{ number: 0, title: "", tabs: [OVERVIEW_TAB] }, ...STEPS.map((step, i) => ({ number: i + 1, title: step.title, tabs: step.tabs }))];
   return (
-    <nav ref={row} aria-label="Reiter" className="flex shrink-0 items-center gap-1 overflow-x-auto px-6 pb-2 shadow-line-bottom [scrollbar-width:none] max-md:px-4 print:hidden">
+    <nav ref={row} aria-label="Reiter" className="relative flex shrink-0 items-center gap-1 overflow-x-auto px-6 pb-2 shadow-line-bottom [scrollbar-width:none] max-md:px-4 print:hidden">
       {groups.map((g) => (
         <span key={g.number} role="group" aria-label={g.title || undefined} className="flex shrink-0 items-center gap-1">
           {g.number > 0 && (

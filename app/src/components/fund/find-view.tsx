@@ -136,7 +136,7 @@ export function FindView({ record }: { record: FindRecord }) {
           onDecide={(stand, wer, grund) => setDecisions(decide(keys, record.decision, { fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }).list)}
         />
         <div className="flex flex-col gap-6 px-6 pt-1 pb-10 max-md:px-4">
-          <Highlights items={[...highlights, decisionCard]} title="Auf einen Blick" />
+          <Highlights items={state === "gefunden" ? highlights : [...highlights, decisionCard]} title="Auf einen Blick" />
           <WeakSpot record={record} excluded={state === "nicht_verrechnen"} active={source} onOpen={open} />
           <CalcPath calc={record.calc} active={source} onOpen={open} />
           <EvidenceList evidence={record.evidence} active={source} onOpen={open} />
