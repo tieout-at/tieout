@@ -412,7 +412,7 @@ export function Timeline({ view }: { view: TimelineView }) {
         <div role="group" aria-label="Ereignisse" className="flex items-center gap-1">
           {[
             { on: false, title: "Fehlt", count: c.missing },
-            { on: true, title: "Alle", count: c.site },
+            { on: true, title: "Alle", count: view.events.length },
           ].map((t) => (
             <button
               key={t.title}

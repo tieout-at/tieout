@@ -65,7 +65,7 @@ function Reader({ item, noun }: { item: InboxItem; noun: string }) {
         ) : item.stand ? (
           <p>{item.stand.state === "verrechnet" ? "Die Arbeit ist verrechnet." : "Die Arbeit kommt in die nächste Abschlagsrechnung."}</p>
         ) : (
-          <p className="text-fg-secondary">Nichts zu verrechnen.</p>
+          <p className="text-fg-secondary">Kein Fund aus dieser {noun}.</p>
         )}
       </section>
 

@@ -17,7 +17,7 @@ export const TIMELINE_ROWS = [
   { id: "plan", lane: "baustelle", title: "Pläne", arts: ["plan"] },
   { id: "foto", lane: "baustelle", title: "Fotos", arts: ["foto", "fotodokumentation"] },
   { id: "aufmass", lane: "baustelle", title: "Aufmaßblätter", arts: ["aufmassblatt"] },
-  { id: "rechnung", lane: "rechnung", title: "Abschlagsrechnungen", arts: ["abschlagsrechnung", "schlussrechnung"] },
+  { id: "rechnung", lane: "rechnung", title: "Rechnungen", arts: ["abschlagsrechnung", "schlussrechnung"] },
   { id: "nachtrag", lane: "rechnung", title: "Nachträge", arts: ["nachtrag"] },
   { id: "entwurf", lane: "rechnung", title: "Entwurf", arts: ["entwurf"] },
   { id: "zahlung", lane: "rechnung", title: "Zahlungen", arts: ["zahlungsavis"] },

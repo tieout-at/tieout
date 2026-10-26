@@ -64,7 +64,7 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       id: "position",
       title: "Position",
       icon: ListOrdered,
-      width: 266,
+      width: 250,
       sortValue: (r) => r.order,
       cell: (r) => <PositionName r={r} />,
     },
@@ -77,14 +77,14 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
       filterValue: (r) => (r.find ? "mit Fund" : "ohne Fund"),
       cell: (r) => r.find && <FindChip find={r.find} />,
     },
-    { id: "ordered", title: "Beauftragt", icon: ReceiptText, width: 120, align: "right", cell: (r) => <Quantity text={r.ordered} /> },
-    { id: "done", title: "Erbracht", icon: PackageCheck, width: 206, align: "right", sortValue: (r) => r.doneValue, cell: (r) => <Quantity text={r.done} /> },
-    { id: "invoiced", title: "Verrechnet", icon: ReceiptText, width: 130, align: "right", cell: (r) => <Quantity text={r.invoiced} /> },
+    { id: "ordered", title: "Beauftragt", icon: ReceiptText, width: 116, align: "right", cell: (r) => <Quantity text={r.ordered} /> },
+    { id: "done", title: "Erbracht", icon: PackageCheck, width: 190, align: "right", sortValue: (r) => r.doneValue, cell: (r) => <Quantity text={r.done} /> },
+    { id: "invoiced", title: "Verrechnet", icon: ReceiptText, width: 116, align: "right", cell: (r) => <Quantity text={r.invoiced} /> },
     {
       id: "open",
       title: "Offen",
       icon: Wallet,
-      width: 256,
+      width: 250,
       align: "right",
       sortValue: (r) => r.open?.cent ?? null,
       filterValue: (r) => (r.open ? "ja" : "nein"),
@@ -138,18 +138,20 @@ export function PositionsTable({ built, projektId, project, targets }: { built: 
   const hidden = ["find", "group", "kind", "price", "unit", "check"];
   const calc = { open: "zusaetzlich", belegstand: "klaerung" };
   const lvOrder = { column: "position", direction: "asc" } as const;
+  // the number of entries stands in the view's name, so the answer shows before the click
+  const count = (f: (r: PositionRow) => boolean) => rows.filter(f).length;
   const views: View[] = [
     // each view shows the column that answers it: Belegstand for what is open, the reason for what stands out
-    { id: "offen", title: "Offen", state: { sort: lvOrder, filters: [{ column: "open", values: ["ja"] }], hidden: [...hidden, "note"], calculations: calc } },
+    { id: "offen", title: `Offen ${count((r) => !!r.open)}`, state: { sort: lvOrder, filters: [{ column: "open", values: ["ja"] }], hidden: [...hidden, "note"], calculations: calc } },
     {
       id: "auffaellig",
-      title: "Auffällig",
+      title: `Auffällig ${count((r) => !!r.note)}`,
       state: { sort: lvOrder, filters: [{ column: "note", values: ["mehr als beauftragt", "nicht aufgemessen", "nach der letzten Abschlagsrechnung"] }], hidden: [...hidden, "belegstand"], calculations: calc },
     },
-    { id: "alle", title: "Alle Positionen", state: { sort: lvOrder, filters: [], hidden, calculations: calc } },
+    { id: "alle", title: `Alle Positionen ${rows.length}`, state: { sort: lvOrder, filters: [], hidden, calculations: calc } },
     {
       id: "abdeckung",
-      title: "Belegabdeckung",
+      title: `Belegabdeckung ${count((r) => !!r.check || !!r.find)}`,
       kind: "board",
       icon: Grid3x3,
       state: { sort: lvOrder, filters: [{ column: "check", values: ["mit Fund oder Lücke"] }], hidden, calculations: calc },

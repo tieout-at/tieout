@@ -77,7 +77,7 @@ export function whatsappView(b: FirmenErgebnis = business()): InboxView {
         place: m.ort.wert,
         facts: [
           ...(m.bezugRegiebericht ? [{ label: "Regiebericht", value: `Regiebericht ${m.bezugRegiebericht.wert}` }] : []),
-          ...(m.foto ? [{ label: "Foto", value: m.foto }] : []),
+          ...(m.foto ? [{ label: "Foto", value: `${m.foto}, Bild nicht in den Beispieldaten` }] : []),
           { label: "Bestätigt", value: `${m.bestaetigt.rolle}, ${datumText(m.bestaetigt.zeitpunkt.slice(0, 10))}, ${m.bestaetigt.zeitpunkt.slice(11, 16)}` },
         ],
         stand: x?.stand ? { state: x.stand, text: EREIGNISSTAND_TEXT[x.stand] } : null,
