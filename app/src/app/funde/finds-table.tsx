@@ -6,7 +6,7 @@ import { CalendarDays, Construction, FileCheck, FolderInput, Gavel, ShieldAlert,
 
 import { DataTable, type Column } from "@/components/table/data-table";
 import { Tag, type TagColour } from "@/components/table/tag";
-import { currentState, decide, DECISION_TEXT, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
+import { currentState, decide, DECISION_TEXT, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import { useLive } from "@/lib/live";
 import type { Calculation, View } from "@/lib/table";
@@ -212,6 +212,7 @@ export function FindsTable({
           tasksOf={(r) => tasksOf(r).length}
           reasonOf={reasonOf}
           openOf={(r) => [
+            ...(gapBeforeRelease(r.belegstand?.state) ? [gapBeforeRelease(r.belegstand?.state)!] : []),
             ...(r.risk && !r.risk.alreadyCut ? [`Kürzungsrisiko ${r.risk.reason}, ${r.risk.amount.text}`] : []),
             ...(r.remedy ? [r.remedy] : []),
             ...tasksOf(r).map((t) => `Aufgabe für ${t.zustaendig}: ${t.text}`),

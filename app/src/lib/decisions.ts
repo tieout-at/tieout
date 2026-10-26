@@ -83,6 +83,16 @@ export function moves(state: DecisionState): Move[] {
 }
 
 /**
+ * Said before a release when the find has a gap (step 8a, SPEZIFIKATION.md 3.2): a find in Klärung may be released,
+ * but it reaches the Änderungsliste only once the gap is closed. Null for a find that is "belegt".
+ */
+export function gapBeforeRelease(belegstand: "belegt" | "beleg_fehlt" | "nachtrag_nicht_gelegt" | null | undefined): string | null {
+  if (belegstand === "beleg_fehlt") return "Beleg fehlt: der Fund kommt erst mit dem Beleg in die Änderungsliste";
+  if (belegstand === "nachtrag_nicht_gelegt") return "Nachtrag nicht gelegt: der Fund kommt erst mit dem gelegten Nachtrag in die Änderungsliste";
+  return null;
+}
+
+/**
  * Why a card cannot be moved to a column of the board, or null when the move is a decision the find can take. One step
  * at a time and never back: the Verlauf keeps what was decided, and "In der Schlussrechnung" is set by the invoice.
  */

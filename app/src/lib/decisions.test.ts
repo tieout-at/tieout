@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { ENTSCHEIDUNG_TEXT } from "@tieout/kern";
 
-import { appendDecision, currentState, decide, DECISION_TEXT, localTime, moves, nextStep, readDecisions, refusal, takeIntoInvoice, type Decision } from "./decisions";
+import { appendDecision, currentState, decide, DECISION_TEXT, gapBeforeRelease, localTime, moves, nextStep, readDecisions, refusal, takeIntoInvoice, type Decision } from "./decisions";
 
 const d = (zeit: string, stand: Decision["stand"], key = "p1/plan:H-201:D"): Decision => ({ fundSchluessel: key, zeit, wer: "Abrechnung", stand });
 
@@ -62,5 +62,13 @@ describe("decisions on a find (append only)", () => {
     expect(takeIntoInvoice(keys, "gefunden", "2026-10-25T12:03").refused).toBeNull();
     expect(currentState(readDecisions(), keys)).toBe("in_schlussrechnung");
     expect(takeIntoInvoice(keys, "gefunden", "2026-10-25T12:04").refused).toMatch(/schon in der Schlussrechnung/);
+  });
+});
+
+describe("gapBeforeRelease (step 8a)", () => {
+  it("says that a find in Klärung reaches the Änderungsliste only once its gap is closed", () => {
+    expect(gapBeforeRelease("beleg_fehlt")).toMatch(/erst mit dem Beleg in die Änderungsliste$/);
+    expect(gapBeforeRelease("nachtrag_nicht_gelegt")).toMatch(/erst mit dem gelegten Nachtrag/);
+    expect(gapBeforeRelease("belegt")).toBeNull();
   });
 });

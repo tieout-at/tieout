@@ -2,7 +2,7 @@
 
 **As of:** Monday, 26 October 2026, after step 8a. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** the pull request of `schritt-8a-ruhige-seiten` is merged, CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows the project Wohnpark Mooshaim with one row of tabs and three figures led by 14.620,15 €, and "Übersicht" with "Was bringt der Abgleich?". If not, ask Maxi S. first. Create the branch `schritt-8b-daten-zwilling` from `main`.
+**Precondition:** the pull requests of `schritt-8a-ruhige-seiten` (#115) and `schritt-8a-nacharbeit` are merged, CI `App`, `Kern` and `Lösungsliste` are green on `main`, and app-neu shows the project Wohnpark Mooshaim with one row of tabs and three figures led by 14.620,15 €, and "Übersicht" with "Was bringt der Abgleich?". If not, ask Maxi S. first. Create the branch `schritt-8b-daten-zwilling` from `main`.
 
 ## Goal
 
@@ -21,7 +21,7 @@ Build the pages v1 has and v2 still lacks, so that the switch-over (step 8c, rig
 - **Working method that Maxi S. liked (steps 8 and 8a):** two sentences before each part; for a page with real design choices three drafts with the core's figures (data pack from `kern/` as JSON, standalone HTML with the images embedded in the board, screenshots at 1165 and 390 px), an independent judge, a board side by side, build what Maxi S. chooses; an independent reviewer scores every page (overview / calm, 1 to 10, at 1440 and 390 px) until each is at least 7; every finding re-measured, findings that break a product rule are named and not taken.
 - **Amount audit across pages:** build `main` and the branch in folders of their own (a copy with `node_modules` as a junction, `turbopack.root` set to a common parent folder) and compare the amounts of every exported page; every amount on a page must be the core's. The script of 8a was in the session's scratchpad; write it again, about 20 lines.
 - **Screens:** `npm run screens` (dev server on 3100); `node scripts/compare.mjs <dir>` with the Attio pictures copied into `<dir>/attio` (they stay local).
-- **Open from 8a for Maxi S.:** remove the unused components of the step 4 Übersicht (`app/src/components/zwilling/`, with their tests)? Keep the yellow dot for the project status "offen" (yellow means "Beleg fehlt" elsewhere)? Open from step 8: should the release dialog say that a find "Beleg fehlt" stays out of the Änderungsliste; keep "Zusammen, mit in Klärung" on the Schlussbesprechungs-Blatt; a "realistic" payment expectation next to the Restforderung would need a figure `kern/` does not have.
+- **Open from 8a for Maxi S.:** keep the yellow dot for the project status "offen" (yellow means "Beleg fehlt" elsewhere)? Open from step 8: keep "Zusammen, mit in Klärung" on the Schlussbesprechungs-Blatt; a "realistic" payment expectation next to the Restforderung would need a figure `kern/` does not have.
 
 ## Done when
 
