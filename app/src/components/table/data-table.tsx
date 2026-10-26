@@ -67,6 +67,7 @@ export function DataTable<R extends Row>({
   noun,
   board,
   phoneRow,
+  selectable = true,
 }: {
   /** Key under which the browser remembers the view. */
   name: string;
@@ -78,6 +79,8 @@ export function DataTable<R extends Row>({
   board?: (visible: R[]) => ReactNode;
   /** Below 768 px the rows become a list, each row drawn by the page, instead of the wide grid (customer test 2). */
   phoneRow?: (r: R) => ReactNode;
+  /** false for a table without any action on a selection (Positionen): no checkboxes, more room for the columns. */
+  selectable?: boolean;
 }) {
   const storageKey = `tieout.tabelle.${name}`;
   const ids = columns.map((c) => c.id);
@@ -239,7 +242,7 @@ export function DataTable<R extends Row>({
                   onSort={(direction) => update({ sort: { column: c.id, direction } })}
                   onHide={() => update({ hidden: [...hidden, c.id] })}
                 >
-                  {i === 0 && (
+                  {i === 0 && selectable && (
                     <Checkbox
                       checked={allSelected ? true : someSelected ? "mixed" : false}
                       label="Alle auswählen"
@@ -270,7 +273,7 @@ export function DataTable<R extends Row>({
                         c.align === "right" && "justify-end text-right tabular-nums",
                       )}
                     >
-                      {i === 0 && <Checkbox checked={isSelected} label="Auswählen" onChange={() => toggleRow(r.id)} />}
+                      {i === 0 && selectable && <Checkbox checked={isSelected} label="Auswählen" onChange={() => toggleRow(r.id)} />}
                       {c.cell(r)}
                     </div>
                   ))}
@@ -345,7 +348,7 @@ function ViewBar<R>({
       <DropdownMenu>
         <DropdownMenuTrigger className={barButton}>
           <span className="flex size-4 items-center justify-center rounded-xs bg-fg text-white" aria-hidden>
-            {board ? <Kanban className="size-3" /> : <Table className="size-3" />}
+            {view.icon ? <view.icon className="size-3" /> : board ? <Kanban className="size-3" /> : <Table className="size-3" />}
           </span>
           <span className="max-w-56 truncate">{view.title}</span>
           <ChevronDown className="size-4 text-fg-secondary" aria-hidden />
@@ -355,7 +358,7 @@ function ViewBar<R>({
             <DropdownMenuLabel>Ansichten</DropdownMenuLabel>
             {views.map((v) => (
               <DropdownMenuItem key={v.id} onClick={() => onView(v)}>
-                {v.kind === "board" ? <Kanban /> : <Table />}
+                {v.icon ? <v.icon /> : v.kind === "board" ? <Kanban /> : <Table />}
                 <span className="flex-1">{v.title}</span>
                 {v.id === view.id && <Check aria-label="gewählt" />}
               </DropdownMenuItem>

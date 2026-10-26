@@ -37,6 +37,7 @@ const SCREENS = [
   { name: "projekte", path: "/projekte/" },
   { name: "projekt-kiefernau", path: "/projekte/buerohaus-kiefernau/" },
   { name: "projekt", path: "/projekte/wohnpark-mooshaim/" },
+  { name: "projekt-zeitstrahl", path: "/projekte/wohnpark-mooshaim/zeitstrahl/" },
   { name: "projekt-positionen", path: "/projekte/wohnpark-mooshaim/positionen/" },
   { name: "projekt-belege", path: "/projekte/wohnpark-mooshaim/belege/" },
   { name: "projekt-funde", path: "/projekte/wohnpark-mooshaim/funde/" },

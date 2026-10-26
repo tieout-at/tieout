@@ -5,6 +5,8 @@
  * calculation" only as fixed sums from `kern/`, never "zusätzlich verrechenbar" plus "in Klärung").
  */
 
+import type { LucideIcon } from "lucide-react";
+
 export type Row = {
   id: string;
   /** Groups a fixed sum can cover ("zusaetzlich", "klaerung", "offen", …). */
@@ -28,8 +30,8 @@ export type ViewState = {
   calculations: Record<string, string | null>;
 };
 
-/** A saved view (Attio's view switcher): its name, the state it starts with, and whether it is a table or a board. */
-export type View = { id: string; title: string; state: ViewState; kind?: "table" | "board" };
+/** A saved view (Attio's view switcher): its name, the state it starts with, and whether it is a table or a board; `icon` marks a board view that is no kanban (the matrix of the Belegabdeckung). */
+export type View = { id: string; title: string; state: ViewState; kind?: "table" | "board"; icon?: LucideIcon };
 
 export type SortValue = string | number | null;
 

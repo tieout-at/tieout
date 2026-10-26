@@ -11,6 +11,8 @@ import type { Belegstand, Fund } from "./typen";
 
 export interface Positionszeile {
   art: "position" | "regie" | "meldung" | "aenderung" | "preisumrechnung" | "pauschale";
+  /** Stable key of the row: the position number, "regie:9", or the key of the find without a position. */
+  schluessel: string;
   positionNr: string | null;
   /** "22.04.12B Plattenheizkörper Typ 22 VK, 600/1000" or the service ("Regiebericht 9, Steigleitung umgelegt"). */
   text: string;
@@ -54,6 +56,7 @@ export function positionstabelle(d: Datensatz, a: Abgleich): Positionstabelle {
     const pausch = einheit === "psch";
     return {
       art: "position",
+      schluessel: nr,
       positionNr: nr,
       text: `${nr} ${p.kurztext.wert}`,
       einheit,
@@ -78,6 +81,7 @@ export function positionstabelle(d: Datensatz, a: Abgleich): Positionstabelle {
       const verrechnet = k.regieVerrechnet.has(rb.nr);
       return {
         art: "regie",
+        schluessel: `regie:${rb.nr}`,
         positionNr: null,
         text: `Regiebericht ${rb.nr}, ${rb.taetigkeit.wert}`,
         einheit: "h",
@@ -100,6 +104,7 @@ export function positionstabelle(d: Datensatz, a: Abgleich): Positionstabelle {
         const m = d.meldungen.find((x) => `meldung:${x.nr}` === f.schluessel)!;
         return {
           art: "meldung" as const,
+          schluessel: f.schluessel,
           positionNr: null,
           text: `WhatsApp-Meldung ${datumText(m.zeitpunkt.slice(0, 10))}, ${m.taetigkeit.wert}`,
           einheit: "h" as const,
@@ -117,6 +122,7 @@ export function positionstabelle(d: Datensatz, a: Abgleich): Positionstabelle {
       const datum = f.art === "aenderung_angemeldet" || f.art === "pauschale" ? ` (E-Mail ${datumText(f.arbeitsdatum)})` : "";
       return {
         art: f.art === "aenderung_angemeldet" ? ("aenderung" as const) : f.art === "pauschale" ? ("pauschale" as const) : ("preisumrechnung" as const),
+        schluessel: f.schluessel,
         positionNr: null,
         text: `${f.titel}${datum}`,
         einheit: null,

@@ -26,10 +26,11 @@ const SIDE = {
     "inset-x-0 bottom-0 max-h-[calc(100dvh-64px)] rounded-t-2xl bg-surface data-open:slide-in-from-bottom data-closed:slide-out-to-bottom",
 } as const;
 
-function SheetContent({ className, children, side = "left", ...props }: SheetPrimitive.Popup.Props & { side?: keyof typeof SIDE }) {
+/** `backdrop={false}` for a panel that leaves the page usable behind it (Attio's record panel, the Belegabdeckung). */
+function SheetContent({ className, children, side = "left", backdrop = true, ...props }: SheetPrimitive.Popup.Props & { side?: keyof typeof SIDE; backdrop?: boolean }) {
   return (
     <SheetPrimitive.Portal>
-      <SheetPrimitive.Backdrop className="fixed inset-0 z-50 bg-black/10 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+      {backdrop && <SheetPrimitive.Backdrop className="fixed inset-0 z-50 bg-black/10 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />}
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         className={cn("fixed z-50 flex flex-col shadow-popup outline-none data-open:animate-in data-closed:animate-out", SIDE[side], className)}

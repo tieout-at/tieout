@@ -17,3 +17,5 @@ export { pruefeProjekt, ZAEHLENDE_ENTSCHEIDUNGEN, type Entscheidungssumme, type 
 export { belegListe, belegTitel, gelesen, korrekturen, BELEG_GRUPPE, BELEGGRUPPE_TEXT, type BelegZeile, type Belegsgruppe, type Feldstand, type GelesenerWert, type Korrektur } from "./belege";
 export { auftraggeberHistorie, gleicherGrund, abrechnung, tageZwischen, imProjekt, type AuftraggeberHistorie, type HistorieKuerzung, type HistorieAbzug, type Abrechnung, type AbrechnungsZeile } from "./historie";
 export { pruefeFirma, statusfarbe, STATUS_TAGE, type FirmenErgebnis, type ProjektZeile, type Statusfarbe } from "./firma";
+export { belegabdeckung, zeilenJeBeleg, abdeckungText, NACHWEISARTEN, NACHWEISART_TEXT, NACHWEISART_SPALTE, type Belegabdeckung, type AbdeckungsZeile, type AbdeckungsBeleg, type Nachweisart } from "./abdeckung";
+export { zeitstrahl, EREIGNISSTAND_TEXT, type Zeitstrahl, type Ereignis, type Ereignisstand, type Bahn } from "./zeitstrahl";
