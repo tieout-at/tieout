@@ -140,15 +140,15 @@ function vorpruefungText(droht: number, gekuerzt: number): string {
 // ---------- Abschluss-Lauf ----------
 
 const ABSCHLUSS_NODES: FlowNode[] = [
-  { id: "ausloeser", kind: "ausloeser", icon: "folder", title: "Ordner importiert", does: "Wenn ein Projektordner kommt", text: "Startet, sobald der Ordner eines Projekts mit Entwurf der Schlussrechnung hereinkommt.", reads: ["Projektordner"], confirms: "Niemand, der Lauf startet von selbst.", row: 0, side: "main" },
-  { id: "ordner", kind: "schritt", icon: "file", title: "Ordner lesen", does: "Belege und Felder lesen", text: "Liest jede Datei des Ordners, erkennt doppelte Dateien und Planstände und ordnet die WhatsApp-Meldungen dem Projekt zu.", reads: ["Projektordner", "WhatsApp-Meldungen"], confirms: "Die Abrechnung bestätigt oder korrigiert unsichere Felder.", row: 1, side: "main" },
-  { id: "abgleich", kind: "schritt", icon: "compare", title: "Abgleich", does: "Funde suchen", text: "Legt Leistungsverzeichnis, Aufmaß, Regie, Meldungen und Abschlagsrechnungen neben Ihren Entwurf und sucht, was erbracht, aber nicht verrechnet ist.", reads: ["Leistungsverzeichnis", "Aufmaßblätter", "Regieberichte", "WhatsApp-Meldungen", "Abschlagsrechnungen", "Entwurf", "Vertrag"], confirms: "Rechnen muss niemand bestätigen. Jeder Fund geht zur Prüfung an die Abrechnung.", row: 2, side: "main" },
-  { id: "vorpruefung", kind: "schritt", icon: "shield", title: "Vorprüfung", does: "Prüfen wie der Auftraggeber", text: "Prüft den Entwurf so, wie der Auftraggeber prüfen wird: jede Position mit Kürzungsrisiko, mit Grund und Abhilfe, und jeden Satz gegen den Vertrag.", reads: ["Entwurf mit den Funden", "Vertrag", "Verlauf des Auftraggebers"], confirms: "Die Abrechnung entscheidet über die Abhilfe.", row: 3, side: "main" },
-  { id: "entwurf", kind: "schritt", icon: "receipt", title: "Entwurf", does: "Änderungsliste und Rechnungsabschluss", text: "Stellt die Änderungsliste und den Rechnungsabschluss bis zur Restforderung zusammen. Die Beträge rechnet der Rechenkern.", reads: ["Entwurf", "Funde", "Vertrag", "Zahlungen"], confirms: "Die Abrechnung prüft jeden Fund.", row: 4, side: "main" },
-  { id: "freigabe", kind: "aufgabe", icon: "release", title: "Freigabe anfordern", does: "An die Geschäftsführung", text: "Bittet die Geschäftsführung, die geprüften Funde freizugeben. Erst dann sind die Ausgaben endgültig.", reads: ["geprüfte Funde"], confirms: "Die Geschäftsführung gibt frei.", row: 5, side: "main" },
-  { id: "ausgaben", kind: "schritt", icon: "package", title: "Ausgaben", does: "Excel, Beweispakete, Blatt", text: "Erstellt Änderungsliste als Excel, Beweispakete und das Schlussbesprechungs-Blatt. Ihr Betrieb trägt die Rechnung selbst ein und schickt sie selbst.", reads: ["freigegebene Funde"], confirms: "Niemand: tieout schickt nichts an den Auftraggeber.", row: 6, side: "main" },
-  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Je Lücke im Beleg", text: "Legt für jeden Fund mit fehlendem Beleg eine Aufgabe an die Bauleitung, solange der Polier noch auf der Baustelle ist.", reads: ["Funde in Klärung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 2, side: "left" },
-  { id: "aufgabe-abrechnung", kind: "aufgabe", icon: "task", title: "Aufgabe an Abrechnung", does: "Je Kürzungsrisiko", text: "Legt für jedes drohende Kürzungsrisiko eine Aufgabe mit der Abhilfe an die Abrechnung.", reads: ["Kürzungsrisiken"], confirms: "Die Abrechnung hakt die Aufgabe ab.", row: 3, side: "left" },
+  { id: "ausloeser", kind: "ausloeser", icon: "folder", title: "Ordner importiert", does: "Wenn ein Projektordner kommt", text: "Startet, wenn der Ordner eines Projekts mit Entwurf kommt.", reads: ["Projektordner"], confirms: "Niemand, der Lauf startet von selbst.", row: 0, side: "main" },
+  { id: "ordner", kind: "schritt", icon: "file", title: "Ordner lesen", does: "Belege und Felder lesen", text: "Liest jede Datei des Ordners und erkennt doppelte.", reads: ["Projektordner", "WhatsApp-Meldungen"], confirms: "Die Abrechnung bestätigt oder korrigiert unsichere Felder.", row: 1, side: "main" },
+  { id: "abgleich", kind: "schritt", icon: "compare", title: "Abgleich", does: "Funde suchen", text: "Sucht, was erbracht, aber nicht verrechnet ist.", reads: ["Leistungsverzeichnis", "Aufmaßblätter", "Regieberichte", "WhatsApp-Meldungen", "Abschlagsrechnungen", "Entwurf", "Vertrag"], confirms: "Rechnen muss niemand bestätigen. Jeder Fund geht zur Prüfung an die Abrechnung.", row: 2, side: "main" },
+  { id: "vorpruefung", kind: "schritt", icon: "shield", title: "Vorprüfung", does: "Prüfen wie der Auftraggeber", text: "Prüft den Entwurf so, wie der Auftraggeber prüfen wird.", reads: ["Entwurf mit den Funden", "Vertrag", "Verlauf des Auftraggebers"], confirms: "Die Abrechnung entscheidet über die Abhilfe.", row: 3, side: "main" },
+  { id: "entwurf", kind: "schritt", icon: "receipt", title: "Entwurf", does: "Änderungsliste und Rechnungsabschluss", text: "Stellt Änderungsliste und Rechnungsabschluss zusammen.", reads: ["Entwurf", "Funde", "Vertrag", "Zahlungen"], confirms: "Die Abrechnung prüft jeden Fund.", row: 4, side: "main" },
+  { id: "freigabe", kind: "aufgabe", icon: "release", title: "Freigabe anfordern", does: "An die Geschäftsführung", text: "Bittet die Geschäftsführung, die geprüften Funde freizugeben.", reads: ["geprüfte Funde"], confirms: "Die Geschäftsführung gibt frei.", row: 5, side: "main" },
+  { id: "ausgaben", kind: "schritt", icon: "package", title: "Ausgaben", does: "Excel, Beweispakete, Blatt", text: "Erstellt Excel und Beweispakete; schicken tut Ihr Betrieb selbst.", reads: ["freigegebene Funde"], confirms: "Niemand: tieout schickt nichts an den Auftraggeber.", row: 6, side: "main" },
+  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Je Lücke im Beleg", text: "Eine Aufgabe je fehlendem Beleg, solange der Polier noch da ist.", reads: ["Funde in Klärung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 2, side: "left" },
+  { id: "aufgabe-abrechnung", kind: "aufgabe", icon: "task", title: "Aufgabe an Abrechnung", does: "Je Kürzungsrisiko", text: "Eine Aufgabe je drohendem Kürzungsrisiko, mit der Abhilfe.", reads: ["Kürzungsrisiken"], confirms: "Die Abrechnung hakt die Aufgabe ab.", row: 3, side: "left" },
 ];
 
 const chain = (ids: string[]): FlowEdge[] => ids.slice(1).map((to, i) => ({ from: ids[i], to }));
@@ -170,7 +170,6 @@ function abschlussRun(x: AbschlussLauf, { name, rows, money }: Ctx): FlowRun {
       ordner: done(
         `${plural(x.ordner.belege, "Beleg", "Belege")} gelesen`,
         [
-          { label: "Belege gelesen", value: String(x.ordner.belege) },
           { label: "davon doppelt", value: String(x.ordner.duplikate) },
           { label: "Felder von Hand korrigiert", value: String(x.ordner.korrigierteFelder) },
           { label: "WhatsApp-Meldungen", value: String(x.ordner.meldungen) },
@@ -207,10 +206,10 @@ function abschlussRun(x: AbschlussLauf, { name, rows, money }: Ctx): FlowRun {
 // ---------- Lauf je Abschlagsrechnung ----------
 
 const ABSCHLAG_NODES: FlowNode[] = [
-  { id: "ausloeser", kind: "ausloeser", icon: "invoice", title: "Neue Abschlagsrechnung", does: "Bei jeder Abschlagsrechnung", text: "Startet für ein Projekt in Ausführung, sobald eine Abschlagsrechnung im Ordner liegt. Nur Arbeit bis zu ihrem Datum zählt.", reads: ["Abschlagsrechnung"], confirms: "Niemand, der Lauf startet von selbst.", row: 0, side: "main" },
-  { id: "abgleich", kind: "schritt", icon: "compare", title: "Abgleich", does: "Funde bis zur Abschlagsrechnung", text: "Sucht Arbeit bis zum Datum der Abschlagsrechnung, die erbracht, aber in keiner Abschlagsrechnung verrechnet ist.", reads: ["Leistungsverzeichnis", "Aufmaßblätter", "Regieberichte", "WhatsApp-Meldungen", "Abschlagsrechnungen"], confirms: "Jeder Fund geht zur Prüfung an die Abrechnung.", row: 1, side: "main" },
-  { id: "vorpruefung", kind: "schritt", icon: "shield", title: "Vorprüfung", does: "Prüfen wie der Auftraggeber", text: "Prüft wie der Auftraggeber. Sie braucht einen eigenen Entwurf der Schlussrechnung und läuft deshalb erst vor der Schlussrechnung.", reads: ["Entwurf", "Vertrag"], confirms: "Die Abrechnung entscheidet über die Abhilfe.", row: 2, side: "main" },
-  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Je Lücke im Beleg", text: "Legt für jede Lücke eine Aufgabe an die Bauleitung, solange der Polier noch auf der Baustelle ist.", reads: ["Funde in Klärung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 3, side: "main" },
+  { id: "ausloeser", kind: "ausloeser", icon: "invoice", title: "Neue Abschlagsrechnung", does: "Bei jeder Abschlagsrechnung", text: "Startet bei jeder Abschlagsrechnung eines Projekts in Ausführung.", reads: ["Abschlagsrechnung"], confirms: "Niemand, der Lauf startet von selbst.", row: 0, side: "main" },
+  { id: "abgleich", kind: "schritt", icon: "compare", title: "Abgleich", does: "Funde bis zur Abschlagsrechnung", text: "Sucht Arbeit bis zur Abschlagsrechnung, die nicht verrechnet ist.", reads: ["Leistungsverzeichnis", "Aufmaßblätter", "Regieberichte", "WhatsApp-Meldungen", "Abschlagsrechnungen"], confirms: "Jeder Fund geht zur Prüfung an die Abrechnung.", row: 1, side: "main" },
+  { id: "vorpruefung", kind: "schritt", icon: "shield", title: "Vorprüfung", does: "Prüfen wie der Auftraggeber", text: "Braucht einen Entwurf und läuft deshalb erst vor der Schlussrechnung.", reads: ["Entwurf", "Vertrag"], confirms: "Die Abrechnung entscheidet über die Abhilfe.", row: 2, side: "main" },
+  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Je Lücke im Beleg", text: "Eine Aufgabe je fehlendem Beleg, solange der Polier noch da ist.", reads: ["Funde in Klärung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 3, side: "main" },
 ];
 
 function abschlagRun(x: AbschlagsLauf, { name, rows, money }: Ctx): FlowRun {
@@ -242,9 +241,9 @@ function abschlagRun(x: AbschlagsLauf, { name, rows, money }: Ctx): FlowRun {
 // ---------- Meldung zu Regiebericht ----------
 
 const MELDUNG_NODES: FlowNode[] = [
-  { id: "ausloeser", kind: "ausloeser", icon: "message", title: "Neue WhatsApp-Meldung", does: "Wenn ein Monteur meldet", text: "Startet bei jeder WhatsApp-Meldung, die der Absender bestätigt hat.", reads: ["WhatsApp-Meldung"], confirms: "Der Absender bestätigt die Meldung im Chat.", row: 0, side: "main" },
-  { id: "bedingung", kind: "bedingung", icon: "filter", title: "Ohne Regiebericht", does: "Nur weiter, wenn keiner da ist", text: "Geht nur weiter, wenn die Meldung Stunden nennt, keine Position betrifft und kein Regiebericht sie aufnimmt.", reads: ["Regieberichte", "Leistungsverzeichnis"], confirms: "Niemand, die Bedingung prüft nur.", row: 1, side: "main" },
-  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Regiebericht schreiben lassen", text: "Bittet die Bauleitung, einen Regiebericht zu schreiben und ihn vom Polier unterschreiben zu lassen.", reads: ["WhatsApp-Meldung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 2, side: "main" },
+  { id: "ausloeser", kind: "ausloeser", icon: "message", title: "Neue WhatsApp-Meldung", does: "Wenn ein Monteur meldet", text: "Startet bei jeder bestätigten WhatsApp-Meldung.", reads: ["WhatsApp-Meldung"], confirms: "Der Absender bestätigt die Meldung im Chat.", row: 0, side: "main" },
+  { id: "bedingung", kind: "bedingung", icon: "filter", title: "Ohne Regiebericht", does: "Nur weiter, wenn keiner da ist", text: "Geht nur weiter, wenn kein Regiebericht die Stunden aufnimmt.", reads: ["Regieberichte", "Leistungsverzeichnis"], confirms: "Niemand, die Bedingung prüft nur.", row: 1, side: "main" },
+  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Regiebericht schreiben lassen", text: "Bittet die Bauleitung um einen unterschriebenen Regiebericht.", reads: ["WhatsApp-Meldung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 2, side: "main" },
 ];
 
 function meldungRun(x: MeldungsLauf, { name, rows }: Ctx): FlowRun {
@@ -298,7 +297,7 @@ export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
       slug: FLOW_SLUGS.abschluss_lauf,
       title: "Abschluss-Lauf",
       summary: "Ordner importiert, fünf Laufschritte, Freigabe anfordern",
-      description: "Prüft vor der Schlussrechnung den ganzen Ordner eines Projekts: lesen, abgleichen, wie der Auftraggeber prüfen, den Entwurf zusammenstellen und die Freigabe anfordern.",
+      description: "Prüft vor der Schlussrechnung den ganzen Ordner eines Projekts.",
       nodes: ABSCHLUSS_NODES,
       edges: [...chain(["ausloeser", "ordner", "abgleich", "vorpruefung", "entwurf", "freigabe", "ausgaben"]), { from: "abgleich", to: "aufgabe-bauleitung" }, { from: "vorpruefung", to: "aufgabe-abrechnung" }],
       checksAt: "vorpruefung",
@@ -309,7 +308,7 @@ export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
       slug: FLOW_SLUGS.lauf_je_abschlagsrechnung,
       title: "Lauf je Abschlagsrechnung",
       summary: "Abgleich bei jeder Abschlagsrechnung, Aufgabe an die Bauleitung",
-      description: "Prüft Projekte in Ausführung bei jeder Abschlagsrechnung, damit eine Lücke eine Aufgabe wird, solange der Polier noch auf der Baustelle ist.",
+      description: "Prüft bei jeder Abschlagsrechnung, solange der Polier noch da ist.",
       nodes: ABSCHLAG_NODES,
       edges: chain(["ausloeser", "abgleich", "vorpruefung", "aufgabe-bauleitung"]),
       checksAt: null,
@@ -320,7 +319,7 @@ export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
       slug: FLOW_SLUGS.meldung_zu_regiebericht,
       title: "Meldung zu Regiebericht",
       summary: "WhatsApp-Meldung ohne Regiebericht wird eine Aufgabe",
-      description: "Macht aus einer WhatsApp-Meldung mit Stunden, die kein Regiebericht aufnimmt, eine Aufgabe an die Bauleitung.",
+      description: "Macht aus einer Meldung ohne Regiebericht eine Aufgabe.",
       nodes: MELDUNG_NODES,
       edges: chain(["ausloeser", "bedingung", "aufgabe-bauleitung"]),
       checksAt: null,

@@ -406,7 +406,7 @@ export function RunList({ view, runId, playing, onPick, onClose }: { view: FlowV
       )}
       <p className="flex gap-1.5 px-5 pt-1 pb-4 text-xs leading-4 text-fg-muted">
         <CircleDashed className="mt-px size-3.5 shrink-0" aria-hidden />
-        Gezeigt wird je Projekt der Lauf zum heutigen Stand der Daten.
+        Ein neuer Lauf startet, sobald neue Belege kommen.
       </p>
     </>
   );
