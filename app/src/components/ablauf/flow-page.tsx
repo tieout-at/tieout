@@ -148,6 +148,7 @@ export function FlowPage({ built }: { built: FlowView }) {
             type="button"
             disabled={!run}
             onClick={() => (playing ? stop() : play())}
+            title={playing ? "Anhalten" : "Zeigt den Lauf Schritt für Schritt, ohne neu zu prüfen"}
             className="flex h-7 shrink-0 items-center gap-1.5 rounded-md bg-accent py-1 pr-2 pl-1.5 text-sm font-medium text-white shadow-primary outline-none hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 max-lg:h-8"
           >
             {playing ? <Square className="size-3.5" aria-hidden /> : <Play className="size-4" aria-hidden />}
@@ -164,7 +165,9 @@ export function FlowPage({ built }: { built: FlowView }) {
         <FlowCanvas view={view} run={run} states={states} selected={selected} onSelect={select} panel={panel !== "closed"} readonly={tab === "laeufe"} onPalette={openPalette}>
           {panel !== "closed" && (
             <aside aria-label="Einstellungen des Blocks" data-no-pan className="absolute top-3 right-3 bottom-3 flex w-[400px] flex-col overflow-y-auto rounded-2xl bg-surface shadow-button" onPointerDown={(e) => e.stopPropagation()}>
-              {panelBody}
+              <div key={`${tab}-${panel}-${selected ?? ""}`} className="flex min-h-full flex-col animate-in duration-150 fade-in-0 motion-reduce:animate-none">
+                {panelBody}
+              </div>
             </aside>
           )}
         </FlowCanvas>

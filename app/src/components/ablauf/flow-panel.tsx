@@ -15,7 +15,7 @@ import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
 import { Chip, Dot, KIND_TEXT, Lines, ResultLine } from "./parts";
 
-const PANEL_FOOT = "Ein Block rechnet keinen Betrag und schickt nichts an den Auftraggeber. Beträge kommen aus dem Rechenkern.";
+const PANEL_FOOT = "Kein Block rechnet einen Betrag oder schreibt dem Auftraggeber.";
 
 function Head({ onBack, onClose, children }: { onBack?: () => void; onClose?: () => void; children: React.ReactNode }) {
   return (
@@ -137,7 +137,6 @@ export function AblaufInfo({ view, run, onClose }: { view: FlowView; run: FlowRu
           <>
             <p className="font-medium">{run.title}</p>
             <p className="text-fg-secondary">{run.summary}</p>
-            <p className="mt-2 text-xs leading-4 text-fg-muted">Ein Klick auf einen Block zeigt, was er gelesen und gefunden hat. „Lauf abspielen“ zeigt diesen Lauf Schritt für Schritt; neu geprüft wird, sobald neue Belege kommen.</p>
           </>
         ) : (
           <p className="text-fg-secondary">Noch kein Lauf. Der erste Lauf startet, sobald der Auslöser eintritt.</p>
@@ -148,9 +147,6 @@ export function AblaufInfo({ view, run, onClose }: { view: FlowView; run: FlowRu
           <Money money={run.money} href={`/projekte/${run.project.slug}/schlussrechnung/`} />
         </Section>
       )}
-      <Section title="Einstellen" last>
-        <p className="text-fg-secondary">Ein Klick auf eine Aufgabe stellt ein, wer sie bekommt und bis wann; die Prüfung „Mengenänderung“ hat einen Schwellwert. Die Schritte selbst bleiben fest, damit Vorprüfung und Freigabe nie fehlen.</p>
-      </Section>
       <Foot />
     </>
   );
@@ -209,7 +205,7 @@ function TaskList({ targets, settings }: { targets: FlowTask[]; settings: BlockS
           Alle {open.length} anlegen
         </button>
       )}
-      <p className="mt-2 text-xs leading-4 text-fg-muted">Vorerst nur in diesem Browser gespeichert. Abhaken und bearbeiten auf der Seite „Aufgaben“.</p>
+      <p className="mt-2 text-xs leading-4 text-fg-muted">Nur in diesem Browser gespeichert, abhaken unter „Aufgaben“.</p>
       <TaskDialog open={one !== null} onOpenChange={(o) => !o && setOne(null)} targets={one ? [one] : []} defaults={{ zustaendig: settings.zustaendig, bis: dueDate(settings.frist) ?? "" }} />
     </>
   );
@@ -231,7 +227,6 @@ function TaskSettings({ block, settings }: { block: string; settings: BlockSetti
           </option>
         ))}
       </Select>
-      <p className="mt-1 text-xs leading-4 text-fg-muted">Gilt für jede neue Aufgabe dieses Blocks.</p>
     </>
   );
 }
@@ -257,15 +252,17 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
         </div>
         <p className="mt-3 text-fg-secondary">{n.text}</p>
       </Head>
-      <Section title="Liest">
-        <div className="flex flex-wrap gap-1.5">
-          {n.reads.map((x) => (
-            <span key={x} className="inline-flex h-6 items-center rounded-sm bg-fill-subtle px-1.5 text-xs font-medium shadow-ring">
-              {x}
-            </span>
-          ))}
-        </div>
-      </Section>
+      {(n.kind === "schritt" || n.kind === "bedingung") && (
+        <Section title="Liest">
+          <div className="flex flex-wrap gap-1.5">
+            {n.reads.map((x) => (
+              <span key={x} className="inline-flex h-6 items-center rounded-sm bg-fill-subtle px-1.5 text-xs font-medium shadow-ring">
+                {x}
+              </span>
+            ))}
+          </div>
+        </Section>
+      )}
       <Section title={run ? "Ergebnis im Lauf" : "Ergebnis"} count={run ? `${run.title}, ${run.on}` : undefined}>
         {r ? (
           <>
@@ -286,7 +283,6 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
       <Section title="Wer bestätigt" last>
         <p className="text-fg-secondary">{n.confirms}</p>
       </Section>
-      <Foot />
     </>
   );
 }
@@ -309,7 +305,7 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
         </div>
         <p className="mt-3 text-fg-secondary">{one ? CHECK_TEXT[one.id] : "Jede Regel des Prüfkatalogs ist ein Block. Neue Regeln kommen von Fachleuten aus dem Bau."}</p>
       </Head>
-      <Section title="Treffer im Lauf" count={run ? `${run.title}, ${run.on}` : undefined}>
+      <Section title="Treffer im Lauf" count={run ? `${run.title}, ${run.on}` : undefined} last={one?.id !== THRESHOLD_CHECK}>
         <dl>
           {(one ? [one] : checks).map((c) => (
             <div key={c.id} className="flex min-h-7 items-center justify-between gap-3 py-0.5">
@@ -354,23 +350,18 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
           run && <GoTo href={`/projekte/${run.project.slug}/schlussrechnung/`} label="Vorprüfung öffnen" />
         )}
       </Section>
-      <Section title="Einstellen" last>
-        {one?.id === THRESHOLD_CHECK ? (
-          <>
-            <Select label="Melden über" value={String(threshold(list))} onChange={(v) => saveSetting(THRESHOLD_CHECK, "schwelle", v)}>
-              {THRESHOLDS.map((t) => (
-                <option key={t} value={t}>
-                  {t} %
-                </option>
-              ))}
-            </Select>
-            <p className="mt-1 text-xs leading-4 text-fg-muted">Ein höherer Wert meldet weniger Positionen. Kein Betrag ändert sich, die Fundseite zeigt die Mengenänderung weiter. Vorerst nur in diesem Browser gespeichert.</p>
-          </>
-        ) : (
-          <p className="text-fg-secondary">{one ? "Aktiv bei jedem Lauf, ohne Stellschraube: jeder Treffer ist ein Grund, den der Auftraggeber für eine Kürzung nennen kann." : "Die Prüfung „Mengenänderung“ hat einen Schwellwert; die übrigen zählen jeden Treffer."}</p>
-        )}
-      </Section>
-      <Foot />
+      {one?.id === THRESHOLD_CHECK && (
+        <Section title="Einstellen" last>
+          <Select label="Melden über" value={String(threshold(list))} onChange={(v) => saveSetting(THRESHOLD_CHECK, "schwelle", v)}>
+            {THRESHOLDS.map((t) => (
+              <option key={t} value={t}>
+                {t} %
+              </option>
+            ))}
+          </Select>
+          <p className="mt-1 text-xs leading-4 text-fg-muted">Höher heißt weniger Treffer. Kein Betrag ändert sich.</p>
+        </Section>
+      )}
     </>
   );
 }
@@ -438,7 +429,12 @@ export function Palette({ view, onBack, onClose }: { view: FlowView; onBack?: ()
               {g.items.map((t) => (
                 <li key={t} className="flex h-10 items-center gap-2.5 rounded-[10px] px-2.5 shadow-button">
                   <span className="min-w-0 flex-1 truncate">{t}</span>
-                  {used.has(t) && <span className="shrink-0 text-xs text-fg-muted">in diesem Ablauf</span>}
+                  {used.has(t) && (
+                    <span className="flex shrink-0 items-center gap-1 text-xs text-fg-muted">
+                      <Check className="size-3.5" aria-hidden />
+                      <span className="max-md:sr-only">hier</span>
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
