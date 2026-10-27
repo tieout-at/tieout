@@ -37,7 +37,7 @@ function Head({ onBack, onClose, children }: { onBack?: () => void; onClose?: ()
 function Section({ title, count, children, last }: { title: string; count?: string; children: React.ReactNode; last?: boolean }) {
   return (
     <section className={cn("px-5 py-3.5", !last && "border-b border-line")}>
-      <h3 className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold">
+      <h3 className="mb-2 flex flex-wrap items-baseline gap-x-1.5 text-[13px] font-semibold">
         {title}
         {count && <span className="font-medium text-fg-muted">{count}</span>}
       </h3>
@@ -82,7 +82,7 @@ export function AblaufInfo({ view, run, onClose }: { view: FlowView; run: FlowRu
           <>
             <p className="font-medium">{run.title}</p>
             <p className="text-fg-secondary">{run.summary}</p>
-            <p className="mt-2 text-xs leading-4 text-fg-muted">Ein Klick auf einen Block zeigt, was er gelesen und gefunden hat.</p>
+            <p className="mt-2 text-xs leading-4 text-fg-muted">Ein Klick auf einen Block zeigt, was er gelesen und gefunden hat. „Lauf abspielen“ zeigt diesen Lauf Schritt für Schritt; neu geprüft wird, sobald neue Belege kommen.</p>
           </>
         ) : (
           <p className="text-fg-secondary">Noch kein Lauf. Der erste Lauf startet, sobald der Auslöser eintritt.</p>
@@ -127,6 +127,8 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
           <>
             <ResultLine node={n} result={r} state="done" className="font-medium" />
             <Lines lines={r.lines} />
+            {r.note && <p className="mt-2 text-xs leading-4 text-fg-muted">{r.note}</p>}
+            {r.proposed && <p className="mt-2 text-xs leading-4 text-fg-muted">Die Abhilfe steht fest. Angelegt wird eine Aufgabe auf der Seite „Aufgaben“ mit einem Klick.</p>}
             {r.link && <GoTo {...r.link} />}
           </>
         ) : (
@@ -179,7 +181,15 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
             </div>
           )}
         </dl>
-        {run && <GoTo href={`/projekte/${run.project.slug}/schlussrechnung/`} label="Vorprüfung öffnen" />}
+        {one ? (
+          <div className="flex flex-wrap gap-2">
+            {one.links.map((l) => (
+              <GoTo key={l.href} {...l} />
+            ))}
+          </div>
+        ) : (
+          run && <GoTo href={`/projekte/${run.project.slug}/schlussrechnung/`} label="Vorprüfung öffnen" />
+        )}
       </Section>
       <Section title="Ein und aus" last>
         <div className="flex items-center gap-2.5">

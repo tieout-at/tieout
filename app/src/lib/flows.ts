@@ -5,9 +5,9 @@
  * found and checked, and leads to the page where that is.
  */
 
-import { ablaeufe, datumText, PRUEFUNGEN, type AbschlagsLauf, type AbschlussLauf, type AblaufId, type FirmenErgebnis, type Fundzahlen, type MeldungsLauf, type PruefungId } from "@tieout/kern";
+import { ablaeufe, datumText, FUND_ART_TEXT, PRUEFUNGEN, type AbschlagsLauf, type AbschlussLauf, type AblaufId, type FirmenErgebnis, type Fundzahlen, type MeldungsLauf, type PruefungId } from "@tieout/kern";
 
-import { projectSlug } from "./example";
+import { findSlug, projectSlug } from "./example";
 import { business, firm } from "./kern-data";
 
 export type FlowKind = "ausloeser" | "schritt" | "bedingung" | "aufgabe";
@@ -37,12 +37,16 @@ export type Line = { label: string; value: string; tone?: Tone };
 /** What a block produced in one run; `ran` false when the run did not reach it (a filter stopped, no Entwurf yet). */
 export type NodeResult = {
   ran: boolean;
+  /** A task block: the tasks are proposed on "Aufgaben", nobody created them yet. */
+  proposed?: boolean;
   text: string;
   lines: Line[];
+  /** One sentence below the lines (what this run leaves for the next one). */
+  note?: string | null;
   link: { href: string; label: string } | null;
 };
 
-export type CheckResult = { id: PruefungId; title: string; hits: number; threat: number };
+export type CheckResult = { id: PruefungId; title: string; hits: number; threat: number; links: { href: string; label: string }[] };
 
 export type FlowRun = {
   id: string;
@@ -93,6 +97,12 @@ function stand(z: Fundzahlen): Line[] {
 
 const done = (text: string, lines: Line[] = [], link: NodeResult["link"] = null): NodeResult => ({ ran: true, text, lines, link });
 const skipped = (text: string): NodeResult => ({ ran: false, text, lines: [], link: null });
+const proposed = (n: number): NodeResult => ({ ran: true, proposed: true, text: `${plural(n, "Aufgabe", "Aufgaben")} vorgeschlagen`, lines: [], link: { href: "/aufgaben/", label: n === 1 ? "Vorschlag ansehen" : "Vorschläge ansehen" } });
+
+function vorpruefungText(droht: number, gekuerzt: number): string {
+  const risiko = droht ? plural(droht, "Kürzungsrisiko", "Kürzungsrisiken") : "kein Kürzungsrisiko";
+  return gekuerzt ? `${risiko}, ${gekuerzt} gekürzt` : risiko;
+}
 
 // ---------- Abschluss-Lauf ----------
 
@@ -121,7 +131,7 @@ function abschlussRun(x: AbschlussLauf, name: string): FlowRun {
     iso: x.datum,
     title: name,
     on: "Entwurf",
-    summary: `${plural(x.ordner.belege, "Beleg", "Belege")}, ${funde(z.funde)}, ${plural(vp.positionen, "Kürzungsrisiko", "Kürzungsrisiken")}`,
+    summary: `${plural(x.ordner.belege, "Beleg", "Belege")}, ${funde(z.funde)}, ${vorpruefungText(vp.droht, vp.schonGekuerzt)}`,
     results: {
       ausloeser: done(name, [{ label: "Entwurf vom", value: datumText(x.datum) }], { href: tab(name), label: "Projekt öffnen" }),
       ordner: done(
@@ -136,7 +146,7 @@ function abschlussRun(x: AbschlussLauf, name: string): FlowRun {
       ),
       abgleich: done(funde(z.funde), stand(z), { href: tab(name, "funde"), label: `${funde(z.funde)} öffnen` }),
       vorpruefung: done(
-        plural(vp.positionen, "Kürzungsrisiko", "Kürzungsrisiken"),
+        vorpruefungText(vp.droht, vp.schonGekuerzt),
         [
           { label: "Kürzungsrisiko droht", value: String(vp.droht), tone: "red" },
           { label: "schon gekürzt", value: String(vp.schonGekuerzt) },
@@ -144,12 +154,22 @@ function abschlussRun(x: AbschlussLauf, name: string): FlowRun {
         { href: tab(name, "schlussrechnung"), label: "Vorprüfung öffnen" },
       ),
       entwurf: done(`${x.entwurf.entschieden} von ${x.entwurf.funde} ${x.entwurf.funde === 1 ? "Fund" : "Funden"} entschieden`, [], { href: tab(name, "schlussrechnung"), label: "Schlussrechnung öffnen" }),
-      freigabe: done(offen ? `${funde(offen)} offen` : "alle Funde entschieden", [], { href: tab(name, "funde"), label: "Funde öffnen" }),
+      freigabe: done(offen ? `${funde(offen)} offen` : x.entwurf.freigegeben ? "alle Funde entschieden" : "nichts freigegeben", [], { href: tab(name, "funde"), label: "Funde öffnen" }),
       ausgaben: done(x.ausgabenFertig ? "freigegeben" : "Entwurf, nicht freigegeben", [], { href: tab(name, "schlussrechnung"), label: "Ausgaben öffnen" }),
-      "aufgabe-bauleitung": x.aufgaben.bauleitung ? done(`für ${funde(x.aufgaben.bauleitung)} in Klärung`, [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("keine Lücke"),
-      "aufgabe-abrechnung": x.aufgaben.abrechnung ? done(`für ${plural(x.aufgaben.abrechnung, "Kürzungsrisiko", "Kürzungsrisiken")}`, [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("kein Kürzungsrisiko"),
+      "aufgabe-bauleitung": x.aufgaben.bauleitung ? proposed(x.aufgaben.bauleitung) : skipped("keine Lücke"),
+      "aufgabe-abrechnung": x.aufgaben.abrechnung ? proposed(x.aufgaben.abrechnung) : skipped("kein Kürzungsrisiko"),
     },
-    checks: vp.pruefungen.map((p) => ({ id: p.id, title: PRUEFUNGEN.find((c) => c.id === p.id)!.text, hits: p.treffer, threat: p.droht })),
+    checks: vp.pruefungen.map((p) => ({
+      id: p.id,
+      title: PRUEFUNGEN.find((c) => c.id === p.id)!.text,
+      hits: p.treffer,
+      threat: p.droht,
+      links: !p.treffer
+        ? []
+        : p.funde.length
+          ? p.funde.map((nr) => ({ href: `/funde/${findSlug(name, nr)}/`, label: `${nr} öffnen` }))
+          : [{ href: tab(name, "schlussrechnung"), label: p.id === "abzug_ohne_vertragspunkt" ? "Rechnungsabschluss öffnen" : "Vorprüfung öffnen" }],
+    })),
   };
 }
 
@@ -171,19 +191,17 @@ function abschlagRun(x: AbschlagsLauf, name: string): FlowRun {
     iso: x.abschlagsrechnung.datum,
     title: name,
     on: x.abschlagsrechnung.nr,
-    summary: `${funde(z.funde)}, ${x.aufgaben.bauleitung ? plural(x.aufgaben.bauleitung, "Aufgabe", "Aufgaben") : "keine Aufgabe"} an die Bauleitung`,
+    summary: `${funde(z.funde)}, ${x.aufgaben.bauleitung ? `${plural(x.aufgaben.bauleitung, "Aufgabe", "Aufgaben")} vorgeschlagen` : "keine Lücke"}`,
     results: {
       ausloeser: done(x.abschlagsrechnung.nr, [{ label: "vom", value: datumText(x.abschlagsrechnung.datum) }], { href: tab(name, "zeitstrahl"), label: "Zeitstrahl öffnen" }),
-      abgleich: done(funde(z.funde), [
-        ...stand(z),
-        { label: "Regieberichte unterschrieben, nicht verrechnet", value: String(x.regie.unterschriebenNichtVerrechnet) },
-        { label: "Regieberichte nicht unterschrieben", value: String(x.regie.nichtUnterschrieben) },
-        { label: "Arbeit nach der Abschlagsrechnung, zählt beim nächsten Lauf", value: String(x.regie.nachGrenze) },
-      ], { href: tab(name, "funde"), label: `${funde(z.funde)} öffnen` }),
+      abgleich: {
+        ...done(funde(z.funde), [...stand(z), ...Object.entries(z.jeArt).map(([art, n]) => ({ label: FUND_ART_TEXT[art as keyof typeof FUND_ART_TEXT], value: String(n) }))], { href: tab(name, "funde"), label: `${funde(z.funde)} öffnen` }),
+        note: x.regie.nachGrenze ? `${plural(x.regie.nachGrenze, "Regiebericht", "Regieberichte")} nach dem ${datumText(x.abschlagsrechnung.datum)} zählt erst beim nächsten Lauf.` : null,
+      },
       vorpruefung: x.vorpruefung
         ? done(`${plural(x.vorpruefung.positionen, "Position", "Positionen")} in der Vorprüfung`, [{ label: "Kürzungsrisiko droht", value: String(x.vorpruefung.droht), tone: "red" }], { href: tab(name, "schlussrechnung"), label: "Vorprüfung öffnen" })
         : skipped("läuft erst mit einem Entwurf"),
-      "aufgabe-bauleitung": x.aufgaben.bauleitung ? done(`für ${funde(x.aufgaben.bauleitung)} in Klärung`, [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("keine Lücke"),
+      "aufgabe-bauleitung": x.aufgaben.bauleitung ? proposed(x.aufgaben.bauleitung) : skipped("keine Lücke"),
     },
     checks: null,
   };
@@ -217,11 +235,11 @@ function meldungRun(x: MeldungsLauf, name: string): FlowRun {
     iso: x.zeitpunkt,
     title: name,
     on: `Meldung ${x.nr}`,
-    summary: e.art === "aufgabe" ? `${x.taetigkeit}: Aufgabe an die Bauleitung` : `${x.taetigkeit}: ${filter.text}`,
+    summary: e.art === "aufgabe" ? `${x.taetigkeit}: Aufgabe an die Bauleitung vorgeschlagen` : `${x.taetigkeit}: ${filter.text}`,
     results: {
       ausloeser: done(`${x.nr}, ${x.taetigkeit}`, [{ label: "eingegangen", value: `${datumText(day)}, ${x.zeitpunkt.slice(11, 16)}` }], { href: `/whatsapp-meldungen/#${x.meldungId}`, label: "Meldung öffnen" }),
       bedingung: { ...filter, ran: true },
-      "aufgabe-bauleitung": e.art === "aufgabe" ? done("Regiebericht schreiben lassen", [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("nicht nötig"),
+      "aufgabe-bauleitung": e.art === "aufgabe" ? proposed(1) : skipped("nicht nötig"),
     },
     checks: null,
   };

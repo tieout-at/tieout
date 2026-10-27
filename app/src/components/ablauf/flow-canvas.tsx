@@ -17,7 +17,7 @@ export const H = 70;
 const ROW = 112;
 const LEFT = -290;
 const GROUP_X = 290;
-const GROUP_W = 290;
+const GROUP_W = 310;
 const CHECK_H = 34;
 const PANEL = 424;
 
@@ -71,10 +71,16 @@ export function FlowCanvas({
   const [tool, setTool] = useState<"pointer" | "hand">("pointer");
   const drag = useRef<{ x: number; y: number; bx: number; by: number; moved: boolean } | null>(null);
 
+  // the view fits the Ablauf when it opens and when the canvas changes size; opening the panel, a live recompute or a
+  // new run keep the user's zoom and pan
+  const latest = useRef({ view, panel });
+  useLayoutEffect(() => {
+    latest.current = { view, panel };
+  });
   const fitNow = useCallback(() => {
     const el = area.current;
-    if (el) setBox(fit(view, el.clientWidth, el.clientHeight, panel));
-  }, [view, panel]);
+    if (el && el.clientWidth) setBox(fit(latest.current.view, el.clientWidth, el.clientHeight, latest.current.panel));
+  }, []);
 
   useLayoutEffect(() => {
     fitNow();
@@ -83,35 +89,48 @@ export function FlowCanvas({
     const ro = new ResizeObserver(fitNow);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [fitNow]);
+  }, [fitNow, view.slug]);
 
-  const zoomTo = useCallback((k: number) => {
+  /** Zoom to `k`, or by `factor` from the current zoom, around the centre of the free canvas. */
+  const zoomTo = useCallback((k: number | null, factor = 1) => {
     const el = area.current;
     setBox((b) => {
       if (!b || !el) return b;
-      const nk = Math.min(1.5, Math.max(0.5, k));
+      const nk = Math.min(1.5, Math.max(0.5, (k ?? b.k) * factor));
       const cx = (el.clientWidth - (panel ? PANEL : 0)) / 2;
       const cy = el.clientHeight / 2;
       return { k: nk, x: cx - ((cx - b.x) / b.k) * nk, y: cy - ((cy - b.y) / b.k) * nk };
     });
   }, [panel]);
 
-  // B opens the building blocks, as Attio's "Add block"; not while typing
+  // B opens the building blocks, as Attio's "Add block": only while the canvas is shown and editable, not while typing
+  // or in a menu
   useEffect(() => {
+    if (readonly) return;
     const key = (e: KeyboardEvent) => {
       const t = e.target instanceof HTMLElement ? e.target : null;
-      if (e.key.toLowerCase() !== "b" || e.ctrlKey || e.metaKey || e.altKey || t?.closest("input, textarea, [contenteditable], [role=dialog]")) return;
+      if (e.key.toLowerCase() !== "b" || e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+      if (t?.closest("input, textarea, select, [contenteditable], [role=dialog], [role=menu], [role=listbox]")) return;
+      if (!area.current?.offsetParent) return;
       onPalette();
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [onPalette]);
+  }, [onPalette, readonly]);
 
-  const onWheel = (e: React.WheelEvent) => {
-    if (!box) return;
-    if (e.ctrlKey || e.metaKey) zoomTo(box.k * (e.deltaY > 0 ? 0.9 : 1.1));
-    else setBox({ ...box, x: box.x - e.deltaX, y: box.y - e.deltaY });
-  };
+  // the wheel pans and Ctrl with the wheel (or a pinch) zooms the canvas, never the page; not over the panel or toolbar
+  useEffect(() => {
+    const el = area.current;
+    if (!el) return;
+    const wheel = (e: WheelEvent) => {
+      if (e.target instanceof Element && e.target.closest("[data-no-pan]")) return;
+      e.preventDefault();
+      if (e.ctrlKey || e.metaKey) zoomTo(null, e.deltaY > 0 ? 0.9 : 1.1);
+      else setBox((b) => (b ? { ...b, x: b.x - e.deltaX, y: b.y - e.deltaY } : b));
+    };
+    el.addEventListener("wheel", wheel, { passive: false });
+    return () => el.removeEventListener("wheel", wheel);
+  }, [zoomTo]);
   const onPointerDown = (e: React.PointerEvent) => {
     if (!box || e.button !== 0) return;
     const onBlock = (e.target as HTMLElement).closest("[data-block]");
@@ -119,9 +138,13 @@ export function FlowCanvas({
     drag.current = { x: e.clientX, y: e.clientY, bx: box.x, by: box.y, moved: false };
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
+  const endDrag = () => {
+    drag.current = null;
+  };
   const onPointerMove = (e: React.PointerEvent) => {
     const d = drag.current;
     if (!d) return;
+    if (!e.buttons) return endDrag();
     const dx = e.clientX - d.x;
     const dy = e.clientY - d.y;
     if (Math.abs(dx) + Math.abs(dy) > 3) d.moved = true;
@@ -144,14 +167,16 @@ export function FlowCanvas({
   return (
     <div
       ref={area}
+      id="ablauf-flaeche"
       role="group"
       aria-label="Arbeitsfläche"
       className={cn("relative min-h-0 flex-1 touch-none overflow-hidden bg-sidebar select-none", tool === "hand" ? "cursor-grab active:cursor-grabbing" : "cursor-default")}
       style={{ backgroundImage: "radial-gradient(rgb(0 0 0 / 0.14) 0.6px, transparent 0.8px)", backgroundSize: `${10 * (box?.k ?? 1)}px ${10 * (box?.k ?? 1)}px`, backgroundPosition: box ? `${box.x}px ${box.y}px` : undefined }}
-      onWheel={onWheel}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
+      onPointerCancel={endDrag}
+      onLostPointerCapture={endDrag}
     >
       {box && (
         <div className="absolute top-0 left-0 origin-top-left" style={{ transform: `translate(${box.x}px, ${box.y}px) scale(${box.k})` }}>
@@ -197,10 +222,11 @@ export function FlowCanvas({
                 data-block
                 aria-pressed={selected === n.id}
                 aria-label={`${n.title}: ${state === "run" ? "läuft" : result && state !== "wait" ? result.text : n.does}`}
-                disabled={tool === "hand"}
+                tabIndex={0}
                 onClick={() => onSelect(selected === n.id ? null : n.id)}
                 className={cn(
-                  "absolute flex flex-col rounded-[14px] bg-surface pt-1.5 pb-1.5 text-left shadow-button outline-none transition-[box-shadow,background-color,opacity] duration-200 hover:bg-fill-selected focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none motion-reduce:transition-none",
+                  "absolute flex flex-col rounded-[14px] bg-surface pt-1.5 pb-1.5 text-left shadow-button outline-none transition-[box-shadow,background-color,opacity] duration-200 hover:bg-fill-selected focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none",
+                  tool === "hand" && "pointer-events-none",
                   selected === n.id && "bg-fill-selected shadow-[inset_0_0_0_1px_var(--color-accent),0_0_2px_0_rgb(28_40_64/0.18),0_1px_3px_0_rgb(0_0_0/0.04)]",
                   state === "run" && "shadow-[inset_0_0_0_1.5px_var(--color-accent),0_0_0_4px_rgb(29_59_255/0.1)]",
                   dim && "opacity-55",
@@ -215,7 +241,7 @@ export function FlowCanvas({
                 )}
                 <span className="flex h-7 items-center gap-1.5 px-2.5 pt-1">
                   <Chip icon={n.icon} />
-                  <span className="truncate text-sm font-medium" title={n.title}>{n.title}</span>
+                  <span className={cn("truncate font-medium", n.title.length > 20 ? "text-[13px]" : "text-sm")} title={n.title}>{n.title}</span>
                 </span>
                 <ResultLine node={n} result={result} state={state} className="px-3 pt-1.5 text-xs leading-4 font-medium" />
               </button>
@@ -242,11 +268,12 @@ export function FlowCanvas({
                       <button
                         type="button"
                         data-block
-                        disabled={tool === "hand"}
+                        tabIndex={0}
                         aria-pressed={selected === `pruefung:${c.id}`}
                         onClick={() => onSelect(selected === `pruefung:${c.id}` ? null : `pruefung:${c.id}`)}
                         className={cn(
-                          "flex w-full items-center gap-2 rounded-md px-1.5 text-left text-[13px] outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none",
+                          "flex w-full items-center gap-2 rounded-md px-1.5 text-left text-[13px] outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent",
+                          tool === "hand" && "pointer-events-none",
                           selected === `pruefung:${c.id}` && "bg-fill-selected shadow-[inset_0_0_0_1px_var(--color-accent)]",
                         )}
                         style={{ height: CHECK_H }}
@@ -275,6 +302,7 @@ export function FlowCanvas({
         className="absolute bottom-3.5 flex h-11 -translate-x-1/2 items-center gap-2 rounded-xl bg-surface p-2 shadow-[0_0_0_1px_rgb(28_40_64/0.04),0_4px_8px_-4px_rgb(28_40_64/0.12),0_4px_12px_-2px_rgb(24_41_75/0.16)]"
         style={{ left: `calc((100% - ${panel ? PANEL : 0}px) / 2)` }}
         onPointerDown={(e) => e.stopPropagation()}
+        data-no-pan
       >
         <DropdownMenu>
           <DropdownMenuTrigger className="flex h-7 items-center gap-1.5 rounded-md bg-surface px-1.5 text-sm font-medium tabular-nums shadow-button outline-none focus-visible:outline-2 focus-visible:outline-accent" aria-label="Zoom">
@@ -283,8 +311,8 @@ export function FlowCanvas({
             <ChevronDown className="size-4 text-fg-secondary" aria-hidden />
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" className="min-w-44">
-            <DropdownMenuItem onClick={() => box && zoomTo(box.k * 1.2)}>Vergrößern</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => box && zoomTo(box.k / 1.2)}>Verkleinern</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => zoomTo(null, 1.2)}>Vergrößern</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => zoomTo(null, 1 / 1.2)}>Verkleinern</DropdownMenuItem>
             <DropdownMenuItem onClick={() => zoomTo(0.5)}>Auf 50 %</DropdownMenuItem>
             <DropdownMenuItem onClick={() => zoomTo(1)}>Auf 100 %</DropdownMenuItem>
             <DropdownMenuItem onClick={fitNow}>Ganz anzeigen</DropdownMenuItem>

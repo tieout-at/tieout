@@ -28,22 +28,22 @@ describe("Abschluss-Lauf", () => {
   it("Vorprüfung: 3 positions, 2 threaten, 1 already cut; hits per check in the order of the catalogue", () => {
     const vp = a.abschluss[0].vorpruefung;
     expect([vp.positionen, vp.droht, vp.schonGekuerzt]).toEqual([3, 2, 1]);
-    expect(vp.pruefungen.map((p) => [p.id, p.treffer, p.droht])).toEqual([
-      ["aufmass_nicht_gegengezeichnet", 1, 1],
-      ["regie_nicht_unterschrieben", 0, 0],
-      ["stunden_weichen_ab", 1, 1],
-      ["rechenfehler", 0, 0],
-      ["ausserhalb_lv_kein_nachtrag", 1, 0],
-      ["menge_ohne_aufmass", 0, 0],
-      ["abzug_ohne_vertragspunkt", 1, 0],
-      ["mengenaenderung_ueber_20", 1, 0],
+    expect(vp.pruefungen.map((p) => [p.id, p.treffer, p.droht, p.funde])).toEqual([
+      ["aufmass_nicht_gegengezeichnet", 1, 1, ["F1"]],
+      ["regie_nicht_unterschrieben", 0, 0, []],
+      ["stunden_weichen_ab", 1, 1, ["F2"]],
+      ["rechenfehler", 0, 0, []],
+      ["ausserhalb_lv_kein_nachtrag", 1, 0, []],
+      ["menge_ohne_aufmass", 0, 0, []],
+      ["abzug_ohne_vertragspunkt", 1, 0, []],
+      ["mengenaenderung_ueber_20", 1, 0, ["F4"]],
     ]);
     expect(PRUEFUNGEN).toHaveLength(8);
   });
 
   it("tasks: 3 gaps to the Bauleitung, 2 Kürzungsrisiken to the Abrechnung; nothing decided, Ausgaben not final", () => {
     const x = a.abschluss[0];
-    expect([x.aufgaben, x.entwurf, x.ausgabenFertig]).toEqual([{ bauleitung: 3, abrechnung: 2 }, { funde: 8, entschieden: 0 }, false]);
+    expect([x.aufgaben, x.entwurf, x.ausgabenFertig]).toEqual([{ bauleitung: 3, abrechnung: 2 }, { funde: 8, entschieden: 0, freigegeben: 0 }, false]);
   });
 
   it("follows the decisions: a find set to 'Nicht verrechnen' leaves its gap and counts as decided", () => {
@@ -54,9 +54,26 @@ describe("Abschluss-Lauf", () => {
     const x = ablaeufe(firma, pruefeFirma(firma, [...freigabe, nv])).abschluss[0];
     expect([x.abgleich.belegFehlt, x.abgleich.nichtVerrechnen, x.aufgaben.bauleitung, x.entwurf.entschieden, x.ausgabenFertig]).toEqual([1, 1, 2, 6, false]);
   });
+
+  it("Ausgaben are final only with every find decided and at least one released", () => {
+    const funde = pruefeFirma(firma).ergebnisse.p1.abgleich.funde;
+    const alle = (stand: Entscheidung["stand"]) => funde.map((f): Entscheidung => ({ fundSchluessel: `p1/${f.schluessel}`, zeit: "2026-10-27T10:00", wer: "Geschäftsführung", stand, grund: "Test" }));
+    const nichts = ablaeufe(firma, pruefeFirma(firma, alle("nicht_verrechnen"))).abschluss[0];
+    expect([nichts.entwurf.entschieden, nichts.entwurf.freigegeben, nichts.ausgabenFertig]).toEqual([8, 0, false]);
+    const frei = ablaeufe(firma, pruefeFirma(firma, alle("freigegeben"))).abschluss[0];
+    expect([frei.entwurf.freigegeben, frei.ausgabenFertig]).toEqual([8, true]);
+  });
 });
 
 describe("Lauf je Abschlagsrechnung", () => {
+  it("takes the Abschlagsrechnung filed later when two share the last day", () => {
+    const d = firma.projekte.find((x) => x.projekt.id === "p2")!;
+    const zwei = d.abschlaege.at(-1)!;
+    const gleich = { ...zwei, nr: { ...zwei.nr, wert: "Abschlagsrechnung 3" } };
+    const f = { ...firma, projekte: firma.projekte.map((x) => (x === d ? { ...d, abschlaege: [...d.abschlaege, gleich] } : x)) };
+    expect(ablaeufe(f, pruefeFirma(f)).abschlag.find((x) => x.projektId === "p2")!.abschlagsrechnung).toEqual({ nr: "Abschlagsrechnung 3", datum: "2026-09-30" });
+  });
+
   it("runs for the two projects in Ausführung at their last Abschlagsrechnung", () => {
     expect(a.abschlag.map((x) => [x.projektId, x.abschlagsrechnung.nr, x.abschlagsrechnung.datum])).toEqual([
       ["p2", "Abschlagsrechnung 2", "2026-09-30"],

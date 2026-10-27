@@ -7,6 +7,7 @@ import { UnderlineTabs } from "@/components/shell/underline-tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { InfoTip } from "@/components/ui/info-tip";
 import { SideWindow } from "@/components/ui/side-window";
+import { useMediaQuery } from "@/components/ui/use-media";
 import type { FlowView } from "@/lib/flows";
 import { useLive } from "@/lib/live";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ const STEP_MS = 650;
 /** Plays a run: each block in turn runs, then shows what it produced. Without motion the run ends at once. */
 function usePlay(order: string[]) {
   const [at, setAt] = useState<number | null>(null);
+  const [still, setStill] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const stop = useCallback(() => {
     if (timer.current) clearInterval(timer.current);
@@ -27,7 +29,10 @@ function usePlay(order: string[]) {
   }, []);
   const play = useCallback(() => {
     if (timer.current) clearInterval(timer.current);
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setAt(null);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setAt(null);
+      return setStill((n) => n + 1);
+    }
     setAt(0);
     timer.current = setInterval(() => {
       setAt((i) => {
@@ -48,7 +53,7 @@ function usePlay(order: string[]) {
     order.forEach((id, i) => (s[id] = at === null ? "idle" : i < at ? "done" : i === at ? "run" : "wait"));
     return s;
   }, [order, at]);
-  return { playing: at !== null, states, play, stop };
+  return { playing: at !== null, still, states, play, stop };
 }
 
 export function FlowPage({ built }: { built: FlowView }) {
@@ -61,7 +66,10 @@ export function FlowPage({ built }: { built: FlowView }) {
   const [sheet, setSheet] = useState<string | null>(null);
   const run = view.runs.find((r) => r.id === runId) ?? view.runs[0] ?? null;
   const order = useMemo(() => playOrder(view.nodes, view.checksAt), [view.nodes, view.checksAt]);
-  const { playing, states, play, stop } = usePlay(order);
+  const { playing, still, states, play, stop } = usePlay(order);
+  const wide = useMediaQuery("(min-width: 1024px)", true);
+  // a sheet opened on a narrow screen stays closed once the canvas with its own panel takes over
+  const sheetOpen = sheet !== null && !wide;
 
   const pickRun = (id: string) => {
     stop();
@@ -69,7 +77,10 @@ export function FlowPage({ built }: { built: FlowView }) {
   };
   const select = (id: string | null) => {
     setSelected(id);
-    if (id) setPanel("open");
+    if (!id) return;
+    setPanel("open");
+    // on "Läufe" the panel holds the runs: a block opens its details on "Ablauf", for the chosen run
+    setTab("ablauf");
   };
   const openPalette = useCallback(() => {
     setSelected(null);
@@ -98,13 +109,14 @@ export function FlowPage({ built }: { built: FlowView }) {
           groups={[
             {
               items: [
-                { key: "ablauf", title: "Ablauf", icon: Workflow, active: tab === "ablauf", onSelect: () => setTab("ablauf") },
-                { key: "laeufe", title: "Läufe", icon: List, count: view.runs.length, active: tab === "laeufe", onSelect: () => { setTab("laeufe"); setPanel("open"); } },
+                { key: "ablauf", title: "Ablauf", icon: Workflow, active: tab === "ablauf", controls: "ablauf-inhalt", onSelect: () => setTab("ablauf") },
+                { key: "laeufe", title: "Läufe", icon: List, count: view.runs.length, active: tab === "laeufe", controls: "ablauf-inhalt", onSelect: () => { setTab("laeufe"); setPanel("open"); } },
               ],
             },
           ]}
         />
         <div className="flex items-center gap-2 max-lg:px-4 max-lg:pb-3">
+          {view.runs.length === 1 && run && <span className="min-w-0 truncate text-sm text-fg-secondary max-lg:hidden">{runLabel(run)}</span>}
           {view.runs.length > 1 && (
             <DropdownMenu>
               <DropdownMenuTrigger className="flex h-7 min-w-0 items-center gap-1.5 rounded-md bg-surface py-1 pr-1.5 pl-2 text-sm font-medium shadow-button outline-none focus-visible:outline-2 focus-visible:outline-accent max-lg:h-8 max-lg:flex-1 max-lg:justify-between">
@@ -137,14 +149,14 @@ export function FlowPage({ built }: { built: FlowView }) {
         </div>
       </div>
       <p className="sr-only" aria-live="polite">
-        {playing ? "Der Lauf spielt." : ""}
+        {playing ? "Der Lauf spielt." : still ? `Lauf gezeigt: ${run ? run.summary : ""}` : ""}
       </p>
 
       {/* desktop: Attio's canvas with its floating panel */}
-      <div className="hidden min-h-0 flex-1 flex-col lg:flex">
+      <div id="ablauf-inhalt" role="tabpanel" className="hidden min-h-0 flex-1 flex-col lg:flex">
         <FlowCanvas view={view} run={run} states={states} selected={selected} onSelect={select} panel={panel !== "closed"} readonly={tab === "laeufe"} onPalette={openPalette}>
           {panel !== "closed" && (
-            <aside aria-label="Einstellungen des Blocks" className="absolute top-3 right-3 bottom-3 flex w-[400px] flex-col overflow-y-auto rounded-2xl bg-surface shadow-button" onPointerDown={(e) => e.stopPropagation()}>
+            <aside aria-label="Einstellungen des Blocks" data-no-pan className="absolute top-3 right-3 bottom-3 flex w-[400px] flex-col overflow-y-auto rounded-2xl bg-surface shadow-button" onPointerDown={(e) => e.stopPropagation()}>
               {panelBody}
             </aside>
           )}
@@ -185,8 +197,8 @@ export function FlowPage({ built }: { built: FlowView }) {
             })}
           </ol>
         )}
-        <SideWindow open={sheet !== null} onClose={() => setSheet(null)} title={view.nodes.find((n) => n.id === sheet)?.title ?? "Prüfungen"}>
-          {sheet && <BlockDetail view={view} run={run} id={sheet} onClose={() => setSheet(null)} />}
+        <SideWindow open={sheetOpen} onClose={() => setSheet(null)} title={view.nodes.find((n) => n.id === sheet)?.title ?? "Prüfungen"}>
+          {sheetOpen && sheet && <BlockDetail view={view} run={run} id={sheet} onClose={() => setSheet(null)} />}
         </SideWindow>
       </div>
     </div>

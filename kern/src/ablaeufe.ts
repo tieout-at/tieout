@@ -39,6 +39,8 @@ export interface PruefungsTreffer {
   treffer: number;
   /** Of them Kürzungsrisiken that still threaten (only reasons to cut). */
   droht: number;
+  /** Numbers of the finds the hits lie in ("F1"), so each hit leads to its find; empty for a line of the Entwurf. */
+  funde: string[];
 }
 
 /** The finds of a project counted by Belegstand; a find set to "Nicht verrechnen" counts apart, in no Belegstand. */
@@ -60,8 +62,8 @@ export interface AbschlussLauf {
   vorpruefung: { positionen: number; droht: number; schonGekuerzt: number; pruefungen: PruefungsTreffer[] };
   aufgaben: { bauleitung: number; abrechnung: number };
   /** Finds not "Gefunden" or "Geprüft" count as decided (as the tab Schlussrechnung counts them). */
-  entwurf: { funde: number; entschieden: number };
-  /** Ausgaben are final only once every find is decided (SPEZIFIKATION.md 5.1). */
+  entwurf: { funde: number; entschieden: number; freigegeben: number };
+  /** Ausgaben are final only once every find is decided and at least one is released (SPEZIFIKATION.md 5.1). */
   ausgabenFertig: boolean;
 }
 
@@ -116,14 +118,16 @@ function fundzahlen(e: ProjektErgebnis): Fundzahlen {
 }
 
 function pruefungen(e: ProjektErgebnis): PruefungsTreffer[] {
+  const nr = new Map(e.abgleich.funde.map((f) => [f.schluessel, f.nr]));
+  const funde = (keys: (string | null)[]) => [...new Set(keys.flatMap((k) => (k && nr.has(k) ? [nr.get(k)!] : [])))];
   const risiken = e.vorpruefung?.risiken ?? [];
   const abzuege = (e.vorpruefung?.saetze ?? []).filter((s) => s.pruefung === "abzug_ohne_vertragspunkt").length;
-  const mengen = e.abgleich.hinweise.filter((h) => h.art === "mengenaenderung_ueber_20").length;
+  const mengen = e.abgleich.hinweise.filter((h) => h.art === "mengenaenderung_ueber_20");
   return PRUEFUNGEN.map(({ id }) => {
-    if (id === "abzug_ohne_vertragspunkt") return { id, treffer: abzuege, droht: 0 };
-    if (id === "mengenaenderung_ueber_20") return { id, treffer: mengen, droht: 0 };
+    if (id === "abzug_ohne_vertragspunkt") return { id, treffer: abzuege, droht: 0, funde: [] };
+    if (id === "mengenaenderung_ueber_20") return { id, treffer: mengen.length, droht: 0, funde: funde(mengen.map((h) => h.fundSchluessel)) };
     const xs = risiken.filter((r) => r.grund === id);
-    return { id, treffer: xs.length, droht: xs.filter((r) => r.zustand === "droht").length };
+    return { id, treffer: xs.length, droht: xs.filter((r) => r.zustand === "droht").length, funde: funde(xs.map((r) => r.fundSchluessel)) };
   });
 }
 
@@ -135,6 +139,7 @@ function abschlussLauf(d: Datensatz, e: ProjektErgebnis): AbschlussLauf | null {
   if (!d.entwurf || !vp || !e.rechnungsabschluss) return null;
   const z = fundzahlen(e);
   const entschieden = e.abgleich.funde.filter((f) => ENTSCHIEDEN.includes(f.entscheidung)).length;
+  const freigegeben = e.abgleich.funde.filter((f) => f.entscheidung === "freigegeben" || f.entscheidung === "in_schlussrechnung").length;
   const offen = new Set(e.abgleich.funde.filter((f) => f.entscheidung !== "nicht_verrechnen").map((f) => f.schluessel));
   const droht = vp.risiken.filter((r) => r.zustand === "droht");
   return {
@@ -144,13 +149,14 @@ function abschlussLauf(d: Datensatz, e: ProjektErgebnis): AbschlussLauf | null {
     abgleich: z,
     vorpruefung: { positionen: vp.risiken.length, droht: droht.length, schonGekuerzt: vp.risiken.length - droht.length, pruefungen: pruefungen(e) },
     aufgaben: { bauleitung: luecken(z), abrechnung: droht.filter((r) => r.fundSchluessel === null || offen.has(r.fundSchluessel)).length },
-    entwurf: { funde: z.funde, entschieden },
-    ausgabenFertig: entschieden === z.funde,
+    entwurf: { funde: z.funde, entschieden, freigegeben },
+    ausgabenFertig: entschieden === z.funde && freigegeben > 0,
   };
 }
 
 function abschlagsLauf(d: Datensatz, e: ProjektErgebnis): AbschlagsLauf | null {
-  const letzte = d.abschlaege.toSorted((a, b) => b.datum.wert.localeCompare(a.datum.wert))[0];
+  // the latest Abschlagsrechnung; on the same day the one filed later in the folder
+  const letzte = d.abschlaege.reduce<(typeof d.abschlaege)[number] | undefined>((a, b) => (!a || b.datum.wert >= a.datum.wert ? b : a), undefined);
   if (d.entwurf || !e.abgleich.laeuft || !letzte) return null;
   const z = fundzahlen(e);
   const r = e.abgleich.regie;

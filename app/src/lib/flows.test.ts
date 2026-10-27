@@ -29,13 +29,16 @@ describe("Abläufe (step 9)", () => {
       ausloeser: "Wohnpark Mooshaim",
       ordner: "77 Belege gelesen",
       abgleich: "8 Funde",
-      vorpruefung: "3 Kürzungsrisiken",
+      vorpruefung: "2 Kürzungsrisiken, 1 gekürzt",
       entwurf: "0 von 8 Funden entschieden",
       freigabe: "8 Funde offen",
       ausgaben: "Entwurf, nicht freigegeben",
-      "aufgabe-bauleitung": "für 3 Funde in Klärung",
-      "aufgabe-abrechnung": "für 2 Kürzungsrisiken",
+      "aufgabe-bauleitung": "3 Aufgaben vorgeschlagen",
+      "aufgabe-abrechnung": "2 Aufgaben vorgeschlagen",
     });
+    // proposed, not created: the same 5 proposals the page "Aufgaben" lists for Wohnpark Mooshaim
+    expect([run.results["aufgabe-bauleitung"].proposed, run.results["aufgabe-abrechnung"].proposed]).toEqual([true, true]);
+    expect(findRows().filter((r) => r.project.name === "Wohnpark Mooshaim" && r.taskText).length).toBe(3 + 2);
     expect(run.results.abgleich.lines.map((l) => `${l.label} ${l.value}`)).toEqual(["belegt 5", "Beleg fehlt 2", "Nachtrag nicht gelegt 1"]);
     expect(run.checks?.filter((c) => c.hits).map((c) => `${c.title} ${c.hits}${c.threat ? " droht" : ""}`)).toEqual([
       "Aufmaß nicht gegengezeichnet 1 droht",
@@ -44,6 +47,13 @@ describe("Abläufe (step 9)", () => {
       "Abzug ohne Vertragspunkt 1",
       "Mengenänderung über 20 % 1",
     ]);
+    expect(Object.fromEntries(run.checks!.filter((c) => c.hits).map((c) => [c.title, c.links.map((l) => l.href)]))).toEqual({
+      "Aufmaß nicht gegengezeichnet": ["/funde/wohnpark-mooshaim-f1/"],
+      "Stunden weichen ab": ["/funde/wohnpark-mooshaim-f2/"],
+      "Außerhalb des Leistungsverzeichnisses": ["/projekte/wohnpark-mooshaim/schlussrechnung/"],
+      "Abzug ohne Vertragspunkt": ["/projekte/wohnpark-mooshaim/schlussrechnung/"],
+      "Mengenänderung über 20 %": ["/funde/wohnpark-mooshaim-f4/"],
+    });
   });
 
   it("never shows an amount on a block, in a line or in a run", () => {
@@ -55,13 +65,15 @@ describe("Abläufe (step 9)", () => {
     const links = views.flatMap((v) => v.runs.flatMap((r) => Object.values(r.results).flatMap((x) => (x.link ? [x.link.href] : []))));
     expect(links.length).toBeGreaterThan(10);
     for (const href of links) expect(href).toMatch(/^\/(projekte\/[a-z-]+\/([a-z-]+\/)?|aufgaben\/|whatsapp-meldungen\/#[a-z0-9-]+)$/);
+    const checks = views.flatMap((v) => v.runs.flatMap((r) => (r.checks ?? []).flatMap((c) => c.links.map((l) => l.href))));
+    for (const href of checks) expect(href).toMatch(/^\/(funde\/[a-z0-9-]+\/|projekte\/[a-z-]+\/schlussrechnung\/)$/);
   });
 
   it("the Lauf je Abschlagsrechnung skips the Vorprüfung without an Entwurf and names the gaps", () => {
     const v = flowView(FLOW_SLUGS.lauf_je_abschlagsrechnung)!;
     expect(v.runs.map((r) => [r.results.vorpruefung.ran, r.results["aufgabe-bauleitung"].text])).toEqual([
       [false, "keine Lücke"],
-      [false, "für 1 Fund in Klärung"],
+      [false, "1 Aufgabe vorgeschlagen"],
     ]);
   });
 
@@ -87,7 +99,7 @@ describe("Abläufe (step 9)", () => {
     const r = l.runs[0];
     expect([r.results.entwurf.text, r.results["aufgabe-bauleitung"].text, r.results.abgleich.lines.map((x) => `${x.label} ${x.value}`)]).toEqual([
       "1 von 8 Funden entschieden",
-      "für 2 Funde in Klärung",
+      "2 Aufgaben vorgeschlagen",
       ["belegt 5", "Beleg fehlt 1", "Nachtrag nicht gelegt 1", "Nicht verrechnen 1"],
     ]);
     expect(live([]).flowView(FLOW_SLUGS.abschluss_lauf)).toEqual(abschluss);

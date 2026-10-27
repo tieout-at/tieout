@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CircleDashed, FileText, Filter, FolderInput, GitCompareArrows, LoaderCircle, MessageCircle, Package, ReceiptText, ShieldCheck, SquareCheck, UserCheck, type LucideIcon } from "lucide-react";
+import { Check, CircleDashed, FileText, Lightbulb, Filter, FolderInput, GitCompareArrows, LoaderCircle, MessageCircle, Package, ReceiptText, ShieldCheck, SquareCheck, UserCheck, type LucideIcon } from "lucide-react";
 
 import type { FlowIcon, FlowKind, FlowNode, FlowRun, Line, NodeResult, Tone } from "@/lib/flows";
 import { cn } from "@/lib/utils";
@@ -62,8 +62,8 @@ export function ResultLine({ node, result, state, className }: { node: FlowNode;
     );
   if (!result || state === "wait") return <span className={cn("block truncate text-fg-secondary", className)}>{node.does}</span>;
   return (
-    <span className={cn("flex min-w-0 items-center gap-1.5", result.ran ? "text-fg" : "text-fg-muted", className)}>
-      {result.ran ? <Check className="size-3.5 shrink-0" aria-hidden /> : <CircleDashed className="size-3.5 shrink-0" aria-hidden />}
+    <span className={cn("flex min-w-0 items-center gap-1.5", result.proposed ? "text-fg-secondary" : result.ran ? "text-fg" : "text-fg-muted", className)}>
+      {result.proposed ? <Lightbulb className="size-3.5 shrink-0" aria-hidden /> : result.ran ? <Check className="size-3.5 shrink-0" aria-hidden /> : <CircleDashed className="size-3.5 shrink-0" aria-hidden />}
       <span className="truncate">{result.text}</span>
     </span>
   );
