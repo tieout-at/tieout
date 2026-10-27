@@ -1,0 +1,276 @@
+/**
+ * "Abläufe" (step 9, SPEZIFIKATION.md 5.2): the three ready Abläufe as blocks on Attio's canvas and every run the data
+ * allows. The counts come from `ablaeufe()` of `kern/` over the core's result, so the same code runs while the pages are
+ * built and in the browser once decisions exist (`kern-live.ts`). A block never shows an amount: it says what it read,
+ * found and checked, and leads to the page where that is.
+ */
+
+import { ablaeufe, datumText, PRUEFUNGEN, type AbschlagsLauf, type AbschlussLauf, type AblaufId, type FirmenErgebnis, type Fundzahlen, type MeldungsLauf, type PruefungId } from "@tieout/kern";
+
+import { projectSlug } from "./example";
+import { business, firm } from "./kern-data";
+
+export type FlowKind = "ausloeser" | "schritt" | "bedingung" | "aufgabe";
+export type FlowIcon = "folder" | "file" | "compare" | "shield" | "receipt" | "release" | "package" | "task" | "invoice" | "message" | "filter";
+export type Tone = "green" | "yellow" | "orange" | "red" | "grey";
+
+/** A block and where it sits: `row` down the main column, `side` left of it (tasks) or in it. */
+export type FlowNode = {
+  id: string;
+  kind: FlowKind;
+  icon: FlowIcon;
+  title: string;
+  /** What the block does, in a few words (the subtitle before a run). */
+  does: string;
+  /** The panel: what it is, what it reads, who confirms. */
+  text: string;
+  reads: string[];
+  confirms: string;
+  row: number;
+  side: "main" | "left";
+};
+
+export type FlowEdge = { from: string; to: string };
+
+export type Line = { label: string; value: string; tone?: Tone };
+
+/** What a block produced in one run; `ran` false when the run did not reach it (a filter stopped, no Entwurf yet). */
+export type NodeResult = {
+  ran: boolean;
+  text: string;
+  lines: Line[];
+  link: { href: string; label: string } | null;
+};
+
+export type CheckResult = { id: PruefungId; title: string; hits: number; threat: number };
+
+export type FlowRun = {
+  id: string;
+  project: { name: string; slug: string };
+  /** Plain date of the run ("19.10.2026"). */
+  date: string;
+  iso: string;
+  /** The project; `on` what the run ran on ("Entwurf", "Abschlagsrechnung 2", "Meldung W4"). */
+  title: string;
+  on: string;
+  summary: string;
+  results: Record<string, NodeResult>;
+  checks: CheckResult[] | null;
+};
+
+export type FlowView = {
+  id: AblaufId;
+  slug: string;
+  title: string;
+  /** One sentence on the list and in the panel when no block is chosen. */
+  summary: string;
+  description: string;
+  nodes: FlowNode[];
+  edges: FlowEdge[];
+  /** The block the check catalogue hangs on (the Vorprüfung of the Abschluss-Lauf). */
+  checksAt: string | null;
+  runs: FlowRun[];
+};
+
+export const FLOW_SLUGS: Record<AblaufId, string> = {
+  abschluss_lauf: "abschluss-lauf",
+  lauf_je_abschlagsrechnung: "lauf-je-abschlagsrechnung",
+  meldung_zu_regiebericht: "meldung-zu-regiebericht",
+};
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+const funde = (n: number) => plural(n, "Fund", "Funde");
+const tab = (name: string, t = "") => `/projekte/${projectSlug(name)}/${t ? `${t}/` : ""}`;
+
+function stand(z: Fundzahlen): Line[] {
+  return [
+    { label: "belegt", value: String(z.belegt), tone: "green" as const },
+    { label: "Beleg fehlt", value: String(z.belegFehlt), tone: "yellow" as const },
+    { label: "Nachtrag nicht gelegt", value: String(z.nachtragNichtGelegt), tone: "orange" as const },
+    ...(z.nichtVerrechnen ? [{ label: "Nicht verrechnen", value: String(z.nichtVerrechnen), tone: "grey" as const }] : []),
+  ].filter((l) => l.value !== "0" || l.tone === "green");
+}
+
+const done = (text: string, lines: Line[] = [], link: NodeResult["link"] = null): NodeResult => ({ ran: true, text, lines, link });
+const skipped = (text: string): NodeResult => ({ ran: false, text, lines: [], link: null });
+
+// ---------- Abschluss-Lauf ----------
+
+const ABSCHLUSS_NODES: FlowNode[] = [
+  { id: "ausloeser", kind: "ausloeser", icon: "folder", title: "Ordner importiert", does: "Wenn ein Projektordner kommt", text: "Startet, sobald der Ordner eines Projekts mit Entwurf der Schlussrechnung hereinkommt.", reads: ["Projektordner"], confirms: "Niemand, der Lauf startet von selbst.", row: 0, side: "main" },
+  { id: "ordner", kind: "schritt", icon: "file", title: "Ordner lesen", does: "Belege und Felder lesen", text: "Liest jede Datei des Ordners, erkennt doppelte Dateien und Planstände und ordnet die WhatsApp-Meldungen dem Projekt zu.", reads: ["Projektordner", "WhatsApp-Meldungen"], confirms: "Die Abrechnung bestätigt oder korrigiert unsichere Felder.", row: 1, side: "main" },
+  { id: "abgleich", kind: "schritt", icon: "compare", title: "Abgleich", does: "Funde suchen", text: "Legt Leistungsverzeichnis, Aufmaß, Regie, Meldungen und Abschlagsrechnungen neben Ihren Entwurf und sucht, was erbracht, aber nicht verrechnet ist.", reads: ["Leistungsverzeichnis", "Aufmaßblätter", "Regieberichte", "WhatsApp-Meldungen", "Abschlagsrechnungen", "Entwurf", "Vertrag"], confirms: "Rechnen muss niemand bestätigen. Jeder Fund geht zur Prüfung an die Abrechnung.", row: 2, side: "main" },
+  { id: "vorpruefung", kind: "schritt", icon: "shield", title: "Vorprüfung", does: "Prüfen wie der Auftraggeber", text: "Prüft den Entwurf so, wie der Auftraggeber prüfen wird: jede Position mit Kürzungsrisiko, mit Grund und Abhilfe, und jeden Satz gegen den Vertrag.", reads: ["Entwurf mit den Funden", "Vertrag", "Verlauf des Auftraggebers"], confirms: "Die Abrechnung entscheidet über die Abhilfe.", row: 3, side: "main" },
+  { id: "entwurf", kind: "schritt", icon: "receipt", title: "Entwurf", does: "Änderungsliste und Rechnungsabschluss", text: "Stellt die Änderungsliste und den Rechnungsabschluss bis zur Restforderung zusammen. Die Beträge rechnet der Rechenkern.", reads: ["Entwurf", "Funde", "Vertrag", "Zahlungen"], confirms: "Die Abrechnung prüft jeden Fund.", row: 4, side: "main" },
+  { id: "freigabe", kind: "aufgabe", icon: "release", title: "Freigabe anfordern", does: "An die Geschäftsführung", text: "Bittet die Geschäftsführung, die geprüften Funde freizugeben. Erst dann sind die Ausgaben endgültig.", reads: ["geprüfte Funde"], confirms: "Die Geschäftsführung gibt frei.", row: 5, side: "main" },
+  { id: "ausgaben", kind: "schritt", icon: "package", title: "Ausgaben", does: "Excel, Beweispakete, Blatt", text: "Erstellt Änderungsliste als Excel, Beweispakete und das Schlussbesprechungs-Blatt. Ihr Betrieb trägt die Rechnung selbst ein und schickt sie selbst.", reads: ["freigegebene Funde"], confirms: "Niemand: tieout schickt nichts an den Auftraggeber.", row: 6, side: "main" },
+  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Je Lücke im Beleg", text: "Legt für jeden Fund mit fehlendem Beleg eine Aufgabe an die Bauleitung, solange der Polier noch auf der Baustelle ist.", reads: ["Funde in Klärung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 2, side: "left" },
+  { id: "aufgabe-abrechnung", kind: "aufgabe", icon: "task", title: "Aufgabe an Abrechnung", does: "Je Kürzungsrisiko", text: "Legt für jedes drohende Kürzungsrisiko eine Aufgabe mit der Abhilfe an die Abrechnung.", reads: ["Kürzungsrisiken"], confirms: "Die Abrechnung hakt die Aufgabe ab.", row: 3, side: "left" },
+];
+
+const chain = (ids: string[]): FlowEdge[] => ids.slice(1).map((to, i) => ({ from: ids[i], to }));
+
+function abschlussRun(x: AbschlussLauf, name: string): FlowRun {
+  const z = x.abgleich;
+  const vp = x.vorpruefung;
+  const offen = x.entwurf.funde - x.entwurf.entschieden;
+  return {
+    id: `abschluss-${x.projektId}`,
+    project: { name, slug: projectSlug(name) },
+    date: datumText(x.datum),
+    iso: x.datum,
+    title: name,
+    on: "Entwurf",
+    summary: `${plural(x.ordner.belege, "Beleg", "Belege")}, ${funde(z.funde)}, ${plural(vp.positionen, "Kürzungsrisiko", "Kürzungsrisiken")}`,
+    results: {
+      ausloeser: done(name, [{ label: "Entwurf vom", value: datumText(x.datum) }], { href: tab(name), label: "Projekt öffnen" }),
+      ordner: done(
+        `${plural(x.ordner.belege, "Beleg", "Belege")} gelesen`,
+        [
+          { label: "Belege gelesen", value: String(x.ordner.belege) },
+          { label: "davon doppelt", value: String(x.ordner.duplikate) },
+          { label: "Felder von Hand korrigiert", value: String(x.ordner.korrigierteFelder) },
+          { label: "WhatsApp-Meldungen", value: String(x.ordner.meldungen) },
+        ],
+        { href: tab(name, "belege"), label: "Belege öffnen" },
+      ),
+      abgleich: done(funde(z.funde), stand(z), { href: tab(name, "funde"), label: `${funde(z.funde)} öffnen` }),
+      vorpruefung: done(
+        plural(vp.positionen, "Kürzungsrisiko", "Kürzungsrisiken"),
+        [
+          { label: "Kürzungsrisiko droht", value: String(vp.droht), tone: "red" },
+          { label: "schon gekürzt", value: String(vp.schonGekuerzt) },
+        ],
+        { href: tab(name, "schlussrechnung"), label: "Vorprüfung öffnen" },
+      ),
+      entwurf: done(`${x.entwurf.entschieden} von ${x.entwurf.funde} ${x.entwurf.funde === 1 ? "Fund" : "Funden"} entschieden`, [], { href: tab(name, "schlussrechnung"), label: "Schlussrechnung öffnen" }),
+      freigabe: done(offen ? `${funde(offen)} offen` : "alle Funde entschieden", [], { href: tab(name, "funde"), label: "Funde öffnen" }),
+      ausgaben: done(x.ausgabenFertig ? "freigegeben" : "Entwurf, nicht freigegeben", [], { href: tab(name, "schlussrechnung"), label: "Ausgaben öffnen" }),
+      "aufgabe-bauleitung": x.aufgaben.bauleitung ? done(`für ${funde(x.aufgaben.bauleitung)} in Klärung`, [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("keine Lücke"),
+      "aufgabe-abrechnung": x.aufgaben.abrechnung ? done(`für ${plural(x.aufgaben.abrechnung, "Kürzungsrisiko", "Kürzungsrisiken")}`, [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("kein Kürzungsrisiko"),
+    },
+    checks: vp.pruefungen.map((p) => ({ id: p.id, title: PRUEFUNGEN.find((c) => c.id === p.id)!.text, hits: p.treffer, threat: p.droht })),
+  };
+}
+
+// ---------- Lauf je Abschlagsrechnung ----------
+
+const ABSCHLAG_NODES: FlowNode[] = [
+  { id: "ausloeser", kind: "ausloeser", icon: "invoice", title: "Neue Abschlagsrechnung", does: "Bei jeder Abschlagsrechnung", text: "Startet für ein Projekt in Ausführung, sobald eine Abschlagsrechnung im Ordner liegt. Nur Arbeit bis zu ihrem Datum zählt.", reads: ["Abschlagsrechnung"], confirms: "Niemand, der Lauf startet von selbst.", row: 0, side: "main" },
+  { id: "abgleich", kind: "schritt", icon: "compare", title: "Abgleich", does: "Funde bis zur Abschlagsrechnung", text: "Sucht Arbeit bis zum Datum der Abschlagsrechnung, die erbracht, aber in keiner Abschlagsrechnung verrechnet ist.", reads: ["Leistungsverzeichnis", "Aufmaßblätter", "Regieberichte", "WhatsApp-Meldungen", "Abschlagsrechnungen"], confirms: "Jeder Fund geht zur Prüfung an die Abrechnung.", row: 1, side: "main" },
+  { id: "vorpruefung", kind: "schritt", icon: "shield", title: "Vorprüfung", does: "Prüfen wie der Auftraggeber", text: "Prüft wie der Auftraggeber. Sie braucht einen eigenen Entwurf der Schlussrechnung und läuft deshalb erst vor der Schlussrechnung.", reads: ["Entwurf", "Vertrag"], confirms: "Die Abrechnung entscheidet über die Abhilfe.", row: 2, side: "main" },
+  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Je Lücke im Beleg", text: "Legt für jede Lücke eine Aufgabe an die Bauleitung, solange der Polier noch auf der Baustelle ist.", reads: ["Funde in Klärung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 3, side: "main" },
+];
+
+function abschlagRun(x: AbschlagsLauf, name: string): FlowRun {
+  const z = x.abgleich;
+  return {
+    id: `abschlag-${x.projektId}`,
+    project: { name, slug: projectSlug(name) },
+    date: datumText(x.abschlagsrechnung.datum),
+    iso: x.abschlagsrechnung.datum,
+    title: name,
+    on: x.abschlagsrechnung.nr,
+    summary: `${funde(z.funde)}, ${x.aufgaben.bauleitung ? plural(x.aufgaben.bauleitung, "Aufgabe", "Aufgaben") : "keine Aufgabe"} an die Bauleitung`,
+    results: {
+      ausloeser: done(x.abschlagsrechnung.nr, [{ label: "vom", value: datumText(x.abschlagsrechnung.datum) }], { href: tab(name, "zeitstrahl"), label: "Zeitstrahl öffnen" }),
+      abgleich: done(funde(z.funde), [
+        ...stand(z),
+        { label: "Regieberichte unterschrieben, nicht verrechnet", value: String(x.regie.unterschriebenNichtVerrechnet) },
+        { label: "Regieberichte nicht unterschrieben", value: String(x.regie.nichtUnterschrieben) },
+        { label: "Arbeit nach der Abschlagsrechnung, zählt beim nächsten Lauf", value: String(x.regie.nachGrenze) },
+      ], { href: tab(name, "funde"), label: `${funde(z.funde)} öffnen` }),
+      vorpruefung: x.vorpruefung
+        ? done(`${plural(x.vorpruefung.positionen, "Position", "Positionen")} in der Vorprüfung`, [{ label: "Kürzungsrisiko droht", value: String(x.vorpruefung.droht), tone: "red" }], { href: tab(name, "schlussrechnung"), label: "Vorprüfung öffnen" })
+        : skipped("läuft erst mit einem Entwurf"),
+      "aufgabe-bauleitung": x.aufgaben.bauleitung ? done(`für ${funde(x.aufgaben.bauleitung)} in Klärung`, [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("keine Lücke"),
+    },
+    checks: null,
+  };
+}
+
+// ---------- Meldung zu Regiebericht ----------
+
+const MELDUNG_NODES: FlowNode[] = [
+  { id: "ausloeser", kind: "ausloeser", icon: "message", title: "Neue WhatsApp-Meldung", does: "Wenn ein Monteur meldet", text: "Startet bei jeder WhatsApp-Meldung, die der Absender bestätigt hat.", reads: ["WhatsApp-Meldung"], confirms: "Der Absender bestätigt die Meldung im Chat.", row: 0, side: "main" },
+  { id: "bedingung", kind: "bedingung", icon: "filter", title: "Ohne Regiebericht", does: "Nur weiter, wenn keiner da ist", text: "Geht nur weiter, wenn die Meldung Stunden nennt, keine Position betrifft und kein Regiebericht sie aufnimmt.", reads: ["Regieberichte", "Leistungsverzeichnis"], confirms: "Niemand, die Bedingung prüft nur.", row: 1, side: "main" },
+  { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Regiebericht schreiben lassen", text: "Bittet die Bauleitung, einen Regiebericht zu schreiben und ihn vom Polier unterschreiben zu lassen.", reads: ["WhatsApp-Meldung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 2, side: "main" },
+];
+
+function meldungRun(x: MeldungsLauf, name: string): FlowRun {
+  const day = x.zeitpunkt.slice(0, 10);
+  const e = x.ergebnis;
+  const filter =
+    e.art === "regiebericht"
+      ? skipped(`Regiebericht ${e.nr} vorhanden${e.unterschrieben ? ", unterschrieben" : ", nicht unterschrieben"}`)
+      : e.art === "positionen"
+        ? skipped("betrifft Positionen, kein Regiebericht nötig")
+        : e.art === "verrechnet"
+          ? skipped("schon verrechnet")
+          : e.art === "ohne_stunden"
+            ? skipped("keine Stunden genannt")
+            : done("kein Regiebericht");
+  return {
+    id: `meldung-${x.meldungId}`,
+    project: { name, slug: projectSlug(name) },
+    date: datumText(day),
+    iso: x.zeitpunkt,
+    title: name,
+    on: `Meldung ${x.nr}`,
+    summary: e.art === "aufgabe" ? `${x.taetigkeit}: Aufgabe an die Bauleitung` : `${x.taetigkeit}: ${filter.text}`,
+    results: {
+      ausloeser: done(`${x.nr}, ${x.taetigkeit}`, [{ label: "eingegangen", value: `${datumText(day)}, ${x.zeitpunkt.slice(11, 16)}` }], { href: `/whatsapp-meldungen/#${x.meldungId}`, label: "Meldung öffnen" }),
+      bedingung: { ...filter, ran: true },
+      "aufgabe-bauleitung": e.art === "aufgabe" ? done("Regiebericht schreiben lassen", [], { href: "/aufgaben/", label: "Aufgaben öffnen" }) : skipped("nicht nötig"),
+    },
+    checks: null,
+  };
+}
+
+// ---------- the views ----------
+
+/** The three Abläufe with their runs, from the core's result (built: no decisions; live: this browser's). */
+export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
+  const f = firm();
+  const a = ablaeufe(f, b);
+  const name = (id: string) => f.projekte.find((d) => d.projekt.id === id)!.projekt.name;
+  return [
+    {
+      id: "abschluss_lauf",
+      slug: FLOW_SLUGS.abschluss_lauf,
+      title: "Abschluss-Lauf",
+      summary: "Ordner importiert, fünf Laufschritte, Freigabe anfordern",
+      description: "Prüft vor der Schlussrechnung den ganzen Ordner eines Projekts: lesen, abgleichen, wie der Auftraggeber prüfen, den Entwurf zusammenstellen und die Freigabe anfordern.",
+      nodes: ABSCHLUSS_NODES,
+      edges: [...chain(["ausloeser", "ordner", "abgleich", "vorpruefung", "entwurf", "freigabe", "ausgaben"]), { from: "abgleich", to: "aufgabe-bauleitung" }, { from: "vorpruefung", to: "aufgabe-abrechnung" }],
+      checksAt: "vorpruefung",
+      runs: a.abschluss.map((x) => abschlussRun(x, name(x.projektId))),
+    },
+    {
+      id: "lauf_je_abschlagsrechnung",
+      slug: FLOW_SLUGS.lauf_je_abschlagsrechnung,
+      title: "Lauf je Abschlagsrechnung",
+      summary: "Abgleich bei jeder Abschlagsrechnung, Aufgabe an die Bauleitung",
+      description: "Prüft Projekte in Ausführung bei jeder Abschlagsrechnung, damit eine Lücke eine Aufgabe wird, solange der Polier noch auf der Baustelle ist.",
+      nodes: ABSCHLAG_NODES,
+      edges: chain(["ausloeser", "abgleich", "vorpruefung", "aufgabe-bauleitung"]),
+      checksAt: null,
+      runs: a.abschlag.map((x) => abschlagRun(x, name(x.projektId))),
+    },
+    {
+      id: "meldung_zu_regiebericht",
+      slug: FLOW_SLUGS.meldung_zu_regiebericht,
+      title: "Meldung zu Regiebericht",
+      summary: "WhatsApp-Meldung ohne Regiebericht wird eine Aufgabe",
+      description: "Macht aus einer WhatsApp-Meldung mit Stunden, die kein Regiebericht aufnimmt, eine Aufgabe an die Bauleitung.",
+      nodes: MELDUNG_NODES,
+      edges: chain(["ausloeser", "bedingung", "aufgabe-bauleitung"]),
+      checksAt: null,
+      runs: a.meldung.map((x) => meldungRun(x, name(x.projektId))),
+    },
+  ];
+}
+
+export function flowView(slug: string, b: FirmenErgebnis = business()): FlowView | null {
+  return flowViews(b).find((v) => v.slug === slug) ?? null;
+}

@@ -166,6 +166,16 @@
   }
 }
 
+/* Abläufe: while a block runs, a short light travels down the line into it (the light of the Übersicht). */
+@keyframes flow-sweep {
+  from {
+    stroke-dashoffset: 10;
+  }
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
 /* An internal link (Attio: a record name in ink): ink with a faint underline that darkens on hover. Blue stays for the
    one action of a screen, the focus ring and the trace on "Übersicht". */
 @utility link-quiet {
