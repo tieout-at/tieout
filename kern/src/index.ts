@@ -6,7 +6,7 @@ export * from "./geld";
 export { abrechnen, type Satz, type Stufenrechnung, type StufenZeile } from "./stufen";
 export { ordnerLesen, type OrdnerStand, type Planstand } from "./ordner";
 export * from "./typen";
-export { abgleich, wirdAbgeglichen, datumText, type Abgleich, type AbgleichOptionen } from "./regeln";
+export { abgleich, berichtZuMeldung, wirdAbgeglichen, datumText, type Abgleich, type AbgleichOptionen } from "./regeln";
 export { zumStichtag } from "./stand";
 export { positionstabelle, type Positionstabelle, type Positionszeile } from "./positionen";
 export { vorpruefung, saetzePruefen, kalenderwoche, type Vorpruefung, type Satzpruefung } from "./vorpruefung";
@@ -19,3 +19,4 @@ export { auftraggeberHistorie, gleicherGrund, abrechnung, tageZwischen, imProjek
 export { pruefeFirma, statusfarbe, STATUS_TAGE, type FirmenErgebnis, type ProjektZeile, type Statusfarbe } from "./firma";
 export { belegabdeckung, zeilenJeBeleg, abdeckungText, NACHWEISARTEN, NACHWEISART_TEXT, NACHWEISART_SPALTE, type Belegabdeckung, type AbdeckungsZeile, type AbdeckungsBeleg, type Nachweisart } from "./abdeckung";
 export { zeitstrahl, EREIGNISSTAND_TEXT, type Zeitstrahl, type Ereignis, type Ereignisstand, type Bahn } from "./zeitstrahl";
+export { ablaeufe, ABLAUF_TEXT, PRUEFUNGEN, type AblaufId, type Ablaeufe, type AbschlussLauf, type AbschlagsLauf, type MeldungsLauf, type MeldungsErgebnis, type PruefungId, type PruefungsTreffer, type Fundzahlen } from "./ablaeufe";

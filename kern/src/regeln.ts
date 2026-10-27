@@ -214,9 +214,11 @@ function stundenSchritte(k: Kontext, m: { wert: number; quelle: Quelle }, h: { w
 }
 
 /** Is a Meldung already written up as a Regiebericht (the report names it, or the message names an existing report)? */
-function zuBericht(k: Kontext, m: WhatsAppMeldung): Regiebericht | undefined {
-  return k.d.regie.find((r) => r.ausMeldung?.wert === m.nr || r.nr === m.bezugRegiebericht?.wert);
+export function berichtZuMeldung(d: Datensatz, m: WhatsAppMeldung): Regiebericht | undefined {
+  return d.regie.find((r) => r.ausMeldung?.wert === m.nr || r.nr === m.bezugRegiebericht?.wert);
 }
+
+const zuBericht = (k: Kontext, m: WhatsAppMeldung) => berichtZuMeldung(k.d, m);
 
 function regieFunde(k: Kontext): RohFund[] {
   const v = k.d.vertrag;

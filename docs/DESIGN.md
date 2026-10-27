@@ -182,6 +182,32 @@ Asked for by Maxi S. on 26.10.2026: every page compact, visual and interactive l
 - **Pages.** Start: two figures, "Geld je Projekt" as a bar chart on an axis (deadline per row), "Als Nächstes" with the deadline and the tasks side by side. Projekt: Angaben in one line, figures (zusätzlich verrechenbar with its ring, in Klärung, Restforderung with a link to its steps), "Wo im Gebäude" (an isometric schema drawn from the places the Belege name, `lib/building.ts`, captioned "Schema aus den Ortsangaben der Belege, kein Plan"; pointing at a find lifts its zone and draws a hairline with the travelling light), Bauzeit and Verlauf. Schlussrechnung: decisions, three figures with "zusätzlich verrechenbar" as the money tieout found, "Was kommt dazu?" and "Restforderung Schritt für Schritt" with the switch "Wie angekündigt / Laut Vertrag" (a deduction without contract item struck through, the Restforderung counts to its new value), Vorprüfung and the sheet for the final meeting as a table (its one total behind a click); on phones the two lower cards fold. Auftraggeber: figures, "Gleicher Grund" as a chain, a matrix of reasons per project with the amount under each mark (our Vorprüfung apart, red rings), projects as rows. Berichte: one dashboard of four cards (money per project, Belegstand by count, Regieberichte as cells, cuts and deductions per Auftraggeber in alphabetical order). Zeitstrahl: Überblick (two lanes, shapes as well as colours for the find states), Kalender (weeks that snap sideways, months that snap downwards) and Chronik (every event by day); phones offer Kalender and Chronik. Fundseite: one quiet line for the Kürzungsrisiko with the Abhilfe on a click, Rechenweg as words ("verrechnet 1.512 m, aufgemessen 1.638 m · +126 m"), source chips with the icon of their kind, Belege as a list. Tables keep Attio's style with quick filters and counts, Belegstand always written, the Kürzungsrisiko with its part amount, money words in the footer never cut.
 - **One date.** "Stand 22.10.2026" everywhere (the day of the comparison), never the day of the visit; one date per Beleg (the date written on it, `belegDatum` in `kern/`).
 
+## Abläufe (step 9)
+
+Measured on Attio's Workflows editor in Maxi S.'s workspace on 27.10.2026 (the sample workflow; it never ran, so the states of a running workflow come from Attio's help pages). Proposal with a picture accepted by Maxi S. the same day.
+
+| Element | Attio (measured) | tieout |
+|---|---|---|
+| Canvas | `#fbfbfb`, dots every 10 px, black 14 % | same, the dots move and scale with the view |
+| Block | 200 × 70, radius 14, the button shadow; chip 24 px in a colour per block type; title 14/20/500; subtitle 12/16/500 at 63 % | 220 × 70 (the German titles), chip grey (colour carries meaning only), subtitle becomes the result of the chosen run with a tick, a dashed circle where the run did not reach the block |
+| Selected block | `#f6f7f7`, 1 px inset in Attio blue | same in `accent` |
+| Edges | 1.2 px `#d9dade`, chevron at the target, handles 12 px | same; lit in `accent` while a run plays, a short `sweep` light runs into the running block |
+| Layout | left to right | top to bottom (decided by Maxi S.): 7 steps and 8 checks fit next to the panel at about 80 % |
+| Panel | 400 px, 12 px from the edges, radius 16; the workflow's description when nothing is chosen | same; nothing chosen: the Ablauf and its last run; a block: Liest, Ergebnis im Lauf with a link to the page, Wer bestätigt; closable |
+| Toolbar | 44 px, radius 12, centred under the free canvas: zoom menu, hand, pointer, "Add block B" | same; "Bausteine B" shows the palette (the check catalogue) instead of adding blocks, since composing comes with sign-in |
+| Tabs | Editor, Runs, Settings | "Ablauf", "Läufe" (`UnderlineTabs`); right of them the run picker, "An" (locked, with an info icon) and the one primary button "Lauf abspielen" |
+| Runs | panel "Run history", latest first; opening a run highlights the blocks it executed | the same list in the panel; the chosen run fills the blocks; playing it lights them one after the other (650 ms each, at once with reduced motion) |
+
+- **Checks** hang as one card of 8 rows on the Vorprüfung of the Abschluss-Lauf: the name, "1 droht" with the red dot (Kürzungsrisiko only), "1 Treffer" or "kein Treffer"; header "8 aktiv". No switches (decided by Maxi S. after the review): the quantity check has a threshold in its panel, a higher one names the positions below it.
+- **Same background as every page.** The canvas is white (`surface`) with the dots, not Attio's `#fbfbfb`; a block the run did not reach stays opaque white and only its content fades, so the grid never shows through.
+- **Trigger.** An ink label "Auslöser: startet den Ablauf" above the block and an ink chip with a white icon; on phones the same words above the title.
+- **Money of a run.** In the panel of the Ablauf and on top of the phone list: zusätzlich verrechenbar (green dot), davon mit Kürzungsrisiko indented, in Klärung (yellow dot), never added, a link to the Schlussrechnung; never on a block.
+- **Task blocks** list their finds with "Anlegen" (the task modal with the block's Zuständig and Frist) and "Alle n anlegen"; the block then reads "x von n angelegt" with the bulb, "n Aufgaben angelegt" with a tick. Settings are appended in this browser (`use-flow-settings.ts`).
+- **Runs** are the runs the data allows today: per project the run at its Entwurf, at its last Abschlagsrechnung, and one per WhatsApp-Meldung. Earlier Abschlagsrechnungen would need the core at a past date (later).
+- **No amount** on a block, a line or a run (tested in `flows.test.ts`); every result leads to its page (Belege, Funde, Schlussrechnung, Aufgaben, the WhatsApp-Meldung).
+- **Below 1024 px** the blocks are one column of cards in the order a run reaches them (side blocks indented), each opens its details as a sheet from the bottom.
+- **Speed.** The canvas imports only types and `flow-catalogue.ts`, never the core: the page loads as much script as "Berichte"; the core comes as its own chunk only for live figures.
+
 ## Icons and pictures
 
 - **Icons:** Lucide, stroke 2, in `fg-secondary` (the active sidebar entry in `fg`). 16 px in entries, buttons and titles; 18 px for the buttons that open or hide the sidebar, the menu and the search on phones (as Attio's sidebar button, measured); 14 px inside the 24 px chips of the search. No colour chips per object as in Attio's "Records": colour stays reserved for meaning.

@@ -15,6 +15,7 @@ import { positionsView } from "./positions";
 import { reportsView } from "./reports";
 import { invoiceList, invoiceView } from "./invoice";
 import { twinProjects, twinView } from "./twin";
+import { flowView } from "./flows";
 
 export type Live = ReturnType<typeof live>;
 
@@ -52,6 +53,8 @@ export function live(decisions: readonly Decision[]) {
     positionsView: perKey((projektId) => positionsView(projektId, b)),
     /** "Auf einen Blick" of a find page, by its slug. */
     findHighlights: perKey((slug) => findHighlights(slug, b)),
+    /** An Ablauf with its runs, by its slug. */
+    flowView: perKey((slug) => flowView(slug, b)),
     /** The "Übersicht" of an open project, by its slug. */
     twinView: perKey((slug) => twinProjects(b).map((id) => twinView(id, b)).find((v) => v?.project.slug === slug) ?? null),
   };
