@@ -2,7 +2,7 @@
 
 **As of:** Tuesday, 27 October 2026, after step 8e. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** the review of 8d (#124) and the Excel export (branch `export-8e`, its own pull request) are merged and live at https://app.tieout.workers.dev; CI `App`, `Kern` and `Lösungsliste` green on `main`. If something differs, ask Maxi S. first.
+**Precondition:** the review of 8d (#124) and the Excel export (#125) are merged and live at https://app.tieout.workers.dev (checked 27.10.2026: 86 of 86 pages with the same amounts as the local build, the export opened in Excel); CI `App`, `Kern` and `Lösungsliste` green on `main`. If something differs, ask Maxi S. first.
 
 ## Goal
 
