@@ -1,10 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Check, ChevronLeft, CircleDashed, Info, LoaderCircle, ShieldCheck, X } from "lucide-react";
+import { ArrowRight, Check, ChevronLeft, ChevronsUpDown, CircleDashed, Info, LoaderCircle, Plus, ShieldCheck, X } from "lucide-react";
+import { useState } from "react";
 
+import { TaskDialog } from "@/components/aufgaben/task-dialog";
+import { appendTask, localTime } from "@/lib/decisions";
 import { CHECK_TEXT, PALETTE } from "@/lib/flow-catalogue";
-import type { FlowRun, FlowView } from "@/lib/flows";
+import { blockSettings, DEADLINE_DAYS, DEADLINE_TEXT, dueDate, threshold, THRESHOLD_CHECK, THRESHOLDS, type BlockSettings } from "@/lib/flow-state";
+import type { FlowRun, FlowView, RunMoney } from "@/lib/flows";
+import { ROLES, type TaskTarget } from "@/lib/tasks";
+import { saveSetting, useFlowSettings } from "@/lib/use-flow-settings";
+import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
 import { Chip, Dot, KIND_TEXT, Lines, ResultLine } from "./parts";
 
@@ -64,6 +71,54 @@ function GoTo({ href, label }: { href: string; label: string }) {
   );
 }
 
+/** A native select (the phone's own picker) drawn as our field. */
+function Select({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: React.ReactNode }) {
+  return (
+    <label className="flex min-h-9 items-center justify-between gap-3">
+      <span className="text-fg-secondary">{label}</span>
+      <span className="relative flex">
+        <select value={value} onChange={(e) => onChange(e.target.value)} className="h-8 min-w-40 cursor-pointer appearance-none rounded-md bg-surface py-1 pr-8 pl-2 text-sm shadow-[inset_0_0_0_1px_#e3e4e8] outline-none focus-visible:outline-2 focus-visible:outline-accent max-md:h-11 max-md:text-base">
+          {children}
+        </select>
+        <ChevronsUpDown className="pointer-events-none absolute top-1/2 right-2 size-4 -translate-y-1/2 text-fg-muted" aria-hidden />
+      </span>
+    </label>
+  );
+}
+
+/** What the project's Abgleich found, from the core: the two money words apart, never added, the risk as "davon". */
+export function Money({ money, href }: { money: RunMoney; href: string }) {
+  return (
+    <>
+      <dl>
+        <div className="flex min-h-7 items-center justify-between gap-3">
+          <dt className="flex items-center gap-2 text-fg-secondary">
+            <Dot tone="green" />
+            zusätzlich verrechenbar
+          </dt>
+          <dd className="font-mono text-[13px] whitespace-nowrap tabular-nums">{money.extra.text}</dd>
+        </div>
+        {money.risk && (
+          <div className="flex min-h-7 items-center justify-between gap-3 pl-4">
+            <dt className="text-fg-secondary">davon mit Kürzungsrisiko</dt>
+            <dd className="font-mono text-[13px] whitespace-nowrap tabular-nums">{money.risk.text}</dd>
+          </div>
+        )}
+        {money.unclear && (
+          <div className="flex min-h-7 items-center justify-between gap-3">
+            <dt className="flex items-center gap-2 text-fg-secondary">
+              <Dot tone="yellow" />
+              in Klärung
+            </dt>
+            <dd className="font-mono text-[13px] whitespace-nowrap tabular-nums">{money.unclear.text}</dd>
+          </div>
+        )}
+      </dl>
+      <GoTo href={href} label="Schlussrechnung öffnen" />
+    </>
+  );
+}
+
 /** Nothing chosen: the Ablauf itself (Attio shows the workflow's description). */
 export function AblaufInfo({ view, run, onClose }: { view: FlowView; run: FlowRun | null; onClose?: () => void }) {
   return (
@@ -88,19 +143,102 @@ export function AblaufInfo({ view, run, onClose }: { view: FlowView; run: FlowRu
           <p className="text-fg-secondary">Noch kein Lauf. Der erste Lauf startet, sobald der Auslöser eintritt.</p>
         )}
       </Section>
-      <Section title="Ein und aus" last>
-        <p className="text-fg-secondary">Dieser Ablauf ist eingeschaltet. Abläufe und Prüfungen selbst ein- und ausschalten kommt mit der Anmeldung.</p>
+      {run?.money && (
+        <Section title="Was der Lauf gefunden hat">
+          <Money money={run.money} href={`/projekte/${run.project.slug}/schlussrechnung/`} />
+        </Section>
+      )}
+      <Section title="Einstellen" last>
+        <p className="text-fg-secondary">Ein Klick auf eine Aufgabe stellt ein, wer sie bekommt und bis wann; die Prüfung „Mengenänderung“ hat einen Schwellwert. Die Schritte selbst bleiben fest, damit Vorprüfung und Freigabe nie fehlen.</p>
       </Section>
       <Foot />
     </>
   );
 }
 
+const day = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
+
+/** The finds a task block proposes tasks for: each created here with one click, or all at once, as the block is set. */
+function TaskList({ targets, settings }: { targets: TaskTarget[]; settings: BlockSettings }) {
+  const tasks = useTasks();
+  const [one, setOne] = useState<TaskTarget | null>(null);
+  const made = (t: TaskTarget) => tasks?.find((x) => x.fundSchluessel === t.key) ?? null;
+  const open = targets.filter((t) => !made(t));
+  const createAll = () => {
+    const zeit = localTime();
+    open.forEach((t, i) =>
+      appendTask({ id: `aufgabe-${Date.now()}-${i}`, fundSchluessel: t.key, fund: t.label, href: t.href, zeit, wer: "Abrechnung", text: t.taskText, zustaendig: settings.zustaendig, bis: dueDate(settings.frist) }),
+    );
+  };
+  return (
+    <>
+      <ul>
+        {targets.map((t) => {
+          const m = made(t);
+          return (
+            <li key={t.key} className="flex items-start gap-2.5 py-2 [&:not(:last-child)]:shadow-line-bottom">
+              <a href={t.href} className="mt-0.5 flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
+                {t.label.split(" ")[0]}
+              </a>
+              <span className="min-w-0 flex-1">
+                <span className="block">{t.taskText}</span>
+                {m && (
+                  <span className="mt-0.5 flex items-center gap-1.5 text-xs text-fg-secondary">
+                    <Check className="size-3.5" aria-hidden />
+                    angelegt, {m.zustaendig}, {m.bis ? `bis ${day(m.bis)}` : "ohne Frist"}
+                  </span>
+                )}
+              </span>
+              {!m && tasks && (
+                <button type="button" onClick={() => setOne(t)} aria-label={`Aufgabe anlegen: ${t.taskText}`} className="inline-flex h-7 shrink-0 items-center rounded-md bg-surface px-2 text-sm font-medium shadow-button outline-none hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-accent max-md:h-8">
+                  Anlegen
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      {tasks && open.length > 1 && (
+        <button type="button" onClick={createAll} className="mt-2.5 inline-flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 text-sm font-medium shadow-button outline-none hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-accent max-md:h-8">
+          <Plus className="size-4 text-fg-secondary" aria-hidden />
+          Alle {open.length} anlegen
+        </button>
+      )}
+      <p className="mt-2 text-xs leading-4 text-fg-muted">Vorerst nur in diesem Browser gespeichert. Abhaken und bearbeiten auf der Seite „Aufgaben“.</p>
+      <TaskDialog open={one !== null} onOpenChange={(o) => !o && setOne(null)} targets={one ? [one] : []} defaults={{ zustaendig: settings.zustaendig, bis: dueDate(settings.frist) ?? "" }} />
+    </>
+  );
+}
+
+/** Who gets the tasks of a block and by when; appended in this browser, used for every task made from the block. */
+function TaskSettings({ block, settings }: { block: string; settings: BlockSettings }) {
+  return (
+    <>
+      <Select label="Zuständig" value={settings.zustaendig} onChange={(v) => saveSetting(block, "zustaendig", v)}>
+        {ROLES.map((r) => (
+          <option key={r}>{r}</option>
+        ))}
+      </Select>
+      <Select label="Frist" value={settings.frist} onChange={(v) => saveSetting(block, "frist", v)}>
+        {DEADLINE_DAYS.map((d) => (
+          <option key={d} value={d}>
+            {DEADLINE_TEXT[d]}
+          </option>
+        ))}
+      </Select>
+      <p className="mt-1 text-xs leading-4 text-fg-muted">Gilt für jede neue Aufgabe dieses Blocks.</p>
+    </>
+  );
+}
+
 export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView; run: FlowRun | null; id: string; onBack?: () => void; onClose?: () => void }) {
+  const list = useFlowSettings();
   if (id === "pruefungen" || id.startsWith("pruefung:")) return <CheckDetail run={run} id={id} onBack={onBack} onClose={onClose} />;
   const n = view.nodes.find((x) => x.id === id);
   if (!n) return null;
   const r = run?.results[id];
+  const taskBlock = n.id.startsWith("aufgabe-");
+  const settings = blockSettings(list, n.id);
   return (
     <>
       <Head onBack={onBack} onClose={onClose}>
@@ -128,13 +266,17 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
             <ResultLine node={n} result={r} state="done" className="font-medium" />
             <Lines lines={r.lines} />
             {r.note && <p className="mt-2 text-xs leading-4 text-fg-muted">{r.note}</p>}
-            {r.proposed && <p className="mt-2 text-xs leading-4 text-fg-muted">Die Abhilfe steht fest. Angelegt wird eine Aufgabe auf der Seite „Aufgaben“ mit einem Klick.</p>}
-            {r.link && <GoTo {...r.link} />}
+            {r.tasks?.length ? <TaskList targets={r.tasks} settings={settings} /> : r.link && <GoTo {...r.link} />}
           </>
         ) : (
           <p className="text-fg-secondary">Noch kein Lauf.</p>
         )}
       </Section>
+      {taskBlock && (
+        <Section title="Einstellen">
+          <TaskSettings block={n.id} settings={settings} />
+        </Section>
+      )}
       <Section title="Wer bestätigt" last>
         <p className="text-fg-secondary">{n.confirms}</p>
       </Section>
@@ -144,6 +286,7 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
 }
 
 function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: string; onBack?: () => void; onClose?: () => void }) {
+  const list = useFlowSettings();
   const checks = run?.checks ?? [];
   const one = id.startsWith("pruefung:") ? checks.find((c) => `pruefung:${c.id}` === id) : null;
   return (
@@ -155,7 +298,7 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
           </span>
           <div className="min-w-0">
             <h2 className="leading-5 font-semibold">{one ? one.title : "Prüfungen"}</h2>
-            <p className="text-xs leading-4 text-fg-muted">{one ? "Prüfung der Vorprüfung" : `${checks.length} Prüfungen, alle eingeschaltet`}</p>
+            <p className="text-xs leading-4 text-fg-muted">{one ? "Prüfung der Vorprüfung, aktiv" : `${checks.length} Prüfungen, alle aktiv`}</p>
           </div>
         </div>
         <p className="mt-3 text-fg-secondary">{one ? CHECK_TEXT[one.id] : "Jede Regel des Prüfkatalogs ist ein Block. Neue Regeln kommen von Fachleuten aus dem Bau."}</p>
@@ -181,6 +324,20 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
             </div>
           )}
         </dl>
+        {one?.below?.length ? (
+          <p className="mt-1 text-xs leading-4 text-fg-muted">
+            Unter dem Schwellwert:{" "}
+            {one.below.map((b, i) => (
+              <span key={b.href}>
+                {i > 0 && ", "}
+                <Link href={b.href} className="link-quiet">
+                  {b.label.replace(" öffnen", "")}
+                </Link>
+                {b.change !== null && ` (+${(b.change / 100).toLocaleString("de-AT", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %)`}
+              </span>
+            ))}
+          </p>
+        ) : null}
         {one ? (
           <div className="flex flex-wrap gap-2">
             {one.links.map((l) => (
@@ -191,11 +348,21 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
           run && <GoTo href={`/projekte/${run.project.slug}/schlussrechnung/`} label="Vorprüfung öffnen" />
         )}
       </Section>
-      <Section title="Ein und aus" last>
-        <div className="flex items-center gap-2.5">
-          <span aria-hidden className="relative h-4 w-7 shrink-0 rounded-full bg-fg opacity-50 after:absolute after:top-0.5 after:right-0.5 after:size-3 after:rounded-full after:bg-surface" />
-          <span className="text-fg-secondary">Eingeschaltet. Selbst ausschalten kommt mit der Anmeldung.</span>
-        </div>
+      <Section title="Einstellen" last>
+        {one?.id === THRESHOLD_CHECK ? (
+          <>
+            <Select label="Melden über" value={String(threshold(list))} onChange={(v) => saveSetting(THRESHOLD_CHECK, "schwelle", v)}>
+              {THRESHOLDS.map((t) => (
+                <option key={t} value={t}>
+                  {t} %
+                </option>
+              ))}
+            </Select>
+            <p className="mt-1 text-xs leading-4 text-fg-muted">Ein höherer Wert meldet weniger Positionen. Kein Betrag ändert sich, die Fundseite zeigt die Mengenänderung weiter. Vorerst nur in diesem Browser gespeichert.</p>
+          </>
+        ) : (
+          <p className="text-fg-secondary">{one ? "Aktiv bei jedem Lauf, ohne Stellschraube: jeder Treffer ist ein Grund, den der Auftraggeber für eine Kürzung nennen kann." : "Die Prüfung „Mengenänderung“ hat einen Schwellwert; die übrigen zählen jeden Treffer."}</p>
+        )}
       </Section>
       <Foot />
     </>
@@ -255,7 +422,7 @@ export function Palette({ view, onBack, onClose }: { view: FlowView; onBack?: ()
     <>
       <Head onBack={onBack} onClose={onClose}>
         <h2 className="font-semibold">Bausteine</h2>
-        <p className="mt-1 text-fg-secondary">Jede Regel, die Fachleute aus dem Bau dazugeben, wird hier ein Baustein. Eigene Abläufe zusammenstellen kommt mit der Anmeldung.</p>
+        <p className="mt-1 text-fg-secondary">Jede Regel, die Fachleute aus dem Bau dazugeben, wird hier ein Baustein. Die Abläufe sind fest, damit Vorprüfung und Freigabe nie fehlen; eingestellt wird im jeweiligen Block.</p>
       </Head>
       <div className="px-3 py-2">
         {PALETTE.map((g) => (

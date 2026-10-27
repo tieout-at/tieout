@@ -56,8 +56,8 @@ describe("Abläufe (step 9)", () => {
     });
   });
 
-  it("never shows an amount on a block, in a line or in a run", () => {
-    const all = JSON.stringify(views.map((v) => v.runs));
+  it("never shows an amount on a block, in a line or a check; money only in the money of a run, from the core", () => {
+    const all = JSON.stringify(views.map((v) => v.runs.map(({ money, ...rest }) => (void money, rest))));
     expect(all).not.toMatch(/€|\d+,\d\d/);
   });
 
@@ -112,5 +112,44 @@ describe("check catalogue of the canvas", () => {
     const { CHECK_TEXT, CHECK_TITLES } = await import("./flow-catalogue");
     expect(CHECK_TITLES).toEqual(PRUEFUNGEN.map((p) => p.text));
     expect(Object.keys(CHECK_TEXT).toSorted()).toEqual(PRUEFUNGEN.map((p) => p.id).toSorted());
+  });
+});
+
+describe("what this browser adds (step 9, after the go of Maxi S.)", () => {
+  it("shows the money of the run from the core: the two money words apart, the risk as davon", () => {
+    expect(run.money).toEqual({ extra: { cent: 1462015, text: "14.620,15 €" }, risk: { cent: 684300, text: "6.843,00 €" }, unclear: { cent: 807359, text: "8.073,59 €" } });
+    const ar = flowView(FLOW_SLUGS.lauf_je_abschlagsrechnung)!.runs.map((r) => [r.money?.extra.text, r.money?.unclear?.text ?? null]);
+    expect(ar).toEqual([["4.852,73 €", null], ["3.160,08 €", "245,60 €"]]);
+    expect(flowView(FLOW_SLUGS.meldung_zu_regiebericht)!.runs.every((r) => r.money === null)).toBe(true);
+  });
+
+  it("names the finds a task block is for, the same as the proposals on Aufgaben", () => {
+    const keys = (id: string) => run.results[id].tasks!.map((t) => t.label);
+    expect(keys("aufgabe-bauleitung")).toEqual(["F6 Wohnpark Mooshaim", "F7 Wohnpark Mooshaim", "F8 Wohnpark Mooshaim"]);
+    expect(keys("aufgabe-abrechnung")).toEqual(["F1 Wohnpark Mooshaim", "F2 Wohnpark Mooshaim"]);
+    const w4 = flowView(FLOW_SLUGS.meldung_zu_regiebericht)!.runs.find((r) => r.on === "Meldung W4")!;
+    expect(w4.results["aufgabe-bauleitung"].tasks!.map((t) => [t.label, t.taskText])).toEqual([["F7 Wohnpark Mooshaim", "Regiebericht schreiben und vom Polier unterschreiben lassen"]]);
+  });
+
+  it("marks tasks created from a block: some, then all", async () => {
+    const { localRun } = await import("./flow-state");
+    const task = (key: string) => ({ id: key, fundSchluessel: key, fund: "", href: "", zeit: "2026-10-27T10:00", wer: "Abrechnung", text: "", zustaendig: "Bauleitung", bis: null });
+    const targets = run.results["aufgabe-bauleitung"].tasks!;
+    const some = localRun(run, [task(targets[0].key)], []).results["aufgabe-bauleitung"];
+    expect([some.text, some.proposed]).toEqual(["1 von 3 angelegt", true]);
+    const all = localRun(run, targets.map((t) => task(t.key)), []).results["aufgabe-bauleitung"];
+    expect([all.text, all.proposed]).toEqual(["3 Aufgaben angelegt", false]);
+    expect(localRun(run, null, [])).toEqual(run);
+  });
+
+  it("applies the threshold of the quantity check: above 26,3 % F4 is no longer a hit", async () => {
+    const { localRun, blockSettings, dueDate } = await import("./flow-state");
+    const at = (wert: string) => localRun(run, [], [{ block: "mengenaenderung_ueber_20", feld: "schwelle", wert, zeit: "2026-10-27T10:00" }]).checks!.find((c) => c.id === "mengenaenderung_ueber_20")!;
+    expect([at("25").title, at("25").hits, at("25").links.map((l) => l.label)]).toEqual(["Mengenänderung über 25 %", 1, ["F4 öffnen"]]);
+    expect([at("30").title, at("30").hits, at("30").links, at("30").below?.map((b) => [b.label, b.change])]).toEqual(["Mengenänderung über 30 %", 0, [], [["F4 öffnen", 2625]]]);
+    expect(at("7").hits).toBe(1); // an unknown value keeps 20 %
+    expect(blockSettings([], "aufgabe-abrechnung")).toEqual({ zustaendig: "Abrechnung", frist: "3" });
+    expect(blockSettings([{ block: "aufgabe-bauleitung", feld: "frist", wert: "7", zeit: "2026-10-27T10:00" }, { block: "aufgabe-bauleitung", feld: "frist", wert: "0", zeit: "2026-10-27T11:00" }], "aufgabe-bauleitung").frist).toBe("0");
+    expect([dueDate("3", new Date("2026-10-30T12:00")), dueDate("0")]).toEqual(["2026-11-02", null]);
   });
 });

@@ -5,10 +5,12 @@
  * found and checked, and leads to the page where that is.
  */
 
-import { ablaeufe, datumText, FUND_ART_TEXT, PRUEFUNGEN, type AbschlagsLauf, type AbschlussLauf, type AblaufId, type FirmenErgebnis, type Fundzahlen, type MeldungsLauf, type PruefungId } from "@tieout/kern";
+import { ablaeufe, datumText, euro, FUND_ART_TEXT, PRUEFUNGEN, type AbschlagsLauf, type AbschlussLauf, type AblaufId, type FirmenErgebnis, type Fundzahlen, type MeldungsLauf, type PruefungId } from "@tieout/kern";
 
 import { findSlug, projectSlug } from "./example";
-import { business, firm } from "./kern-data";
+import { checkLinks } from "./flow-state";
+import { business, findRows, firm, type Amount, type FindRow } from "./kern-data";
+import { targetOf, type TaskTarget } from "./tasks";
 
 export type FlowKind = "ausloeser" | "schritt" | "bedingung" | "aufgabe";
 export type FlowIcon = "folder" | "file" | "compare" | "shield" | "receipt" | "release" | "package" | "task" | "invoice" | "message" | "filter";
@@ -37,8 +39,9 @@ export type Line = { label: string; value: string; tone?: Tone };
 /** What a block produced in one run; `ran` false when the run did not reach it (a filter stopped, no Entwurf yet). */
 export type NodeResult = {
   ran: boolean;
-  /** A task block: the tasks are proposed on "Aufgaben", nobody created them yet. */
+  /** A task block: the tasks are proposed, nobody created them yet; `tasks` are the finds they are for. */
   proposed?: boolean;
+  tasks?: TaskTarget[];
   text: string;
   lines: Line[];
   /** One sentence below the lines (what this run leaves for the next one). */
@@ -46,7 +49,21 @@ export type NodeResult = {
   link: { href: string; label: string } | null;
 };
 
-export type CheckResult = { id: PruefungId; title: string; hits: number; threat: number; links: { href: string; label: string }[] };
+/** One hit of a check: where it leads, the quantity change in basis points (only the quantity check), whether it threatens. */
+export type CheckItem = { href: string; label: string; change: number | null; threat: boolean };
+export type CheckResult = {
+  id: PruefungId;
+  title: string;
+  hits: number;
+  threat: number;
+  items: CheckItem[];
+  links: { href: string; label: string }[];
+  /** Hits a higher threshold of this browser leaves out, so the panel can name them. */
+  below?: CheckItem[];
+};
+
+/** What the project's Abgleich found, from the core: the two money words apart, the part with a Kürzungsrisiko as "davon". */
+export type RunMoney = { extra: Amount; risk: Amount | null; unclear: Amount | null };
 
 export type FlowRun = {
   id: string;
@@ -60,6 +77,7 @@ export type FlowRun = {
   summary: string;
   results: Record<string, NodeResult>;
   checks: CheckResult[] | null;
+  money: RunMoney | null;
 };
 
 export type FlowView = {
@@ -97,7 +115,15 @@ function stand(z: Fundzahlen): Line[] {
 
 const done = (text: string, lines: Line[] = [], link: NodeResult["link"] = null): NodeResult => ({ ran: true, text, lines, link });
 const skipped = (text: string): NodeResult => ({ ran: false, text, lines: [], link: null });
-const proposed = (n: number): NodeResult => ({ ran: true, proposed: true, text: `${plural(n, "Aufgabe", "Aufgaben")} vorgeschlagen`, lines: [], link: { href: "/aufgaben/", label: n === 1 ? "Vorschlag ansehen" : "Vorschläge ansehen" } });
+const proposed = (rows: FindRow[], none: string): NodeResult =>
+  rows.length
+    ? { ran: true, proposed: true, text: `${plural(rows.length, "Aufgabe", "Aufgaben")} vorgeschlagen`, lines: [], link: { href: "/aufgaben/", label: "Aufgaben öffnen" }, tasks: rows.map(targetOf) }
+    : skipped(none);
+
+/** The context of a run: the project's name, its finds as rows (for tasks) and its money from the core. */
+type Ctx = { name: string; rows: FindRow[]; money: RunMoney | null };
+const counts = (r: FindRow) => r.decisionState !== "nicht_verrechnen";
+const amount = (cent: number): Amount => ({ cent, text: euro(cent) });
 
 function vorpruefungText(droht: number, gekuerzt: number): string {
   const risiko = droht ? plural(droht, "Kürzungsrisiko", "Kürzungsrisiken") : "kein Kürzungsrisiko";
@@ -120,7 +146,7 @@ const ABSCHLUSS_NODES: FlowNode[] = [
 
 const chain = (ids: string[]): FlowEdge[] => ids.slice(1).map((to, i) => ({ from: ids[i], to }));
 
-function abschlussRun(x: AbschlussLauf, name: string): FlowRun {
+function abschlussRun(x: AbschlussLauf, { name, rows, money }: Ctx): FlowRun {
   const z = x.abgleich;
   const vp = x.vorpruefung;
   const offen = x.entwurf.funde - x.entwurf.entschieden;
@@ -156,20 +182,18 @@ function abschlussRun(x: AbschlussLauf, name: string): FlowRun {
       entwurf: done(`${x.entwurf.entschieden} von ${x.entwurf.funde} ${x.entwurf.funde === 1 ? "Fund" : "Funden"} entschieden`, [], { href: tab(name, "schlussrechnung"), label: "Schlussrechnung öffnen" }),
       freigabe: done(offen ? `${funde(offen)} offen` : x.entwurf.freigegeben ? "alle Funde entschieden" : "nichts freigegeben", [], { href: tab(name, "funde"), label: "Funde öffnen" }),
       ausgaben: done(x.ausgabenFertig ? "freigegeben" : "Entwurf, nicht freigegeben", [], { href: tab(name, "schlussrechnung"), label: "Ausgaben öffnen" }),
-      "aufgabe-bauleitung": x.aufgaben.bauleitung ? proposed(x.aufgaben.bauleitung) : skipped("keine Lücke"),
-      "aufgabe-abrechnung": x.aufgaben.abrechnung ? proposed(x.aufgaben.abrechnung) : skipped("kein Kürzungsrisiko"),
+      "aufgabe-bauleitung": proposed(rows.filter((r) => counts(r) && r.remedy), "keine Lücke"),
+      "aufgabe-abrechnung": proposed(rows.filter((r) => counts(r) && r.risk && !r.risk.alreadyCut), "kein Kürzungsrisiko"),
     },
-    checks: vp.pruefungen.map((p) => ({
-      id: p.id,
-      title: PRUEFUNGEN.find((c) => c.id === p.id)!.text,
-      hits: p.treffer,
-      threat: p.droht,
-      links: !p.treffer
-        ? []
-        : p.funde.length
-          ? p.funde.map((nr) => ({ href: `/funde/${findSlug(name, nr)}/`, label: `${nr} öffnen` }))
-          : [{ href: tab(name, "schlussrechnung"), label: p.id === "abzug_ohne_vertragspunkt" ? "Rechnungsabschluss öffnen" : "Vorprüfung öffnen" }],
-    })),
+    checks: vp.pruefungen.map((p) => {
+      const items: CheckItem[] = p.einzeln.map((h) =>
+        h.fund
+          ? { href: `/funde/${findSlug(name, h.fund)}/`, label: `${h.fund} öffnen`, change: h.aenderung, threat: h.droht }
+          : { href: tab(name, "schlussrechnung"), label: p.id === "abzug_ohne_vertragspunkt" ? "Rechnungsabschluss öffnen" : "Vorprüfung öffnen", change: h.aenderung, threat: h.droht },
+      );
+      return { id: p.id, title: PRUEFUNGEN.find((c) => c.id === p.id)!.text, hits: p.treffer, threat: p.droht, items, links: checkLinks(items) };
+    }),
+    money,
   };
 }
 
@@ -182,7 +206,7 @@ const ABSCHLAG_NODES: FlowNode[] = [
   { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Je Lücke im Beleg", text: "Legt für jede Lücke eine Aufgabe an die Bauleitung, solange der Polier noch auf der Baustelle ist.", reads: ["Funde in Klärung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 3, side: "main" },
 ];
 
-function abschlagRun(x: AbschlagsLauf, name: string): FlowRun {
+function abschlagRun(x: AbschlagsLauf, { name, rows, money }: Ctx): FlowRun {
   const z = x.abgleich;
   return {
     id: `abschlag-${x.projektId}`,
@@ -201,9 +225,10 @@ function abschlagRun(x: AbschlagsLauf, name: string): FlowRun {
       vorpruefung: x.vorpruefung
         ? done(`${plural(x.vorpruefung.positionen, "Position", "Positionen")} in der Vorprüfung`, [{ label: "Kürzungsrisiko droht", value: String(x.vorpruefung.droht), tone: "red" }], { href: tab(name, "schlussrechnung"), label: "Vorprüfung öffnen" })
         : skipped("läuft erst mit einem Entwurf"),
-      "aufgabe-bauleitung": x.aufgaben.bauleitung ? proposed(x.aufgaben.bauleitung) : skipped("keine Lücke"),
+      "aufgabe-bauleitung": proposed(rows.filter((r) => counts(r) && r.remedy), "keine Lücke"),
     },
     checks: null,
+    money,
   };
 }
 
@@ -215,7 +240,7 @@ const MELDUNG_NODES: FlowNode[] = [
   { id: "aufgabe-bauleitung", kind: "aufgabe", icon: "task", title: "Aufgabe an Bauleitung", does: "Regiebericht schreiben lassen", text: "Bittet die Bauleitung, einen Regiebericht zu schreiben und ihn vom Polier unterschreiben zu lassen.", reads: ["WhatsApp-Meldung"], confirms: "Die Bauleitung bestätigt auf dem Handy.", row: 2, side: "main" },
 ];
 
-function meldungRun(x: MeldungsLauf, name: string): FlowRun {
+function meldungRun(x: MeldungsLauf, { name, rows }: Ctx): FlowRun {
   const day = x.zeitpunkt.slice(0, 10);
   const e = x.ergebnis;
   const filter =
@@ -239,9 +264,10 @@ function meldungRun(x: MeldungsLauf, name: string): FlowRun {
     results: {
       ausloeser: done(`${x.nr}, ${x.taetigkeit}`, [{ label: "eingegangen", value: `${datumText(day)}, ${x.zeitpunkt.slice(11, 16)}` }], { href: `/whatsapp-meldungen/#${x.meldungId}`, label: "Meldung öffnen" }),
       bedingung: { ...filter, ran: true },
-      "aufgabe-bauleitung": e.art === "aufgabe" ? proposed(1) : skipped("nicht nötig"),
+      "aufgabe-bauleitung": e.art === "aufgabe" ? proposed(rows.filter((r) => counts(r) && [r.id, ...r.earlierIds].some((k) => k.endsWith(`meldung:${x.nr}`))), "kein Fund zur Meldung") : skipped("nicht nötig"),
     },
     checks: null,
+    money: null,
   };
 }
 
@@ -251,7 +277,14 @@ function meldungRun(x: MeldungsLauf, name: string): FlowRun {
 export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
   const f = firm();
   const a = ablaeufe(f, b);
-  const name = (id: string) => f.projekte.find((d) => d.projekt.id === id)!.projekt.name;
+  const all = findRows(b);
+  const ctx = (id: string): Ctx => {
+    const name = f.projekte.find((d) => d.projekt.id === id)!.projekt.name;
+    const e = b.ergebnisse[id];
+    const s = e.abgleich.summen;
+    const risk = e.vorpruefung?.davonMitKuerzungsrisiko ?? 0;
+    return { name, rows: all.filter((r) => r.project.name === name), money: { extra: amount(s.zusaetzlichVerrechenbar), risk: risk ? amount(risk) : null, unclear: s.inKlaerung ? amount(s.inKlaerung) : null } };
+  };
   return [
     {
       id: "abschluss_lauf",
@@ -262,7 +295,7 @@ export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
       nodes: ABSCHLUSS_NODES,
       edges: [...chain(["ausloeser", "ordner", "abgleich", "vorpruefung", "entwurf", "freigabe", "ausgaben"]), { from: "abgleich", to: "aufgabe-bauleitung" }, { from: "vorpruefung", to: "aufgabe-abrechnung" }],
       checksAt: "vorpruefung",
-      runs: a.abschluss.map((x) => abschlussRun(x, name(x.projektId))),
+      runs: a.abschluss.map((x) => abschlussRun(x, ctx(x.projektId))),
     },
     {
       id: "lauf_je_abschlagsrechnung",
@@ -273,7 +306,7 @@ export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
       nodes: ABSCHLAG_NODES,
       edges: chain(["ausloeser", "abgleich", "vorpruefung", "aufgabe-bauleitung"]),
       checksAt: null,
-      runs: a.abschlag.map((x) => abschlagRun(x, name(x.projektId))),
+      runs: a.abschlag.map((x) => abschlagRun(x, ctx(x.projektId))),
     },
     {
       id: "meldung_zu_regiebericht",
@@ -284,7 +317,7 @@ export function flowViews(b: FirmenErgebnis = business()): FlowView[] {
       nodes: MELDUNG_NODES,
       edges: chain(["ausloeser", "bedingung", "aufgabe-bauleitung"]),
       checksAt: null,
-      runs: a.meldung.map((x) => meldungRun(x, name(x.projektId))),
+      runs: a.meldung.map((x) => meldungRun(x, ctx(x.projektId))),
     },
   ];
 }

@@ -21,12 +21,15 @@ export function TaskDialog({
   onOpenChange,
   targets,
   onMade,
+  defaults,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** One find when the task is made on it; every find when it is made on "Aufgaben". */
   targets: TaskTarget[];
   onMade?: (task: Task) => void;
+  /** Who gets the task and by when, as a task block of "Abläufe" sets it. */
+  defaults?: { zustaendig: string; bis: string };
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,6 +38,7 @@ export function TaskDialog({
         {open && (
           <TaskForm
             targets={targets}
+            defaults={defaults}
             onCancel={() => onOpenChange(false)}
 onMade={(t) => {
               onMade?.(t);
@@ -47,12 +51,12 @@ onMade={(t) => {
   );
 }
 
-function TaskForm({ targets, onCancel, onMade }: { targets: TaskTarget[]; onCancel: () => void; onMade: (task: Task) => void }) {
+function TaskForm({ targets, onCancel, onMade, defaults }: { targets: TaskTarget[]; onCancel: () => void; onMade: (task: Task) => void; defaults?: { zustaendig: string; bis: string } }) {
   const fixed = targets.length === 1 ? targets[0] : null;
   const [key, setKey] = useState(fixed?.key ?? "");
   const target = targets.find((t) => t.key === key) ?? null;
   // the Abhilfe is site work (joint Aufmaß, a signature) in most finds, so the Bauleitung is proposed
-  const [task, setTask] = useState({ text: fixed?.taskText ?? "", zustaendig: "Bauleitung", bis: "" });
+  const [task, setTask] = useState({ text: fixed?.taskText ?? "", zustaendig: defaults?.zustaendig ?? "Bauleitung", bis: defaults?.bis ?? "" });
   const projects = [...new Set(targets.map((t) => t.project))];
 
   const choose = (next: string) => {

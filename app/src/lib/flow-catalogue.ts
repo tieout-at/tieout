@@ -17,7 +17,7 @@ export const CHECK_TEXT: Record<PruefungId, string> = {
   ausserhalb_lv_kein_nachtrag: "Findet Leistungen außerhalb des Leistungsverzeichnisses, zu denen kein Nachtrag gelegt ist.",
   menge_ohne_aufmass: "Findet Mengen im Entwurf, zu denen kein Aufmaß vorliegt.",
   abzug_ohne_vertragspunkt: "Prüft jeden Abzug des Auftraggebers gegen die Punkte des Vertrags.",
-  mengenaenderung_ueber_20: "Meldet Positionen, deren Menge mehr als 20 % vom Leistungsverzeichnis abweicht. Dort kann der Auftraggeber einen neuen Einheitspreis prüfen.",
+  mengenaenderung_ueber_20: "Meldet Positionen, deren Menge um mehr als den Schwellwert vom Leistungsverzeichnis abweicht. Dort kann der Auftraggeber einen neuen Einheitspreis prüfen.",
 };
 
 /** The titles of `PRUEFUNGEN` in the core, in its order. */

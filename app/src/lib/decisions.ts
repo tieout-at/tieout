@@ -30,6 +30,18 @@ export type Task = {
 };
 
 /**
+ * A setting of an Abläufe block (step 9): who gets its tasks and by when, or the threshold of a check. Appended, never
+ * changed; the latest entry of a block and field counts. Stage 0: this browser only, per company from step 10.
+ */
+export type Setting = {
+  /** "aufgabe-bauleitung", "aufgabe-abrechnung" of an Ablauf, or the id of a check. */
+  block: string;
+  feld: "zustaendig" | "frist" | "schwelle";
+  wert: string;
+  zeit: string;
+};
+
+/**
  * Ticking a task off, or opening it again: appended, never changed; the latest entry of a task counts. Noted as the
  * role in charge of the task (no persons before sign-in, step 10).
  */
@@ -49,7 +61,7 @@ export const DECISION_TEXT: Record<DecisionState, string> = {
   nicht_verrechnen: "Nicht verrechnen",
 };
 
-const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1" } as const;
+const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1", settings: "tieout.ablauf-einstellungen.v1" } as const;
 
 /** The current decision of a find: the latest entry for it or an earlier key of the same work, "gefunden" without any (as `entscheidungsstand` in kern/). */
 export function currentState(list: readonly Decision[], keys: readonly string[], fallback: DecisionState = "gefunden"): DecisionState {
@@ -183,4 +195,6 @@ export function onStorageChange(callback: () => void): () => void {
 export const readTasks = () => read<Task>(KEYS.tasks);
 export const appendTask = (t: Task) => append(KEYS.tasks, t);
 export const readTaskChecks = () => read<TaskCheck>(KEYS.checks);
+export const readSettings = () => read<Setting>(KEYS.settings);
+export const appendSetting = (x: Setting) => append(KEYS.settings, x);
 export const appendTaskCheck = (c: TaskCheck) => append(KEYS.checks, c);

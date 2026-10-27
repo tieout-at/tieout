@@ -30,7 +30,7 @@ function bounds(view: FlowView) {
   return {
     minX: view.nodes.some((n) => n.side === "left") ? LEFT : 0,
     maxX: at ? GROUP_X + GROUP_W : W,
-    minY: -28,
+    minY: -32,
     maxY: Math.max(rows * ROW + H, groupBottom),
   };
 }
@@ -170,8 +170,8 @@ export function FlowCanvas({
       id="ablauf-flaeche"
       role="group"
       aria-label="Arbeitsfläche"
-      className={cn("relative min-h-0 flex-1 touch-none overflow-hidden bg-sidebar select-none", tool === "hand" ? "cursor-grab active:cursor-grabbing" : "cursor-default")}
-      style={{ backgroundImage: "radial-gradient(rgb(0 0 0 / 0.14) 0.6px, transparent 0.8px)", backgroundSize: `${10 * (box?.k ?? 1)}px ${10 * (box?.k ?? 1)}px`, backgroundPosition: box ? `${box.x}px ${box.y}px` : undefined }}
+      className={cn("relative min-h-0 flex-1 touch-none overflow-hidden bg-surface select-none", tool === "hand" ? "cursor-grab active:cursor-grabbing" : "cursor-default")}
+      style={{ backgroundImage: "radial-gradient(rgb(0 0 0 / 0.16) 0.6px, transparent 0.8px)", backgroundSize: `${10 * (box?.k ?? 1)}px ${10 * (box?.k ?? 1)}px`, backgroundPosition: box ? `${box.x}px ${box.y}px` : undefined }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -229,18 +229,18 @@ export function FlowCanvas({
                   tool === "hand" && "pointer-events-none",
                   selected === n.id && "bg-fill-selected shadow-[inset_0_0_0_1px_var(--color-accent),0_0_2px_0_rgb(28_40_64/0.18),0_1px_3px_0_rgb(0_0_0/0.04)]",
                   state === "run" && "shadow-[inset_0_0_0_1.5px_var(--color-accent),0_0_0_4px_rgb(29_59_255/0.1)]",
-                  dim && "opacity-55",
+                  dim && "[&>span]:opacity-50",
                 )}
                 style={{ left: p.x, top: p.y, width: W, height: H }}
               >
                 {n.kind === "ausloeser" && (
-                  <span className="absolute -top-[22px] left-0 flex h-[18px] items-center gap-1 rounded-[6px] bg-surface px-1.5 text-[11px] font-medium text-fg-secondary shadow-button">
-                    <Zap className="size-[11px]" aria-hidden />
-                    Auslöser
+                  <span className="absolute -top-[26px] left-0 flex h-5 items-center gap-1 rounded-[6px] bg-fg px-1.5 text-xs font-medium text-white">
+                    <Zap className="size-3 fill-current" aria-hidden />
+                    Auslöser: startet den Ablauf
                   </span>
                 )}
                 <span className="flex h-7 items-center gap-1.5 px-2.5 pt-1">
-                  <Chip icon={n.icon} />
+                  <Chip icon={n.icon} className={n.kind === "ausloeser" ? "bg-fg text-white shadow-none" : undefined} />
                   <span className={cn("truncate font-medium", n.title.length > 20 ? "text-[13px]" : "text-sm")} title={n.title}>{n.title}</span>
                 </span>
                 <ResultLine node={n} result={result} state={state} className="px-3 pt-1.5 text-xs leading-4 font-medium" />
@@ -250,7 +250,7 @@ export function FlowCanvas({
 
           {at && run?.checks && (
             <div
-              className={cn("absolute rounded-[14px] bg-surface p-1.5 shadow-button transition-opacity duration-200", states.pruefungen === "wait" && "opacity-55")}
+              className={cn("absolute rounded-[14px] bg-surface p-1.5 shadow-button transition-opacity duration-200", states.pruefungen === "wait" && "[&>*]:opacity-50")}
               style={{ left: GROUP_X, top: at.row * ROW - 4, width: GROUP_W }}
             >
               <div className="flex h-[30px] items-center gap-1.5 px-1 text-sm font-medium">
@@ -258,7 +258,7 @@ export function FlowCanvas({
                   <ShieldCheck className="size-4" aria-hidden />
                 </span>
                 Prüfungen
-                <span className="ml-auto text-xs font-medium text-fg-muted">{run.checks.length} an</span>
+                <span className="ml-auto text-xs font-medium text-fg-muted">{run.checks.length} aktiv</span>
               </div>
               <ul>
                 {run.checks.map((c, i) => {
@@ -278,7 +278,6 @@ export function FlowCanvas({
                         )}
                         style={{ height: CHECK_H }}
                       >
-                        <span aria-hidden className="relative h-3.5 w-6 shrink-0 rounded-full bg-fg after:absolute after:top-0.5 after:right-0.5 after:size-2.5 after:rounded-full after:bg-surface" />
                         <span className={cn("min-w-0 flex-1 truncate", shown && c.hits === 0 && "text-fg-muted")}>{c.title}</span>
                         {shown && (
                           <span className={cn("flex shrink-0 items-center gap-1.5 text-xs font-medium", c.hits ? "text-fg-secondary" : "text-fg-muted")}>

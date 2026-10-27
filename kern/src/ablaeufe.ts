@@ -41,6 +41,8 @@ export interface PruefungsTreffer {
   droht: number;
   /** Numbers of the finds the hits lie in ("F1"), so each hit leads to its find; empty for a line of the Entwurf. */
   funde: string[];
+  /** Every hit on its own: its find (or null), the quantity change in basis points (only "Mengenänderung über 20 %"). */
+  einzeln: { fund: string | null; aenderung: number | null; droht: boolean }[];
 }
 
 /** The finds of a project counted by Belegstand; a find set to "Nicht verrechnen" counts apart, in no Belegstand. */
@@ -124,10 +126,17 @@ function pruefungen(e: ProjektErgebnis): PruefungsTreffer[] {
   const abzuege = (e.vorpruefung?.saetze ?? []).filter((s) => s.pruefung === "abzug_ohne_vertragspunkt").length;
   const mengen = e.abgleich.hinweise.filter((h) => h.art === "mengenaenderung_ueber_20");
   return PRUEFUNGEN.map(({ id }) => {
-    if (id === "abzug_ohne_vertragspunkt") return { id, treffer: abzuege, droht: 0, funde: [] };
-    if (id === "mengenaenderung_ueber_20") return { id, treffer: mengen.length, droht: 0, funde: funde(mengen.map((h) => h.fundSchluessel)) };
+    if (id === "abzug_ohne_vertragspunkt") return { id, treffer: abzuege, droht: 0, funde: [], einzeln: Array.from({ length: abzuege }, () => ({ fund: null, aenderung: null, droht: false })) };
+    if (id === "mengenaenderung_ueber_20")
+      return { id, treffer: mengen.length, droht: 0, funde: funde(mengen.map((h) => h.fundSchluessel)), einzeln: mengen.map((h) => ({ fund: (h.fundSchluessel && nr.get(h.fundSchluessel)) || null, aenderung: h.aenderung, droht: false })) };
     const xs = risiken.filter((r) => r.grund === id);
-    return { id, treffer: xs.length, droht: xs.filter((r) => r.zustand === "droht").length, funde: funde(xs.map((r) => r.fundSchluessel)) };
+    return {
+      id,
+      treffer: xs.length,
+      droht: xs.filter((r) => r.zustand === "droht").length,
+      funde: funde(xs.map((r) => r.fundSchluessel)),
+      einzeln: xs.map((r) => ({ fund: (r.fundSchluessel && nr.get(r.fundSchluessel)) || null, aenderung: null, droht: r.zustand === "droht" })),
+    };
   });
 }
 

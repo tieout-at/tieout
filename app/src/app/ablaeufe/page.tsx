@@ -43,7 +43,7 @@ export default function AblaeufePage() {
                     </Link>
                   </td>
                   <td className="px-3 font-mono text-[13px] tabular-nums">{v.runs.length}</td>
-                  <td className="px-3 text-fg-secondary">eingeschaltet</td>
+                  <td className="px-3 text-fg-secondary">aktiv</td>
                   <td className="px-3 text-fg-secondary">{last ? `${last.date}, ${last.title}` : "noch kein Lauf"}</td>
                 </tr>
               );

@@ -39,6 +39,9 @@ describe("Abschluss-Lauf", () => {
       ["mengenaenderung_ueber_20", 1, 0, ["F4"]],
     ]);
     expect(PRUEFUNGEN).toHaveLength(8);
+    // each hit on its own, the quantity change with its value (+26,3 % on F4), so a threshold can filter it
+    expect(vp.pruefungen.find((p) => p.id === "mengenaenderung_ueber_20")!.einzeln).toEqual([{ fund: "F4", aenderung: 2625, droht: false }]);
+    expect(vp.pruefungen.every((p) => p.einzeln.length === p.treffer && p.einzeln.filter((x) => x.droht).length === p.droht)).toBe(true);
   });
 
   it("tasks: 3 gaps to the Bauleitung, 2 Kürzungsrisiken to the Abrechnung; nothing decided, Ausgaben not final", () => {

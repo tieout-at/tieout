@@ -8,11 +8,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { InfoTip } from "@/components/ui/info-tip";
 import { SideWindow } from "@/components/ui/side-window";
 import { useMediaQuery } from "@/components/ui/use-media";
+import { localRun } from "@/lib/flow-state";
 import type { FlowView } from "@/lib/flows";
 import { useLive } from "@/lib/live";
+import { useFlowSettings } from "@/lib/use-flow-settings";
+import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
 import { FlowCanvas } from "./flow-canvas";
-import { AblaufInfo, BlockDetail, Palette, RunList } from "./flow-panel";
+import { AblaufInfo, BlockDetail, Money, Palette, RunList } from "./flow-panel";
 import { Chip, playOrder, ResultLine, runLabel, type NodeState } from "./parts";
 
 const STEP_MS = 650;
@@ -58,7 +61,11 @@ function usePlay(order: string[]) {
 
 export function FlowPage({ built }: { built: FlowView }) {
   const live = useLive();
-  const view = live?.flowView(built.slug) ?? built;
+  const tasks = useTasks();
+  const settings = useFlowSettings();
+  const core = live?.flowView(built.slug) ?? built;
+  // what this browser adds: tasks created from a block, the threshold of the quantity check
+  const view = useMemo(() => ({ ...core, runs: core.runs.map((r) => localRun(r, tasks, settings)) }), [core, tasks, settings]);
   const [tab, setTab] = useState<"ablauf" | "laeufe">("ablauf");
   const [runId, setRunId] = useState<string | null>(built.runs[0]?.id ?? null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -133,9 +140,9 @@ export function FlowPage({ built }: { built: FlowView }) {
             </DropdownMenu>
           )}
           <span className="flex shrink-0 items-center gap-1.5 text-sm text-fg-secondary max-lg:hidden">
-            An
-            <span aria-hidden className="relative h-4 w-7 rounded-full bg-fg opacity-50 after:absolute after:top-0.5 after:right-0.5 after:size-3 after:rounded-full after:bg-surface" />
-            <InfoTip label="Ein und aus">Dieser Ablauf ist eingeschaltet. Selbst ein- und ausschalten kommt mit der Anmeldung.</InfoTip>
+            <span aria-hidden className="size-2 rounded-full bg-fg" />
+            Aktiv
+            <InfoTip label="Aktiv">Dieser Ablauf läuft bei jedem Auslöser. Die Schritte bleiben fest, damit Vorprüfung und Freigabe nie fehlen; eingestellt wird in den Aufgaben und bei der Prüfung „Mengenänderung“.</InfoTip>
           </span>
           <button
             type="button"
@@ -168,6 +175,21 @@ export function FlowPage({ built }: { built: FlowView }) {
         {tab === "laeufe" ? (
           <RunList view={view} runId={run?.id ?? null} playing={playing} onPick={(id) => { pickRun(id); setTab("ablauf"); }} />
         ) : (
+          <>
+          {run && (
+            <section className="mx-4 mt-4 rounded-[14px] bg-surface px-4 py-3 shadow-button" aria-label="Letzter Lauf">
+              <p className="text-xs text-fg-muted">Letzter Lauf, {run.date}</p>
+              <p className="font-medium">
+                {run.title}, {run.on}
+              </p>
+              <p className="text-xs leading-4 text-fg-secondary">{run.summary}</p>
+              {run.money && (
+                <div className="mt-2 border-t border-line pt-2">
+                  <Money money={run.money} href={`/projekte/${run.project.slug}/schlussrechnung/`} />
+                </div>
+              )}
+            </section>
+          )}
           <ol className="px-4 pt-4 pb-6">
             {order.map((id, i) => {
               const n = view.nodes.find((x) => x.id === id);
@@ -180,9 +202,10 @@ export function FlowPage({ built }: { built: FlowView }) {
               return (
                 <li key={id} className={cn("relative flex gap-3 pb-3", n?.side === "left" || id === "pruefungen" ? "pl-6" : "")}>
                   {!last && <span aria-hidden className="absolute top-11 bottom-0 left-[21px] w-px bg-[#d9dade]" />}
-                  <button type="button" onClick={() => setSheet(id)} className={cn("flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-[14px] bg-surface px-3 py-2.5 text-left shadow-button outline-none transition-opacity focus-visible:outline-2 focus-visible:outline-accent", dim && "opacity-55", state === "run" && "shadow-[inset_0_0_0_1.5px_var(--color-accent)]")}>
-                    {n ? <Chip icon={n.icon} className="size-8 rounded-lg" /> : <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-fill-hover text-fg-secondary shadow-ring"><ShieldCheck className="size-4" aria-hidden /></span>}
+                  <button type="button" onClick={() => setSheet(id)} className={cn("flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-[14px] bg-surface px-3 py-2.5 text-left shadow-button outline-none transition-opacity focus-visible:outline-2 focus-visible:outline-accent", dim && "[&>*]:opacity-50", state === "run" && "shadow-[inset_0_0_0_1.5px_var(--color-accent)]")}>
+                    {n ? <Chip icon={n.icon} className={cn("size-8 rounded-lg", n.kind === "ausloeser" && "bg-fg text-white shadow-none")} /> : <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-fill-hover text-fg-secondary shadow-ring"><ShieldCheck className="size-4" aria-hidden /></span>}
                     <span className="min-w-0 flex-1">
+                      {n?.kind === "ausloeser" && <span className="block text-[11px] leading-4 font-medium text-fg-secondary">Auslöser: startet den Ablauf</span>}
                       <span className="block truncate font-medium">{n ? n.title : "Prüfungen"}</span>
                       {n ? (
                         <ResultLine node={n} result={result} state={state} className="text-xs leading-4" />
@@ -196,6 +219,7 @@ export function FlowPage({ built }: { built: FlowView }) {
               );
             })}
           </ol>
+          </>
         )}
         <SideWindow open={sheetOpen} onClose={() => setSheet(null)} title={view.nodes.find((n) => n.id === sheet)?.title ?? "Prüfungen"}>
           {sheetOpen && sheet && <BlockDetail view={view} run={run} id={sheet} onClose={() => setSheet(null)} />}
