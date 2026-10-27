@@ -5,7 +5,8 @@
  */
 
 import type { Setting, Task } from "./decisions";
-import type { CheckItem, FlowRun, NodeResult } from "./flows";
+import type { CheckItem, FlowRun, FlowTask, NodeResult } from "./flows";
+import { ROLES } from "./tasks";
 
 /** The days a task block gives its tasks, and the thresholds of "Mengenänderung über 20 %" (percent). */
 export const DEADLINE_DAYS = ["0", "1", "3", "7", "14"] as const;
@@ -24,10 +25,12 @@ function latest(list: readonly Setting[], block: string, feld: Setting["feld"]):
   return best?.wert ?? null;
 }
 
+/** The settings of a task block; `block` is "<Ablauf>/<block>", so each Ablauf keeps its own. */
 export function blockSettings(list: readonly Setting[], block: string): BlockSettings {
   const frist = latest(list, block, "frist");
+  const role = latest(list, block, "zustaendig");
   return {
-    zustaendig: latest(list, block, "zustaendig") ?? DEFAULT_ROLE[block] ?? "Bauleitung",
+    zustaendig: role && (ROLES as readonly string[]).includes(role) ? role : (DEFAULT_ROLE[block.split("/").pop() ?? ""] ?? "Bauleitung"),
     frist: (DEADLINE_DAYS as readonly string[]).includes(frist ?? "") ? (frist as BlockSettings["frist"]) : "3",
   };
 }
@@ -53,11 +56,18 @@ export function dueDate(frist: BlockSettings["frist"], today: Date = new Date())
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+/** The newest task made on a find, under its key or an earlier key of the same work. */
+export function taskOf(t: FlowTask, tasks: readonly Task[]): Task | null {
+  let best: Task | null = null;
+  for (const x of tasks) if (t.keys.includes(x.fundSchluessel) && (!best || x.zeit >= best.zeit)) best = x;
+  return best;
+}
+
 function tasksDone(r: NodeResult, tasks: readonly Task[]): NodeResult {
-  if (!r.tasks?.length) return r;
-  const made = r.tasks.filter((t) => tasks.some((x) => x.fundSchluessel === t.key)).length;
-  const n = r.tasks.length;
-  if (!made) return r;
+  const open = (r.tasks ?? []).filter((t) => !t.excluded);
+  const made = open.filter((t) => taskOf(t, tasks)).length;
+  const n = open.length;
+  if (!n || !made) return r;
   if (made === n) return { ...r, proposed: false, text: `${n} ${n === 1 ? "Aufgabe" : "Aufgaben"} angelegt`, link: { href: "/aufgaben/", label: "Aufgaben öffnen" } };
   return { ...r, text: `${made} von ${n} angelegt` };
 }
@@ -66,6 +76,7 @@ function tasksDone(r: NodeResult, tasks: readonly Task[]): NodeResult {
 export function localRun(run: FlowRun, tasks: readonly Task[] | null, settings: readonly Setting[]): FlowRun {
   const limit = threshold(settings) * 100;
   const results = Object.fromEntries(Object.entries(run.results).map(([id, r]) => [id, tasks ? tasksDone(r, tasks) : r]));
+  // a find set to "Nicht verrechnen" needs no task; one made on it before is named in the panel, never counted
   const checks =
     run.checks?.map((c) => {
       if (c.id !== THRESHOLD_CHECK || limit === 2000) return c;

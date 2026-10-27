@@ -23,14 +23,13 @@ Step 10 of `docs/_STATUS.md`: sign-in on, a company per account, files, decision
 
 ## Decisions waiting for Maxi S.
 
-- From 9: euro on the page "Abläufe" (asked by the Geschäftsführer; decided so far: counts only); thresholds per check.
 - From 8e: a figure "sicher verrechenbar" and a hint "davon noch nicht freigegeben" at the Restforderung.
 - From 8d: project status colours, the red mark at the Bauschadensumlage, the thin bars on the Übersicht, the dates of the Nachträge N1 to N3.
 - Committing the report of customer test 5 in `../tieout-intern` (local file, see `_STATUS.md`).
 
 ## Good to know
 
-- **Abläufe (step 9):** counts per block from `ablaeufe()` in `kern/src/ablaeufe.ts`, page data in `app/src/lib/flows.ts`, canvas in `app/src/components/ablauf/`. The canvas must not import the core (only types and `flow-catalogue.ts`), or the page loads the core and its sample data on first paint. Task blocks say "vorgeschlagen" until tasks are created on the server.
+- **Abläufe (step 9):** counts per block from `ablaeufe()` in `kern/src/ablaeufe.ts`, page data in `app/src/lib/flows.ts`, canvas in `app/src/components/ablauf/`. The canvas must not import the core (only types and `flow-catalogue.ts`), or the page loads the core and its sample data on first paint. Task blocks create tasks in this browser with the block's Zuständig and Frist; settings (`Setting` in `app/src/lib/decisions.ts`) and tasks move to the server in this step, per company.
 - **Tools:** `npm run screens` (app served from `out/` with `node scripts/serve-out.mjs 3103`, launch name `app-build`) photographs 64 screens at five widths. The amount audit compares every euro amount of every exported page against the live app and `docs/Demo_Faelle.md`; write it again in the session's scratchpad if needed (fetch each page, take every amount like `1.234,56 €` from the text without scripts, compare sorted lists). In Git Bash set `MSYS_NO_PATHCONV=1` before passing paths like `/ablaeufe/` to node.
 - **Attio:** measured through Claude in Chrome in Maxi S.'s Edge (his session); pictures only in `app/qa-shots/` (ignored), never committed.
 - A `next dev` of another process may hold port 3100; check pages in the build (`npm run build`, then the server on 3103).

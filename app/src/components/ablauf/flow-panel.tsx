@@ -5,11 +5,11 @@ import { ArrowRight, Check, ChevronLeft, ChevronsUpDown, CircleDashed, Info, Loa
 import { useState } from "react";
 
 import { TaskDialog } from "@/components/aufgaben/task-dialog";
-import { appendTask, localTime } from "@/lib/decisions";
+import { appendTask, localTime, readTasks } from "@/lib/decisions";
 import { CHECK_TEXT, PALETTE } from "@/lib/flow-catalogue";
-import { blockSettings, DEADLINE_DAYS, DEADLINE_TEXT, dueDate, threshold, THRESHOLD_CHECK, THRESHOLDS, type BlockSettings } from "@/lib/flow-state";
-import type { FlowRun, FlowView, RunMoney } from "@/lib/flows";
-import { ROLES, type TaskTarget } from "@/lib/tasks";
+import { blockSettings, DEADLINE_DAYS, DEADLINE_TEXT, dueDate, taskOf, threshold, THRESHOLD_CHECK, THRESHOLDS, type BlockSettings } from "@/lib/flow-state";
+import type { FlowRun, FlowTask, FlowView, RunMoney } from "@/lib/flows";
+import { ROLES } from "@/lib/tasks";
 import { saveSetting, useFlowSettings } from "@/lib/use-flow-settings";
 import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
@@ -159,29 +159,34 @@ export function AblaufInfo({ view, run, onClose }: { view: FlowView; run: FlowRu
 const day = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 
 /** The finds a task block proposes tasks for: each created here with one click, or all at once, as the block is set. */
-function TaskList({ targets, settings }: { targets: TaskTarget[]; settings: BlockSettings }) {
+function TaskList({ targets, settings }: { targets: FlowTask[]; settings: BlockSettings }) {
   const tasks = useTasks();
-  const [one, setOne] = useState<TaskTarget | null>(null);
-  const made = (t: TaskTarget) => tasks?.find((x) => x.fundSchluessel === t.key) ?? null;
-  const open = targets.filter((t) => !made(t));
+  const [one, setOne] = useState<FlowTask | null>(null);
+  const made = (t: FlowTask) => (tasks ? taskOf(t, tasks) : null);
+  // a find set to "Nicht verrechnen" is shown only when a task was made on it, so it can be ticked off
+  const shown = targets.filter((t) => !t.excluded || made(t));
+  const open = targets.filter((t) => !t.excluded && !made(t));
   const createAll = () => {
+    // read the stored tasks again: a double click or another tab must not create a task twice
+    const stored = new Set(readTasks().map((x) => x.fundSchluessel));
     const zeit = localTime();
-    open.forEach((t, i) =>
+    open.filter((t) => !t.keys.some((k) => stored.has(k))).forEach((t, i) =>
       appendTask({ id: `aufgabe-${Date.now()}-${i}`, fundSchluessel: t.key, fund: t.label, href: t.href, zeit, wer: "Abrechnung", text: t.taskText, zustaendig: settings.zustaendig, bis: dueDate(settings.frist) }),
     );
   };
   return (
     <>
       <ul>
-        {targets.map((t) => {
+        {shown.map((t) => {
           const m = made(t);
           return (
             <li key={t.key} className="flex items-start gap-2.5 py-2 [&:not(:last-child)]:shadow-line-bottom">
-              <a href={t.href} className="mt-0.5 flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
+              <Link href={t.href} aria-label={`${t.label.split(" ")[0]} öffnen`} className="mt-0.5 flex h-5 min-w-7 shrink-0 items-center justify-center rounded-xs bg-fill-hover px-1 text-xs text-count shadow-ring outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent">
                 {t.label.split(" ")[0]}
-              </a>
+              </Link>
               <span className="min-w-0 flex-1">
-                <span className="block">{t.taskText}</span>
+                <span className={cn("block", t.excluded && "text-fg-muted line-through")}>{t.taskText}</span>
+                {t.excluded && <span className="block text-xs text-fg-secondary">Fund steht auf „Nicht verrechnen“: Aufgabe auf der Seite „Aufgaben“ abhaken.</span>}
                 {m && (
                   <span className="mt-0.5 flex items-center gap-1.5 text-xs text-fg-secondary">
                     <Check className="size-3.5" aria-hidden />
@@ -189,7 +194,7 @@ function TaskList({ targets, settings }: { targets: TaskTarget[]; settings: Bloc
                   </span>
                 )}
               </span>
-              {!m && tasks && (
+              {!m && tasks && !t.excluded && (
                 <button type="button" onClick={() => setOne(t)} aria-label={`Aufgabe anlegen: ${t.taskText}`} className="inline-flex h-7 shrink-0 items-center rounded-md bg-surface px-2 text-sm font-medium shadow-button outline-none hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-accent max-md:h-8">
                   Anlegen
                 </button>
@@ -238,7 +243,8 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
   if (!n) return null;
   const r = run?.results[id];
   const taskBlock = n.id.startsWith("aufgabe-");
-  const settings = blockSettings(list, n.id);
+  const block = `${view.id}/${n.id}`;
+  const settings = blockSettings(list, block);
   return (
     <>
       <Head onBack={onBack} onClose={onClose}>
@@ -274,7 +280,7 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
       </Section>
       {taskBlock && (
         <Section title="Einstellen">
-          <TaskSettings block={n.id} settings={settings} />
+          <TaskSettings block={block} settings={settings} />
         </Section>
       )}
       <Section title="Wer bestätigt" last>
@@ -328,7 +334,7 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
           <p className="mt-1 text-xs leading-4 text-fg-muted">
             Unter dem Schwellwert:{" "}
             {one.below.map((b, i) => (
-              <span key={b.href}>
+              <span key={i}>
                 {i > 0 && ", "}
                 <Link href={b.href} className="link-quiet">
                   {b.label.replace(" öffnen", "")}
@@ -340,8 +346,8 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
         ) : null}
         {one ? (
           <div className="flex flex-wrap gap-2">
-            {one.links.map((l) => (
-              <GoTo key={l.href} {...l} />
+            {one.links.map((l, i) => (
+              <GoTo key={i} {...l} />
             ))}
           </div>
         ) : (

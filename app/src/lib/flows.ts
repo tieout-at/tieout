@@ -41,13 +41,16 @@ export type NodeResult = {
   ran: boolean;
   /** A task block: the tasks are proposed, nobody created them yet; `tasks` are the finds they are for. */
   proposed?: boolean;
-  tasks?: TaskTarget[];
+  tasks?: FlowTask[];
   text: string;
   lines: Line[];
   /** One sentence below the lines (what this run leaves for the next one). */
   note?: string | null;
   link: { href: string; label: string } | null;
 };
+
+/** A find a task block is for: its keys (with earlier ones of the same work); `excluded` once set to "Nicht verrechnen". */
+export type FlowTask = TaskTarget & { keys: string[]; excluded: boolean };
 
 /** One hit of a check: where it leads, the quantity change in basis points (only the quantity check), whether it threatens. */
 export type CheckItem = { href: string; label: string; change: number | null; threat: boolean };
@@ -115,10 +118,14 @@ function stand(z: Fundzahlen): Line[] {
 
 const done = (text: string, lines: Line[] = [], link: NodeResult["link"] = null): NodeResult => ({ ran: true, text, lines, link });
 const skipped = (text: string): NodeResult => ({ ran: false, text, lines: [], link: null });
-const proposed = (rows: FindRow[], none: string): NodeResult =>
-  rows.length
-    ? { ran: true, proposed: true, text: `${plural(rows.length, "Aufgabe", "Aufgaben")} vorgeschlagen`, lines: [], link: { href: "/aufgaben/", label: "Aufgaben öffnen" }, tasks: rows.map(targetOf) }
-    : skipped(none);
+/** A task block over the finds it is for; finds set to "Nicht verrechnen" stay listed (a task made earlier) but are not counted. */
+const proposed = (all: FindRow[], none: string): NodeResult => {
+  const tasks: FlowTask[] = all.map((r) => ({ ...targetOf(r), keys: [r.id, ...r.earlierIds], excluded: !counts(r) }));
+  const n = tasks.filter((t) => !t.excluded).length;
+  return n
+    ? { ran: true, proposed: true, text: `${plural(n, "Aufgabe", "Aufgaben")} vorgeschlagen`, lines: [], link: { href: "/aufgaben/", label: "Aufgaben öffnen" }, tasks }
+    : { ...skipped(none), tasks: tasks.length ? tasks : undefined };
+};
 
 /** The context of a run: the project's name, its finds as rows (for tasks) and its money from the core. */
 type Ctx = { name: string; rows: FindRow[]; money: RunMoney | null };
@@ -182,8 +189,8 @@ function abschlussRun(x: AbschlussLauf, { name, rows, money }: Ctx): FlowRun {
       entwurf: done(`${x.entwurf.entschieden} von ${x.entwurf.funde} ${x.entwurf.funde === 1 ? "Fund" : "Funden"} entschieden`, [], { href: tab(name, "schlussrechnung"), label: "Schlussrechnung öffnen" }),
       freigabe: done(offen ? `${funde(offen)} offen` : x.entwurf.freigegeben ? "alle Funde entschieden" : "nichts freigegeben", [], { href: tab(name, "funde"), label: "Funde öffnen" }),
       ausgaben: done(x.ausgabenFertig ? "freigegeben" : "Entwurf, nicht freigegeben", [], { href: tab(name, "schlussrechnung"), label: "Ausgaben öffnen" }),
-      "aufgabe-bauleitung": proposed(rows.filter((r) => counts(r) && r.remedy), "keine Lücke"),
-      "aufgabe-abrechnung": proposed(rows.filter((r) => counts(r) && r.risk && !r.risk.alreadyCut), "kein Kürzungsrisiko"),
+      "aufgabe-bauleitung": proposed(rows.filter((r) => r.remedy), "keine Lücke"),
+      "aufgabe-abrechnung": proposed(rows.filter((r) => r.risk && !r.risk.alreadyCut), "kein Kürzungsrisiko"),
     },
     checks: vp.pruefungen.map((p) => {
       const items: CheckItem[] = p.einzeln.map((h) =>
@@ -225,7 +232,7 @@ function abschlagRun(x: AbschlagsLauf, { name, rows, money }: Ctx): FlowRun {
       vorpruefung: x.vorpruefung
         ? done(`${plural(x.vorpruefung.positionen, "Position", "Positionen")} in der Vorprüfung`, [{ label: "Kürzungsrisiko droht", value: String(x.vorpruefung.droht), tone: "red" }], { href: tab(name, "schlussrechnung"), label: "Vorprüfung öffnen" })
         : skipped("läuft erst mit einem Entwurf"),
-      "aufgabe-bauleitung": proposed(rows.filter((r) => counts(r) && r.remedy), "keine Lücke"),
+      "aufgabe-bauleitung": proposed(rows.filter((r) => r.remedy), "keine Lücke"),
     },
     checks: null,
     money,
@@ -264,7 +271,7 @@ function meldungRun(x: MeldungsLauf, { name, rows }: Ctx): FlowRun {
     results: {
       ausloeser: done(`${x.nr}, ${x.taetigkeit}`, [{ label: "eingegangen", value: `${datumText(day)}, ${x.zeitpunkt.slice(11, 16)}` }], { href: `/whatsapp-meldungen/#${x.meldungId}`, label: "Meldung öffnen" }),
       bedingung: { ...filter, ran: true },
-      "aufgabe-bauleitung": e.art === "aufgabe" ? proposed(rows.filter((r) => counts(r) && [r.id, ...r.earlierIds].some((k) => k.endsWith(`meldung:${x.nr}`))), "kein Fund zur Meldung") : skipped("nicht nötig"),
+      "aufgabe-bauleitung": e.art === "aufgabe" ? proposed(rows.filter((r) => [r.id, ...r.earlierIds].some((k) => k.endsWith(`meldung:${x.nr}`))), "kein Fund zur Meldung") : skipped("nicht nötig"),
     },
     checks: null,
     money: null,

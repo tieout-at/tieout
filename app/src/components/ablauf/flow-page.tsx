@@ -177,8 +177,8 @@ export function FlowPage({ built }: { built: FlowView }) {
         ) : (
           <>
           {run && (
-            <section className="mx-4 mt-4 rounded-[14px] bg-surface px-4 py-3 shadow-button" aria-label="Letzter Lauf">
-              <p className="text-xs text-fg-muted">Letzter Lauf, {run.date}</p>
+            <section className="mx-4 mt-4 rounded-[14px] bg-surface px-4 py-3 shadow-button" aria-label="Lauf">
+              <p className="text-xs text-fg-muted">{run.id === view.runs[0]?.id ? "Letzter Lauf" : "Gewählter Lauf"}, {run.date}</p>
               <p className="font-medium">
                 {run.title}, {run.on}
               </p>

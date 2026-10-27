@@ -153,3 +153,39 @@ describe("what this browser adds (step 9, after the go of Maxi S.)", () => {
     expect([dueDate("3", new Date("2026-10-30T12:00")), dueDate("0")]).toEqual(["2026-11-02", null]);
   });
 });
+
+describe("review of the settings and tasks (step 9)", () => {
+  it("counts the same tasks as the core, for every run", async () => {
+    const { ablaeufe, pruefeFirma } = await import("@tieout/kern");
+    const { firm } = await import("./kern-data");
+    const a = ablaeufe(firm(), pruefeFirma(firm()));
+    const n = (r: (typeof run)["results"][string]) => (r.tasks ?? []).filter((t) => !t.excluded).length;
+    expect(n(run.results["aufgabe-bauleitung"])).toBe(a.abschluss[0].aufgaben.bauleitung);
+    expect(n(run.results["aufgabe-abrechnung"])).toBe(a.abschluss[0].aufgaben.abrechnung);
+    const ar = flowView(FLOW_SLUGS.lauf_je_abschlagsrechnung)!.runs.map((r) => n(r.results["aufgabe-bauleitung"]));
+    expect(ar).toEqual(a.abschlag.map((x) => x.aufgaben.bauleitung));
+  });
+
+  it("keeps the settings of each Ablauf apart and never uses an unknown role", async () => {
+    const { blockSettings } = await import("./flow-state");
+    const at = (block: string, feld: "zustaendig" | "frist", wert: string) => ({ block, feld, wert, zeit: "2026-10-27T10:00" });
+    const list = [at("meldung_zu_regiebericht/aufgabe-bauleitung", "frist", "14"), at("abschluss_lauf/aufgabe-bauleitung", "zustaendig", "Polier X")];
+    expect(blockSettings(list, "abschluss_lauf/aufgabe-bauleitung")).toEqual({ zustaendig: "Bauleitung", frist: "3" });
+    expect(blockSettings(list, "meldung_zu_regiebericht/aufgabe-bauleitung")).toEqual({ zustaendig: "Bauleitung", frist: "14" });
+    expect(blockSettings([], "abschluss_lauf/aufgabe-abrechnung").zustaendig).toBe("Abrechnung");
+  });
+
+  it("finds a task made under an earlier key and leaves a find set to Nicht verrechnen out of the count", async () => {
+    const { localRun, taskOf } = await import("./flow-state");
+    const task = (key: string, zeit = "2026-10-27T10:00") => ({ id: key + zeit, fundSchluessel: key, fund: "", href: "", zeit, wer: "Abrechnung", text: "", zustaendig: "Bauleitung", bis: null });
+    const f7 = run.results["aufgabe-bauleitung"].tasks!.find((t) => t.label.startsWith("F7"))!;
+    expect(f7.keys).toContain("p1/meldung:W4");
+    expect(taskOf(f7, [task("p1/meldung:W4", "2026-10-27T09:00"), task("p1/meldung:W4", "2026-10-27T11:00")])!.zeit).toBe("2026-10-27T11:00");
+    const gap = findRows().find((r) => r.project.name === "Wohnpark Mooshaim" && r.belegstand?.text === "Beleg fehlt")!;
+    const l = live([{ fundSchluessel: gap.id, zeit: "2026-10-27T10:00", wer: "Abrechnung", stand: "nicht_verrechnen", grund: "Test" }]).flowView(FLOW_SLUGS.abschluss_lauf)!.runs[0];
+    const tasks = l.results["aufgabe-bauleitung"].tasks!;
+    expect(tasks.map((t) => t.excluded)).toEqual([true, false, false]);
+    const r = localRun(l, [task(tasks[0].keys[0]), task(tasks[1].keys[0])], []).results["aufgabe-bauleitung"];
+    expect(r.text).toBe("1 von 2 angelegt");
+  });
+});

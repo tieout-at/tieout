@@ -195,6 +195,11 @@ export function onStorageChange(callback: () => void): () => void {
 export const readTasks = () => read<Task>(KEYS.tasks);
 export const appendTask = (t: Task) => append(KEYS.tasks, t);
 export const readTaskChecks = () => read<TaskCheck>(KEYS.checks);
-export const readSettings = () => read<Setting>(KEYS.settings);
+const FELDER: readonly Setting["feld"][] = ["zustaendig", "frist", "schwelle"];
+/** Only well-formed entries: a foreign or broken value in the browser's storage never breaks the page. */
+export const readSettings = () =>
+  read<unknown>(KEYS.settings).filter(
+    (x): x is Setting => !!x && typeof x === "object" && typeof (x as Setting).block === "string" && typeof (x as Setting).wert === "string" && typeof (x as Setting).zeit === "string" && FELDER.includes((x as Setting).feld),
+  );
 export const appendSetting = (x: Setting) => append(KEYS.settings, x);
 export const appendTaskCheck = (c: TaskCheck) => append(KEYS.checks, c);
