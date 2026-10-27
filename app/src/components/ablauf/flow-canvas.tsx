@@ -221,6 +221,7 @@ export function FlowCanvas({
                 type="button"
                 data-block
                 aria-pressed={selected === n.id}
+                title={selected === n.id ? undefined : "Details zeigen"}
                 aria-label={`${n.title}: ${state === "run" ? "läuft" : result && state !== "wait" ? result.text : n.does}`}
                 tabIndex={0}
                 onClick={() => onSelect(selected === n.id ? null : n.id)}
@@ -241,7 +242,7 @@ export function FlowCanvas({
                 )}
                 <span className="flex h-7 items-center gap-1.5 px-2.5 pt-1">
                   <Chip icon={n.icon} className={n.kind === "ausloeser" ? "bg-fg text-white shadow-none" : undefined} />
-                  <span className={cn("truncate font-medium", n.title.length > 20 ? "text-[13px]" : "text-sm")} title={n.title}>{n.title}</span>
+                  <span className={cn("truncate font-medium", n.title.length > 20 ? "text-[13px]" : "text-sm")}>{n.title}</span>
                 </span>
                 <ResultLine node={n} result={result} state={state} className="px-3 pt-1.5 text-xs leading-4 font-medium" />
               </button>

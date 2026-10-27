@@ -96,6 +96,18 @@ export function FlowPage({ built }: { built: FlowView }) {
   }, []);
   const close = () => setPanel("closed");
 
+  // Escape steps back: from a block to the Ablauf, from the building blocks to the panel; not while a dialog or menu is open
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      if (e.target instanceof Element && e.target.closest("[role=dialog], [role=menu], [role=listbox], select")) return;
+      if (selected) setSelected(null);
+      else if (panel === "palette") setPanel("open");
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [selected, panel]);
+
   const panelBody =
     tab === "laeufe" ? (
       <RunList view={view} runId={run?.id ?? null} playing={playing} onPick={pickRun} onClose={close} />
@@ -148,11 +160,11 @@ export function FlowPage({ built }: { built: FlowView }) {
             type="button"
             disabled={!run}
             onClick={() => (playing ? stop() : play())}
-            title={playing ? "Anhalten" : "Zeigt den Lauf Schritt für Schritt, ohne neu zu prüfen"}
+            title={playing ? "Anhalten" : "Zeigt Schritt für Schritt, was der Lauf gefunden hat. Neu geprüft wird, sobald neue Belege kommen."}
             className="flex h-7 shrink-0 items-center gap-1.5 rounded-md bg-accent py-1 pr-2 pl-1.5 text-sm font-medium text-white shadow-primary outline-none hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 max-lg:h-8"
           >
             {playing ? <Square className="size-3.5" aria-hidden /> : <Play className="size-4" aria-hidden />}
-            {playing ? "Anhalten" : "Lauf abspielen"}
+            {playing ? "Anhalten" : run && run.id !== view.runs[0]?.id ? "Lauf zeigen" : "Letzten Lauf zeigen"}
           </button>
         </div>
       </div>
