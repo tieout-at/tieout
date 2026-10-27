@@ -196,7 +196,12 @@ export function Inbox({ view, noun, plural, empty }: { view: InboxView; noun: st
   // the message in the address, else the newest one shown
   useEffect(() => {
     const read = () => {
-      const id = decodeURIComponent(window.location.hash.slice(1));
+      let id = "";
+      try {
+        id = decodeURIComponent(window.location.hash.slice(1));
+      } catch {
+        return; // a broken address keeps the newest message
+      }
       if (view.items.some((i) => i.id === id)) setChosen(id);
     };
     read();

@@ -153,6 +153,8 @@ export function DataTable<R extends Row>({
     setViewId(v.id);
     setState(v.state);
     setSelected(new Set());
+    // the quick filters are not shown on the board, so none may stay on unseen
+    setQuickId(null);
   };
   const update = (patch: Partial<ViewState>) => {
     if (patch.hidden) setForced(uniform.filter((id) => !patch.hidden!.includes(id)));
@@ -818,9 +820,14 @@ function AddColumn<R>({ columns, hidden, onShow }: { columns: Column<R>[]; hidde
   );
 }
 
-/** The second sum of a column (`alsoSum`), when it is not the chosen one and the rows in view have it. */
+/**
+ * The second sum of a column (`alsoSum`), when it is not the chosen one and the rows in view have it; not when the
+ * footer already shows it in place of the chosen one (a quick filter "in Klärung" leaves no row of the chosen sum).
+ */
 function alsoResult<R extends Row>(column: Column<R>, chosen: string | null, visible: R[]) {
   if (!column.alsoSum || column.alsoSum === chosen || !column.calculations?.length) return null;
+  const first = footerSum(column.calculations, chosen, visible);
+  if (first && !("cut" in first) && first.calculation.id === column.alsoSum) return null;
   const r = footerSum(column.calculations, column.alsoSum, visible);
   return r && !("cut" in r) && r.calculation.id === column.alsoSum ? r : null;
 }

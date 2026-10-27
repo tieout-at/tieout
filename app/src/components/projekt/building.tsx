@@ -156,7 +156,7 @@ export function Building({ model, finds, decided }: { model: BuildingModel; find
           {decided} · {placed.length} von {finds.length} mit Ort
         </span>
       </header>
-      <div ref={box} className="relative grid gap-x-6 gap-y-2 px-3 pb-3 lg:grid-cols-[minmax(0,1.5fr)_minmax(300px,1fr)]" onPointerLeave={() => setHot(null)}>
+      <div ref={box} className="relative grid gap-x-6 gap-y-2 px-3 pb-3 lg:grid-cols-[minmax(0,1.5fr)_minmax(300px,1fr)]" onPointerLeave={(e) => e.pointerType !== "touch" && setHot(null)}>
         <figure className="relative flex min-w-0 flex-col self-start pt-1">
           <svg ref={stage} role="img" aria-label={`Schema des Gebäudes mit ${placed.length} Funden`} viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} className="gebaeude h-auto w-full" preserveAspectRatio="xMidYMin meet" style={{ maxHeight: phone ? undefined : 460 }}>
             {/* guides of the exploded base: where the blocks stand on it */}
@@ -240,12 +240,14 @@ export function Building({ model, finds, decided }: { model: BuildingModel; find
             ))}
             {scene.labels.map((l) => {
                 const [x, y] = project(l.at);
+                // phones: a badge that sits on the word ("Keller", "Technikraum") pushes the word to its left
+                const under = phone ? badges.find((b) => Math.abs(b.y - y) < 14 * grow && Math.abs(b.bx - x) < 60 * grow) : undefined;
                 return (
                   <text
                     key={l.id}
-                    x={x + (l.anchor === "end" ? -10 : 0)}
+                    x={under ? under.bx - 13 * grow : x + (l.anchor === "end" ? -10 : 0)}
                     y={y + 4}
-                    textAnchor={l.anchor}
+                    textAnchor={under ? "end" : l.anchor}
                     // a white halo keeps the word readable where it crosses an edge or a tinted face
                     style={{ fontSize: 10 * grow, paintOrder: "stroke", stroke: "var(--color-surface)", strokeWidth: 3 * grow, strokeLinejoin: "round" }}
                     className={cn("bld-fade pointer-events-none fill-fg-secondary font-medium tracking-wide", motion)}
@@ -326,7 +328,8 @@ export function Building({ model, finds, decided }: { model: BuildingModel; find
                   data-row={f.number}
                   // phones light a row by a tap only (a scroll must not light the row that slides under the finger)
                   onPointerEnter={() => !phone && setHot(f.number)}
-                  onFocus={() => setHot(f.number)}
+                  // on phones the tap's own focus would light the row before the click, which then opens the find at once
+                  onFocus={() => !phone && setHot(f.number)}
                   onBlur={() => setHot(null)}
                   onClick={(e) => {
                     if (phone && f.place && hot !== f.number) {

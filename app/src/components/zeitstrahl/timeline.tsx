@@ -25,7 +25,12 @@ const MODES: { id: Mode; title: string }[] = [
 
 /** The address keeps the view and the chosen event: `#kalender` (the month), `#kalender-woche`, `#chronik/w4`; an old `#w4` opens the event. */
 function readHash(ids: Set<string>): { mode?: Mode; span?: Span; event?: string } {
-  const raw = decodeURIComponent(window.location.hash.slice(1));
+  let raw = "";
+  try {
+    raw = decodeURIComponent(window.location.hash.slice(1));
+  } catch {
+    // a broken address ("#%E0") opens the page as it is built
+  }
   if (!raw) return {};
   const [head, event] = raw.split("/");
   if (ids.has(head)) return { event: head };
@@ -214,7 +219,7 @@ export function Timeline({ view }: { view: TimelineView }) {
               <MonthView view={view} shown={shown} chosen={chosen} onSelect={choose} startDay={startDay} compact={phone} extra={phone ? undefined : spanSwitch} />
             </div>
           ))}
-        {shownMode === "chronik" && <Chronik view={view} shown={shown} chosen={chosen} onSelect={choose} startAtLatest={phone} />}
+        {shownMode === "chronik" && <Chronik view={view} shown={shown} chosen={chosen} onSelect={choose} />}
       </div>
 
       <SideWindow open={selection !== null} onClose={close} title="Ereignis">

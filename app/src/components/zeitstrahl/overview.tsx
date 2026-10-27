@@ -120,13 +120,14 @@ export function Overview({ view, shown, width, chosen, onChoose }: { view: Timel
   }
 
   const order = [...shown].sort((a, b) => byMoment(a, b) || a.row.localeCompare(b.row));
-  // the names of the Abschlagsrechnungen at their dashed line, all on one baseline: right of the line, else left of it
-  const dividers: { id: string; x: number; left: number; title: string }[] = [];
+  // the names of the Abschlagsrechnungen at their dashed line, all on one baseline: right of the line, else left of it;
+  // where neither side is free (a narrow axis beside an open window) the name folds and the line keeps it as its title
+  const dividers: { id: string; x: number; left: number | null; title: string }[] = [];
   for (const e of view.events.filter((e) => e.art === "abschlagsrechnung").sort(byMoment)) {
     const at = x(e.date.iso);
     const w = e.title.length * 5.9 + 10;
-    const free = (a: number) => a >= X0 - 4 && a + w <= width && !dividers.some((d) => d.left < a + w + 4 && d.left + d.title.length * 5.9 + 10 > a - 4);
-    const left = [at + 4, at - w - 4].find(free) ?? Math.min(at + 4, width - w);
+    const free = (a: number) => a >= X0 - 4 && a + w <= width && !dividers.some((d) => d.left !== null && d.left < a + w + 4 && d.left + d.title.length * 5.9 + 10 > a - 4);
+    const left = [at + 4, at - w - 4].find(free) ?? null;
     dividers.push({ id: e.id, x: at, left, title: e.title });
   }
 
@@ -170,10 +171,12 @@ export function Overview({ view, shown, width, chosen, onChoose }: { view: Timel
         )}
         {dividers.map((d) => (
           <div key={`${d.id}-div`}>
-            <div className="absolute border-l border-dashed border-fg-faint" style={{ left: d.x, top: AXIS + 2, height: bottom - AXIS - 2 }} />
-            <div className="absolute bg-surface px-1 text-[11px] whitespace-nowrap text-fg-secondary" style={{ left: d.left, top: AXIS + 3 }}>
-              {d.title}
-            </div>
+            <div title={d.title} className="absolute border-l border-dashed border-fg-faint" style={{ left: d.x, top: AXIS + 2, height: bottom - AXIS - 2 }} />
+            {d.left !== null && (
+              <div className="absolute bg-surface px-1 text-[11px] whitespace-nowrap text-fg-secondary" style={{ left: d.left, top: AXIS + 3 }}>
+                {d.title}
+              </div>
+            )}
           </div>
         ))}
         {shown.map((e) => {

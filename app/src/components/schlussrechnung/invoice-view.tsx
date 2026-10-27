@@ -119,6 +119,8 @@ function StatusHead({ v }: { v: View }) {
   const [note, setNote] = useState<string | null>(null);
   const done = v.status.all.filter((f) => decided(f.decision)).length;
   const released = v.status.all.filter((f) => f.decision === "freigegeben");
+  // why the take-over is grey: nothing released yet, or every released find is in already
+  const takeOverNote = v.status.inInvoice ? "Alle freigegebenen Funde sind übernommen" : "Übernehmen geht erst nach der Freigabe eines Funds";
   const says = v.status.final
     ? "Ja. Alle Funde sind entschieden, die Ausdrucke sind endgültig."
     : released.length
@@ -170,12 +172,12 @@ function StatusHead({ v }: { v: View }) {
             <FileCheck2 className="size-4 text-fg-secondary" aria-hidden />
             Beweispakete
           </Link>
-          <Button variant={released.length ? "primary" : "secondary"} disabled={!released.length} title={released.length ? undefined : "erst nach der Freigabe eines Funds"} onClick={() => setAsking(true)} aria-describedby={released.length ? undefined : "uebernehmen-hinweis"}>
+          <Button variant={released.length ? "primary" : "secondary"} disabled={!released.length} title={released.length ? undefined : takeOverNote} onClick={() => setAsking(true)} aria-describedby={released.length ? undefined : "uebernehmen-hinweis"}>
             In die Schlussrechnung übernehmen
           </Button>
         </div>
         <span className="flex items-center gap-2 text-xs text-fg-muted">
-          {!released.length && <span id="uebernehmen-hinweis" className="sr-only">Übernehmen geht erst nach der Freigabe eines Funds</span>}
+          {!released.length && <span id="uebernehmen-hinweis" className="sr-only">{takeOverNote}</span>}
           {!v.status.final && (
             <span className="flex items-center gap-1.5">
               <span aria-hidden className="size-1.5 rounded-full bg-state-grey" />
@@ -571,7 +573,7 @@ function MeetingCard({ v }: { v: View }) {
           Summe nur für das Gespräch
         </button>
         <p className={cn("text-xs text-fg-secondary", total ? "block" : "hidden print:block")}>
-          Zusammen mit in Klärung: Forderung <span className="text-fg tabular-nums">{keep(m.claim.text)}</span>, Untergrenze <span className="text-fg tabular-nums">{keep(m.floor.text)}</span>, Spielraum <span className="text-fg tabular-nums">{keep(m.room.text)}</span>. Das ist die einzige Stelle, an der beide Geldwörter zusammen stehen.
+          Zusammen mit in Klärung: Forderung <span className="text-fg tabular-nums">{keep(m.claim.text)}</span>, Untergrenze <span className="text-fg tabular-nums">{keep(m.floor.text)}</span>, Spielraum <span className="text-fg tabular-nums">{keep(m.room.text)}</span>. Nur für die Schlussbesprechung, nicht für die Rechnung: Was in Klärung ist, kommt erst mit dem fehlenden Beleg oder Nachtrag dazu.
         </p>
         {v.notes.map((n) => (
           <p key={n.title} className="text-xs text-fg-secondary">

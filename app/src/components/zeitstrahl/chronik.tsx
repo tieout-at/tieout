@@ -1,7 +1,7 @@
 "use client";
 
 import { Construction } from "lucide-react";
-import { createElement, useEffect, useRef } from "react";
+import { createElement } from "react";
 
 import { keep } from "@/components/charts/tones";
 import { belegIcon } from "@/components/fund/icons";
@@ -19,9 +19,10 @@ const iconOf = (art: string) => belegIcon(art as Parameters<typeof belegIcon>[0]
  * while its month scrolls by; each row with its day and time, kind, title, what it means for the invoice and its find as
  * a chip (the find's amount stands once, in the window, never at each of its Belege). Invoices, payments and cuts stand
  * between as quiet rows with their printed amount and its word, so the order of site and Rechnung reads in one column.
- * On phones the list opens at the latest event. A click opens the event in the window at the right.
+ * It opens at the top on phones too, so the heading and the switch stay in view (customer test 8e). A click opens the
+ * event in the window at the right.
  */
-export function Chronik({ view, shown, chosen, onSelect, startAtLatest = false }: { view: TimelineView; shown: TimelineEvent[]; chosen: string | null; onSelect: (s: Selection) => void; startAtLatest?: boolean }) {
+export function Chronik({ view, shown, chosen, onSelect }: { view: TimelineView; shown: TimelineEvent[]; chosen: string | null; onSelect: (s: Selection) => void }) {
   const list = [...shown].sort(byMoment);
   const months: { first: string; events: TimelineEvent[] }[] = [];
   for (const e of list) {
@@ -29,12 +30,7 @@ export function Chronik({ view, shown, chosen, onSelect, startAtLatest = false }
     if (months.at(-1)?.first !== first) months.push({ first, events: [] });
     months.at(-1)!.events.push(e);
   }
-  const latest = useRef<HTMLLIElement>(null);
-  useEffect(() => {
-    if (startAtLatest) latest.current?.scrollIntoView({ block: "center" });
-  }, [startAtLatest]);
   if (!months.length) return <p className="py-12 text-center text-fg-muted">Nichts zu zeigen.</p>;
-  const lastId = list.at(-1)?.id;
   return (
     <ol className="flex flex-col">
       {months.map((m) => (
@@ -51,7 +47,7 @@ export function Chronik({ view, shown, chosen, onSelect, startAtLatest = false }
           </h3>
           <ul className="flex flex-col py-1">
             {m.events.map((e, i) => (
-              <li key={e.id} ref={e.id === lastId ? latest : undefined}>
+              <li key={e.id}>
                 <Row e={e} view={view} chosen={chosen === e.id} onSelect={onSelect} sameDay={i > 0 && m.events[i - 1].date.iso === e.date.iso} />
               </li>
             ))}

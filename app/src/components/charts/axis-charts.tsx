@@ -180,7 +180,7 @@ export function HBarChart({ groups, label, onHover, active, unit = "Euro" }: { g
           at={tip ? { x: tip.x, y: tip.y } : null}
           box={{ w, h: total }}
           title={tip?.g.name ?? ""}
-          lines={(tip?.g.bars ?? []).flatMap((b): TipLine[] => (b.parts.length > 1 ? [{ label: b.label, value: b.text }, ...b.parts.filter((p) => p.cent > 0).map((p) => ({ label: `davon ${p.label}`, value: p.text, dot: TONE_VAR[p.tone] }))] : [{ label: b.label, value: b.text, dot: TONE_VAR[b.parts[0]?.tone ?? "neutral"] }]))}
+          lines={(tip?.g.bars ?? []).flatMap((b): TipLine[] => (b.parts.length > 1 ? [{ label: b.label, value: b.text }, ...b.parts.filter((p) => p.cent > 0 && p.text).map((p) => ({ label: `davon ${p.label}`, value: p.text, dot: TONE_VAR[p.tone] }))] : [{ label: b.label, value: b.text, dot: TONE_VAR[b.parts[0]?.tone ?? "neutral"] }]))}
         />
       </div>
     </figure>

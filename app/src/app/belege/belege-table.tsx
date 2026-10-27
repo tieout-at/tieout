@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { createElement, useState } from "react";
+import { createElement, useRef, useState } from "react";
 import { BookOpen, CalendarDays, Construction, File, FileText, Layers, ScanText, SearchCheck, Shapes } from "lucide-react";
 
 import { belegIconByText } from "@/components/fund/icons";
@@ -68,10 +68,13 @@ export function BelegeTable({ rows, project }: { rows: BelegRow[]; project?: str
   // a click on a row opens the Beleg's first page in the window at the right; again, closes it (step 8d)
   const [open, setOpen] = useState<BelegRow | null>(null);
   const [pages, setPages] = useState<Record<string, OriginalPage> | null>(null);
+  // the row asked for last: a slower answer for an earlier row must not replace its pages
+  const asked = useRef<string | null>(null);
   const openRow = (r: BelegRow) => {
     setOpen((cur) => (cur?.id === r.id ? null : r));
     setPages(null);
-    void loadOriginals(r.project.slug).then(setPages);
+    asked.current = r.id;
+    void loadOriginals(r.project.slug).then((p) => asked.current === r.id && setPages(p));
   };
   // quick filters by kind, the kinds with the most Belege first (step 8d)
   const kinds = [...rows.reduce((m, r) => m.set(r.kind, (m.get(r.kind) ?? 0) + 1), new Map<string, number>())].sort((a, b) => b[1] - a[1]).slice(0, 5);
