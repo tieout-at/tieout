@@ -46,7 +46,12 @@ export function Kpi({ k }: { k: KpiItem }) {
       <span className="flex min-w-0 flex-col">
         <span className="flex items-center gap-1.5 text-xs text-fg-secondary">
           <span className="truncate">{k.label}</span>
-          {k.info && <InfoTip label={k.label}>{k.info}</InfoTip>}
+          {k.info && (
+            // above the card's link, so the "i" explains instead of leaving the page
+            <span className="relative z-10 flex">
+              <InfoTip label={k.label}>{k.info}</InfoTip>
+            </span>
+          )}
           {k.href && <ChevronRight aria-hidden className="size-3.5 shrink-0 text-fg-faint" />}
         </span>
         <span className={cn("mt-1 font-semibold tracking-tight tabular-nums whitespace-nowrap", k.lead ? "text-[28px] leading-9 max-md:text-2xl" : "text-[22px] leading-8 max-md:text-xl")}>{keep(k.value)}</span>
@@ -73,6 +78,14 @@ export function Kpi({ k }: { k: KpiItem }) {
     </span>
   );
   const cls = "flex h-full flex-col justify-start px-4 py-3.5 max-md:px-4";
+  // a button may not sit inside a link: with an info icon the link lies over the card and the icon above it
+  if (k.href && k.info)
+    return (
+      <div className={cn(cls, "relative hover:bg-row-hover")}>
+        <Link href={k.href} aria-label={`${k.label} ${k.value}`} className="absolute inset-0 outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent" />
+        {body}
+      </div>
+    );
   return k.href ? (
     <Link href={k.href} className={cn(cls, "outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent")}>
       {body}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { Move } from "@/lib/decisions";
 
 export const field =
-  "w-full rounded-md bg-surface px-2 py-1.5 text-sm shadow-[inset_0_0_0_1px_var(--color-line)] outline-none focus-visible:shadow-[inset_0_0_0_1px_var(--color-accent)] max-md:text-base";
+  "w-full rounded-md bg-surface px-2 py-1.5 text-sm text-fg placeholder:text-fg-muted shadow-[inset_0_0_0_1px_var(--color-line)] outline-none focus-visible:shadow-[inset_0_0_0_1px_var(--color-accent)] max-md:text-base";
 
 /**
  * The confirmation of one decision on one find, the same on the find page (in the decision bar's popup) and on the
