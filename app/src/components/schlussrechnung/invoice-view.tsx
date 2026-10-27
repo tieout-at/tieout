@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, FileCheck2, Printer } from "lucide-react";
+import { ChevronRight, FileCheck2, FileSpreadsheet, Printer } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { KpiRow } from "@/components/charts/kpi";
@@ -117,6 +117,7 @@ function CardHead({ title, info, figure, right }: { title: string; info?: string
 function StatusHead({ v }: { v: View }) {
   const [asking, setAsking] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
   const done = v.status.all.filter((f) => decided(f.decision)).length;
   const released = v.status.all.filter((f) => f.decision === "freigegeben");
   // why the take-over is grey: nothing released yet, or every released find is in already
@@ -131,6 +132,17 @@ function StatusHead({ v }: { v: View }) {
     const refused = released.map((f) => takeIntoInvoice([f.key, ...f.earlierKeys], f.decision, zeit).refused).filter(Boolean);
     setAsking(false);
     setNote(refused.length ? `${released.length - refused.length} übernommen, ${refused.length} nicht: ${refused[0]}` : `${released.length === 1 ? "1 Fund steht" : `${released.length} Funde stehen`} jetzt in der Schlussrechnung.`);
+  };
+  // the writer and the sheets load on the first click only; the file uses the figures this page shows
+  const exportFile = async () => {
+    setExporting(true);
+    try {
+      (await import("@/lib/invoice-export")).downloadInvoice(v);
+    } catch {
+      setNote("Die Excel-Datei ließ sich nicht erstellen. Bitte versuchen Sie es noch einmal.");
+    } finally {
+      setExporting(false);
+    }
   };
   return (
     <section aria-label="Kann die Rechnung raus?" className={cn(card, "flex-row flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3.5")}>
@@ -167,6 +179,10 @@ function StatusHead({ v }: { v: View }) {
           <Button onClick={() => window.print()}>
             <Printer />
             Drucken
+          </Button>
+          <Button onClick={exportFile} disabled={exporting} title={v.status.final ? "Änderungsliste, Rechnungsabschluss, Vorprüfung und Schlussbesprechung als Excel-Datei" : "Als Excel-Datei, bis alle Funde entschieden sind mit „Entwurf, nicht freigegeben“"}>
+            <FileSpreadsheet />
+            Excel
           </Button>
           <Link href={v.project.packagesHref} className="inline-flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 font-medium shadow-button outline-none hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-accent max-md:h-8">
             <FileCheck2 className="size-4 text-fg-secondary" aria-hidden />
@@ -378,7 +394,7 @@ function SettlementCard({ v, mode, setMode }: { v: View; mode: Mode; setMode: (m
     if (l.kind === "abzug" && l.check?.state === "abzug_ohne_vertragspunkt" && mode === "contract") return void shown.push({ ...l, gone: true });
     const same = lines.filter((x) => x.kind === l.kind && x.label.replace(" laut Vertrag", "") === l.label.replace(" laut Vertrag", ""));
     shown.push(same[0] ? { ...same[0], label: l.label } : l);
-    if (l.kind === "summe" && i === s.lines.findIndex((x) => x.kind === "summe")) shown.push({ label: `Änderungsliste, ${finds.length === 1 ? "1 Fund" : `${finds.length} Funde`}`, kind: "fund", amount: v.changes.total, rate: null, check: null, find: null });
+    if (l.kind === "summe" && i === s.lines.findIndex((x) => x.kind === "summe")) shown.push({ label: `Änderungsliste, ${finds.length === 1 ? "1 Fund" : `${finds.length} Funde`}`, kind: "fund", amount: v.changes.total, rate: null, share: null, check: null, find: null });
   });
   return (
     <section id="rechnungsabschluss" aria-label="Restforderung Schritt für Schritt" className={card}>

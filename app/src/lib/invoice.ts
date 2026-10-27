@@ -22,7 +22,7 @@ import {
 } from "@tieout/kern";
 
 import { findSlug, projectSlug } from "./example";
-import { business, clientSlug, nameAndFacts, type Amount } from "./kern-data";
+import { business, clientSlug, nameAndFacts, type Amount, type Dated } from "./kern-data";
 
 export type InvoiceFind = {
   number: string;
@@ -39,7 +39,7 @@ export type InvoiceFind = {
 export type ChangeEntry = {
   find: InvoiceFind;
   /** One entry per position the find adds, or one for Regie and other finds without a position. */
-  items: { position: string; text: string; quantity: string | null; price: Amount | null; amount: Amount }[];
+  items: { position: string; text: string; quantity: string | null; count: number | null; unit: string | null; price: Amount | null; amount: Amount }[];
   amount: Amount;
   /** The Vorprüfung line in this find ("droht"), named next to it. */
   risk: { number: string; reason: string; amount: Amount } | null;
@@ -50,13 +50,15 @@ export type SettlementLine = {
   kind: "summe" | "fund" | "abzug" | "zahlung" | "ergebnis";
   amount: Amount;
   rate: string | null;
+  /** The rate as a share (3 % is 0.03), for the export. */
+  share: number | null;
   /** "laut Vertrag", "weicht vom Vertrag ab" or "Abzug ohne Vertragspunkt", with the Vertragspunkt. */
   check: { state: Satzpruefung["pruefung"]; text: string } | null;
   find: InvoiceFind | null;
 };
 
 export type InvoiceView = {
-  project: { id: string; name: string; href: string; packagesHref: string; client: { name: string; href: string }; deadline: string | null };
+  project: { id: string; name: string; href: string; packagesHref: string; client: { name: string; href: string }; deadline: string | null; asOf: Dated };
   /** "Entwurf, nicht freigegeben" until every find is decided (SPEZIFIKATION.md 5.1). */
   status: { finds: number; open: number; released: number; inInvoice: number; final: boolean; all: InvoiceFind[] };
   changes: { entries: ChangeEntry[]; total: Amount; risk: Amount };
@@ -135,10 +137,12 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
               position: x.positionNr,
               text: x.kurztext,
               quantity: menge(x.differenz, x.einheit as Einheit),
+              count: x.differenz / 100,
+              unit: x.einheit,
               price: amount(x.ep),
               amount: amount(x.betrag),
             }))
-          : [{ position: f.titel.split(",")[0], text: f.rechenweg.text, quantity: null, price: null, amount: amount(f.betrag) }],
+          : [{ position: f.titel.split(",")[0], text: f.rechenweg.text, quantity: null, count: null, unit: null, price: null, amount: amount(f.betrag) }],
         amount: amount(f.betrag),
         risk: risk ? { number: risk.nr, reason: KUERZUNGSGRUND_TEXT[risk.grund], amount: amount(risk.betrag) } : null,
       };
@@ -149,6 +153,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
     kind: z.art,
     amount: amount(z.betrag),
     rate: z.satz === null ? null : prozentText(z.satz, 1),
+    share: z.satz === null ? null : z.satz / 10_000,
     check: z.pruefung ? { state: z.pruefung, text: z.vertragspunkt ? `${CHECK_TEXT[z.pruefung]} ${z.vertragspunkt}` : CHECK_TEXT[z.pruefung] } : null,
     find: linkOf(z.fundSchluessel),
   });
@@ -165,6 +170,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
       packagesHref: `/schlussrechnungen/${projectSlug(p.name)}/beweispakete/`,
       client: { name: p.auftraggeber.name, href: `/auftraggeber/${clientSlug(p.auftraggeber.kurzname)}/` },
       deadline: p.datum?.art === "legen_bis" ? `Schlussrechnung legen bis ${datumText(p.datum.wert)}` : null,
+      asOf: { iso: b.stichtag, text: datumText(b.stichtag) },
     },
     status: {
       finds: funde.length,
