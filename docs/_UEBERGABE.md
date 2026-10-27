@@ -1,45 +1,44 @@
-# Handover: step 8e, Export
+# Handover: step 9, Abläufe
 
-**As of:** Monday, 26 October 2026, night, after step 8d. Written by Claude for Maxi S.
+**As of:** Tuesday, 27 October 2026, after step 8e. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** step 8d is merged (#122) and live at https://app.tieout.workers.dev (checked 26.10.2026: 86 of 86 pages with the same amounts as the local build); CI `App`, `Kern` and `Lösungsliste` green on `main`. If something differs, ask Maxi S. first.
+**Precondition:** the review of 8d (#124) and the Excel export (branch `export-8e`, its own pull request) are merged and live at https://app.tieout.workers.dev; CI `App`, `Kern` and `Lösungsliste` green on `main`. If something differs, ask Maxi S. first.
 
 ## Goal
 
-The one thing v1 had and v2 lacks (comparison test of 8c, named by the Abrechnerin and the Geschäftsführer): an export to the invoicing program. A file the business can open or import, made from the Änderungsliste of the Schlussrechnung, marked "Entwurf, nicht freigegeben" until every find is decided. No button before it works (SPEZIFIKATION.md 3.3).
+The page "Abläufe" as `docs/SPEZIFIKATION.md` 5.2 describes it: Attio's Workflows canvas one to one in layout and behaviour (dotted grid, blocks of about 200 × 60 px, configuration panel on the right, toolbar at the bottom, the list "Läufe"), with our own content: how the business checks its invoices. Three Abläufe come ready: "Abschluss-Lauf", "Lauf je Abschlagsrechnung" and "Meldung zu Regiebericht". A run lights the blocks one after the other and shows their results; a click on a block opens what it produced. A block never computes an amount, never sends anything to the Auftraggeber.
 
 ## Read first
 
-1. `CLAUDE.md`, `docs/_STATUS.md` (row 8d and its open points), this file.
-2. `docs/DESIGN.md` "Principles for every new page" (the bar for every page, learned in 8d), `docs/SPEZIFIKATION.md` 3.3 (outputs: Excel and PDF now, ÖNORM A 2063 data carrier when a real customer needs it, BMD later) and `docs/DESIGN.md` (section "Compact and visual (step 8d)").
-3. v1's export for comparison: branch `v1`, `product/app` (an Excel file with five sheets: Schlussrechnung, Posten, Schlussbesprechung, Vorprüfung, Belege).
+1. `CLAUDE.md`, `docs/_STATUS.md` (rows 8d and 8e, open points), this file.
+2. `docs/SPEZIFIKATION.md` 5.1 (the five steps of the Abschluss-Lauf) and 5.2 (blocks, panel, the three Abläufe), `docs/DESIGN.md` "Principles for every new page".
+3. Attio's Workflows in Maxi S.'s workspace as the reference for measurements (with his OK, through his browser session; never commit the pictures, `app/qa-shots/` is ignored).
 
 ## Steps
 
-1. **Review what 8d built** (not done in 8d, now part of done, rule 9 of CLAUDE.md): a bug review and a security review of the 8d diff (`git diff 99f3ba4..b5f4a6c`, about 4.000 lines in `app/src` and `kern/`), and a speed check (bundle size per page from the build output, the first load of Start, Projekt and Zeitstrahl at 390 px on a slow line); every finding re-measured and fixed in its own pull request.
-2. **Then the short customer test of 8d** that was not run: the three roles (Abrechnerin, Geschäftsführer, Bauleiter) on the new pages, desktop and phone, the same four verdicts as before; every finding re-measured. Fix what is clearly wrong before the export.
-3. **Decide with Maxi S.** (two sentences each, his go): what the file holds (proposal: Änderungsliste with position, quantity, Einheitspreis, amount and the Beweispaket reference; Rechnungsabschluss; Vorprüfung; Schlussbesprechungs-Blatt marked internal) and the format (proposal: one .xlsx built in the browser from the core's figures, no server).
-4. Build it on the tab Schlussrechnung next to "Drucken", amounts only from `kern/` (the amount audit must stay green), words as in the app, internal sheets marked; test the file by opening it.
-5. Review (bug, security, speed) and status as usual; follow "Principles for every new page" in `docs/DESIGN.md`.
+1. Measure Attio's canvas (grid, block, panel, toolbar, run list, states while a run goes) and propose the page to Maxi S. with a picture before building (two sentences each, his go).
+2. Build the canvas with the three Abläufe from the core's results (`kern/`: what each step read, found and checked; counts only, amounts stay where they are).
+3. Runs: a list "Läufe" per project; playing a run lights the blocks; every result leads to its find, Beleg or task.
+4. Customer test of the three roles on "Abläufe" (does a business see how its invoices are checked, would it switch a check on or off), then review (bug, security, speed) and status as usual.
 
-## Decisions waiting for Maxi S. (from 8d)
+## Decisions waiting for Maxi S.
 
-- Project status colours: red "Frist nah" and yellow "offen" still mark deadlines; the council wants red only for Kürzungsrisiko and yellow only for Beleg fehlt (proposal: deadline neutral with a clock icon, the word stays).
-- The red mark at the Bauschadensumlage "Abzug ohne Vertragspunkt" on the Schlussrechnung (keep red as a risk, or neutral).
-- The Übersicht keeps its thin bars under the money figures (his word: it stays as it is); the council asks him to confirm.
-- The dates of the Nachträge N1 to N3 (in the core's sample data, not in the solution list): add to the solution list or leave unshown.
+- From 8e: a figure "sicher verrechenbar" (the core does not give it; it would go into the solution list) and a hint "davon noch nicht freigegeben" at the Restforderung.
+- From 8d: project status colours (red and yellow for deadlines), the red mark at the Bauschadensumlage, the thin bars on the Übersicht, the dates of the Nachträge N1 to N3.
+- Committing the report of customer test 5 in `../tieout-intern` (local file, see `_STATUS.md`).
 
 ## Good to know
 
-- **Tools:** `npm run screens` (app served from `out/` with `node scripts/serve-out.mjs 3103`) photographs 61 screens at five widths and reports anything wider than its column. The amount audit of 8d builds `main` in a folder of its own (git archive of `app`, `kern`, `docs`; `app/node_modules` as junctions to the repository's packages except `@tieout/kern`, which points to the copy's `kern`; `turbopack.root` set to `C:/Users/maxis`) and compares every euro amount of every exported page against `docs/Demo_Faelle.md`. Write the scripts again in the session's scratchpad if needed; pass URL paths with `MSYS_NO_PATHCONV=1` on Git Bash.
-- A `next dev` of another process may hold port 3100 and does not pick up new exports from client files; check pages in the build (`npm run build`, then the server on 3103).
-- `app/qa-shots/board/` holds the board of drafts (`index.html`) and the result board (`ergebnis.html`) of 8d; git-ignored, never publish them (Attio and Linear pictures).
+- **Tools:** `npm run screens` (app served from `out/` with `node scripts/serve-out.mjs 3103`) photographs 61 screens at five widths. The amount audit compares every euro amount of every exported page against the live app and `docs/Demo_Faelle.md`; write it again in the session's scratchpad if needed (fetch each page, take every amount like `1.234,56 €` from the text without scripts, compare sorted lists).
+- **Checking an export:** Excel is installed; PowerShell COM (`New-Object -ComObject Excel.Application`) opens a file read only, reads cell values and can render a used range as a picture (`CopyPicture`, paste into a chart, `Chart.Export`). Always `Quit()`.
+- A `next dev` of another process may hold port 3100; check pages in the build (`npm run build`, then the server on 3103).
+- The export (`app/src/lib/invoice-export.ts`) takes the same view as the tab Schlussrechnung; a new figure on that tab belongs in the file too.
 
 ## Done when
 
-- Customer test of 8d run and its findings handled; the export decided with Maxi S., built, opened and checked; amounts unchanged; check and amount audit green; checked live after the merge go.
-- `_STATUS.md` updated, this file rewritten for step 9 (Abläufe).
+- The canvas built and accepted by Maxi S. next to the Attio reference; the three Abläufe run for Wohnpark Mooshaim; amounts unchanged; check and amount audit green; customer test run; checked live after the merge go.
+- `_STATUS.md` updated, this file rewritten for step 10 (Backend).
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 8e, Export. Lies `CLAUDE.md` und `docs/_UEBERGABE.md`. Zuerst Bug-, Security- und Tempo-Prüfung von 8d und der kurze Kundentest der drei Rollen auf den neuen Seiten, dann der Export ins Rechnungsprogramm: schlag mir Inhalt und Format vor, bevor du baust. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Push, Merge, Cloudflare). Beträge nur aus dem Kern. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Schritt 9, Abläufe. Lies `CLAUDE.md` und `docs/_UEBERGABE.md`. Miss zuerst Attios Workflows aus und zeig mir einen Vorschlag mit Bild, bevor du baust. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Push, Merge, Cloudflare). Beträge nur aus dem Kern. Deutsch, einfach, Ergebnis zuerst.

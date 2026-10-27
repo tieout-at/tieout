@@ -36,6 +36,18 @@ function unzip(bytes: Uint8Array): Map<string, string> {
     files.set(name, dec.decode(data));
     at += 30 + nameLength + size;
   }
+  // the central directory names the same files at the same places, and the end record counts them
+  const end = bytes.length - 22;
+  expect(d.getUint32(end, true)).toBe(0x06054b50);
+  let at = d.getUint32(end + 16, true);
+  for (let i = 0; i < d.getUint16(end + 10, true); i++) {
+    expect(d.getUint32(at, true)).toBe(0x02014b50);
+    const nameLength = d.getUint16(at + 28, true);
+    const local = d.getUint32(at + 42, true);
+    expect(dec.decode(bytes.subarray(local + 30, local + 30 + nameLength))).toBe(dec.decode(bytes.subarray(at + 46, at + 46 + nameLength)));
+    at += 46 + nameLength;
+  }
+  expect(at).toBe(end);
   return files;
 }
 
@@ -54,6 +66,9 @@ describe("xlsx writer", () => {
     expect(sheet).toContain('t="inlineStr"><is><t xml:space="preserve">=HYPERLINK(&quot;http://x&quot;)</t>');
     expect(sheet).toContain('<c r="A2" s="6"><v>1.5</v></c>');
     expect(() => xlsx([{ name: "T", widths: [], rows: [[NaN]] }], "t")).toThrow();
+    const bare = unzip(xlsx([{ name: "T", widths: [], rows: [["x".repeat(40_000)]] }], "t")).get("xl/worksheets/sheet1.xml")!;
+    expect(bare).not.toContain("<cols>");
+    expect(bare.match(/<t xml:space="preserve">(x*)…<\/t>/)?.[1]).toHaveLength(32_766);
     expect(() => xlsx([{ name: "T", widths: [], rows: [] }, { name: "T", widths: [], rows: [] }], "t")).toThrow();
   });
 
@@ -71,7 +86,7 @@ describe("export of the Schlussrechnung (step 8e)", () => {
     for (const s of sheets) {
       expect(value(s.rows[3][0])).toBe("Entwurf, nicht freigegeben: 0 von 8 Funden entschieden");
       expect(s.rows.some((r) => value(r[0]) === "Synthetische Beispieldaten, keine echten Kundendaten")).toBe(true);
-      expect(s.rows.some((r) => value(r[0]) === "Nur intern, nicht für Hornfeld Bau GmbH")).toBe(s.name.includes("intern"));
+      expect(value(s.rows[4][0])).toBe(s.name.includes("intern") ? "Nur intern, nicht für Hornfeld Bau GmbH: mit Kalkulation und Untergrenzen" : "Intern, für Ihr Rechnungsprogramm. Für Hornfeld Bau GmbH sind die Beweispakete.");
     }
   });
 
@@ -112,13 +127,13 @@ describe("export of the Schlussrechnung (step 8e)", () => {
   });
 
   it("names the file a draft until every find is decided, and follows the decisions of this browser", () => {
-    expect(exportFileName(v)).toBe(`Schlussrechnung_wohnpark-mooshaim_${v.project.asOf.iso}_Entwurf.xlsx`);
+    expect(exportFileName(v)).toBe(`Schlussrechnung_wohnpark-mooshaim_${v.project.asOf.iso}_Entwurf_intern.xlsx`);
     const decide = (stand: Decision["stand"]) => v.status.all.map((f): Decision => ({ fundSchluessel: f.key, zeit: "2026-10-25T10:00", wer: "Geschäftsführung", stand, ...(stand === "nicht_verrechnen" ? { grund: "Test" } : {}) }));
     const one = live([decide("nicht_verrechnen")[0]]).invoiceView("p1")!;
     expect(exportState(one).text).toBe("Entwurf, nicht freigegeben: 1 von 8 Funden entschieden");
     expect(invoiceSheets(one, origin)[0].rows.some((r) => value(r[0]) === "F1")).toBe(false);
     const all = live(decide("freigegeben")).invoiceView("p1")!;
     expect(exportState(all)).toEqual({ draft: false, text: "Alle 8 Funde entschieden" });
-    expect(exportFileName(all)).not.toContain("Entwurf");
+    expect(exportFileName(all)).toBe(`Schlussrechnung_wohnpark-mooshaim_${v.project.asOf.iso}_intern.xlsx`);
   });
 });

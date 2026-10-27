@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { InfoTip } from "@/components/ui/info-tip";
 import { useReducedMotion } from "@/components/ui/use-media";
-import { DECISION_TEXT, localTime, takeIntoInvoice, type DecisionState } from "@/lib/decisions";
+import { DECISION_TEXT, localTime, readDecisions, takeIntoInvoice, type DecisionState } from "@/lib/decisions";
 import type { ChangeEntry, InvoiceFind, InvoiceView as View, SettlementLine } from "@/lib/invoice";
 import { useLive } from "@/lib/live";
 import { cn } from "@/lib/utils";
@@ -118,6 +118,7 @@ function StatusHead({ v }: { v: View }) {
   const [asking, setAsking] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
+  const busy = useRef(false);
   const done = v.status.all.filter((f) => decided(f.decision)).length;
   const released = v.status.all.filter((f) => f.decision === "freigegeben");
   // why the take-over is grey: nothing released yet, or every released find is in already
@@ -133,15 +134,25 @@ function StatusHead({ v }: { v: View }) {
     setAsking(false);
     setNote(refused.length ? `${released.length - refused.length} übernommen, ${refused.length} nicht: ${refused[0]}` : `${released.length === 1 ? "1 Fund steht" : `${released.length} Funde stehen`} jetzt in der Schlussrechnung.`);
   };
-  // the writer and the sheets load on the first click only; the file uses the figures this page shows
+  // the writer and the sheets load on the first click only. The file takes the decisions stored in this browser even when
+  // the page has not computed them yet (right after loading); one file per click, however fast the clicks come
   const exportFile = async () => {
+    if (busy.current) return;
+    busy.current = true;
     setExporting(true);
+    setNote(null);
     try {
-      (await import("@/lib/invoice-export")).downloadInvoice(v);
+      const decisions = readDecisions();
+      const view = decisions.length ? ((await import("@/lib/kern-live")).live(decisions).invoiceView(v.project.id) ?? v) : v;
+      (await import("@/lib/invoice-export")).downloadInvoice(view);
     } catch {
       setNote("Die Excel-Datei ließ sich nicht erstellen. Bitte versuchen Sie es noch einmal.");
     } finally {
-      setExporting(false);
+      // a second click within a second (a double click) gives no second file
+      setTimeout(() => {
+        busy.current = false;
+        setExporting(false);
+      }, 1000);
     }
   };
   return (

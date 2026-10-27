@@ -1,7 +1,8 @@
 /**
  * The export of the tab "Schlussrechnung" for the Rechnungsprogramm (step 8e): one Excel file with four sheets, the
  * Änderungsliste to type in, the Rechnungsabschluss down to the Restforderung both ways, and the Vorprüfung and the
- * Schlussbesprechung marked internal. Every amount is the core's, taken from the same view the page shows (with the
+ * Schlussbesprechung marked internal. The whole file is the business's own (it holds the Vorprüfung and the Untergrenzen), so
+ * every sheet and the file name say "intern"; for the Auftraggeber are the Beweispakete. Every amount is the core's, taken from the same view the page shows (with the
  * decisions of this browser); the export adds none and writes amounts as numbers in euro. Until every find is decided,
  * every sheet and the file name say "Entwurf" (SPEZIFIKATION.md 5.1).
  */
@@ -35,7 +36,7 @@ function top(v: InvoiceView, title: string, internal: boolean): Cell[][] {
     [`Auftraggeber: ${v.project.client.name}`],
     [`Stand: ${v.project.asOf.text}`],
     [{ value: state.text, style: state.draft ? "draft" : "bold" }],
-    ...(internal ? [[{ value: `Nur intern, nicht für ${v.project.client.name}`, style: "draft" } as Cell]] : []),
+    [{ value: internal ? `Nur intern, nicht für ${v.project.client.name}: mit Kalkulation und Untergrenzen` : `Intern, für Ihr Rechnungsprogramm. Für ${v.project.client.name} sind die Beweispakete.`, style: "draft" }],
     [muted("Synthetische Beispieldaten, keine echten Kundendaten")],
     [],
   ];
@@ -129,9 +130,9 @@ export function invoiceSheets(v: InvoiceView, origin: string): Sheet[] {
   return [changeSheet(v, origin), settlementSheet(v), checkSheet(v, origin), meetingSheet(v)];
 }
 
-/** "Schlussrechnung_wohnpark-mooshaim_2026-10-24_Entwurf.xlsx"; without "Entwurf" once every find is decided. */
+/** "Schlussrechnung_wohnpark-mooshaim_2026-10-22_Entwurf_intern.xlsx"; without "Entwurf" once every find is decided. */
 export function exportFileName(v: InvoiceView): string {
-  return `Schlussrechnung_${projectSlug(v.project.name)}_${v.project.asOf.iso}${exportState(v).draft ? "_Entwurf" : ""}.xlsx`;
+  return `Schlussrechnung_${projectSlug(v.project.name)}_${v.project.asOf.iso}${exportState(v).draft ? "_Entwurf" : ""}_intern.xlsx`;
 }
 
 /** Builds the file and hands it to the browser as a download. */
@@ -144,5 +145,6 @@ export function downloadInvoice(v: InvoiceView): void {
   document.body.append(a);
   a.click();
   a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  // long enough for the save question of Safari on iPhones
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

@@ -72,6 +72,8 @@ export function sheetName(name: string): string {
   return name.replace(/[[\]:*?/\\]/g, " ").slice(0, 31);
 }
 
+const MAX_TEXT = 32_767;
+
 function cellXml(cell: Cell, ref: string, links: { ref: string; target: string }[]): string {
   if (cell === null || cell === "") return "";
   if (typeof cell === "object" && "link" in cell) {
@@ -84,7 +86,9 @@ function cellXml(cell: Cell, ref: string, links: { ref: string; target: string }
     if (!Number.isFinite(value)) throw new Error(`Zelle ${ref}: keine Zahl`);
     return `<c r="${ref}" s="${XF[style ?? "text"]}"><v>${value}</v></c>`;
   }
-  return `<c r="${ref}" s="${XF[style ?? "text"]}" t="inlineStr"><is><t xml:space="preserve">${xml(value)}</t></is></c>`;
+  // Excel refuses a file with more than 32.767 characters in one cell
+  const text = value.length > MAX_TEXT ? value.slice(0, MAX_TEXT - 1) + "…" : value;
+  return `<c r="${ref}" s="${XF[style ?? "text"]}" t="inlineStr"><is><t xml:space="preserve">${xml(text)}</t></is></c>`;
 }
 
 function sheetXml(sheet: Sheet, links: { ref: string; target: string }[]): string {
@@ -97,7 +101,7 @@ function sheetXml(sheet: Sheet, links: { ref: string; target: string }[]): strin
     .join("");
   const hyperlinks = links.length ? `<hyperlinks>${links.map((l, i) => `<hyperlink ref="${l.ref}" r:id="rId${i + 1}"/>`).join("")}</hyperlinks>` : "";
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>${cols}</cols><sheetData>${rows}</sheetData>${hyperlinks}<pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>`;
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>${cols ? `<cols>${cols}</cols>` : ""}<sheetData>${rows}</sheetData>${hyperlinks}<pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>`;
 }
 
 /** The parts of the workbook, path and content, in the order they go into the zip. */
