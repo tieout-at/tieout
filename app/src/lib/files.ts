@@ -99,3 +99,18 @@ export async function fileAddress(pfad: string): Promise<string | null> {
   const { data, error } = await sb.storage.from("dateien").createSignedUrl(pfad, 600);
   return error ? null : data.signedUrl;
 }
+
+/**
+ * Fetches a stored file by its signed address and gives it to the viewer as an address of this page (Supabase serves
+ * files with a policy that keeps the browser's PDF reader out of a frame). The checksum is computed again on the way:
+ * `intact` says whether the file is the one whose SHA-256 was noted at the upload. Null when it is not there.
+ */
+export async function openFile(f: StoredFile): Promise<{ url: string; intact: boolean } | null> {
+  const signed = await fileAddress(f.pfad);
+  if (!signed) return null;
+  const res = await fetch(signed);
+  if (!res.ok) return null;
+  const bytes = await res.arrayBuffer();
+  const intact = hex(await crypto.subtle.digest("SHA-256", bytes)) === f.sha256;
+  return { url: URL.createObjectURL(new Blob([bytes], { type: f.typ })), intact };
+}

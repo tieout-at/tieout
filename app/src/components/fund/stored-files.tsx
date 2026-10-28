@@ -4,7 +4,7 @@ import { FileText, ImageIcon, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { useAccount } from "@/lib/account";
-import { fileAddress, listFiles, sizeText, storeFile, TYPE_TEXT, type StoredFile } from "@/lib/files";
+import { listFiles, openFile, sizeText, storeFile, TYPE_TEXT, type StoredFile } from "@/lib/files";
 import { localMinute } from "@/lib/server-store";
 
 const when = (iso: string) => {
@@ -15,12 +15,12 @@ const when = (iso: string) => {
 const small =
   "inline-flex h-6 shrink-0 items-center gap-1 rounded-md px-1.5 text-xs font-medium text-fg shadow-button outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50 max-md:h-9";
 
-export type ShownFile = { file: StoredFile; url: string };
+export type ShownFile = { file: StoredFile; url: string; intact: boolean };
 
 /**
  * The files the company stored for this Beleg, under the head of the original viewer (step 10, part E). Only with an
  * account: the demo has no files and loads nothing for them. "Datei hinterlegen" takes one PDF, JPEG or PNG up to
- * 20 MB; "Ansehen" shows it in the viewer by a signed address.
+ * 20 MB; "Ansehen" fetches it by a signed address, checks its checksum again and shows it in the viewer.
  */
 export function StoredFiles({ project, belegId, shown, onShow }: { project: string; belegId: string; shown: StoredFile | null; onShow: (f: ShownFile | null) => void }) {
   const account = useAccount();
@@ -45,8 +45,8 @@ export function StoredFiles({ project, belegId, shown, onShow }: { project: stri
 
   const show = async (f: StoredFile) => {
     if (shown?.id === f.id) return onShow(null);
-    const url = await fileAddress(f.pfad);
-    if (url) onShow({ file: f, url });
+    const opened = await openFile(f).catch(() => null);
+    if (opened) onShow({ file: f, ...opened });
     else setNote(`${f.name} ist nicht im Speicher: das Hochladen brach ab. Bitte noch einmal hochladen.`);
   };
 
@@ -112,18 +112,23 @@ export function StoredFiles({ project, belegId, shown, onShow }: { project: stri
   );
 }
 
-/** A stored file in the viewer: a PDF in the browser's own reader, a photo as it is, with who stored it and its checksum. */
+/**
+ * A stored file in the viewer: a PDF in the browser's own reader, a photo as it is, with who stored it and whether its
+ * checksum still is the one noted at the upload. The copy in this page is let go when the file is closed.
+ */
 export function FileView({ shown }: { shown: ShownFile }) {
-  const { file, url } = shown;
+  const { file, url, intact } = shown;
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
   return (
     <div className="flex h-full min-h-0 flex-col gap-2">
       <p className="text-xs text-fg-secondary">
-        Hochgeladen von {file.person} am {when(file.zeit)}. SHA-256 {file.sha256.slice(0, 12)}…, im Browser berechnet.
+        Hochgeladen von {file.person} am {when(file.zeit)}. SHA-256 {file.sha256.slice(0, 12)}…, beim Hochladen im Browser berechnet,{" "}
+        {intact ? "beim Öffnen nachgerechnet: unverändert." : <span className="text-fg">beim Öffnen nachgerechnet: stimmt nicht, die Datei ist nicht die hochgeladene.</span>}
       </p>
       {file.typ === "application/pdf" ? (
         <iframe src={url} title={file.name} className="min-h-[480px] w-full flex-1 rounded-md bg-surface shadow-ring" />
       ) : (
-        // a signed address on Supabase that lives ten minutes: Next's image optimisation does not apply
+        // a copy in this page of a private file: Next's image optimisation does not apply
         // eslint-disable-next-line @next/next/no-img-element
         <img src={url} alt={file.name} className="h-auto w-full rounded-md shadow-ring" />
       )}
