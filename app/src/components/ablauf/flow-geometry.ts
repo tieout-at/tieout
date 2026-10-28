@@ -47,6 +47,76 @@ export function moveBy(moved: Offsets, id: string, from: Point, dx: number, dy: 
   return { ...moved, [id]: { x: Math.round(from.x + dx / k), y: Math.round(from.y + dy / k) } };
 }
 
+/** How close (in screen pixels) a dragged block must come to a straight line to its neighbour before it snaps. */
+export const SNAP = 8;
+
+/** A thin line shown while a dragged block sits on a straight edge, as in Attio and Figma. */
+export type Guide = { x1: number; y1: number; x2: number; y2: number };
+
+/** The blocks an edge connects to `id`, and whether that edge runs down the column or sideways. */
+function links(view: FlowView, id: string): { other: string; down: boolean }[] {
+  const side = (n: string) => view.nodes.find((m) => m.id === n)?.side;
+  const out = view.edges.flatMap((e) => (e.from === id ? [e.to] : e.to === id ? [e.from] : [])).map((other) => ({ other, down: side(other) === side(id) }));
+  if (view.checksAt && id === GROUP) out.push({ other: view.checksAt, down: false });
+  if (view.checksAt && id === view.checksAt) out.push({ other: GROUP, down: false });
+  return out;
+}
+
+/**
+ * The drag of a block, snapped: when an edge to a neighbour is less than `SNAP` screen pixels from straight, the block
+ * jumps so the edge is straight (one snap across, one along), and the guides show which edge lines up.
+ */
+export function dragTo(view: FlowView, moved: Offsets, id: string, from: Point, dx: number, dy: number, k: number): { moved: Offsets; guides: Guide[] } {
+  const next = moveBy(moved, id, from, dx, dy, k);
+  const p = place(view, id, next);
+  const base = place(view, id, {});
+  const reach = SNAP / k;
+  const width = (n: string) => (n === GROUP ? GROUP_W : W);
+  let sx: { at: number; d: number; q: Point } | null = null;
+  let sy: { at: number; d: number; q: Point; w: number } | null = null;
+  for (const { other, down } of links(view, id)) {
+    const q = place(view, other, next);
+    // the card of the checks hangs 4 px above the block it belongs to, so their edge is straight at that offset
+    const at = down ? q.x : q.y + (id === GROUP ? -4 : other === GROUP ? 4 : 0);
+    const d = Math.abs((down ? p.x : p.y) - at);
+    if (d >= reach) continue;
+    if (down && (!sx || d < sx.d)) sx = { at, d, q };
+    if (!down && (!sy || d < sy.d)) sy = { at, d, q, w: width(other) };
+  }
+  const x = sx ? sx.at : p.x;
+  const y = sy ? sy.at : p.y;
+  const guides: Guide[] = [];
+  if (sx) guides.push({ x1: x + W / 2, y1: Math.min(y, sx.q.y) - 12, x2: x + W / 2, y2: Math.max(y, sx.q.y) + H + 12 });
+  if (sy) {
+    const cy = (id === GROUP ? y + 4 : y) + H / 2;
+    guides.push({ x1: Math.min(x, sy.q.x) - 12, y1: cy, x2: Math.max(x + width(id), sy.q.x + sy.w) + 12, y2: cy });
+  }
+  return { moved: { ...next, [id]: { x: x - base.x, y: y - base.y } }, guides };
+}
+
+/** The moves of one view with the steps to undo and redo; at most 50 steps back. */
+export type Moves = { by: Offsets; past: Offsets[]; future: Offsets[] };
+export const NO_MOVES: Moves = { by: {}, past: [], future: [] };
+
+/**
+ * "begin" keeps the arrangement before a drag as one step back, "set" follows the drag, "reset" puts every block back
+ * (itself a step that can be undone).
+ */
+export function moves(m: Moves, a: { type: "begin" | "undo" | "redo" | "reset" } | { type: "set"; by: Offsets }): Moves {
+  switch (a.type) {
+    case "begin":
+      return { by: m.by, past: [...m.past, m.by].slice(-50), future: [] };
+    case "set":
+      return { ...m, by: a.by };
+    case "undo":
+      return m.past.length ? { by: m.past[m.past.length - 1], past: m.past.slice(0, -1), future: [m.by, ...m.future] } : m;
+    case "redo":
+      return m.future.length ? { by: m.future[0], past: [...m.past, m.by], future: m.future.slice(1) } : m;
+    case "reset":
+      return Object.keys(m.by).length ? { by: {}, past: [...m.past, m.by].slice(-50), future: [] } : m;
+  }
+}
+
 /**
  * The line of an edge and its chevron at the target. "down" runs from the bottom of `a` to the top of `b`, "left" from
  * the left of `a` to the right of `b` (a task beside the column), "right" from the right of `a` to the left of `b` (the
