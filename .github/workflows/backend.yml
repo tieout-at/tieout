@@ -1,0 +1,39 @@
+# Checks for the database rules (backend/): types, lint, and the policies played through in a local Postgres. Runs only
+# when something changes there, in kern/ (whose earlier keys fund_alias holds) or in the agent's v1 SQL.
+name: Backend
+
+on:
+  pull_request:
+    paths: ["backend/**", "kern/**", "agent/worker/supabase.sql", ".github/workflows/backend.yml"]
+  push:
+    branches: [main]
+    paths: ["backend/**", "kern/**", "agent/worker/supabase.sql"]
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - name: Typen
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Tests
+        run: npm test

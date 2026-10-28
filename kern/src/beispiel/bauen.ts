@@ -10,9 +10,9 @@ import type { KatalogPosition } from "./katalog";
 export const q = (belegId: string, seite: number, stelle?: string): Quelle => (stelle ? { belegId, seite, stelle } : { belegId, seite });
 export const f = <T>(wert: T, quelle: Quelle): Feld<T> => feld(wert, quelle);
 
-/** A field the machine read wrong and a human corrected on import: the value is right, the misreading stays in the Verlauf. */
-export function korrigiert<T>(wert: T, falsch: T, quelle: Quelle, zeit: string): Feld<T> {
-  return korrigiere(feld(falsch, quelle), wert, "Abrechnung", zeit);
+/** A field the machine read wrong and a human corrected on import, with the reason: the value is right, the misreading stays in the Verlauf. */
+export function korrigiert<T>(wert: T, falsch: T, quelle: Quelle, zeit: string, grund: string): Feld<T> {
+  return korrigiere(feld(falsch, quelle), wert, "Abrechnung", zeit, grund);
 }
 
 /** Deterministic random numbers (mulberry32): the same seed gives the same data. */

@@ -214,7 +214,7 @@ function projectActivity(d: Datensatz): ActivityEntry[] {
       time: k.zeit,
       timeText: zeitText(k.zeit),
       who: k.wer,
-      text: `korrigierte ${k.beleg}, ${stelleText(k.stelle)}: ${k.vorher} auf ${k.wert}`,
+      text: `korrigierte ${k.beleg}, ${stelleText(k.stelle)}: ${k.vorher} auf ${k.wert}${k.grund ? `, ${k.grund}` : ""}`,
       kind: "korrektur" as const,
     })),
     ...d.meldungen.map((m) => ({

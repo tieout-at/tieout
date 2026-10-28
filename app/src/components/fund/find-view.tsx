@@ -8,6 +8,7 @@ import { Kpi, type KpiItem } from "@/components/charts/kpi";
 import { Activity } from "@/components/record/activity";
 import { RecordHead } from "@/components/shell/record-head";
 import { SideWindow, toggleOpen } from "@/components/ui/side-window";
+import { checkedBy } from "@/lib/decision-rules";
 import { currentState, decide, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision, type DecisionState } from "@/lib/decisions";
 import type { FindRecord, SourceRef } from "@/lib/finds";
 import { useLive } from "@/lib/live";
@@ -160,6 +161,7 @@ export function FindView({ record }: { record: FindRecord }) {
       </RecordHead>
       <DecisionBar
         state={state}
+        checker={checkedBy(decisions, keys)}
         amount={record.amount}
         target={{ key: record.key, label: `${record.number} ${record.project.name}`, name: record.name, href: `/funde/${record.slug}/`, project: record.project.name, taskText: record.taskText, deadline: record.deadline }}
         open={[
@@ -171,8 +173,9 @@ export function FindView({ record }: { record: FindRecord }) {
         onDecide={(stand, wer, grund) => setDecisions(decide(keys, record.decision, { fundSchluessel: record.key, zeit: localTime(), wer, stand, ...(grund ? { grund } : {}) }).list)}
       />
       <div className="flex w-full flex-col gap-6 px-6 pt-2 pb-12 max-md:gap-5 max-md:px-4">
-        <section aria-label="Auf einen Blick">
-          <ul className="grid overflow-hidden rounded-xl bg-surface shadow-ring md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1.5fr)]">
+        {/* three columns only where the content is wide enough for the amount with its ring (customer test, 28.10.2026: at 800 px the ring lay on the amount) */}
+        <section aria-label="Auf einen Blick" className="@container">
+          <ul className="grid overflow-hidden rounded-xl bg-surface shadow-ring @4xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1.5fr)]">
             {figures.map((k) => (
               <li key={k.id} className="min-w-0 shadow-[inset_-1px_-1px_0_0_var(--color-line)]">
                 <Kpi k={k} />

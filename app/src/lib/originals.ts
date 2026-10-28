@@ -5,6 +5,7 @@
  * Nothing is added that the twin did not read: every text on a page is a field of `kern/` with its place.
  */
 
+import { projectSlug } from "./example";
 import { BELEG_ART_TEXT, belegTitel, datumText, euro, gelesen, menge, PRUEFSTAND_TEXT, stunden, type BelegArt, type Datensatz, type GelesenerWert } from "@tieout/kern";
 
 /** A marked place: the viewer marks every part of the page whose place matches the place of the source. */
@@ -16,6 +17,8 @@ export type OriginalPage = {
   /** `belegId:seite`. */
   key: string;
   belegId: string;
+  /** The project's slug ("wohnpark-mooshaim"): with the Beleg it names the files a company stored for it (step 10). */
+  project: string;
   page: number;
   pages: number;
   title: string;
@@ -33,8 +36,8 @@ export type OriginalPage = {
   extra: PageField[];
   /** A signature field and whether it is given. */
   sign: { label: string; value: string; place: Place; given: boolean } | null;
-  /** Everything the twin read from this page, for the line under the page ("maschinell gelesen", "korrigiert, vorher …"). */
-  read: { place: Place; label: string | null; text: string; review: string; before: string | null }[];
+  /** Everything the twin read from this page, for the line under the page ("maschinell gelesen", "korrigiert, vorher …, Grund"). */
+  read: { place: Place; label: string | null; text: string; review: string; before: string | null; reason: string | null }[];
 };
 
 /** The place in the app's words: a line of a list is named by its position ("Position 22.04.12B"). */
@@ -86,7 +89,7 @@ function readOn(werte: GelesenerWert[], page: number): OriginalPage["read"] {
   return werte
     .filter((w) => w.seite === page)
     .filter((w) => !seen.has(`${w.stelle}|${w.text}`) && !!seen.add(`${w.stelle}|${w.text}`))
-    .map((w) => ({ place: w.stelle, label: LABEL[w.schluessel] ?? null, text: w.text, review: PRUEFSTAND_TEXT[w.pruefstand], before: w.vorher }));
+    .map((w) => ({ place: w.stelle, label: LABEL[w.schluessel] ?? null, text: w.text, review: PRUEFSTAND_TEXT[w.pruefstand], before: w.vorher, reason: w.grund }));
 }
 
 /**
@@ -111,6 +114,7 @@ function layoutPage(d: Datensatz, belegId: string, page: number): OriginalPage |
   const base: OriginalPage = {
     key: `${belegId}:${page}`,
     belegId,
+    project: projectSlug(d.projekt.name),
     page,
     pages: beleg?.seiten ?? 1,
     title: belegTitel(d, belegId),

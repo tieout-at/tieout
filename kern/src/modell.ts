@@ -37,6 +37,8 @@ export interface FeldVerlauf<T> {
   art: "bestaetigt" | "korrigiert";
   vorher: T;
   wert: T;
+  /** Why a human corrected the value ("Handschrift falsch gelesen, im Original nachgesehen"); only on a correction. */
+  grund?: string;
 }
 
 export interface Feld<T> {
@@ -51,9 +53,9 @@ export function feld<T>(wert: T, quelle: Quelle): Feld<T> {
   return { wert, quelle, pruefstand: "maschinell", verlauf: [] };
 }
 
-/** A human corrects a field: the new value applies, the old one stays in the Verlauf. Returns a new field. */
-export function korrigiere<T>(f: Feld<T>, wert: T, wer: string, zeit: Zeitpunkt): Feld<T> {
-  return { ...f, wert, pruefstand: "korrigiert", verlauf: [...f.verlauf, { zeit, wer, art: "korrigiert", vorher: f.wert, wert }] };
+/** A human corrects a field, with a reason: the new value applies, the old one stays in the Verlauf. Returns a new field. */
+export function korrigiere<T>(f: Feld<T>, wert: T, wer: string, zeit: Zeitpunkt, grund?: string): Feld<T> {
+  return { ...f, wert, pruefstand: "korrigiert", verlauf: [...f.verlauf, { zeit, wer, art: "korrigiert", vorher: f.wert, wert, ...(grund ? { grund } : {}) }] };
 }
 
 /** A human confirms a field as read. Returns a new field. */

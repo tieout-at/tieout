@@ -1,44 +1,39 @@
-# Handover: step 10, Backend
+# Handover: after step 10, before step 11
 
-**As of:** Tuesday, 27 October 2026, after step 9. Written by Claude for Maxi S.
+**As of:** Wednesday, 28 October 2026, after parts D to F of step 10. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** step 9 (Abläufe, branch `ablaeufe-9`) is merged and live at https://app.tieout.workers.dev/ablaeufe/ (check: the three Abläufe open, "Lauf abspielen" runs, 86 + 3 pages, the 1.037 amounts of the other pages unchanged); CI `App`, `Kern` and `Lösungsliste` green on `main`. If step 9 is not merged yet, finish that first (push, pull request, merge, live check, each with the go of Maxi S.).
+**Precondition:** step 10 is merged into `main` and live (check row 10 of `docs/_STATUS.md`; if the pull request of `backend-10` is still open, finish it first: Cloudflare preview, merge, live check, each with the go of Maxi S.).
 
-## Goal
+## Where things stand
 
-Step 10 of `docs/_STATUS.md`: sign-in on, a company per account, files, decisions and tasks stored on the server instead of one browser, demo access for the jury and for customers. Check-in: two accounts, one file, one approval. Everything that so far says "kommt mit der Anmeldung" waits for this step: persons and roles (who checked, who released), shared decisions and tasks, switching checks and Abläufe on and off, real scans.
+- The app at https://app.tieout.workers.dev has sign-in for companies (`/anmelden/`), and without sign-in the demo with the sample data as before. With an account, decisions, tasks, ticks, settings of the Abläufe and files live in the company's database at Supabase (`backend/README.md`), live for every member, and the interface offers each person only the steps of their roles.
+- **Supabase** project `tieout-app` (Frankfurt, Free plan), migrations 001 to 004 applied. "Testfirma A" with two accounts of Maxi S. (Abrechnung; Geschäftsführung), "Testfirma B" with a third (both roles). Their e-mail addresses are not written in this public repository. Maxi S. invites every account himself; Claude adds the row in `mitglied` in the SQL editor and never creates accounts or types a password or key.
+- **Checked:** two companies see only their own rows, in the database and on the live channel (with a counter check); four eyes; one synthetic PDF stored and opened as "unverändert"; amounts unchanged.
 
-## Read first
+## What comes next
 
-1. `CLAUDE.md`, `docs/_STATUS.md` (row 9, open points of 9, 8e, 8c "for step 10"), this file.
-2. `docs/SPEZIFIKATION.md` 1.4 (data and trust), 2.1 (rules for every object: source, review state, Verlauf append only), 3.3 (outputs), section 10 (decisions); `../tieout-intern` for hosting, price and gate constraints (read only, never copy into this repository).
-3. `app/src/lib/decisions.ts` and `live.ts` (how decisions and tasks live in the browser today), `kern/src/modell.ts` (Entscheidung, Feld with Verlauf).
+Step 11 ("Frag tieout") starts only after a team go (`_STATUS.md`). Until then, or before it, these are the candidates; Maxi S. picks one per chat:
 
-## Steps
-
-1. Propose the backend to Maxi S. before building (hosting next to the Cloudflare worker, sign-in, data silo per company, what moves from the browser to the server, cost): two sentences each, a picture of the data flow, his go. Rules that stay: synthetic data only until the legal clearance and the works council say otherwise; data silo per company; history append only; no secrets in the repository.
-2. Build sign-in and the company, then decisions and tasks on the server (the browser keeps working without sign-in as the demo), then one file upload with its source.
-3. Persons and roles: "Prüfung" by the Abrechnung, "Freigabe" by the Geschäftsführung; a reason per correction.
-4. Security review with access per company and input validation, bug and speed review, customer test, status as usual.
-
-## Decisions waiting for Maxi S.
-
-- From 8e: a figure "sicher verrechenbar" and a hint "davon noch nicht freigegeben" at the Restforderung.
-- From 8d: project status colours, the red mark at the Bauschadensumlage, the thin bars on the Übersicht, the dates of the Nachträge N1 to N3.
-- Committing the report of customer test 5 in `../tieout-intern` (local file, see `_STATUS.md`).
+1. **Before the first real customer** (each a proposal with a go, some cost money or add a service): Supabase plan, AVV with Supabase, own SMTP and maybe a code instead of a link, a check of stored files on the server, short-lived signed addresses. Real data only after the legal clearance and the works council (CLAUDE.md rule 4).
+2. **Small fixes from the customer test of step 10** (open point "Step 10" in `_STATUS.md`): Stundenzettel head and unit, wording "korrigierte E-Mail", clickable Verlauf, the Abhilfe link of F1, a notice for the Geschäftsführung, the scan next to a correction.
+3. **Decisions waiting for Maxi S.** (below).
 
 ## Good to know
 
-- **Abläufe (step 9):** counts per block from `ablaeufe()` in `kern/src/ablaeufe.ts`, page data in `app/src/lib/flows.ts`, canvas in `app/src/components/ablauf/`. The canvas must not import the core (only types and `flow-catalogue.ts`), or the page loads the core and its sample data on first paint. Task blocks create tasks in this browser with the block's Zuständig and Frist; settings (`Setting` in `app/src/lib/decisions.ts`) and tasks move to the server in this step, per company.
-- **Tools:** `npm run screens` (app served from `out/` with `node scripts/serve-out.mjs 3103`, launch name `app-build`) photographs 64 screens at five widths. The amount audit compares every euro amount of every exported page against the live app and `docs/Demo_Faelle.md`; write it again in the session's scratchpad if needed (fetch each page, take every amount like `1.234,56 €` from the text without scripts, compare sorted lists). In Git Bash set `MSYS_NO_PATHCONV=1` before passing paths like `/ablaeufe/` to node.
-- **Attio:** measured through Claude in Chrome in Maxi S.'s Edge (his session); pictures only in `app/qa-shots/` (ignored), never committed.
-- A `next dev` of another process may hold port 3100; check pages in the build (`npm run build`, then the server on 3103).
+- **Local check with an account:** launch name `app-build-anmeldung` (port 3100, serves `app/out`; build first). The app may stop it when idle; start it again before a sign-in link is clicked.
+- **E-mail limit:** a few links an hour, and an invitation link lives one hour. Plan a test with at most two links an hour.
+- **Two persons at once:** one browser keeps one session per address. The second person acts in the SQL editor with its own rights (pattern in `backend/test/livetest.sql`), or in a second browser.
+- **Supabase SQL editor:** text goes in with `monaco.editor.getModels()[0].setValue(...)`, "Run" runs it. A "Leave site?" dialog blocks navigation when a query is unsaved; open a new tab. Unicode escapes in SQL: build the backslash in a script (`String.fromCharCode(92)`) and compare the SHA-256 before running.
+- **Test data in Supabase stay** (append only): decisions on F1 and F2 of A, one file of A, F1 checked in B.
+- A server job or the WhatsApp agent needs a deliberate way to write (today only members write).
 
-## Done when
+## Decisions waiting for Maxi S.
 
-- Two accounts of two companies see only their own data; one file uploaded with its source; one find checked by the Abrechnung and released by the Geschäftsführung, visible to both; the demo without sign-in still works; amounts unchanged; check and amount audit green; security review with access per company passed; checked live after the merge go.
-- `_STATUS.md` updated, this file rewritten for the next step.
+- Supabase plan before the first real customer (price in `../tieout-intern`, not here).
+- From 8e: a figure "sicher verrechenbar" and a hint "davon noch nicht freigegeben" at the Restforderung.
+- From 8d: project status colours, the red mark at the Bauschadensumlage, the thin bars on the Übersicht, the dates of the Nachträge N1 to N3.
+- Committing the report of customer test 5 in `../tieout-intern`.
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Schritt 10, Backend. Lies `CLAUDE.md` und `docs/_UEBERGABE.md`. Prüf zuerst, ob Schritt 9 gemergt und live ist. Dann zeig mir einen Vorschlag mit Bild für das Backend (Anmeldung, Betrieb, Dateien, Entscheidungen, Kosten), bevor du baust. Sag mir vor jedem Teil in zwei Sätzen, was passiert, und hol dir mein Go vor allem, was nach außen geht (Push, Merge, Cloudflare, neue Dienste). Beträge nur aus dem Kern. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Lies `CLAUDE.md`, `docs/_UEBERGABE.md` und `docs/_STATUS.md`. Schritt 10 ist fertig. Sag mir in zwei Sätzen, was als Nächstes am meisten bringt, und hol dir mein Go vor allem, was nach außen geht. Deutsch, einfach, Ergebnis zuerst.

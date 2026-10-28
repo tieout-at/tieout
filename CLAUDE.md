@@ -10,6 +10,7 @@ v2 is rebuilt from zero (decided 23.10.2026): UI modelled on Attio's layout, beh
 |---|---|
 | `app/` | v2 app (Next.js), from step 1 |
 | `kern/` | v2 calculation and data model, from step 2; tests against `docs/Demo_Faelle.md` |
+| `backend/` | v2 database in Supabase (Frankfurt), from step 10: migrations and their rules tested in a local Postgres |
 | `agent/` | WhatsApp agent (Santino), taken over unchanged from v1 `product/zuruf`; its own `CLAUDE.md` applies there |
 | `website/` | public website; `website/STRUKTUR.md` is binding |
 | `brand/` | logo and graphics |

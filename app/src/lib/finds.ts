@@ -240,7 +240,7 @@ export function findRecord(slug: string): FindRecord {
     ...korrekturen(d)
       // a correction to a line of a list counts only when the find points to that line
       .filter((k) => ids.has(k.belegId) && (!/^Zeile /.test(k.stelle) || places.has(`${k.belegId}|${k.stelle}`)))
-      .map((k, i) => ({ id: `korrektur-${i}`, time: k.zeit, timeText: zeitText(k.zeit), who: k.wer, text: `korrigierte ${k.beleg}, ${placeText(k.stelle)}: ${k.vorher} auf ${k.wert}`, kind: "korrektur" as const })),
+      .map((k, i) => ({ id: `korrektur-${i}`, time: k.zeit, timeText: zeitText(k.zeit), who: k.wer, text: `korrigierte ${k.beleg}, ${placeText(k.stelle)}: ${k.vorher} auf ${k.wert}${k.grund ? `, ${k.grund}` : ""}`, kind: "korrektur" as const })),
     ...d.meldungen
       .filter((m) => ids.has(m.id))
       .map((m) => ({ id: `meldung-${m.id}`, time: m.bestaetigt.zeitpunkt, timeText: zeitText(m.bestaetigt.zeitpunkt), who: m.bestaetigt.rolle, text: `bestätigte WhatsApp-Meldung ${m.nr}: ${m.taetigkeit.wert}`, kind: "meldung" as const })),

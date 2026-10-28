@@ -77,9 +77,11 @@ export interface Korrektur {
   stelle: string;
   vorher: string;
   wert: string;
+  /** Why it was corrected; null where the Verlauf names no reason. */
+  grund: string | null;
 }
 
-type Feldartig = { wert: unknown; quelle: Quelle; pruefstand: Pruefstand; verlauf: { zeit: string; wer: string; art: string; vorher: unknown; wert: unknown }[] };
+type Feldartig = { wert: unknown; quelle: Quelle; pruefstand: Pruefstand; verlauf: { zeit: string; wer: string; art: string; vorher: unknown; wert: unknown; grund?: string }[] };
 
 const istFeld = (o: unknown): o is Feldartig => !!o && typeof o === "object" && "wert" in o && "quelle" in o && "pruefstand" in o;
 
@@ -198,6 +200,7 @@ export function korrekturen(d: Datensatz): Korrektur[] {
           stelle: f.quelle.stelle ?? `Seite ${f.quelle.seite}`,
           vorher: wertText(v.vorher, schluessel, einheit),
           wert: wertText(v.wert, schluessel, einheit),
+          grund: v.grund ?? null,
         }));
     })
     .sort((a, b) => a.zeit.localeCompare(b.zeit) || a.beleg.localeCompare(b.beleg, "de", { numeric: true }));
@@ -214,6 +217,8 @@ export interface GelesenerWert {
   pruefstand: Pruefstand;
   /** The value as read before a human corrected it. */
   vorher: string | null;
+  /** Why it was corrected. */
+  grund: string | null;
 }
 
 /** Every value the twin read from one Beleg (or WhatsApp-Meldung), in page order. Texts only; nothing is calculated. */
@@ -233,6 +238,7 @@ export function gelesen(d: Datensatz, belegId: string): GelesenerWert[] {
         text: wertText(f.wert, schluessel, einheit),
         pruefstand: f.pruefstand,
         vorher: korrektur ? wertText(korrektur.vorher, schluessel, einheit) : null,
+        grund: korrektur?.grund ?? null,
       };
     })
     .sort((a, b) => a.seite - b.seite);

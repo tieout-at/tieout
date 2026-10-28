@@ -1,12 +1,19 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import dynamic from "next/dynamic";
 import { createElement, useLayoutEffect, useRef, useState } from "react";
 
 import { belegIcon } from "./icons";
 import type { SourceRef } from "@/lib/finds";
 import { markOf, placeText, type OriginalPage } from "@/lib/originals";
 import { OriginalPaper } from "./original-paper";
+import { useAccount } from "@/lib/account";
+import type { ShownFile } from "./stored-files";
+
+// the files of a Beleg exist only with an account: the demo never loads this part
+const StoredFiles = dynamic(() => import("./stored-files").then((m) => m.StoredFiles), { ssr: false });
+const FileView = dynamic(() => import("./stored-files").then((m) => m.FileView), { ssr: false });
 
 const iconButton =
   "flex size-7 items-center justify-center rounded-md text-fg-secondary outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40 max-md:size-11";
@@ -14,11 +21,15 @@ const iconButton =
 /**
  * The original on the right (Attio's chat panel, SPEZIFIKATION.md 4.2): header of 48 px with the Beleg, its page and the
  * arrows to the other pages, below it the page with the place of the source marked. Paging leaves the source; the mark
- * shows only on the page the source points to.
+ * shows only on the page the source points to. With an account the files the company stored for the Beleg are listed
+ * under the head, and one of them can take the place of the drawn page.
  */
 export function OriginalViewer({ source, originals, onClose }: { source: SourceRef; originals: Record<string, OriginalPage>; onClose?: () => void }) {
   // the page shown; a new source resets it (the parent keys this component by the source)
   const [key, setKey] = useState(source.page);
+  // a stored file of the Beleg shown instead of the drawn page, until it is closed or another page is chosen
+  const [file, setFile] = useState<ShownFile | null>(null);
+  const signedIn = useAccount().stand === "konto";
   const page = originals[key] ?? originals[source.page];
   const scroller = useRef<HTMLDivElement>(null);
   const mark = page && key === source.page ? markOf(page, source.place) : null;
@@ -39,7 +50,7 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
     .sort((a, b) => a.page - b.page);
   const at = sameBeleg.findIndex((o) => o.key === page.key);
   const read = mark ? page.read.filter((r) => r.place === source.place || r.place === mark) : [];
-  const reviews = [...new Set(read.map((r) => (r.before ? `${r.review}, vorher ${r.before}` : r.review)))];
+  const reviews = [...new Set(read.map((r) => (r.before ? `${r.review}, vorher ${r.before}${r.reason ? `, ${r.reason}` : ""}` : r.review)))];
 
   return (
     <section aria-label="Original" className="flex h-full min-h-0 flex-col bg-sidebar">
@@ -51,10 +62,10 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
             Seite {page.page} von {page.pages}
           </span>
         )}
-        <button type="button" aria-label="Vorige Seite" disabled={at <= 0} onClick={() => setKey(sameBeleg[at - 1].key)} className={iconButton}>
+        <button type="button" aria-label="Vorige Seite" disabled={at <= 0} onClick={() => (setKey(sameBeleg[at - 1].key), setFile(null))} className={iconButton}>
           <ChevronLeft className="size-4" aria-hidden />
         </button>
-        <button type="button" aria-label="Nächste Seite" disabled={at < 0 || at >= sameBeleg.length - 1} onClick={() => setKey(sameBeleg[at + 1].key)} className={iconButton}>
+        <button type="button" aria-label="Nächste Seite" disabled={at < 0 || at >= sameBeleg.length - 1} onClick={() => (setKey(sameBeleg[at + 1].key), setFile(null))} className={iconButton}>
           <ChevronRight className="size-4" aria-hidden />
         </button>
         {onClose && (
@@ -75,8 +86,9 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
           "Andere Seite als die Quelle, ohne Markierung"
         )}
       </p>
+      {signedIn && page.art !== "whatsapp" && page.project && <StoredFiles key={page.belegId} project={page.project} belegId={page.belegId} shown={file?.file ?? null} onShow={setFile} />}
       <div ref={scroller} className="relative min-h-0 flex-1 overflow-y-auto p-4">
-        <OriginalPaper page={page} mark={mark} />
+        {file && signedIn ? <FileView shown={file} /> : <OriginalPaper page={page} mark={mark} />}
       </div>
     </section>
   );

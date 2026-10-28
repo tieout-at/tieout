@@ -1,0 +1,22 @@
+{
+  "name": "@tieout/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Database of tieout v2 in Supabase (Frankfurt): companies, members, decisions, tasks, settings and files, with the rules tested in a local Postgres",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm test"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.10",
+    "@eslint/js": "9.39.5",
+    "@types/node": "22.20.5",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.0",
+    "vitest": "5.0.5"
+  }
+}

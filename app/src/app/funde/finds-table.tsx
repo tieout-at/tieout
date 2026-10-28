@@ -7,6 +7,7 @@ import { CalendarDays, Construction, FileCheck, FolderInput, Gavel, ShieldAlert,
 import { DataTable, type Column, type QuickFilter } from "@/components/table/data-table";
 import { SideWindow, toggleOpen } from "@/components/ui/side-window";
 import { Tag, type TagColour } from "@/components/table/tag";
+import { checkedBy } from "@/lib/decision-rules";
 import { currentState, decide, DECISION_TEXT, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import { useLive } from "@/lib/live";
@@ -230,6 +231,7 @@ export function FindsTable({
           rows={visible}
           calculations={calculations.amount.filter((c) => c.id === "zusaetzlich" || c.id === "klaerung")}
           stateOf={stateOf}
+          checkerOf={(r) => checkedBy(decisions, keys(r))}
           tasksOf={(r) => tasksOf(r).length}
           reasonOf={reasonOf}
           openOf={(r) => [

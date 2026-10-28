@@ -10,10 +10,13 @@ import { CHECK_TEXT, PALETTE } from "@/lib/flow-catalogue";
 import { blockSettings, DEADLINE_DAYS, DEADLINE_TEXT, dueDate, taskOf, threshold, THRESHOLD_CHECK, THRESHOLDS, type BlockSettings } from "@/lib/flow-state";
 import type { FlowRun, FlowTask, FlowView, RunMoney } from "@/lib/flows";
 import { ROLES } from "@/lib/tasks";
+import { useActor } from "@/lib/account";
+import { settingsRefused } from "@/lib/decision-rules";
 import { saveSetting, useFlowSettings } from "@/lib/use-flow-settings";
 import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
 import { Chip, Dot, KIND_TEXT, Lines, ResultLine } from "./parts";
+import { SavedWhere } from "@/components/shell/saved-where";
 
 const PANEL_FOOT = "Kein Block rechnet einen Betrag oder schreibt dem Auftraggeber.";
 
@@ -71,13 +74,14 @@ function GoTo({ href, label }: { href: string; label: string }) {
   );
 }
 
-/** A native select (the phone's own picker) drawn as our field. */
+/** A native select (the phone's own picker) drawn as our field; fixed for a person whose roles set nothing here. */
 function Select({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: React.ReactNode }) {
+  const refused = settingsRefused(useActor());
   return (
     <label className="flex min-h-9 items-center justify-between gap-3">
       <span className="text-fg-secondary">{label}</span>
       <span className="relative flex">
-        <select value={value} onChange={(e) => onChange(e.target.value)} className="h-8 min-w-40 cursor-pointer appearance-none rounded-md bg-surface py-1 pr-8 pl-2 text-sm shadow-[inset_0_0_0_1px_#e3e4e8] outline-none focus-visible:outline-2 focus-visible:outline-accent max-md:h-11 max-md:text-base">
+        <select value={value} disabled={!!refused} title={refused ?? undefined} onChange={(e) => onChange(e.target.value)} className="h-8 min-w-40 cursor-pointer appearance-none disabled:cursor-default disabled:text-fg-secondary rounded-md bg-surface py-1 pr-8 pl-2 text-sm shadow-[inset_0_0_0_1px_#e3e4e8] outline-none focus-visible:outline-2 focus-visible:outline-accent max-md:h-11 max-md:text-base">
           {children}
         </select>
         <ChevronsUpDown className="pointer-events-none absolute top-1/2 right-2 size-4 -translate-y-1/2 text-fg-muted" aria-hidden />
@@ -205,7 +209,7 @@ function TaskList({ targets, settings }: { targets: FlowTask[]; settings: BlockS
           Alle {open.length} anlegen
         </button>
       )}
-      <p className="mt-2 text-xs leading-4 text-fg-muted">Nur in diesem Browser gespeichert, abhaken unter „Aufgaben“.</p>
+      <p className="mt-2 text-xs leading-4 text-fg-muted"><SavedWhere variant="start" />, abhaken unter „Aufgaben“.</p>
       <TaskDialog open={one !== null} onOpenChange={(o) => !o && setOne(null)} targets={one ? [one] : []} defaults={{ zustaendig: settings.zustaendig, bis: dueDate(settings.frist) ?? "" }} />
     </>
   );
@@ -213,6 +217,7 @@ function TaskList({ targets, settings }: { targets: FlowTask[]; settings: BlockS
 
 /** Who gets the tasks of a block and by when; appended in this browser, used for every task made from the block. */
 function TaskSettings({ block, settings }: { block: string; settings: BlockSettings }) {
+  const refused = settingsRefused(useActor());
   return (
     <>
       <Select label="Zuständig" value={settings.zustaendig} onChange={(v) => saveSetting(block, "zustaendig", v)}>
@@ -227,6 +232,7 @@ function TaskSettings({ block, settings }: { block: string; settings: BlockSetti
           </option>
         ))}
       </Select>
+      {refused && <p className="mt-1 text-xs leading-4 text-fg-muted">{refused}</p>}
     </>
   );
 }
@@ -289,6 +295,7 @@ export function BlockDetail({ view, run, id, onBack, onClose }: { view: FlowView
 
 function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: string; onBack?: () => void; onClose?: () => void }) {
   const list = useFlowSettings();
+  const refused = settingsRefused(useActor());
   const checks = run?.checks ?? [];
   const one = id.startsWith("pruefung:") ? checks.find((c) => `pruefung:${c.id}` === id) : null;
   return (
@@ -359,7 +366,7 @@ function CheckDetail({ run, id, onBack, onClose }: { run: FlowRun | null; id: st
               </option>
             ))}
           </Select>
-          <p className="mt-1 text-xs leading-4 text-fg-muted">Höher heißt weniger Treffer. Kein Betrag ändert sich.</p>
+          <p className="mt-1 text-xs leading-4 text-fg-muted">Höher heißt weniger Treffer. Kein Betrag ändert sich.{refused ? ` ${refused}` : ""}</p>
         </Section>
       )}
     </>
