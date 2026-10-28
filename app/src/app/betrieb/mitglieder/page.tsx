@@ -1,10 +1,8 @@
-import { Users } from "lucide-react";
-
-import { EmptyState } from "@/components/shell/empty-state";
+import { Members } from "./members";
 
 export const metadata = { title: "Mitglieder · Betrieb" };
 
-// Inviting members needs sign-in (step 10); until then this page has no invite button.
+// The members of the own company once signed in (step 10); in the demo the empty state with the way to sign in.
 export default function MitgliederPage() {
-  return <EmptyState icon={Users} title="Mitglieder" text="Abrechnung, Geschäftsführung und Bauleitung, jede Person mit ihrer Rolle. Einladen geht, sobald die Anmeldung aktiv ist." />;
+  return <Members />;
 }

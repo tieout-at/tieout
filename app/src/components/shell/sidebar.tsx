@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Check, ChevronDown, Circle, FlaskConical, PanelLeft, Search, UserPlus } from "lucide-react";
+import { Check, ChevronDown, Circle, FlaskConical, LogIn, LogOut, PanelLeft, Search, UserPlus } from "lucide-react";
 
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import {
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { rolesText, signOut, useAccount } from "@/lib/account";
 import { BUSINESS } from "@/lib/example";
 import { activeDestination, SECTIONS, TOP, type Destination } from "@/lib/navigation";
 import { useTasks } from "@/lib/use-tasks";
@@ -83,6 +84,7 @@ function BusinessRow({ inSheet }: { inSheet: boolean }) {
             <UserPlus />
             Mitglieder einladen
           </DropdownMenuItem>
+          <AccountItems />
         </DropdownMenuContent>
       </DropdownMenu>
       {!inSheet && (
@@ -97,6 +99,63 @@ function BusinessRow({ inSheet }: { inSheet: boolean }) {
           <TooltipContent>Seitenleiste ausblenden</TooltipContent>
         </Tooltip>
       )}
+    </div>
+  );
+}
+
+/** The account in the menu of the business (Attio: account and "Log out" in the workspace menu). */
+function AccountItems() {
+  const account = useAccount();
+  if (account.stand === "laden") return null;
+  if (account.stand === "beispiel")
+    return (
+      <>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem render={<Link href="/anmelden/" />}>
+          <LogIn />
+          Anmelden
+        </DropdownMenuItem>
+      </>
+    );
+  return (
+    <>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuLabel>Konto</DropdownMenuLabel>
+        <DropdownMenuItem render={<Link href="/anmelden/" />} className="h-11">
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate">{account.stand === "konto" ? account.person : account.email}</span>
+            <span className="truncate text-xs text-fg-muted">{account.stand === "konto" ? `${rolesText(account.rollen)}, ${account.firma}` : "noch ohne Firma"}</span>
+          </span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => void signOut()}>
+          <LogOut />
+          Abmelden
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+    </>
+  );
+}
+
+/** Who works here, once signed in: person and company at the foot of the sidebar. Nothing in the demo. */
+function AccountRow() {
+  const { setMobileOpen } = useShell();
+  const account = useAccount();
+  if (account.stand !== "konto" && account.stand !== "ohne_firma") return null;
+  const name = account.stand === "konto" ? account.person : account.email;
+  return (
+    <div className="px-2 py-[5px] shadow-[inset_0_1px_0_0_#eeeff1]">
+      <Link
+        href="/anmelden/"
+        onClick={() => setMobileOpen(false)}
+        className="flex h-7 items-center gap-1.5 rounded-item pr-1 pl-2 outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-accent max-md:h-11"
+      >
+        <span aria-hidden className="flex size-4 shrink-0 items-center justify-center rounded-full bg-fill-hover text-[10px] font-semibold text-fg">
+          {name.slice(0, 1).toUpperCase()}
+        </span>
+        <span className="truncate">{name}</span>
+        <span className="ml-auto truncate text-xs text-fg-muted">{account.stand === "konto" ? account.firma : "ohne Firma"}</span>
+      </Link>
     </div>
   );
 }
@@ -224,6 +283,7 @@ function BottomRows() {
           </PopoverContent>
         </Popover>
       </div>
+      <AccountRow />
       <div className="px-2 py-[5px] shadow-[inset_0_1px_0_0_#eeeff1]">
         <Link
           href="/betrieb/mitglieder/"
