@@ -136,10 +136,20 @@ export async function sendLink(email: string, back: string): Promise<{ ok: true 
   const sb = await supabase();
   const { error } = await sb.auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: false, emailRedirectTo: back } });
   if (!error) return { ok: true };
-  if (error.status === 429 || /rate limit/i.test(error.message)) return { ok: false, why: "Zu viele Versuche. Bitte in einer Stunde noch einmal." };
-  // An address without an account answers like one with: no hint which addresses have an account.
-  if (/signups? not allowed|user not found/i.test(error.message)) return { ok: true };
-  return { ok: false, why: "Der Link ging nicht hinaus. Bitte später noch einmal." };
+  // An address without an account answers like one with: no hint which addresses have an account. An invited
+  // account that has not taken up its invitation answers the same way (Supabase treats it as a new sign-up).
+  if (error.code === "signup_disabled" || /signups? not allowed|user not found/i.test(error.message)) return { ok: true };
+  return { ok: false, why: refusalText(error) };
+}
+
+/**
+ * Why no link went out, in the app's words. Two limits of Supabase answer 429: one address asked again too soon
+ * (a minute), or the project sent its e-mails of the hour (the built-in mail service sends only a few per hour).
+ */
+export function refusalText(error: { status?: number; code?: string; message: string }): string {
+  if (error.code === "over_email_send_rate_limit" || /email rate limit/i.test(error.message)) return "Gerade gehen keine E-Mails mehr hinaus. Bitte in einer Stunde noch einmal.";
+  if (error.status === 429 || /rate limit|only request this after/i.test(error.message)) return "Bitte eine Minute warten und dann noch einmal.";
+  return "Der Link ging nicht hinaus. Bitte später noch einmal.";
 }
 
 export async function signOut() {

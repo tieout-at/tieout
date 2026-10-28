@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { mayHaveSession, rolesOf, rolesText } from "./account";
+import { mayHaveSession, refusalText, rolesOf, rolesText } from "./account";
+
+describe("refusalText: why no link went out", () => {
+  it("tells the hourly limit of the project from the minute between two links to one address", () => {
+    // As Supabase answered on 28.10.2026 (auth log): the project's e-mails of the hour were sent.
+    expect(refusalText({ status: 429, code: "over_email_send_rate_limit", message: "email rate limit exceeded" })).toMatch(/in einer Stunde/);
+    expect(refusalText({ status: 429, code: "over_request_rate_limit", message: "For security purposes, you can only request this after 42 seconds." })).toMatch(/eine Minute/);
+    expect(refusalText({ status: 500, message: "Error sending magic link email" })).toMatch(/später/);
+  });
+});
 
 const store = (value: string | null) => ({ getItem: () => value });
 
