@@ -1,5 +1,5 @@
 /**
- * The rules of migrations/001_basis.sql, played through in a local Postgres (PGlite) with two companies: what a member
+ * The rules of migrations/001_basis.sql (and 003, the Beleg of a file), played through in a local Postgres (PGlite) with two companies: what a member
  * sees, what they may add, and what the database refuses whatever the browser sends.
  */
 
@@ -42,6 +42,7 @@ beforeAll(async () => {
   pg = new PGlite();
   await pg.exec(sql("./supabase-stubs.sql"));
   await pg.exec(sql("../migrations/001_basis.sql"));
+  await pg.exec(sql("../migrations/003_datei_beleg.sql"));
   await pg.exec(`
     insert into public.firma (id, name) values ('${FIRMA_A}', 'Testfirma A'), ('${FIRMA_B}', 'Testfirma B');
     insert into auth.users (id) values ${Object.values(U).map((id) => `('${id}')`).join(", ")};
@@ -281,5 +282,17 @@ describe("Dateien", () => {
     await expect(datei(U.anna, "Aufmaßblatt 12 (Seite 2).pdf")).resolves.toHaveLength(1);
     await expect(als(U.anna, "insert into public.datei (projekt_id, name, typ, groesse, sha256) values ('p1', 'a.pdf', 'application/pdf', 1, 'xyz')")).rejects.toThrow(/check/);
     await expect(als(U.anna, `insert into public.datei (projekt_id, name, typ, groesse, sha256, pfad) values ('p1', 'a.pdf', 'application/pdf', 1, '${SHA}', '${FIRMA_B}/x')`)).rejects.toThrow(/permission denied/);
+  });
+
+  it("names the Beleg it belongs to (003), only as a plain key", async () => {
+    const mit = (beleg: string) =>
+      als<{ beleg_id: string; pfad: string }>(U.anna, "insert into public.datei (projekt_id, beleg_id, name, typ, groesse, sha256) values ('wohnpark-mooshaim', $1, 'rb9.pdf', 'application/pdf', 10, $2) returning *", [beleg, SHA]);
+    const [d] = await mit("rb-9");
+    expect(d.beleg_id).toBe("rb-9");
+    expect(d.pfad.startsWith(`${FIRMA_A}/`)).toBe(true);
+    await expect(mit("../rb-9")).rejects.toThrow(/check/);
+    await expect(mit("RB 9")).rejects.toThrow(/check/);
+    await expect(mit("x".repeat(81))).rejects.toThrow(/check/);
+    expect(await als(U.berta, "select * from public.datei where beleg_id = 'rb-9'")).toEqual([]);
   });
 });
