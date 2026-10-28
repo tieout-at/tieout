@@ -1,0 +1,248 @@
+/**
+ * The rules of migrations/001_basis.sql, played through in a local Postgres (PGlite) with two companies: what a member
+ * sees, what they may add, and what the database refuses whatever the browser sends.
+ */
+
+import { readFileSync } from "node:fs";
+
+import { PGlite } from "@electric-sql/pglite";
+import { beforeAll, describe, expect, it } from "vitest";
+
+const sql = (file: string) => readFileSync(new URL(file, import.meta.url), "utf8");
+
+const FIRMA_A = "aaaaaaaa-0000-4000-8000-000000000001";
+const FIRMA_B = "bbbbbbbb-0000-4000-8000-000000000001";
+const U = {
+  anna: "00000000-0000-4000-8000-00000000000a", // A, Abrechnung
+  georg: "00000000-0000-4000-8000-00000000000b", // A, Geschäftsführung
+  beide: "00000000-0000-4000-8000-00000000000c", // A, Abrechnung and Geschäftsführung
+  bernd: "00000000-0000-4000-8000-00000000000d", // A, Bauleitung
+  berta: "00000000-0000-4000-8000-00000000000e", // B, Abrechnung and Geschäftsführung
+  fremd: "00000000-0000-4000-8000-00000000000f", // signed in, member of no company
+} as const;
+
+let pg: PGlite;
+
+/** Runs a query as a signed-in user (or as an anonymous visitor with null), as PostgREST would. */
+async function als<T = Record<string, unknown>>(user: string | null, query: string, params: unknown[] = []): Promise<T[]> {
+  await pg.exec("reset role");
+  await pg.query("select set_config('request.jwt.claim.sub', $1, false)", [user ?? ""]);
+  await pg.exec(user ? "set role authenticated" : "set role anon");
+  try {
+    return (await pg.query<T>(query, params)).rows;
+  } finally {
+    await pg.exec("reset role");
+  }
+}
+
+const entscheiden = (user: string, fund: string, stand: string, grund: string | null = null, frueher: string[] = []) =>
+  als(user, "insert into public.entscheidung (fund_schluessel, fruehere_schluessel, stand, grund) values ($1, $2, $3, $4) returning *", [fund, frueher, stand, grund]);
+
+beforeAll(async () => {
+  pg = new PGlite();
+  await pg.exec(sql("./supabase-stubs.sql"));
+  await pg.exec(sql("../migrations/001_basis.sql"));
+  await pg.exec(`
+    insert into public.firma (id, name) values ('${FIRMA_A}', 'Testfirma A'), ('${FIRMA_B}', 'Testfirma B');
+    insert into auth.users (id) values ${Object.values(U).map((id) => `('${id}')`).join(", ")};
+    insert into public.mitglied (user_id, firma_id, name, rollen) values
+      ('${U.anna}', '${FIRMA_A}', 'Anna Abrechnung', '{abrechnung}'),
+      ('${U.georg}', '${FIRMA_A}', 'Georg Geschäftsführung', '{geschaeftsfuehrung}'),
+      ('${U.beide}', '${FIRMA_A}', 'Bea Beides', '{abrechnung,geschaeftsfuehrung}'),
+      ('${U.bernd}', '${FIRMA_A}', 'Bernd Bauleitung', '{bauleitung}'),
+      ('${U.berta}', '${FIRMA_B}', 'Berta B', '{abrechnung,geschaeftsfuehrung}');
+  `);
+});
+
+describe("Datensilo je Firma", () => {
+  it("a member sees only the own company and its members", async () => {
+    expect(await als(U.anna, "select name from public.firma")).toEqual([{ name: "Testfirma A" }]);
+    expect((await als(U.anna, "select name from public.mitglied")).length).toBe(4);
+    expect(await als(U.berta, "select name from public.mitglied")).toEqual([{ name: "Berta B" }]);
+  });
+
+  it("company B never sees what company A decided, and the other way round", async () => {
+    await entscheiden(U.anna, "p1/silo", "geprueft");
+    await entscheiden(U.berta, "p1/silo", "geprueft");
+    const a = await als<{ person: string }>(U.anna, "select person from public.entscheidung where fund_schluessel = 'p1/silo'");
+    const b = await als<{ person: string }>(U.berta, "select person from public.entscheidung where fund_schluessel = 'p1/silo'");
+    expect(a.map((r) => r.person)).toEqual(["Anna Abrechnung"]);
+    expect(b.map((r) => r.person)).toEqual(["Berta B"]);
+  });
+
+  it("the same find key is decided per company: B's check does not count for A", async () => {
+    await entscheiden(U.berta, "p1/getrennt", "geprueft");
+    await expect(entscheiden(U.georg, "p1/getrennt", "freigegeben")).rejects.toThrow(/Von gefunden geht es nicht zu freigegeben/);
+  });
+
+  it("an anonymous visitor reads and writes nothing", async () => {
+    await expect(als(null, "select * from public.entscheidung")).rejects.toThrow(/permission denied/);
+    await expect(als(null, "select * from public.firma")).rejects.toThrow(/permission denied/);
+    await expect(entscheidenAnonym()).rejects.toThrow(/permission denied/);
+  });
+
+  it("a signed-in account without a company sees nothing and cannot add", async () => {
+    expect(await als(U.fremd, "select * from public.entscheidung")).toEqual([]);
+    expect(await als(U.fremd, "select * from public.mitglied")).toEqual([]);
+    await expect(entscheiden(U.fremd, "p1/fremd", "geprueft")).rejects.toThrow(/Nur Mitglieder/);
+  });
+});
+
+const entscheidenAnonym = () => als(null, "insert into public.entscheidung (fund_schluessel, stand) values ('p1/x', 'geprueft')");
+
+describe("Der Server schreibt wer und wann", () => {
+  it("company, person and time come from the server", async () => {
+    const [row] = await entscheiden(U.anna, "p1/stempel", "geprueft");
+    expect(row).toMatchObject({ firma_id: FIRMA_A, user_id: U.anna, person: "Anna Abrechnung", rolle: "abrechnung" });
+  });
+
+  it("the browser cannot send another company, person or time", async () => {
+    await expect(als(U.anna, `insert into public.entscheidung (fund_schluessel, stand, firma_id) values ('p1/f', 'geprueft', '${FIRMA_B}')`)).rejects.toThrow(/permission denied/);
+    await expect(als(U.anna, `insert into public.entscheidung (fund_schluessel, stand, user_id) values ('p1/f', 'geprueft', '${U.georg}')`)).rejects.toThrow(/permission denied/);
+    await expect(als(U.anna, "insert into public.entscheidung (fund_schluessel, stand, zeit) values ('p1/f', 'geprueft', '2020-01-01')")).rejects.toThrow(/permission denied/);
+  });
+
+  it("nothing is ever changed or deleted", async () => {
+    await entscheiden(U.anna, "p1/fest", "geprueft");
+    for (const table of ["entscheidung", "aufgabe", "aufgabe_erledigt", "ablauf_einstellung", "datei", "mitglied", "firma"]) {
+      const column = table === "firma" ? "name" : "firma_id";
+      await expect(als(U.beide, `update public.${table} set ${column} = ${column}`)).rejects.toThrow(/permission denied/);
+      await expect(als(U.beide, `delete from public.${table}`)).rejects.toThrow(/permission denied/);
+    }
+  });
+
+  it("members cannot add members or companies", async () => {
+    await expect(als(U.beide, `insert into public.mitglied (user_id, firma_id, name, rollen) values ('${U.fremd}', '${FIRMA_A}', 'X', '{abrechnung}')`)).rejects.toThrow(/permission denied/);
+    await expect(als(U.beide, "insert into public.firma (name) values ('Neu')")).rejects.toThrow(/permission denied/);
+  });
+});
+
+describe("Prüfung, Freigabe und vier Augen", () => {
+  it("check by the Abrechnung, release by another person of the Geschäftsführung", async () => {
+    await entscheiden(U.anna, "p1/f1", "geprueft");
+    const [row] = await entscheiden(U.georg, "p1/f1", "freigegeben");
+    expect(row).toMatchObject({ stand: "freigegeben", rolle: "geschaeftsfuehrung", person: "Georg Geschäftsführung" });
+    await entscheiden(U.anna, "p1/f1", "in_schlussrechnung");
+  });
+
+  it("the site manager neither checks nor releases", async () => {
+    await expect(entscheiden(U.bernd, "p1/f2", "geprueft")).rejects.toThrow(/macht die Abrechnung/);
+    await expect(entscheiden(U.bernd, "p1/f2", "nicht_verrechnen", "Grund")).rejects.toThrow(/macht die Abrechnung/);
+  });
+
+  it("the Abrechnung does not release, the Geschäftsführung alone does not check", async () => {
+    await entscheiden(U.anna, "p1/f3", "geprueft");
+    await expect(entscheiden(U.anna, "p1/f3", "freigegeben")).rejects.toThrow(/macht die Geschäftsführung/);
+    await expect(entscheiden(U.georg, "p1/f4", "geprueft")).rejects.toThrow(/macht die Abrechnung/);
+  });
+
+  it("a person holding both roles does not release what they checked", async () => {
+    await entscheiden(U.beide, "p1/f5", "geprueft");
+    await expect(entscheiden(U.beide, "p1/f5", "freigegeben")).rejects.toThrow(/Vier Augen/);
+    await entscheiden(U.georg, "p1/f5", "freigegeben");
+    await entscheiden(U.anna, "p1/f6", "geprueft");
+    await entscheiden(U.beide, "p1/f6", "freigegeben");
+  });
+
+  it("taken up again counts as a new check by the person who took it up", async () => {
+    await entscheiden(U.anna, "p1/f7", "geprueft");
+    await entscheiden(U.beide, "p1/f7", "nicht_verrechnen", "schon mit einem Nachtrag verrechnet");
+    await entscheiden(U.beide, "p1/f7", "geprueft");
+    await expect(entscheiden(U.beide, "p1/f7", "freigegeben")).rejects.toThrow(/Vier Augen/);
+    await entscheiden(U.georg, "p1/f7", "freigegeben");
+  });
+});
+
+describe("Ein Schritt nach dem anderen", () => {
+  it("no release before a check, no check twice, nothing after the invoice", async () => {
+    await expect(entscheiden(U.georg, "p1/s1", "freigegeben")).rejects.toThrow(/Von gefunden geht es nicht zu freigegeben/);
+    await expect(entscheiden(U.anna, "p1/s1", "in_schlussrechnung")).rejects.toThrow(/Von gefunden geht es nicht zu in_schlussrechnung/);
+    await entscheiden(U.anna, "p1/s1", "geprueft");
+    await expect(entscheiden(U.anna, "p1/s1", "geprueft")).rejects.toThrow(/Von geprueft geht es nicht zu geprueft/);
+    await entscheiden(U.georg, "p1/s1", "freigegeben");
+    await entscheiden(U.anna, "p1/s1", "in_schlussrechnung");
+    await expect(entscheiden(U.anna, "p1/s1", "nicht_verrechnen", "zu spät")).rejects.toThrow(/Von in_schlussrechnung geht es nicht zu nicht_verrechnen/);
+  });
+
+  it("Nicht verrechnen needs a reason, blanks are no reason", async () => {
+    await expect(entscheiden(U.anna, "p1/s2", "nicht_verrechnen")).rejects.toThrow(/check/);
+    await expect(entscheiden(U.anna, "p1/s2", "nicht_verrechnen", "   ")).rejects.toThrow(/check/);
+    const [row] = await entscheiden(U.anna, "p1/s2", "nicht_verrechnen", "  doppelt  ");
+    expect(row.grund).toBe("doppelt");
+  });
+
+  it("decisions under an earlier key of the same work count", async () => {
+    await entscheiden(U.anna, "p1/meldung:3", "geprueft");
+    await expect(entscheiden(U.anna, "p1/regie:11", "geprueft", null, ["p1/meldung:3"])).rejects.toThrow(/Von geprueft geht es nicht zu geprueft/);
+    await expect(entscheiden(U.anna, "p1/regie:11", "freigegeben", null, ["p1/meldung:3"])).rejects.toThrow(/macht die Geschäftsführung/);
+    await expect(entscheiden(U.beide, "p1/regie:11", "freigegeben", null, ["p1/meldung:3"])).resolves.toHaveLength(1);
+  });
+
+  it("an unknown state is refused", async () => {
+    await expect(entscheiden(U.anna, "p1/s3", "gefunden")).rejects.toThrow(/nicht zu gefunden/);
+  });
+});
+
+describe("Aufgaben und Einstellungen", () => {
+  const aufgabe = (user: string, id: string, href = "/projekte/p1/funde/f1/") =>
+    als(user, "insert into public.aufgabe (id, fund_schluessel, fund, href, text, zustaendig, bis) values ($1, 'p1/f1', 'F1 Wohnpark Mooshaim', $2, 'Regiebericht unterschreiben lassen', 'Bauleitung', '2026-11-05') returning *", [id, href]);
+
+  it("every member, the site manager too, creates and ticks tasks of the own company", async () => {
+    const [t] = await aufgabe(U.bernd, "t1");
+    expect(t).toMatchObject({ firma_id: FIRMA_A, person: "Bernd Bauleitung" });
+    await als(U.bernd, "insert into public.aufgabe_erledigt (aufgabe_id, erledigt) values ('t1', true)");
+    expect(await als(U.berta, "select * from public.aufgabe")).toEqual([]);
+  });
+
+  it("a member of B cannot tick a task of A", async () => {
+    await aufgabe(U.anna, "t2");
+    await expect(als(U.berta, "insert into public.aufgabe_erledigt (aufgabe_id, erledigt) values ('t2', true)")).rejects.toThrow(/foreign key/);
+  });
+
+  it("a task only links inside the app", async () => {
+    await expect(aufgabe(U.anna, "t3", "javascript:alert(1)")).rejects.toThrow(/check/);
+    await expect(aufgabe(U.anna, "t4", "//boese.example/")).rejects.toThrow(/check/);
+    await expect(aufgabe(U.anna, "t5", "https://boese.example/")).rejects.toThrow(/check/);
+  });
+
+  it("the Abläufe are set by the Abrechnung or the Geschäftsführung, not by the site", async () => {
+    await als(U.anna, "insert into public.ablauf_einstellung (block, feld, wert) values ('abschluss/mengenaenderung', 'schwelle', '20')");
+    await expect(als(U.bernd, "insert into public.ablauf_einstellung (block, feld, wert) values ('abschluss/mengenaenderung', 'schwelle', '0')")).rejects.toThrow(/row-level security/);
+    await expect(als(U.anna, "insert into public.ablauf_einstellung (block, feld, wert) values ('x', 'farbe', 'rot')")).rejects.toThrow(/check/);
+  });
+});
+
+describe("Dateien", () => {
+  const SHA = "a".repeat(64);
+  const datei = (user: string, name = "Regiebericht 11.pdf", typ = "application/pdf", groesse = 120_000) =>
+    als<{ pfad: string; firma_id: string }>(user, "insert into public.datei (projekt_id, name, typ, groesse, sha256) values ('p1', $1, $2, $3, $4) returning *", [name, typ, groesse, SHA]);
+  const ablegen = (user: string, pfad: string) => als(user, "insert into storage.objects (bucket_id, name) values ('dateien', $1)", [pfad]);
+
+  it("a file is stored at the place of its row, in the own company's folder, and read only there", async () => {
+    const [d] = await datei(U.anna);
+    expect(d.pfad.startsWith(`${FIRMA_A}/`)).toBe(true);
+    await ablegen(U.anna, d.pfad);
+    expect(await als(U.georg, "select name from storage.objects")).toEqual([{ name: d.pfad }]);
+    expect(await als(U.berta, "select name from storage.objects")).toEqual([]);
+    expect(await als(U.berta, "select * from public.datei")).toEqual([]);
+  });
+
+  it("nobody stores a file without its row, in another place, or over an existing one", async () => {
+    await expect(ablegen(U.anna, `${FIRMA_A}/ohne-zeile`)).rejects.toThrow(/row-level security/);
+    const [d] = await datei(U.anna);
+    await expect(ablegen(U.berta, d.pfad)).rejects.toThrow(/row-level security/);
+    await expect(ablegen(U.georg, d.pfad)).rejects.toThrow(/row-level security/);
+    await ablegen(U.anna, d.pfad);
+    expect(await als(U.anna, "update storage.objects set name = name where name = $1 returning name", [d.pfad])).toEqual([]);
+    expect(await als(U.anna, "delete from storage.objects where name = $1 returning name", [d.pfad])).toEqual([]);
+  });
+
+  it("only PDF, JPEG and PNG up to 20 MB, with a well-formed checksum and a plain name", async () => {
+    await expect(datei(U.anna, "x.exe", "application/x-msdownload")).rejects.toThrow(/check/);
+    await expect(datei(U.anna, "gross.pdf", "application/pdf", 20_971_521)).rejects.toThrow(/check/);
+    await expect(datei(U.anna, "../a.pdf")).rejects.toThrow(/check/);
+    await expect(datei(U.anna, "a\\b.pdf")).rejects.toThrow(/check/);
+    await expect(als(U.anna, "insert into public.datei (projekt_id, name, typ, groesse, sha256) values ('p1', 'a.pdf', 'application/pdf', 1, 'xyz')")).rejects.toThrow(/check/);
+    await expect(als(U.anna, `insert into public.datei (projekt_id, name, typ, groesse, sha256, pfad) values ('p1', 'a.pdf', 'application/pdf', 1, '${SHA}', '${FIRMA_B}/x')`)).rejects.toThrow(/permission denied/);
+  });
+});
