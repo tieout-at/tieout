@@ -33,8 +33,8 @@ export type OriginalPage = {
   extra: PageField[];
   /** A signature field and whether it is given. */
   sign: { label: string; value: string; place: Place; given: boolean } | null;
-  /** Everything the twin read from this page, for the line under the page ("maschinell gelesen", "korrigiert, vorher …"). */
-  read: { place: Place; label: string | null; text: string; review: string; before: string | null }[];
+  /** Everything the twin read from this page, for the line under the page ("maschinell gelesen", "korrigiert, vorher …, Grund"). */
+  read: { place: Place; label: string | null; text: string; review: string; before: string | null; reason: string | null }[];
 };
 
 /** The place in the app's words: a line of a list is named by its position ("Position 22.04.12B"). */
@@ -86,7 +86,7 @@ function readOn(werte: GelesenerWert[], page: number): OriginalPage["read"] {
   return werte
     .filter((w) => w.seite === page)
     .filter((w) => !seen.has(`${w.stelle}|${w.text}`) && !!seen.add(`${w.stelle}|${w.text}`))
-    .map((w) => ({ place: w.stelle, label: LABEL[w.schluessel] ?? null, text: w.text, review: PRUEFSTAND_TEXT[w.pruefstand], before: w.vorher }));
+    .map((w) => ({ place: w.stelle, label: LABEL[w.schluessel] ?? null, text: w.text, review: PRUEFSTAND_TEXT[w.pruefstand], before: w.vorher, reason: w.grund }));
 }
 
 /**

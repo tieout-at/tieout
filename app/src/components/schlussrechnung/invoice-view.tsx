@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { InfoTip } from "@/components/ui/info-tip";
 import { useReducedMotion } from "@/components/ui/use-media";
+import { useActor } from "@/lib/account";
+import { notYours } from "@/lib/decision-rules";
 import { DECISION_TEXT, localTime, readDecisions, takeIntoInvoice, type DecisionState } from "@/lib/decisions";
 import type { ChangeEntry, InvoiceFind, InvoiceView as View, SettlementLine } from "@/lib/invoice";
 import { useLive } from "@/lib/live";
@@ -122,8 +124,11 @@ function StatusHead({ v }: { v: View }) {
   const busy = useRef(false);
   const done = v.status.all.filter((f) => decided(f.decision)).length;
   const released = v.status.all.filter((f) => f.decision === "freigegeben");
+  // the Abrechnung writes the invoice and notes the take-over (the database refuses it to anyone else)
+  const notMine = notYours({ stand: "in_schlussrechnung", label: "Übernehmen", wer: "Abrechnung" }, useActor(), null);
+  const can = released.length > 0 && !notMine;
   // why the take-over is grey: nothing released yet, or every released find is in already
-  const takeOverNote = v.status.inInvoice ? "Alle freigegebenen Funde sind übernommen" : "Übernehmen geht erst nach der Freigabe eines Funds";
+  const takeOverNote = released.length && notMine ? notMine : v.status.inInvoice ? "Alle freigegebenen Funde sind übernommen" : "Übernehmen geht erst nach der Freigabe eines Funds";
   const says = v.status.final
     ? "Ja. Alle Funde sind entschieden, die Ausdrucke sind endgültig."
     : released.length
@@ -200,12 +205,12 @@ function StatusHead({ v }: { v: View }) {
             <FileCheck2 className="size-4 text-fg-secondary" aria-hidden />
             Beweispakete
           </Link>
-          <Button variant={released.length ? "primary" : "secondary"} disabled={!released.length} title={released.length ? undefined : takeOverNote} onClick={() => setAsking(true)} aria-describedby={released.length ? undefined : "uebernehmen-hinweis"}>
+          <Button variant={can ? "primary" : "secondary"} disabled={!can} title={can ? undefined : takeOverNote} onClick={() => setAsking(true)} aria-describedby={can ? undefined : "uebernehmen-hinweis"}>
             In die Schlussrechnung übernehmen
           </Button>
         </div>
         <span className="flex items-center gap-2 text-xs text-fg-muted">
-          {!released.length && <span id="uebernehmen-hinweis" className="sr-only">{takeOverNote}</span>}
+          {!can && <span id="uebernehmen-hinweis" className={notMine && released.length ? "text-fg-secondary" : "sr-only"}>{takeOverNote}</span>}
           {!v.status.final && (
             <span className="flex items-center gap-1.5">
               <span aria-hidden className="size-1.5 rounded-full bg-state-grey" />

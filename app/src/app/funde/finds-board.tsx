@@ -17,6 +17,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useActor } from "@/lib/account";
+import { notYours, yourMoves } from "@/lib/decision-rules";
 import { DECISION_TEXT, moves, refusal, type DecisionState, type Move } from "@/lib/decisions";
 import type { FindRow } from "@/lib/kern-data";
 import { columnSums, type Calculation } from "@/lib/table";
@@ -62,6 +64,7 @@ type Pending = { row: FindRow; move: Move };
  * whole flow fits at 1440 px. Moving a card is a decision: it opens the same confirmation as the decision bar, one find
  * and one step at a time, never in bulk; until it is confirmed a dashed card marks the target. The menu on each card
  * offers the same moves for the keyboard and for phones. Below 768 px the board is a list grouped by Entscheidung.
+ * With an account a card goes only where the person's roles allow; anywhere else the board says whose step it is.
  */
 /** Cards a group shows before "weitere zeigen" (a run of one more is shown whole). */
 const FOLD = 4;
@@ -70,6 +73,7 @@ export function FindsBoard({
   rows,
   calculations,
   stateOf,
+  checkerOf,
   tasksOf,
   reasonOf,
   openOf,
@@ -81,6 +85,8 @@ export function FindsBoard({
   /** "zusätzlich verrechenbar" and "in Klärung"; a column shows them only where `kern/` has the sum for exactly its cards. */
   calculations: Calculation[];
   stateOf: (r: FindRow) => DecisionState;
+  /** Who checked a find last (with an account): nobody releases their own check. */
+  checkerOf: (r: FindRow) => string | null;
   tasksOf: (r: FindRow) => number;
   /** The reason given for the latest "Nicht verrechnen" of a find. */
   reasonOf: (r: FindRow) => string | null;
@@ -96,6 +102,14 @@ export function FindsBoard({
   const [taskFor, setTaskFor] = useState<FindRow | null>(null);
   const [message, setMessage] = useState<{ text: string; href?: string; link?: string } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const actor = useActor();
+  // why a card may not go to a column: a step the find cannot take, or one that is not this person's
+  const blocked = (r: FindRow, to: DecisionState) => {
+    const from = stateOf(r);
+    const move = moves(from).find((m) => m.stand === to);
+    return refusal(from, to) ?? (move ? notYours(move, actor, checkerOf(r)) : null);
+  };
+  const mine = (r: FindRow) => yourMoves(moves(stateOf(r)), actor, checkerOf(r));
 
   useEffect(() => () => clearTimeout(timer.current), []);
   const say = (text: string, href?: string, link = "Fund öffnen") => {
@@ -110,7 +124,7 @@ export function FindsBoard({
   const ask = (row: FindRow, to: DecisionState) => {
     const from = stateOf(row);
     if (from === to) return;
-    const why = refusal(from, to);
+    const why = blocked(row, to);
     if (why) return say(why);
     setPending({ row, move: moves(from).find((m) => m.stand === to)! });
   };
@@ -133,7 +147,7 @@ export function FindsBoard({
   const card = (r: FindRow, lane: DecisionState, inGroup = false) => (
     <Card
       row={r}
-      moves={moves(stateOf(r))}
+      moves={mine(r)}
       tasks={tasksOf(r)}
       reason={lane === "nicht_verrechnen" ? reasonOf(r) : null}
       about={about(r)}
@@ -146,7 +160,7 @@ export function FindsBoard({
       }}
       onDragEnd={() => {
         // a column that takes no card gets no drop event: say why when the card was let go over it
-        const why = over && over !== stateOf(r) ? refusal(stateOf(r), over) : null;
+        const why = over && over !== stateOf(r) ? blocked(r, over) : null;
         if (why) say(why);
         setDragging(null);
         setOver(null);
@@ -162,7 +176,7 @@ export function FindsBoard({
       <div className="flex h-[calc(100dvh-var(--header-height)-6rem)] min-h-[420px] shrink-0 gap-2 overflow-x-auto px-2.5 pt-3 pb-2 max-md:hidden">
         {LANES.map((lane) => {
           const cards = rows.filter((r) => stateOf(r) === lane.state);
-          const target = dragging ? stateOf(dragging) !== lane.state && refusal(stateOf(dragging), lane.state) === null : false;
+          const target = dragging ? stateOf(dragging) !== lane.state && blocked(dragging, lane.state) === null : false;
           const waiting = pending?.move.stand === lane.state ? pending.row : null;
           const folded = lane.foldable && cards.length === 0 && !waiting && !(dragging && target);
           const label = `${DECISION_TEXT[lane.state]}, ${cards.length} ${cards.length === 1 ? "Fund" : "Funde"}`;
@@ -279,7 +293,7 @@ export function FindsBoard({
                 {cards.map((r) => (
                   <li key={r.id} className="relative shadow-line-bottom">
                     <PhoneRow row={r} withProject={withProject} reason={lane.state === "nicht_verrechnen" ? reasonOf(r) : null} menuSpace />
-                    <DecisionMenu about={about(r)} moves={moves(stateOf(r))} onMove={(m) => setPending({ row: r, move: m })} onTask={() => setTaskFor(r)} className="absolute right-1 bottom-1 size-11" />
+                    <DecisionMenu about={about(r)} moves={mine(r)} onMove={(m) => setPending({ row: r, move: m })} onTask={() => setTaskFor(r)} className="absolute right-1 bottom-1 size-11" />
                   </li>
                 ))}
               </ul>
@@ -389,7 +403,7 @@ function Card({
   onTask,
 }: {
   row: FindRow;
-  moves: Move[];
+  moves: { allowed: Move[]; why: string | null };
   tasks: number;
   /** The reason of a "Nicht verrechnen", shown on the card in that column instead of the risk. */
   reason: string | null;
@@ -454,7 +468,20 @@ function Card({
  * "…" with the decisions a find can take, each with the icon of its column, and "Aufgabe anlegen"; always visible, the
  * way for keyboard and phones.
  */
-function DecisionMenu({ about, moves, onMove, onTask, className }: { about: string; moves: Move[]; onMove: (m: Move) => void; onTask: () => void; className?: string }) {
+function DecisionMenu({
+  about,
+  moves,
+  onMove,
+  onTask,
+  className,
+}: {
+  about: string;
+  /** The moves this person may take, and why the others are not theirs. */
+  moves: { allowed: Move[]; why: string | null };
+  onMove: (m: Move) => void;
+  onTask: () => void;
+  className?: string;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -469,7 +496,7 @@ function DecisionMenu({ about, moves, onMove, onTask, className }: { about: stri
       <DropdownMenuContent align="end" className="min-w-52">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Entscheidung</DropdownMenuLabel>
-          {moves.map((m) => {
+          {moves.allowed.map((m) => {
             const Icon = LANE[m.stand].icon;
             return (
               <DropdownMenuItem key={m.stand} onClick={() => onMove(m)}>
@@ -478,7 +505,12 @@ function DecisionMenu({ about, moves, onMove, onTask, className }: { about: stri
               </DropdownMenuItem>
             );
           })}
-          {moves.length === 0 && <DropdownMenuItem disabled>Steht in der Schlussrechnung</DropdownMenuItem>}
+          {moves.why && (
+            <DropdownMenuItem disabled className="max-w-64 whitespace-normal text-xs">
+              {moves.why}
+            </DropdownMenuItem>
+          )}
+          {moves.allowed.length === 0 && !moves.why && <DropdownMenuItem disabled>Steht in der Schlussrechnung</DropdownMenuItem>}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onTask}>

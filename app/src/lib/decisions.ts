@@ -5,16 +5,22 @@
  * ever edited or removed; a later entry counts.
  */
 
+import { currentState, DECISION_TEXT, refusal, type DecisionState } from "./decision-rules";
 import { CHANGED, serverAppend, serverRead, type ListKey } from "./server-store";
 
-export type DecisionState = "gefunden" | "geprueft" | "freigegeben" | "in_schlussrechnung" | "nicht_verrechnen";
+export { currentState, DECISION_TEXT, gapBeforeRelease, moves, nextStep, refusal, type DecisionState, type Move } from "./decision-rules";
 
 export type Decision = {
   fundSchluessel: string;
   /** Local time, "2026-10-24T21:40". */
   zeit: string;
-  /** Role, never a person's name: "Abrechnung" checks, "Geschäftsführung" releases. */
+  /**
+   * Who took the step. In the demo the role it needs ("Abrechnung" checks, "Geschäftsführung" releases); with an
+   * account the person and that role, as the database stamped them ("Maximilian Seipl (Abrechnung)").
+   */
   wer: string;
+  /** With an account: the id of that person, so the page knows who checked before a release (four eyes). */
+  von?: string;
   stand: Exclude<DecisionState, "gefunden">;
   grund?: string;
 };
@@ -55,70 +61,7 @@ export type TaskCheck = {
   erledigt: boolean;
 };
 
-/** The words of the core for each state (`ENTSCHEIDUNG_TEXT` in kern/; a test keeps both equal). */
-export const DECISION_TEXT: Record<DecisionState, string> = {
-  gefunden: "Gefunden",
-  geprueft: "Geprüft",
-  freigegeben: "Freigegeben",
-  in_schlussrechnung: "In der Schlussrechnung",
-  nicht_verrechnen: "Nicht verrechnen",
-};
-
 const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1", settings: "tieout.ablauf-einstellungen.v1" } as const;
-
-/** The current decision of a find: the latest entry for it or an earlier key of the same work, "gefunden" without any (as `entscheidungsstand` in kern/). */
-export function currentState(list: readonly Decision[], keys: readonly string[], fallback: DecisionState = "gefunden"): DecisionState {
-  let state = fallback;
-  let time = "";
-  for (const d of list) if (keys.includes(d.fundSchluessel) && d.zeit >= time) [state, time] = [d.stand, d.zeit];
-  return state;
-}
-
-/** What the decision bar offers next: check, then release; a find set to "Nicht verrechnen" can be taken up again. */
-export function nextStep(state: DecisionState): { stand: Decision["stand"]; label: string; wer: string } | null {
-  switch (state) {
-    case "gefunden":
-      return { stand: "geprueft", label: "Prüfen", wer: "Abrechnung" };
-    case "geprueft":
-      return { stand: "freigegeben", label: "Freigeben", wer: "Geschäftsführung" };
-    case "nicht_verrechnen":
-      return { stand: "geprueft", label: "Wieder aufnehmen", wer: "Abrechnung" };
-    default:
-      return null;
-  }
-}
-
-export type Move = { stand: Decision["stand"]; label: string; wer: string };
-
-/** Every decision a find can take from its state, as the decision bar offers them: the next step and "Nicht verrechnen". */
-export function moves(state: DecisionState): Move[] {
-  const next = nextStep(state);
-  const no: Move[] = state === "nicht_verrechnen" || state === "in_schlussrechnung" ? [] : [{ stand: "nicht_verrechnen", label: "Nicht verrechnen", wer: "Abrechnung" }];
-  return [...(next ? [next] : []), ...no];
-}
-
-/**
- * Said before a release when the find has a gap (step 8a, SPEZIFIKATION.md 3.2): a find in Klärung may be released,
- * but it reaches the Änderungsliste only once the gap is closed. Null for a find that is "belegt".
- */
-export function gapBeforeRelease(belegstand: "belegt" | "beleg_fehlt" | "nachtrag_nicht_gelegt" | null | undefined): string | null {
-  if (belegstand === "beleg_fehlt") return "Beleg fehlt: der Fund kommt erst mit dem Beleg in die Änderungsliste";
-  if (belegstand === "nachtrag_nicht_gelegt") return "Nachtrag nicht gelegt: der Fund kommt erst mit dem gelegten Nachtrag in die Änderungsliste";
-  return null;
-}
-
-/**
- * Why a card cannot be moved to a column of the board, or null when the move is a decision the find can take. One step
- * at a time and never back: the Verlauf keeps what was decided, and "In der Schlussrechnung" is set by the invoice.
- */
-export function refusal(from: DecisionState, to: DecisionState): string | null {
-  if (from === to || moves(from).some((m) => m.stand === to)) return null;
-  if (to === "in_schlussrechnung") return "Freigegebene Funde kommen in die Schlussrechnung, wenn sie erstellt wird. Von Hand geht das nicht.";
-  if (from === "in_schlussrechnung") return "Der Fund steht schon in der Schlussrechnung.";
-  if (to === "freigegeben") return "Erst prüfen, dann freigeben: ein Fund geht einen Schritt nach dem anderen.";
-  if (from === "nicht_verrechnen") return "Ein ausgeschlossener Fund wird zuerst wieder aufgenommen und geht dann als geprüft zur Freigabe.";
-  return "Eine Entscheidung wird nicht zurückgenommen. Der Fund kann auf Nicht verrechnen gesetzt werden, mit Grund.";
-}
 
 export function localTime(date = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, "0");

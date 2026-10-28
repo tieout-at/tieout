@@ -210,7 +210,7 @@ export function erzeugeMooshaim(): Datensatz {
       arbeitstage: f(r.tage, qr("Arbeitstage")),
       taetigkeit: f(r.text, qr("Tätigkeit")),
       angewiesenVon: f(r.angewiesen, qr("Angeordnet von")),
-      stundenMonteur: r.gelesenM !== undefined ? korrigiert(r.m, r.gelesenM, qr("Stunden Monteur"), "2026-10-19T08:40") : f(r.m, qr("Stunden Monteur")),
+      stundenMonteur: r.gelesenM !== undefined ? korrigiert(r.m, r.gelesenM, qr("Stunden Monteur"), "2026-10-19T08:40", "Handschrift falsch gelesen, im Original nachgesehen") : f(r.m, qr("Stunden Monteur")),
       stundenHelfer: f(r.h, qr("Stunden Helfer")),
       material: f(r.material, qr("Material zum Einstandspreis")),
       unterschrieben: f(r.unterschriebenAm !== null, qr("Unterschrift Auftraggeber")),
@@ -262,7 +262,7 @@ export function erzeugeMooshaim(): Datensatz {
       const delta = korrektur.get(`${b.nr}|${nr}`);
       return {
         positionNr: f(nr, qa),
-        menge: delta !== undefined ? korrigiert(menge, menge + delta, qa, "2026-10-19T09:10") : f(menge, qa),
+        menge: delta !== undefined ? korrigiert(menge, menge + delta, qa, "2026-10-19T09:10", "falsch gelesen, im Original nachgesehen") : f(menge, qa),
         ort: f(b.titel, qa),
       };
     });
@@ -398,7 +398,7 @@ export function erzeugeMooshaim(): Datensatz {
     const qm = (stelle: string) => q(id, 1, stelle);
     return {
       belegId: id,
-      datum: falschesDatum ? korrigiert(datum, falschesDatum, qm("Kopf, Datum"), "2026-10-19T10:05") : f(datum, qm("Kopf, Datum")),
+      datum: falschesDatum ? korrigiert(datum, falschesDatum, qm("Kopf, Datum"), "2026-10-19T10:05", "falsch gelesen, im Original nachgesehen") : f(datum, qm("Kopf, Datum")),
       absender: f(absender, qm("Kopf, Absender")),
       von,
       betreff: f(betreff, qm("Kopf, Betreff")),
@@ -442,7 +442,7 @@ export function erzeugeMooshaim(): Datensatz {
   const foto = (id: string, zeit: string, ort: string, motiv: string, bezug: string[], falscheZeit?: string): Foto => {
     ordner.add(id, "foto", `P1_IMG_${zeit.slice(0, 10).replace(/-/g, "")}_${zeit.slice(11).replace(":", "")}.jpg`, zeit.slice(0, 10));
     const qf = q(id, 1, "EXIF");
-    return { belegId: id, zeitpunkt: falscheZeit ? korrigiert(zeit, falscheZeit, qf, "2026-10-19T10:20") : f(zeit, qf), ort: f(ort, q(id, 1)), motiv: f(motiv, q(id, 1)), bezugPositionen: f(bezug, q(id, 1)) };
+    return { belegId: id, zeitpunkt: falscheZeit ? korrigiert(zeit, falscheZeit, qf, "2026-10-19T10:20", "Datum der Kamera falsch, laut Regiebericht 9") : f(zeit, qf), ort: f(ort, q(id, 1)), motiv: f(motiv, q(id, 1)), bezugPositionen: f(bezug, q(id, 1)) };
   };
   const fotos: Foto[] = [
     foto("foto-0218", "2026-02-18T10:12", "Technikraum", "Technikraum im Rohbau", []),

@@ -39,7 +39,7 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
     .sort((a, b) => a.page - b.page);
   const at = sameBeleg.findIndex((o) => o.key === page.key);
   const read = mark ? page.read.filter((r) => r.place === source.place || r.place === mark) : [];
-  const reviews = [...new Set(read.map((r) => (r.before ? `${r.review}, vorher ${r.before}` : r.review)))];
+  const reviews = [...new Set(read.map((r) => (r.before ? `${r.review}, vorher ${r.before}${r.reason ? `, ${r.reason}` : ""}` : r.review)))];
 
   return (
     <section aria-label="Original" className="flex h-full min-h-0 flex-col bg-sidebar">

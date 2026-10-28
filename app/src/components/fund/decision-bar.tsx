@@ -7,23 +7,29 @@ import { useState } from "react";
 import { TaskDialog } from "@/components/aufgaben/task-dialog";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
-import { moves, nextStep, type Decision, type DecisionState } from "@/lib/decisions";
+import { useActor } from "@/lib/account";
+import { moves, yourMoves } from "@/lib/decision-rules";
+import type { Decision, DecisionState } from "@/lib/decisions";
 import type { TaskTarget } from "@/lib/tasks";
 import { DecisionConfirm } from "./decision-confirm";
 
 /**
  * The decision bar of a find (Attio's action bar under the record name, SPEZIFIKATION.md 4.2): the next step of
  * "Gefunden" → "Geprüft" → "Freigegeben", "Nicht verrechnen" with a reason, and "Aufgabe anlegen". Each is confirmed in
- * a small popup and appended, never changed; one find at a time, never in bulk.
+ * a small popup and appended, never changed; one find at a time, never in bulk. With an account only the steps of the
+ * person's roles are offered, and one quiet line says whose the others are (the database refuses them anyway).
  */
 export function DecisionBar({
   state,
+  checker,
   amount,
   target,
   open,
   onDecide,
 }: {
   state: DecisionState;
+  /** Who checked the find last (with an account), so nobody is offered the release of their own check. */
+  checker: string | null;
   amount: string;
   /** The find as "Aufgabe anlegen" names it, with its Abhilfe as the text. */
   target: TaskTarget;
@@ -31,8 +37,9 @@ export function DecisionBar({
   open: string[];
   onDecide: (stand: Decision["stand"], wer: string, grund?: string) => void;
 }) {
-  const next = nextStep(state);
-  const notBilled = moves(state).find((m) => m.stand === "nicht_verrechnen");
+  const { allowed, why } = yourMoves(moves(state), useActor(), checker);
+  const next = allowed.find((m) => m.stand !== "nicht_verrechnen");
+  const notBilled = allowed.find((m) => m.stand === "nicht_verrechnen");
   const [openNext, setOpenNext] = useState(false);
   const [openNo, setOpenNo] = useState(false);
   const [openTask, setOpenTask] = useState(false);
@@ -89,6 +96,7 @@ export function DecisionBar({
         </Button>
         <TaskDialog open={openTask} onOpenChange={setOpenTask} targets={[target]} onMade={(t) => setMade(`Aufgabe für ${t.zustaendig} angelegt.`)} />
       </div>
+      {why && <p className="text-xs text-fg-secondary">{why}</p>}
       {made && (
         <p role="status" className="text-xs text-fg">
           {made}{" "}

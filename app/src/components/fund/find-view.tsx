@@ -8,6 +8,7 @@ import { Kpi, type KpiItem } from "@/components/charts/kpi";
 import { Activity } from "@/components/record/activity";
 import { RecordHead } from "@/components/shell/record-head";
 import { SideWindow, toggleOpen } from "@/components/ui/side-window";
+import { checkedBy } from "@/lib/decision-rules";
 import { currentState, decide, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision, type DecisionState } from "@/lib/decisions";
 import type { FindRecord, SourceRef } from "@/lib/finds";
 import { useLive } from "@/lib/live";
@@ -160,6 +161,7 @@ export function FindView({ record }: { record: FindRecord }) {
       </RecordHead>
       <DecisionBar
         state={state}
+        checker={checkedBy(decisions, keys)}
         amount={record.amount}
         target={{ key: record.key, label: `${record.number} ${record.project.name}`, name: record.name, href: `/funde/${record.slug}/`, project: record.project.name, taskText: record.taskText, deadline: record.deadline }}
         open={[

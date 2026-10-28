@@ -65,7 +65,7 @@ describe("find page F1, Wohnpark Mooshaim", () => {
 
   it("Verlauf holds the correction of the e-mail date and the confirmed WhatsApp-Meldung; no decision yet", () => {
     expect(f1.activity.map((a) => a.text)).toEqual([
-      "korrigierte E-Mail: Wohnungstyp C Heizkörper, Datum: 01.04.2026 auf 07.04.2026",
+      "korrigierte E-Mail: Wohnungstyp C Heizkörper, Datum: 01.04.2026 auf 07.04.2026, falsch gelesen, im Original nachgesehen",
       "bestätigte WhatsApp-Meldung W1: zusätzliche Heizkörper montiert",
     ]);
     expect(f1.decision).toBe("gefunden");

@@ -9,8 +9,10 @@
  * `mitglied` and `firma`); the rules there decide what a member may see and do, never this file.
  */
 
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
+
+import { actorOf, type Actor } from "./decision-rules";
 
 /** Project tieout-app (Frankfurt). Both values are public by design: every page that signs in carries them. The
  * publishable key opens nothing by itself; the policies of the database decide every row. No secret lives here. */
@@ -31,7 +33,7 @@ export type Account =
   | { stand: "beispiel" }
   | { stand: "laden" }
   /** Signed in, with the company and roles the database holds for this person. */
-  | { stand: "konto"; email: string; person: string; firma: string; rollen: Role[] }
+  | { stand: "konto"; id: string; email: string; person: string; firma: string; rollen: Role[] }
   /** Signed in, but the database names no company for this person (yet): sees nothing, can add nothing. */
   | { stand: "ohne_firma"; email: string };
 
@@ -88,7 +90,7 @@ async function load(sb: SupabaseClient) {
   if (!user) return set({ stand: "beispiel" });
   const { data: row } = await sb.from("mitglied").select("name, rollen, firma:firma_id (name)").eq("user_id", user.id).maybeSingle();
   const firma = (row?.firma as { name?: string } | null)?.name;
-  set(row && firma ? { stand: "konto", email: user.email ?? "", person: row.name as string, firma, rollen: rolesOf(row.rollen) } : { stand: "ohne_firma", email: user.email ?? "" });
+  set(row && firma ? { stand: "konto", id: user.id, email: user.email ?? "", person: row.name as string, firma, rollen: rolesOf(row.rollen) } : { stand: "ohne_firma", email: user.email ?? "" });
 }
 
 async function connect() {
@@ -130,6 +132,12 @@ export function useAccount(): Account {
     () => snapshot,
     () => LADEN,
   );
+}
+
+/** Who decides in this browser: the demo, a member with their roles, or nobody yet (decision-rules.ts). */
+export function useActor(): Actor {
+  const account = useAccount();
+  return useMemo(() => actorOf(account), [account]);
 }
 
 /** Loads the client on the page "Anmelden" even without a session, so a link can be sent from there. */

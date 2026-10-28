@@ -13,6 +13,7 @@
 import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 
 import { currentAccount, onAccountChange, ROLE_TEXT, supabase, type Role } from "./account";
+import { DECISION_TEXT, refusal, type DecisionState } from "./decision-rules";
 import type { Decision, Setting, Task, TaskCheck } from "./decisions";
 
 /** The page's event for "an entry was added or read"; `decisions.ts` listens to it as well. */
@@ -50,6 +51,7 @@ export const FROM_ROW: Record<ListKey, (r: Row) => unknown> = {
     fundSchluessel: String(r.fund_schluessel),
     zeit: localMinute(String(r.zeit)),
     wer: whoText(r.person, r.rolle),
+    von: String(r.user_id),
     stand: r.stand as Decision["stand"],
     ...(r.grund ? { grund: String(r.grund) } : {}),
   }),
@@ -79,9 +81,19 @@ export const TO_ROW: Record<ListKey, (e: never) => Row> = {
 /** In order of their entry, so that "the latest entry counts" holds within one minute too. */
 const ORDER: Record<ListKey, string> = { entscheidungen: "folge", aufgaben: "zeit", erledigt: "id", einstellungen: "id" };
 
-/** The database's reason in the app's words: its own German messages as they are, anything technical in one line. */
+/**
+ * The database's reason in the app's words: its own German messages as they are; "Von geprueft geht es nicht zu …"
+ * (someone decided in the meantime) with the words of the decision bar; anything technical in one line.
+ */
 export function refusalReason(message: string): string {
-  if (/^(Diesen Schritt|Vier Augen|Von \S+ geht es nicht|Nur Mitglieder)/.test(message)) return message;
+  const step = /^Von (\w+) geht es nicht zu (\w+)\.$/.exec(message);
+  if (step && Object.hasOwn(DECISION_TEXT, step[1]) && Object.hasOwn(DECISION_TEXT, step[2])) {
+    const [from, to] = [step[1] as DecisionState, step[2] as DecisionState];
+    if (from === to) return `Der Fund steht schon auf ${DECISION_TEXT[from]}.`;
+    const why = refusal(from, to);
+    return `Der Fund steht inzwischen auf ${DECISION_TEXT[from]}.${why ? ` ${why}` : ""}`;
+  }
+  if (/^(Diesen Schritt|Vier Augen|Nur Mitglieder)/.test(message)) return message;
   if (/check constraint/i.test(message)) return "Der Eintrag passt nicht zu den Regeln der Datenbank und wurde nicht gespeichert.";
   return "Der Server hat den Eintrag nicht gespeichert. Bitte die Seite neu laden.";
 }

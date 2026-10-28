@@ -36,12 +36,14 @@ describe("Belege of Wohnpark Mooshaim", () => {
     for (const k of liste.filter((b) => b.duplikatVon)) expect(k.datum).toBe(liste.find((b) => b.id === k.duplikatVon)!.datum);
   });
 
-  it("18 corrected fields, the same number 'Ordner lesen' counts, each with the value before and after", () => {
+  it("18 corrected fields, the same number 'Ordner lesen' counts, each with the value before and after and a reason", () => {
     expect(liste.reduce((s, b) => s + b.felder.korrigiert, 0)).toBe(18);
     expect(f.ergebnisse.p1.ordner.korrigierteFelder).toBe(18);
     const k = korrekturen(p1);
     expect(k).toHaveLength(18);
     expect(k.every((x) => x.vorher !== x.wert && x.wer === "Abrechnung")).toBe(true);
+    expect(k.every((x) => !!x.grund)).toBe(true);
+    expect(k.find((x) => x.beleg === "Regiebericht 9")).toMatchObject({ vorher: "17,00 h", wert: "12,00 h", grund: "Handschrift falsch gelesen, im Original nachgesehen" });
     expect(k.map((x) => x.zeit)).toEqual([...k.map((x) => x.zeit)].sort());
     expect(liste.filter((b) => b.felder.korrigiert > 0).every((b) => b.pruefstand === "korrigiert")).toBe(true);
   });
