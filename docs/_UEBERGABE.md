@@ -27,7 +27,7 @@ Read row 10 and the first open point of `docs/_STATUS.md`, then `backend/README.
 - **The demo stays apart:** decisions made without an account stay in the browser and never show under a company (checked on F2).
 - **Unicode in SQL:** the Edit and Write tools and the browser turned `\u200e` and similar escapes into the invisible characters themselves. Write such SQL with a script that builds the backslash (`String.fromCharCode(92)`), and compare the SHA-256 of the file before running it in the SQL editor.
 - **Supabase SQL editor:** a "Leave site?" dialog blocks navigation when a query is unsaved; open a new tab instead. Text goes in with `monaco.editor.getModels()[0].setValue(...)`, the button "Run" runs it, results are read from the grid cells.
-- **Abläufe fix** (hand tool moves blocks, blue outline on a chosen block): built in its own session on the branch `claude/ablaeufe-hand-c49fd2`, waiting there for the go of Maxi S.; it touches `app/src/components/ablauf/`, so merge it before or after `backend-10` and check that both still work together.
+- **Abläufe fix** (hand tool moves blocks, blue outline on a chosen block): built in its own session and merged into `main` as #130 on 28.10.; it touches `app/src/components/ablauf/`, so merge `main` into `backend-10` at the start and check that both still work together.
 - Later, not in this step: a server job or the WhatsApp agent needs a deliberate way to write (today only members write); delete the two old `schlusswerk-demo` addresses from the redirect list (go).
 
 ## Decisions waiting for Maxi S.
