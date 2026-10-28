@@ -103,6 +103,8 @@ const pending: Record<ListKey, unknown[]> = { entscheidungen: [], aufgaben: [], 
 let firma: string | null = null;
 let channel: RealtimeChannel | null = null;
 let started = false;
+/** The state of the account this file last followed. */
+let seen: string | null = null;
 
 function changed() {
   window.dispatchEvent(new Event(CHANGED));
@@ -123,13 +125,17 @@ async function activate(name: string) {
   firma = name;
   lists = { entscheidungen: [], aufgaben: [], erledigt: [], einstellungen: [] };
   const sb = await supabase();
-  await fetchAll(sb);
-  // Live: an entry of another person of the company arrives without reloading (the policies decide what is sent).
-  channel = sb.channel(`firma-${name}`);
+  // signed out or switched while the client loaded: nothing to do for this company any more
+  if (firma !== name) return;
+  // Live first, then the lists, so an entry made in between is not missed. An entry of another person of the company
+  // arrives without reloading (the policies decide what is sent).
+  const live = sb.channel(`firma-${name}`);
   for (const key of Object.keys(TABLE) as ListKey[])
-    channel.on("postgres_changes", { event: "INSERT", schema: "public", table: TABLE[key] }, () => void fetchList(sb, key).then(changed));
-  channel.subscribe();
+    live.on("postgres_changes", { event: "INSERT", schema: "public", table: TABLE[key] }, () => void fetchList(sb, key).then(changed));
+  live.subscribe();
+  channel = live;
   document.addEventListener("visibilitychange", onVisible);
+  await fetchAll(sb);
 }
 
 function onVisible() {
@@ -141,15 +147,20 @@ function deactivate() {
   lists = null;
   for (const k of Object.keys(pending) as ListKey[]) pending[k] = [];
   document.removeEventListener("visibilitychange", onVisible);
-  if (channel) void supabase().then((sb) => sb.removeChannel(channel!));
+  // the channel of this company, taken before it is forgotten: removed once the client answers (review finding)
+  const old = channel;
   channel = null;
+  if (old) void supabase().then((sb) => sb.removeChannel(old));
   changed();
 }
 
 function follow() {
   const a = currentAccount();
   const name = a.stand === "konto" ? a.firma : null;
-  if (name === firma) return;
+  // from "laden" to the demo the lists of this browser count again: the page is told, as on any other change
+  const was = seen;
+  seen = a.stand;
+  if (name === firma) return void (was !== null && was !== a.stand && changed());
   if (firma) deactivate();
   if (name) void activate(name);
 }
@@ -159,6 +170,23 @@ function start() {
   started = true;
   onAccountChange(follow);
   follow();
+}
+
+/** Said when an entry is made while the account of this browser is still being read. */
+export const WAITING = "Das Konto wird noch geladen. Bitte gleich noch einmal.";
+
+/**
+ * Whether the account of this browser is still being read: then an entry goes neither to the database (the company is
+ * not known yet) nor to the browser (it would land under the demo, or over its entries). Review finding, 28.10.2026.
+ */
+export function serverWaiting(): boolean {
+  start();
+  return currentAccount().stand === "laden";
+}
+
+/** Tells the page that an entry was not kept, and why (the notice "Nicht gespeichert."). */
+export function refuse(why: string) {
+  window.dispatchEvent(new CustomEvent(REFUSED, { detail: why }));
 }
 
 /** Whether entries of this browser go to the database: signed in with a company. */
@@ -189,7 +217,7 @@ export function serverAppend(key: ListKey, entry: unknown): boolean {
     if (!error) await fetchList(sb, key);
     pending[key] = pending[key].filter((x) => x !== entry);
     changed();
-    if (error) window.dispatchEvent(new CustomEvent(REFUSED, { detail: refusalReason(error.message) }));
+    if (error) refuse(refusalReason(error.message));
   });
   return true;
 }

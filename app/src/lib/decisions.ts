@@ -6,7 +6,7 @@
  */
 
 import { currentState, DECISION_TEXT, refusal, type DecisionState } from "./decision-rules";
-import { CHANGED, serverAppend, serverRead, type ListKey } from "./server-store";
+import { CHANGED, refuse, serverAppend, serverRead, serverWaiting, WAITING, type ListKey } from "./server-store";
 
 export { currentState, DECISION_TEXT, gapBeforeRelease, moves, nextStep, refusal, type DecisionState, type Move } from "./decision-rules";
 
@@ -94,6 +94,10 @@ function read<T>(key: string): T[] {
 
 /** Appends one entry; returns the whole list. If the browser keeps nothing (private window), the entry lives for this visit. */
 function append<T>(key: string, entry: T): T[] {
+  if (typeof window !== "undefined" && serverWaiting()) {
+    refuse(WAITING);
+    return read<T>(key);
+  }
   if (typeof window !== "undefined" && serverAppend(SERVER_LIST[key], entry)) return read<T>(key);
   const list = [...read<T>(key), entry];
   try {
@@ -114,6 +118,10 @@ export const appendDecision = (d: Decision) => append(KEYS.decisions, d);
  */
 export function decide(keys: readonly string[], fallback: DecisionState, entry: Decision): { list: Decision[]; refused: string | null } {
   const fresh = readDecisions();
+  if (typeof window !== "undefined" && serverWaiting()) {
+    refuse(WAITING);
+    return { list: fresh, refused: WAITING };
+  }
   const from = currentState(fresh, keys, fallback);
   const why = from === entry.stand ? `Der Fund steht schon auf ${DECISION_TEXT[from]}.` : refusal(from, entry.stand);
   return why ? { list: fresh, refused: why } : { list: appendDecision(entry), refused: null };

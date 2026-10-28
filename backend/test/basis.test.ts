@@ -1,5 +1,5 @@
 /**
- * The rules of migrations/001_basis.sql (and 003, the Beleg of a file), played through in a local Postgres (PGlite) with two companies: what a member
+ * The rules of migrations/001_basis.sql (003: the Beleg of a file, 004: checks of two free texts), played through in a local Postgres (PGlite) with two companies: what a member
  * sees, what they may add, and what the database refuses whatever the browser sends.
  */
 
@@ -43,6 +43,7 @@ beforeAll(async () => {
   await pg.exec(sql("./supabase-stubs.sql"));
   await pg.exec(sql("../migrations/001_basis.sql"));
   await pg.exec(sql("../migrations/003_datei_beleg.sql"));
+  await pg.exec(sql("../migrations/004_eingaben.sql"));
   await pg.exec(`
     insert into public.firma (id, name) values ('${FIRMA_A}', 'Testfirma A'), ('${FIRMA_B}', 'Testfirma B');
     insert into auth.users (id) values ${Object.values(U).map((id) => `('${id}')`).join(", ")};
@@ -244,6 +245,20 @@ describe("Aufgaben und Einstellungen", () => {
     await als(U.anna, "insert into public.ablauf_einstellung (block, feld, wert) values ('abschluss/mengenaenderung', 'schwelle', '20')");
     await expect(als(U.bernd, "insert into public.ablauf_einstellung (block, feld, wert) values ('abschluss/mengenaenderung', 'schwelle', '0')")).rejects.toThrow(/row-level security/);
     await expect(als(U.anna, "insert into public.ablauf_einstellung (block, feld, wert) values ('x', 'farbe', 'rot')")).rejects.toThrow(/check/);
+  });
+
+  it("a setting takes only the values the app offers, a find key no hidden characters (004, review finding)", async () => {
+    const setzen = (feld: string, wert: string) => als(U.anna, "insert into public.ablauf_einstellung (block, feld, wert) values ('aufgabe-bauleitung', $1, $2)", [feld, wert]);
+    await expect(setzen("zustaendig", "Geschäftsführung")).resolves.toEqual([]);
+    await expect(setzen("frist", "14")).resolves.toEqual([]);
+    await expect(setzen("zustaendig", "Hausmeister")).rejects.toThrow(/check/);
+    await expect(setzen("frist", "bald")).rejects.toThrow(/check/);
+    await expect(setzen("schwelle", "1000")).rejects.toThrow(/check/);
+    const versteckt = `p1/regie:${String.fromCharCode(0x202e)}9`;
+    await expect(entscheiden(U.anna, versteckt, "geprueft")).rejects.toThrow(/check/);
+    await expect(entscheiden(U.anna, `p1/regie:9${String.fromCharCode(10)}`, "geprueft")).rejects.toThrow(/check/);
+    await expect(als(U.anna, "insert into public.aufgabe (id, fund_schluessel, fund, href, text, zustaendig) values ('t-004', $1, 'F1', '/funde/', 'x', 'Bauleitung')", [versteckt])).rejects.toThrow(/check/);
+    await expect(entscheiden(U.anna, "p1/plan:H-201:D", "nicht_verrechnen", "Test 004")).resolves.toHaveLength(1);
   });
 });
 

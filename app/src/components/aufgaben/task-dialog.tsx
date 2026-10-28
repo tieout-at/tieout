@@ -125,6 +125,8 @@ function TaskForm({ targets, onCancel, onMade, defaults }: { targets: TaskTarget
           onChange={(e) => setTask({ ...task, text: e.target.value })}
           rows={3}
           required
+          // as long as the database takes it (2000 characters)
+          maxLength={2000}
           placeholder={!target ? "Zuerst den Fund wählen, dann steht hier seine Abhilfe." : target.taskText ? undefined : "Für diesen Fund gibt es keine Abhilfe. Was ist zu tun?"}
           className={field}
         />

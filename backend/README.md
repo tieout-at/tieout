@@ -23,5 +23,8 @@ Known limits, decided on purpose:
 - Name, type, size and SHA-256 of a file are what the browser computed before the upload; the app says so. A check on the server (an Edge Function reading the stored file) comes before real data.
 - Only members write. The service role and the postgres role cannot add decisions either (no `auth.uid()`), so a server job or the WhatsApp agent will need a deliberate way in when it comes.
 - Uploads never set `upsert`: there is no update policy, so a second upload to the same place is refused.
+- A member may ask Storage for a signed address of a file of the own company with any lifetime; such an address keeps working after the member leaves the company. The app asks for ten minutes. A short limit on the server comes with the server check of files.
+- Sign-in links are used once: a mail scanner that opens links (as some company mail systems do) can use one up before the person clicks it. With own SMTP, before the first external user, we look at a code to type in instead of a link.
+- The page orders decisions by their minute, the database by the order they passed its check; in the hour the clocks go back in autumn the two can differ for a find decided twice within that hour.
 - If an upload breaks off after its row was added, the row stays without a file (append only); the original viewer says so and the file is uploaded again under a new row.
 - `agent/worker/supabase.sql` (v1, not applied) still reads the company from the token (`app_metadata.firma`); when the agent is switched on it moves to `mitglied`. Both files apply side by side (tested).

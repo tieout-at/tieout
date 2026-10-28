@@ -54,7 +54,7 @@ export function DecisionConfirm({
         {about}
         <label className="flex flex-col gap-1 text-xs text-fg-secondary">
           Grund
-          <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} required placeholder="Zum Beispiel: schon mit einem Nachtrag verrechnet" className={field} />
+          <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} required maxLength={1000} placeholder="Zum Beispiel: schon mit einem Nachtrag verrechnet" className={field} />
         </label>
         <p className="text-xs text-fg-muted">
           {amount} kommen nicht in die Schlussrechnung. Vermerkt als Entscheidung {by}, <SavedWhere variant="inline" />.

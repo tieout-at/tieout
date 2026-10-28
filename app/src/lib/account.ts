@@ -83,12 +83,17 @@ function set(next: Account) {
   for (const l of listeners) l();
 }
 
-/** Reads who is signed in and their company from the database. */
+/**
+ * Reads who is signed in and their company from the database. A failed read (offline after the laptop woke up) never
+ * turns a member into "ohne Firma": the account stays as it was and is read again a little later (review finding,
+ * 28.10.2026). Only an answer without a row means no company.
+ */
 async function load(sb: SupabaseClient) {
   const { data } = await sb.auth.getSession();
   const user = data.session?.user;
   if (!user) return set({ stand: "beispiel" });
-  const { data: row } = await sb.from("mitglied").select("name, rollen, firma:firma_id (name)").eq("user_id", user.id).maybeSingle();
+  const { data: row, error } = await sb.from("mitglied").select("name, rollen, firma:firma_id (name)").eq("user_id", user.id).maybeSingle();
+  if (error) return void setTimeout(() => void load(sb), 5000);
   const firma = (row?.firma as { name?: string } | null)?.name;
   set(row && firma ? { stand: "konto", id: user.id, email: user.email ?? "", person: row.name as string, firma, rollen: rolesOf(row.rollen) } : { stand: "ohne_firma", email: user.email ?? "" });
 }
@@ -105,7 +110,8 @@ async function connect() {
 
 function start(force: boolean) {
   if (started) return;
-  if (!force && !mayHaveSession(window.localStorage, window.location.hash, window.location.search)) return set({ stand: "beispiel" });
+  // without a session the demo, said once: a new object on every subscriber would draw every page part again
+  if (!force && !mayHaveSession(window.localStorage, window.location.hash, window.location.search)) return void (snapshot.stand !== "beispiel" && set({ stand: "beispiel" }));
   started = true;
   connect().catch(() => set({ stand: "beispiel" }));
 }
