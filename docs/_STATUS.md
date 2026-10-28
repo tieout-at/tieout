@@ -1,6 +1,6 @@
 # Status
 
-**As of:** Wednesday, 28 October 2026. Steps 1 to 9 merged (#103 to #131) and live at https://app.tieout.workers.dev. Step 10 (Backend) parts A to F built on the branch `backend-10` and checked against the real Supabase project with two companies; push, pull request, preview, merge and live check with the go of Maxi S.
+**As of:** Wednesday, 28 October 2026. Steps 1 to 10 merged (#103 to #132) and live at https://app.tieout.workers.dev. Step 10 (Backend) merged as #132 with the go of Maxi S. and checked live: live after 210 s, 90 pages with the same 1.114 amounts as the local build of `main`, the demo without sign-in loads nothing of Supabase, a sign-in link sent from the public address signed in "Testfirma B", whose F1 shows only its own check and not the release of Testfirma A. The Cloudflare preview was skipped (its Access sign-in asks for an OAuth consent).
 **Maintenance:** every chat ends by updating this file and `_UEBERGABE.md`. Team status, gates and strategy: `../tieout-intern/_STATUS.md`.
 
 ## Where we stand
