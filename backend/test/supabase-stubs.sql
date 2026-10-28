@@ -35,3 +35,6 @@ as $$ select (string_to_array(name, '/'))[1:cardinality(string_to_array(name, '/
 grant usage on schema storage to anon, authenticated;
 -- As in Supabase: the roles hold every right on the table, the policies decide.
 grant select, insert, update, delete on storage.objects to anon, authenticated;
+
+-- Supabase creates this publication for Realtime; 002_live.sql adds tables to it.
+create publication supabase_realtime;

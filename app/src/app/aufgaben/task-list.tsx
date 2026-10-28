@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/compone
 import { byDue, byMade, doneTasks, dueText, groupOpen, ROLES, type TaskItem, type TaskTarget } from "@/lib/tasks";
 import { checkTask, useTasks, useToday } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
+import { SavedWhere } from "@/components/shell/saved-where";
 
 const datum = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 
@@ -382,7 +383,7 @@ export function TaskList({ targets }: { targets: TaskTarget[] }) {
           {showDone && <ul>{done.map(row)}</ul>}
         </section>
       )}
-      <p className="px-3 py-3 text-xs text-fg-muted">Angelegt auf Funden, vorerst in diesem Browser gespeichert, bis die Anmeldung kommt.</p>
+      <p className="px-3 py-3 text-xs text-fg-muted">Angelegt auf Funden, <SavedWhere variant="inline" />.</p>
       {note && (
         <Note
           task={note.task}

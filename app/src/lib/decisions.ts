@@ -1,8 +1,11 @@
 /**
- * Decisions and tasks on finds in stage 0: append only, kept in this browser until sign-in and the backend come
- * (step 10). The shape is the core's `Entscheidung` (kern/src/modell.ts) with the business key ("p1/plan:H-201:D"), so
- * the backend can take the list over unchanged. Nothing here is ever edited or removed; a later entry counts.
+ * Decisions and tasks on finds: append only. Without an account they are kept in this browser (the demo); with one
+ * they live in the company's database (server-store.ts, step 10), which also decides who may take which step. The
+ * shape is the core's `Entscheidung` (kern/src/modell.ts) with the business key ("p1/plan:H-201:D"). Nothing here is
+ * ever edited or removed; a later entry counts.
  */
+
+import { CHANGED, serverAppend, serverRead, type ListKey } from "./server-store";
 
 export type DecisionState = "gefunden" | "geprueft" | "freigegeben" | "in_schlussrechnung" | "nicht_verrechnen";
 
@@ -124,10 +127,18 @@ export function localTime(date = new Date()): string {
 
 /** Lists this browser could not keep (private window): they live for this visit, and every page of the visit reads them. */
 const memory = new Map<string, unknown[]>();
-/** Tells the other parts of this page that an entry was appended; the "storage" event reaches only other tabs. */
-const CHANGED = "tieout:entries";
+
+/** The list of each key in the database once signed in (server-store.ts); without an account the browser keeps it. */
+const SERVER_LIST: Record<string, ListKey> = {
+  [KEYS.decisions]: "entscheidungen",
+  [KEYS.tasks]: "aufgaben",
+  [KEYS.checks]: "erledigt",
+  [KEYS.settings]: "einstellungen",
+};
 
 function read<T>(key: string): T[] {
+  const server = typeof window === "undefined" ? null : serverRead(SERVER_LIST[key]);
+  if (server) return server as T[];
   if (memory.has(key)) return memory.get(key) as T[];
   try {
     const raw = window.localStorage.getItem(key);
@@ -140,6 +151,7 @@ function read<T>(key: string): T[] {
 
 /** Appends one entry; returns the whole list. If the browser keeps nothing (private window), the entry lives for this visit. */
 function append<T>(key: string, entry: T): T[] {
+  if (typeof window !== "undefined" && serverAppend(SERVER_LIST[key], entry)) return read<T>(key);
   const list = [...read<T>(key), entry];
   try {
     window.localStorage.setItem(key, JSON.stringify(list));

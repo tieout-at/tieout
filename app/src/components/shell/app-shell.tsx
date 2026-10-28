@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { SearchDialog, type SearchFind } from "./search-dialog";
+import { ServerNotice } from "./server-notice";
 import { ShellProvider, useShell } from "./shell-state";
 import { Sidebar } from "./sidebar";
 
@@ -35,6 +36,7 @@ function Frame({ children, finds }: { children: React.ReactNode; finds: SearchFi
         </SheetContent>
       </Sheet>
       <SearchDialog finds={finds} />
+      <ServerNotice />
     </>
   );
 }

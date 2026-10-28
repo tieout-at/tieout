@@ -15,6 +15,7 @@ import { DECISION_TEXT, localTime, readDecisions, takeIntoInvoice, type Decision
 import type { ChangeEntry, InvoiceFind, InvoiceView as View, SettlementLine } from "@/lib/invoice";
 import { useLive } from "@/lib/live";
 import { cn } from "@/lib/utils";
+import { SavedWhere } from "@/components/shell/saved-where";
 
 const quiet = "link-quiet";
 const DECISION_COLOUR: Partial<Record<DecisionState, TagColour>> = { freigegeben: "green", in_schlussrechnung: "green", nicht_verrechnen: "grey" };
@@ -218,7 +219,7 @@ function StatusHead({ v }: { v: View }) {
           <DialogTitle className="pb-1 text-sm">In die Schlussrechnung übernehmen?</DialogTitle>
           <p className="text-xs text-fg-secondary">
             {released.length === 1 ? "1 freigegebener Fund kommt" : `${released.length} freigegebene Funde kommen`} auf „In der Schlussrechnung“. Die Positionen tragen Sie selbst in Ihr Rechnungsprogramm ein; tieout
-            schreibt keine zweite Rechnung und schickt nichts an {v.project.client.name}. Vorerst nur in diesem Browser gespeichert.
+            schreibt keine zweite Rechnung und schickt nichts an {v.project.client.name}. <SavedWhere variant="satz" />
           </p>
           <ul className="mt-2 flex flex-col gap-1 text-xs">
             {released.map((f) => (

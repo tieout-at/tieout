@@ -14,6 +14,7 @@ import { saveSetting, useFlowSettings } from "@/lib/use-flow-settings";
 import { useTasks } from "@/lib/use-tasks";
 import { cn } from "@/lib/utils";
 import { Chip, Dot, KIND_TEXT, Lines, ResultLine } from "./parts";
+import { SavedWhere } from "@/components/shell/saved-where";
 
 const PANEL_FOOT = "Kein Block rechnet einen Betrag oder schreibt dem Auftraggeber.";
 
@@ -205,7 +206,7 @@ function TaskList({ targets, settings }: { targets: FlowTask[]; settings: BlockS
           Alle {open.length} anlegen
         </button>
       )}
-      <p className="mt-2 text-xs leading-4 text-fg-muted">Nur in diesem Browser gespeichert, abhaken unter „Aufgaben“.</p>
+      <p className="mt-2 text-xs leading-4 text-fg-muted"><SavedWhere variant="start" />, abhaken unter „Aufgaben“.</p>
       <TaskDialog open={one !== null} onOpenChange={(o) => !o && setOne(null)} targets={one ? [one] : []} defaults={{ zustaendig: settings.zustaendig, bis: dueDate(settings.frist) ?? "" }} />
     </>
   );

@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { appendTask, localTime, type Task } from "@/lib/decisions";
 import { ROLES, type TaskTarget } from "@/lib/tasks";
+import { SavedWhere } from "@/components/shell/saved-where";
 
 /**
  * "Aufgabe anlegen" (Attio's "Create task" modal), the same on "Aufgaben", on the find page and on a card of the board:
@@ -142,7 +143,7 @@ function TaskForm({ targets, onCancel, onMade, defaults }: { targets: TaskTarget
           <DuePicker value={task.bis} onChange={(bis) => setTask({ ...task, bis })} />
         </div>
       </div>
-      <p className="text-xs text-fg-muted">{target?.deadline ? `${target.deadline}. ` : ""}Vorerst nur in diesem Browser gespeichert.</p>
+      <p className="text-xs text-fg-muted">{target?.deadline ? `${target.deadline}. ` : ""}<SavedWhere variant="satz" /></p>
       <div className="flex justify-end gap-2">
         <Button type="button" onClick={onCancel}>
           Abbrechen

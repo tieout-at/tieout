@@ -42,3 +42,11 @@ it("fund_alias holds exactly the earlier keys of kern/'s sample data", async () 
   expect(rows).toEqual(erwartet);
   expect(rows.length).toBeGreaterThan(0);
 }, 30_000);
+
+it("002_live.sql puts exactly the four lists of the company into Realtime, and nothing else", async () => {
+  const pg = await frisch();
+  await pg.exec(sql("../migrations/001_basis.sql"));
+  await pg.exec(sql("../migrations/002_live.sql"));
+  const rows = (await pg.query<{ tablename: string }>("select tablename from pg_publication_tables where pubname = 'supabase_realtime' order by 1")).rows.map((r) => r.tablename);
+  expect(rows).toEqual(["ablauf_einstellung", "aufgabe", "aufgabe_erledigt", "entscheidung"]);
+}, 30_000);

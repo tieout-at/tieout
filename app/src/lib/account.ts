@@ -114,6 +114,15 @@ function subscribe(listener: () => void): () => void {
   return () => listeners.delete(listener);
 }
 
+/** The account outside React (for the store of decisions): the current one, and a call on every change. */
+export function currentAccount(): Account {
+  return snapshot;
+}
+
+export function onAccountChange(listener: () => void): () => void {
+  return subscribe(listener);
+}
+
 /** Who works in this browser: the demo, or a person of a company. `"laden"` while it is being read and on the server. */
 export function useAccount(): Account {
   return useSyncExternalStore(
