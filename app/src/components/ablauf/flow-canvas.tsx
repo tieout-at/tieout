@@ -1,17 +1,16 @@
 "use client";
 
-import { ChevronDown, Hand, LayoutGrid, MousePointer2, Search, ShieldCheck, Zap } from "lucide-react";
+import { ChevronDown, Hand, LayoutGrid, MousePointer2, Search, ShieldCheck, Undo2, Zap } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Kbd } from "@/components/ui/kbd";
 import type { FlowRun, FlowView } from "@/lib/flows";
 import { cn } from "@/lib/utils";
-import { blockShadow, bounds, CHECK_H, edge, GROUP, GROUP_W, H, moveBy, place, W, type Offsets, type Point } from "./flow-geometry";
+import { blockShadow, bounds, CHECK_H, dragTo, edge, GROUP, GROUP_W, H, moves, NO_MOVES, place, W, type Guide, type Moves, type Offsets, type Point } from "./flow-geometry";
 import { Chip, Dot, ResultLine, type NodeState } from "./parts";
 
 const PANEL = 424;
-const NONE: Offsets = {};
 
 type Box = { x: number; y: number; k: number };
 
@@ -49,13 +48,21 @@ export function FlowCanvas({
   const area = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState<Box | null>(null);
   const [tool, setTool] = useState<"pointer" | "hand">("pointer");
-  // blocks moved by hand, as in Attio with the hand and with the pointer; only in this browser view, back on reload
-  // the block moved last lies on top, as in Attio
-  const [moves, setMoves] = useState<{ slug: string; by: Offsets; top?: string }>({ slug: view.slug, by: NONE });
-  const moved = moves.slug === view.slug ? moves.by : NONE;
-  const top = (id: string) => (moves.slug === view.slug && moves.top === id ? 1 : undefined);
+  // blocks moved with the hand (decided by Maxi S.: the pointer only selects), with the steps to undo them; only in this
+  // browser view, back on reload. The block moved last lies on top, as in Attio.
+  const [hist, setHist] = useState<{ slug: string; m: Moves; top?: string }>({ slug: view.slug, m: NO_MOVES });
+  const m = hist.slug === view.slug ? hist.m : NO_MOVES;
+  const moved = m.by;
+  const top = (id: string) => (hist.slug === view.slug && hist.top === id ? 1 : undefined);
+  const act = useCallback(
+    (a: Parameters<typeof moves>[1], top?: string) => setHist((h) => ({ slug: view.slug, m: moves(h.slug === view.slug ? h.m : NO_MOVES, a), top: top ?? (h.slug === view.slug ? h.top : undefined) })),
+    [view.slug],
+  );
+  const [guides, setGuides] = useState<Guide[]>([]);
   const drag = useRef<
-    { kind: "pan"; x: number; y: number; bx: number; by: number; moved: boolean } | { kind: "block"; id: string; x: number; y: number; from: Point; k: number; moved: boolean } | null
+    | { kind: "pan"; x: number; y: number; bx: number; by: number; moved: boolean }
+    | { kind: "block"; id: string; x: number; y: number; from: Point; base: Offsets; k: number; moved: boolean }
+    | null
   >(null);
   // a drag that moved a block ends without the click that would select it
   const dragged = useRef(false);
@@ -120,15 +127,34 @@ export function FlowCanvas({
     el.addEventListener("wheel", wheel, { passive: false });
     return () => el.removeEventListener("wheel", wheel);
   }, [zoomTo]);
-  // a block (or the card of the checks) follows the pointer once it moved 3 px; a shorter press stays a click that
-  // selects it. The empty canvas pans, with either tool.
+  // Strg Z (⌘ Z on a Mac) undoes a move, Strg Umschalt Z or Strg Y redoes it; not while typing or in a menu
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      const t = e.target instanceof HTMLElement ? e.target : null;
+      const k = e.key.toLowerCase();
+      if (!(e.ctrlKey || e.metaKey) || e.altKey || (k !== "z" && k !== "y") || e.defaultPrevented) return;
+      if (t?.closest("input, textarea, select, [contenteditable], [role=dialog], [role=menu], [role=listbox]")) return;
+      if (!area.current?.offsetParent) return;
+      e.preventDefault();
+      // not in the middle of a drag: its step back is only complete once the block is let go
+      if (drag.current) return;
+      act({ type: k === "y" || e.shiftKey ? "redo" : "undo" });
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [act]);
+
+  // with the hand, a block (or the card of the checks) follows the pointer once it moved 3 px and snaps to straight
+  // edges; a shorter press stays a click that selects it. With the pointer a block is only selected. The empty canvas
+  // pans with either tool.
   const onPointerDown = (e: React.PointerEvent) => {
     if (!box || e.button !== 0) return;
     dragged.current = false;
     const block = (e.target as HTMLElement).closest<HTMLElement>("[data-move]");
     if (block?.dataset.move) {
+      if (tool !== "hand") return;
       // no capture yet: the press may still be a click on the block
-      drag.current = { kind: "block", id: block.dataset.move, x: e.clientX, y: e.clientY, from: moved[block.dataset.move] ?? { x: 0, y: 0 }, k: box.k, moved: false };
+      drag.current = { kind: "block", id: block.dataset.move, x: e.clientX, y: e.clientY, from: moved[block.dataset.move] ?? { x: 0, y: 0 }, base: moved, k: box.k, moved: false };
       return;
     }
     drag.current = { kind: "pan", x: e.clientX, y: e.clientY, bx: box.x, by: box.y, moved: false };
@@ -136,6 +162,7 @@ export function FlowCanvas({
   };
   const endDrag = () => {
     drag.current = null;
+    setGuides((g) => (g.length ? [] : g));
   };
   const onPointerMove = (e: React.PointerEvent) => {
     const d = drag.current;
@@ -145,14 +172,22 @@ export function FlowCanvas({
     const dy = e.clientY - d.y;
     if (!d.moved && Math.abs(dx) + Math.abs(dy) > 3) {
       d.moved = true;
-      if (d.kind === "block") (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      if (d.kind === "block") {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        // the arrangement before this drag becomes one step back
+        act({ type: "begin" });
+      }
     }
     if (d.kind === "pan") setBox((b) => (b ? { ...b, x: d.bx + dx, y: d.by + dy } : b));
-    else if (d.moved) setMoves((m) => ({ slug: view.slug, by: moveBy(m.slug === view.slug ? m.by : NONE, d.id, d.from, dx, dy, d.k), top: d.id }));
+    else if (d.moved) {
+      const r = dragTo(view, d.base, d.id, d.from, dx, dy, d.k);
+      act({ type: "set", by: r.moved }, d.id);
+      setGuides(r.guides);
+    }
   };
   const onPointerUp = () => {
     const d = drag.current;
-    drag.current = null;
+    endDrag();
     if (!d) return;
     if (d.kind === "block") {
       dragged.current = d.moved;
@@ -310,6 +345,14 @@ export function FlowCanvas({
               </ul>
             </div>
           )}
+
+          {guides.length > 0 && (
+            <svg className="pointer-events-none absolute top-0 left-0 z-[2] overflow-visible stroke-accent" width="1" height="1" aria-hidden>
+              {guides.map((g) => (
+                <line key={`${g.x1} ${g.y1} ${g.x2} ${g.y2}`} {...g} strokeWidth={1} strokeDasharray="4 3" vectorEffect="non-scaling-stroke" />
+              ))}
+            </svg>
+          )}
         </div>
       )}
 
@@ -333,7 +376,7 @@ export function FlowCanvas({
             <DropdownMenuItem onClick={() => zoomTo(0.5)}>Auf 50 %</DropdownMenuItem>
             <DropdownMenuItem onClick={() => zoomTo(1)}>Auf 100 %</DropdownMenuItem>
             <DropdownMenuItem onClick={fitNow}>Ganz anzeigen</DropdownMenuItem>
-            {moved !== NONE && <DropdownMenuItem onClick={() => setMoves({ slug: view.slug, by: NONE })}>Blöcke zurücksetzen</DropdownMenuItem>}
+            {Object.keys(moved).length > 0 && <DropdownMenuItem onClick={() => act({ type: "reset" })}>Blöcke zurücksetzen</DropdownMenuItem>}
           </DropdownMenuContent>
         </DropdownMenu>
         <button type="button" aria-label="Verschieben" aria-pressed={tool === "hand"} onClick={() => setTool("hand")} className={cn("flex size-7 items-center justify-center rounded-md outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-accent", tool === "hand" ? "bg-fg text-white" : "text-fg-secondary hover:bg-fill-hover")}>
@@ -341,6 +384,9 @@ export function FlowCanvas({
         </button>
         <button type="button" aria-label="Auswählen" aria-pressed={tool === "pointer"} onClick={() => setTool("pointer")} className={cn("flex size-7 items-center justify-center rounded-md outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-accent", tool === "pointer" ? "bg-fg text-white" : "text-fg-secondary hover:bg-fill-hover")}>
           <MousePointer2 className="size-4" aria-hidden />
+        </button>
+        <button type="button" aria-label="Rückgängig" title="Rückgängig (Strg Z)" disabled={!m.past.length} onClick={() => act({ type: "undo" })} className="flex size-7 items-center justify-center rounded-md text-fg-secondary outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-accent disabled:text-fg-faint disabled:hover:bg-transparent">
+          <Undo2 className="size-4" aria-hidden />
         </button>
         {!readonly && (
           <button type="button" onClick={onPalette} className="flex h-7 items-center gap-1.5 rounded-md bg-surface pr-1.5 pl-1.5 text-sm font-medium shadow-button outline-none hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-accent">
