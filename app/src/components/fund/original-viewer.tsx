@@ -1,13 +1,19 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import dynamic from "next/dynamic";
 import { createElement, useLayoutEffect, useRef, useState } from "react";
 
 import { belegIcon } from "./icons";
 import type { SourceRef } from "@/lib/finds";
 import { markOf, placeText, type OriginalPage } from "@/lib/originals";
 import { OriginalPaper } from "./original-paper";
-import { FileView, StoredFiles, type ShownFile } from "./stored-files";
+import { useAccount } from "@/lib/account";
+import type { ShownFile } from "./stored-files";
+
+// the files of a Beleg exist only with an account: the demo never loads this part
+const StoredFiles = dynamic(() => import("./stored-files").then((m) => m.StoredFiles), { ssr: false });
+const FileView = dynamic(() => import("./stored-files").then((m) => m.FileView), { ssr: false });
 
 const iconButton =
   "flex size-7 items-center justify-center rounded-md text-fg-secondary outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40 max-md:size-11";
@@ -23,6 +29,7 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
   const [key, setKey] = useState(source.page);
   // a stored file of the Beleg shown instead of the drawn page, until it is closed or another page is chosen
   const [file, setFile] = useState<ShownFile | null>(null);
+  const signedIn = useAccount().stand === "konto";
   const page = originals[key] ?? originals[source.page];
   const scroller = useRef<HTMLDivElement>(null);
   const mark = page && key === source.page ? markOf(page, source.place) : null;
@@ -79,9 +86,9 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
           "Andere Seite als die Quelle, ohne Markierung"
         )}
       </p>
-      {page.art !== "whatsapp" && page.project && <StoredFiles key={page.belegId} project={page.project} belegId={page.belegId} shown={file?.file ?? null} onShow={setFile} />}
+      {signedIn && page.art !== "whatsapp" && page.project && <StoredFiles key={page.belegId} project={page.project} belegId={page.belegId} shown={file?.file ?? null} onShow={setFile} />}
       <div ref={scroller} className="relative min-h-0 flex-1 overflow-y-auto p-4">
-        {file ? <FileView shown={file} /> : <OriginalPaper page={page} mark={mark} />}
+        {file && signedIn ? <FileView shown={file} /> : <OriginalPaper page={page} mark={mark} />}
       </div>
     </section>
   );
