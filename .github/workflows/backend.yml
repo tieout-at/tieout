@@ -1,13 +1,13 @@
 # Checks for the database rules (backend/): types, lint, and the policies played through in a local Postgres. Runs only
-# when something changes there.
+# when something changes there, in kern/ (whose earlier keys fund_alias holds) or in the agent's v1 SQL.
 name: Backend
 
 on:
   pull_request:
-    paths: ["backend/**", ".github/workflows/backend.yml"]
+    paths: ["backend/**", "kern/**", "agent/worker/supabase.sql", ".github/workflows/backend.yml"]
   push:
     branches: [main]
-    paths: ["backend/**"]
+    paths: ["backend/**", "kern/**", "agent/worker/supabase.sql"]
 
 concurrency:
   group: backend-${{ github.ref }}

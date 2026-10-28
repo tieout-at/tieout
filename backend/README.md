@@ -14,6 +14,12 @@ Supabase project `tieout-app` (Frankfurt). Signed-in companies keep their decisi
 - **Data silo per company:** every row carries `firma_id`; members see only their own company. One company per account; members are invited by us, sign-up is off.
 - **Append only:** signed-in users may read and add, never change or delete. The server sets company, person and time.
 - **Decisions** follow the decision bar: one step at a time; "Prüfung" by the Abrechnung, "Freigabe" by the Geschäftsführung and never by the person who checked; "Nicht verrechnen" with a reason.
+- **Earlier keys** of the same work (a WhatsApp-Meldung that later got its Regiebericht) live in `fund_alias`, written by us only; the browser cannot pass another find off as an earlier key.
 - **Files** in the private bucket `dateien`, at `<firma_id>/<id>` only, after their row with name, type, size and SHA-256; PDF, JPEG, PNG up to 20 MB; never overwritten.
 
-Known limit: the earlier keys of a find (`fruehere_schluessel`) come from the browser, because the twin's sample data live in `kern/`, not in the database.
+Known limits, decided on purpose:
+
+- Name, type, size and SHA-256 of a file are what the browser computed before the upload; the app says so. A check on the server (an Edge Function reading the stored file) comes before real data.
+- Only members write. The service role and the postgres role cannot add decisions either (no `auth.uid()`), so a server job or the WhatsApp agent will need a deliberate way in when it comes.
+- Uploads never set `upsert`: there is no update policy, so a second upload to the same place is refused.
+- `agent/worker/supabase.sql` (v1, not applied) still reads the company from the token (`app_metadata.firma`); when the agent is switched on it moves to `mitglied`. Both files apply side by side (tested).
