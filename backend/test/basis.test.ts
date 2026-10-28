@@ -167,10 +167,10 @@ describe("Ein Schritt nach dem anderen", () => {
   it("Nicht verrechnen needs a reason, blanks are no reason", async () => {
     await expect(entscheiden(U.anna, "p1/s2", "nicht_verrechnen")).rejects.toThrow(/check/);
     await expect(entscheiden(U.anna, "p1/s2", "nicht_verrechnen", "   ")).rejects.toThrow(/check/);
-    await expect(entscheiden(U.anna, "p1/s2", "nicht_verrechnen", "\t  ")).rejects.toThrow(/check/);
-    const [row] = await entscheiden(U.anna, "p1/s2", "nicht_verrechnen", "  doppelt\t ");
+    await expect(entscheiden(U.anna, "p1/s2", "nicht_verrechnen", "\t\u00a0\u2003")).rejects.toThrow(/check/);
+    const [row] = await entscheiden(U.anna, "p1/s2", "nicht_verrechnen", " \u00a0doppelt\t ");
     expect(row.grund).toBe("doppelt");
-    await expect(entscheiden(U.anna, "p1/s2b", "nicht_verrechnen", "ok‮txt")).rejects.toThrow(/check/);
+    await expect(entscheiden(U.anna, "p1/s2b", "nicht_verrechnen", "ok\u202etxt")).rejects.toThrow(/check/);
   });
 
   it("decisions under an earlier key of the same work count, both ways (fund_alias)", async () => {
@@ -193,17 +193,15 @@ describe("Ein Schritt nach dem anderen", () => {
     await expect(als(U.beide, "select * from public.fund_alias")).rejects.toThrow(/permission denied/);
   });
 
-  it("the time of an entry is the moment it passed the check, so entries never tie", async () => {
+  it("entries are ordered by the moment they passed the check, never by a tie of the clock", async () => {
     await pg.exec("reset role");
     await pg.query("select set_config('request.jwt.claim.sub', $1, false)", [U.anna]);
     await pg.exec("set role authenticated");
     // Two steps in one transaction: now() would give both the same time.
     await pg.exec("begin; insert into public.entscheidung (fund_schluessel, stand) values ('p1/zeit', 'geprueft'); insert into public.entscheidung (fund_schluessel, stand, grund) values ('p1/zeit', 'nicht_verrechnen', 'doppelt'); commit;");
-    const rows = (await pg.query<{ zeit: Date }>("select zeit from public.entscheidung where fund_schluessel = 'p1/zeit' order by id")).rows;
+    const [r] = (await pg.query<{ n: number; folge: boolean; zeit: boolean }>("select count(*)::int as n, (array_agg(folge order by id))[2] > (array_agg(folge order by id))[1] as folge, (array_agg(zeit order by id))[2] >= (array_agg(zeit order by id))[1] as zeit from public.entscheidung where fund_schluessel = 'p1/zeit'")).rows;
     await pg.exec("reset role");
-    expect(rows).toHaveLength(2);
-    expect(rows[1].zeit.getTime()).toBeGreaterThanOrEqual(rows[0].zeit.getTime());
-    expect(rows[1].zeit).not.toEqual(rows[0].zeit);
+    expect(r).toEqual({ n: 2, folge: true, zeit: true });
   });
 
   it("an unknown state is refused", async () => {
@@ -236,8 +234,8 @@ describe("Aufgaben und Einstellungen", () => {
   it("a task has a text that is not blank and does not turn the reading direction", async () => {
     const mitText = (id: string, text: string) =>
       als(U.anna, "insert into public.aufgabe (id, fund_schluessel, fund, href, text, zustaendig) values ($1, 'p1/f1', 'F1', '/', $2, 'Abrechnung')", [id, text]);
-    await expect(mitText("t6", "\t  ")).rejects.toThrow(/check/);
-    await expect(mitText("t7", "Rechnung ‮fdp.exe")).rejects.toThrow(/check/);
+    await expect(mitText("t6", "\t\u00a0 ")).rejects.toThrow(/check/);
+    await expect(mitText("t7", "Rechnung \u202efdp.exe")).rejects.toThrow(/check/);
     await expect(mitText("t8", "Aufmaßblatt 12 gegenzeichnen lassen")).resolves.toEqual([]);
   });
 
@@ -279,7 +277,7 @@ describe("Dateien", () => {
     await expect(datei(U.anna, "../a.pdf")).rejects.toThrow(/check/);
     await expect(datei(U.anna, "a\\b.pdf")).rejects.toThrow(/check/);
     await expect(datei(U.anna, "a\tb.pdf")).rejects.toThrow(/check/);
-    await expect(datei(U.anna, "Rechnung‮fdp.pdf")).rejects.toThrow(/check/);
+    await expect(datei(U.anna, "Rechnung\u202efdp.pdf")).rejects.toThrow(/check/);
     await expect(datei(U.anna, "Aufmaßblatt 12 (Seite 2).pdf")).resolves.toHaveLength(1);
     await expect(als(U.anna, "insert into public.datei (projekt_id, name, typ, groesse, sha256) values ('p1', 'a.pdf', 'application/pdf', 1, 'xyz')")).rejects.toThrow(/check/);
     await expect(als(U.anna, `insert into public.datei (projekt_id, name, typ, groesse, sha256, pfad) values ('p1', 'a.pdf', 'application/pdf', 1, '${SHA}', '${FIRMA_B}/x')`)).rejects.toThrow(/permission denied/);

@@ -70,7 +70,7 @@ revoke all on function public.stempeln() from public, anon, authenticated;
 
 -- The same work under an earlier key: a WhatsApp-Meldung that later got its Regiebericht ("p2/regie:6" was
 -- "p2/meldung:P2-W1"). Written by us only, never by the browser, so nobody can pass another find off as an earlier
--- key. Stage 0: the links of the sample data in kern/ (fruehereSchluessel, compared by test/alias.test.ts), the same
+-- key. Stage 0: the links of the sample data in kern/ (fruehereSchluessel, compared by test/umgebung.test.ts), the same
 -- for every company; per company once the twin lives on the server.
 create table public.fund_alias (
   schluessel text not null check (char_length(schluessel) between 1 and 200),
@@ -85,15 +85,20 @@ create table public.entscheidung (
   -- The business key of the find ("p1/plan:H-201:D").
   fund_schluessel text not null check (char_length(fund_schluessel) between 1 and 200),
   stand text not null check (stand in ('geprueft', 'freigegeben', 'in_schlussrechnung', 'nicht_verrechnen')),
-  grund text check (grund is null or (char_length(grund) <= 1000 and grund !~ '[‎‏‪-‮⁦-⁩]')),
+  grund text check (grund is null or (char_length(grund) <= 1000 and grund !~ '[\u200e\u200f\u202a-\u202e\u2066-\u2069]')),
   -- Set by the server: the role the step needs, who took it, and when.
   rolle text not null check (rolle in ('abrechnung', 'geschaeftsfuehrung')),
   user_id uuid not null,
   person text not null,
   zeit timestamptz not null default now(),
+  -- The order of the decisions: drawn once the lock on the work is held, so it is the order in which they passed the
+  -- check. The clock alone can give two entries the same time; the latest entry is the one with the highest folge.
+  folge bigint not null,
   check (stand <> 'nicht_verrechnen' or grund is not null)
 );
-create index entscheidung_fund on public.entscheidung (firma_id, fund_schluessel, zeit desc);
+create sequence public.entscheidung_folge;
+revoke all on sequence public.entscheidung_folge from public, anon, authenticated;
+create index entscheidung_fund on public.entscheidung (firma_id, fund_schluessel, folge desc);
 
 -- Runs after stempeln() (triggers fire in name order: "a_" before "b_"): the step must be one the find can take from
 -- its latest decision, by a member holding the role the step needs, and a release never by the person who checked.
@@ -107,7 +112,7 @@ declare
   pruefer uuid;
 begin
   -- Blanks of every kind (tab, non-breaking space) are no reason.
-  new.grund := nullif(regexp_replace(new.grund, '^[\s  -​　﻿]+|[\s  -​　﻿]+$', '', 'g'), '');
+  new.grund := nullif(regexp_replace(new.grund, '^[\s\u00a0\u2000-\u200b\u3000\ufeff]+|[\s\u00a0\u2000-\u200b\u3000\ufeff]+$', '', 'g'), '');
   new.rolle := case new.stand when 'freigegeben' then 'geschaeftsfuehrung' else 'abrechnung' end;
   if not new.rolle = any (public.eigene_rollen()) then
     raise exception 'Diesen Schritt macht die %.', case new.rolle when 'abrechnung' then 'Abrechnung' else 'Geschäftsführung' end using errcode = '42501';
@@ -121,16 +126,17 @@ begin
   ) s;
 
   -- One decision per work at a time: two clicks in the same second never both pass the check below. Every key is
-  -- locked, in sorted order so two requests never wait for each other. The time is taken once the lock is held, so
-  -- the order of the entries is the order in which they passed the check.
+  -- locked, in sorted order so two requests never wait for each other. Time and folge are taken once the lock is
+  -- held, so the order of the entries is the order in which they passed the check.
   foreach k in array schluessel loop
     perform pg_advisory_xact_lock(hashtextextended(new.firma_id::text || '/' || k, 0));
   end loop;
   new.zeit := clock_timestamp();
+  new.folge := nextval('public.entscheidung_folge');
 
   select e.stand into bisher from public.entscheidung e
     where e.firma_id = new.firma_id and e.fund_schluessel = any (schluessel)
-    order by e.zeit desc, e.id desc limit 1;
+    order by e.folge desc limit 1;
   bisher := coalesce(bisher, 'gefunden');
 
   if not (
@@ -145,7 +151,7 @@ begin
   if new.stand = 'freigegeben' then
     select e.user_id into pruefer from public.entscheidung e
       where e.firma_id = new.firma_id and e.fund_schluessel = any (schluessel) and e.stand = 'geprueft'
-      order by e.zeit desc, e.id desc limit 1;
+      order by e.folge desc limit 1;
     if pruefer = new.user_id then
       raise exception 'Vier Augen: wer geprüft hat, gibt nicht frei.' using errcode = '42501';
     end if;
@@ -166,10 +172,10 @@ create table public.aufgabe (
   firma_id uuid not null references public.firma (id),
   fund_schluessel text not null check (char_length(fund_schluessel) between 1 and 200),
   -- "F1 Wohnpark Mooshaim" and the find page; only an address inside the app.
-  fund text not null check (char_length(fund) between 1 and 300 and fund !~ '[‎‏‪-‮⁦-⁩]'),
+  fund text not null check (char_length(fund) between 1 and 300 and fund !~ '[\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
   href text not null check (char_length(href) <= 500 and href ~ '^/[A-Za-z0-9/_.#?=&%-]*$' and href !~ '^//'),
   -- Some text that is not blank, and no characters that turn the reading direction (they can disguise a text).
-  text text not null check (char_length(text) <= 2000 and text ~ '[^\s  -​　﻿]' and text !~ '[‎‏‪-‮⁦-⁩]'),
+  text text not null check (char_length(text) <= 2000 and text ~ '[^\s\u00a0\u2000-\u200b\u3000\ufeff]' and text !~ '[\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
   zustaendig text not null check (zustaendig in ('Abrechnung', 'Bauleitung', 'Geschäftsführung')),
   bis date,
   user_id uuid not null,
@@ -214,7 +220,7 @@ create table public.datei (
   id uuid primary key default gen_random_uuid(),
   firma_id uuid not null references public.firma (id),
   projekt_id text not null check (projekt_id ~ '^[a-z0-9-]{1,50}$'),
-  name text not null check (char_length(name) between 1 and 255 and name !~ '[/\\[:cntrl:]]' and name !~ '[‎‏‪-‮⁦-⁩]'),
+  name text not null check (char_length(name) between 1 and 255 and name !~ '[/\\[:cntrl:]]' and name !~ '[\u200e\u200f\u202a-\u202e\u2066-\u2069]'),
   typ text not null check (typ in ('application/pdf', 'image/jpeg', 'image/png')),
   groesse bigint not null check (groesse between 1 and 20971520),
   -- SHA-256 of the file as the browser computed it before the upload.
