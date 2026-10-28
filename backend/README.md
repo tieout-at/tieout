@@ -5,6 +5,7 @@ Supabase project `tieout-app` (Frankfurt). Signed-in companies keep their decisi
 | Path | What |
 |---|---|
 | `migrations/` | SQL, applied once each in the Supabase SQL editor, in order; never changed after it was applied (a change is a new file) |
+| `test/livetest.sql` | the same rules on the real project: run in the SQL editor, it takes everything back (28.10.2026: 26 of 26) |
 | `test/` | the rules of every migration played through in a local Postgres (PGlite) with stand-ins for Supabase's `auth` and `storage` (`supabase-stubs.sql`) |
 
 `npm run check` runs typecheck, lint and tests; CI workflow `Backend` per pull request.
