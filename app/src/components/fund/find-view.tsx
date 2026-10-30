@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Kpi, type KpiItem } from "@/components/charts/kpi";
 import { Activity } from "@/components/record/activity";
 import { RecordHead } from "@/components/shell/record-head";
-import { SideWindow, toggleOpen } from "@/components/ui/side-window";
+import { SideWindow, toggleOpen, useSheetWidth } from "@/components/ui/side-window";
 import { checkedBy } from "@/lib/decision-rules";
 import { currentState, decide, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision, type DecisionState } from "@/lib/decisions";
 import type { FindRecord, SourceRef } from "@/lib/finds";
@@ -101,6 +101,7 @@ export function FindView({ record }: { record: FindRecord }) {
   // a click opens the original, a second click on the same source closes it again
   const open = useCallback((s: SourceRef) => setSource((cur) => toggleOpen(cur, s, sameSource)), []);
   const close = useCallback(() => setSource(null), []);
+  const sheetWidth = useSheetWidth();
 
   const betrag = highlights.find((h) => h.id === "betrag");
   const stand = highlights.find((h) => h.id === "belegstand");
@@ -195,7 +196,7 @@ export function FindView({ record }: { record: FindRecord }) {
         <Activity entries={activity} />
       </div>
 
-      <SideWindow open={source !== null} onClose={close} title="Original">
+      <SideWindow open={source !== null} onClose={close} title="Original" width={sheetWidth}>
         {source && <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} onClose={close} />}
       </SideWindow>
     </div>

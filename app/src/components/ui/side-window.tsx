@@ -56,7 +56,7 @@ export function SideWindow({ open, onClose, title, width = 440, children }: { op
     opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     stack.push({ id, width });
     syncRoom();
-    const t = window.setTimeout(() => box.current?.querySelector<HTMLElement>("button, a[href], [tabindex]:not([tabindex='-1'])")?.focus({ preventScroll: true }), 60);
+    const t = window.setTimeout(() => box.current?.querySelector<HTMLElement>("button:not(:disabled), a[href], [tabindex]:not([tabindex='-1'])")?.focus({ preventScroll: true }), 60);
     const el = box.current;
     return () => {
       window.clearTimeout(t);
@@ -93,6 +93,11 @@ export function SideWindow({ open, onClose, title, width = 440, children }: { op
   );
   // in `body`, so a window opened inside another one is placed against the screen, not clipped by the outer window
   return inBrowser ? createPortal(aside, document.body) : aside;
+}
+
+/** The width for a sheet of paper: its text needs more room than a list, where the page beside it can spare it. */
+export function useSheetWidth(): number {
+  return useMediaQuery("(min-width: 1360px)", true) ? 540 : 440;
 }
 
 /** Open, switch or close: a second click on what is open closes the window. */

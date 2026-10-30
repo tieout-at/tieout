@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { SideWindow } from "@/components/ui/side-window";
+import { SideWindow, useSheetWidth } from "@/components/ui/side-window";
 import type { OriginalPage } from "@/lib/originals";
 import { cn } from "@/lib/utils";
 import { OriginalViewer } from "./original-viewer";
@@ -46,8 +46,9 @@ export function OriginalLink({ project, belegId, label, className, children }: {
 
 /** The original of one page of a Beleg in the window at the right, with a note while the pages load. */
 export function OriginalWindow({ open, onClose, pages, pageKey, label, place = null }: { open: boolean; onClose: () => void; pages: Record<string, OriginalPage> | null; pageKey: string; label: string; place?: string | null }) {
+  const width = useSheetWidth();
   return (
-    <SideWindow open={open} onClose={onClose} title={label}>
+    <SideWindow open={open} onClose={onClose} title={label} width={width}>
       {pages?.[pageKey] ? (
         <OriginalViewer key={`${pageKey}|${place}`} source={{ page: pageKey, place, label, detail: `Seite ${pageKey.slice(pageKey.lastIndexOf(":") + 1)}`, short: label }} originals={pages} onClose={onClose} />
       ) : (

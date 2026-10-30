@@ -1,0 +1,35 @@
+# Checks for the generator of the synthetic folder (ordner/): types only, it needs a local Edge to run. The sheets it
+# wrote are checked with the app (`app/src/lib/scans.test.ts`).
+name: Ordner
+
+on:
+  pull_request:
+    paths: ["ordner/**", "kern/**", ".github/workflows/ordner.yml"]
+  push:
+    branches: [main]
+    paths: ["ordner/**", "kern/**"]
+
+concurrency:
+  group: ordner-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ordner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ordner
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ordner/package-lock.json
+      - run: npm ci
+      - name: Typen
+        run: npm run typecheck

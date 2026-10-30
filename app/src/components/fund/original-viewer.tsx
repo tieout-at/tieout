@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Columns2, Maximize2, ScanText, X, ZoomIn } from "lucide-react";
 import dynamic from "next/dynamic";
 import { createElement, useLayoutEffect, useRef, useState } from "react";
 
@@ -8,15 +8,22 @@ import { belegIcon } from "./icons";
 import type { SourceRef } from "@/lib/finds";
 import { markOf, placeText, type OriginalPage } from "@/lib/originals";
 import { OriginalPaper } from "./original-paper";
+import { closeZoom, OriginalScan } from "./original-scan";
 import { useAccount } from "@/lib/account";
+import { lineOf, useScan } from "@/lib/scans";
 import type { ShownFile } from "./stored-files";
 
 // the files of a Beleg exist only with an account: the demo never loads this part
 const StoredFiles = dynamic(() => import("./stored-files").then((m) => m.StoredFiles), { ssr: false });
 const FileView = dynamic(() => import("./stored-files").then((m) => m.FileView), { ssr: false });
+// the comparison is opened by few, so it is loaded by those few
+const PlanCompare = dynamic(() => import("./plan-compare").then((m) => m.PlanCompare), { ssr: false });
 
 const iconButton =
   "flex size-7 items-center justify-center rounded-md text-fg-secondary outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40 max-md:size-11";
+
+const toolButton =
+  "flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-fg-secondary outline-none hover:bg-fill-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent aria-pressed:bg-fill-hover aria-pressed:text-fg max-md:h-11";
 
 /**
  * The original on the right (Attio's chat panel, SPEZIFIKATION.md 4.2): header of 48 px with the Beleg, its page and the
@@ -33,16 +40,27 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
   const page = originals[key] ?? originals[source.page];
   const scroller = useRef<HTMLDivElement>(null);
   const mark = page && key === source.page ? markOf(page, source.place) : null;
+  // a photo or a WhatsApp-Meldung has no sheet of paper
+  const scan = useScan(page && page.art !== "whatsapp" && page.art !== "foto" ? page.project : null, page?.belegId ?? "");
+  const sheet = page && scan ? (scan.seiten[String(page.page)] ?? null) : null;
+  const sourcePlace = key === source.page ? source.place : null;
+  const line = sheet ? lineOf(sheet, sourcePlace) : [];
+  // close on a mark, the whole page without one, until the reader says otherwise
+  const [closeChoice, setCloseChoice] = useState<boolean | null>(null);
+  const close = closeChoice ?? line.length > 0;
+  const [showRead, setShowRead] = useState(false);
+  const [comparing, setComparing] = useState(false);
+  const zoom = sheet && close ? closeZoom(line) : 1;
 
-  // bring the marked place into the middle of the panel, without moving the page behind it
+  // bring the marked place into the middle of the panel, without moving the page behind it; a sheet does that itself
   useLayoutEffect(() => {
     const box = scroller.current;
-    const el = mark ? box?.querySelector<HTMLElement>(`[data-place="${CSS.escape(mark)}"]`) : null;
-    if (!box) return;
+    if (!box || sheet) return;
+    const el = mark ? box.querySelector<HTMLElement>(`[data-place="${CSS.escape(mark)}"]`) : null;
     if (!el) return void (box.scrollTop = 0);
     const top = el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop;
     box.scrollTop = Math.max(0, top - box.clientHeight / 2 + el.offsetHeight / 2);
-  }, [mark, key]);
+  }, [mark, key, sheet]);
 
   if (!page) return null;
   const sameBeleg = Object.values(originals)
@@ -87,9 +105,28 @@ export function OriginalViewer({ source, originals, onClose }: { source: SourceR
         )}
       </p>
       {signedIn && page.art !== "whatsapp" && page.project && <StoredFiles key={page.belegId} project={page.project} belegId={page.belegId} shown={file?.file ?? null} onShow={setFile} />}
-      <div ref={scroller} className="relative min-h-0 flex-1 overflow-y-auto p-4">
-        {file && signedIn ? <FileView shown={file} /> : <OriginalPaper page={page} mark={mark} />}
+      {sheet && !file && (
+        <div className="flex shrink-0 items-center gap-0.5 bg-surface px-2.5 py-1 shadow-line-bottom">
+          <button type="button" className={toolButton} onClick={() => setCloseChoice(!close)}>
+            {close ? <Maximize2 className="size-3.5" aria-hidden /> : <ZoomIn className="size-3.5" aria-hidden />}
+            {close ? "Ganze Seite" : "Näher"}
+          </button>
+          <button type="button" aria-pressed={showRead} className={toolButton} onClick={() => setShowRead((s) => !s)}>
+            <ScanText className="size-3.5" aria-hidden />
+            Gelesenes
+          </button>
+          {scan?.vergleich && (
+            <button type="button" className={toolButton} onClick={() => setComparing(true)}>
+              <Columns2 className="size-3.5" aria-hidden />
+              Mit {scan.vergleich.links.split(" · ")[0]} vergleichen
+            </button>
+          )}
+        </div>
+      )}
+      <div ref={scroller} data-scroller className={sheet && !file ? "relative flex min-h-0 flex-1 flex-col overflow-auto p-4 max-md:p-2" : "relative min-h-0 flex-1 overflow-y-auto p-4"}>
+        {file && signedIn ? <FileView shown={file} /> : sheet ? <OriginalScan key={sheet.bild} scan={sheet} project={page.project} page={page} source={sourcePlace} mark={mark} zoom={zoom} showRead={showRead} /> : scan === undefined ? null : <OriginalPaper page={page} mark={mark} />}
       </div>
+      {comparing && scan?.vergleich && <PlanCompare title={page.title} project={page.project} belegId={page.belegId} vergleich={scan.vergleich} onClose={() => setComparing(false)} />}
     </section>
   );
 }
