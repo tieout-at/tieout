@@ -2,7 +2,7 @@
 
 **As of:** Wednesday, 28 October 2026. Steps 1 to 10 merged (#103 to #132) and live at https://app.tieout.workers.dev. Step 10 (Backend) merged as #132 with the go of Maxi S. and checked live: live after 210 s, 90 pages with the same 1.114 amounts as the local build of `main`, the demo without sign-in loads nothing of Supabase, a sign-in link sent from the public address signed in "Testfirma B", whose F1 shows only its own check and not the release of Testfirma A. The Cloudflare preview was skipped (its Access sign-in asks for an OAuth consent).
 **Launch film, done 30.10.:** 47 s, 60 fps, German, built outside this repository in `../tieout-film`. Film and posters are in `website/public/film/` on `main` (#134), not yet on the website; Maxi D. builds them in. English version and teaser later. New videos: skill `video`.
-**Plan, 30.10.:** steps 13 to 21 below. Step 13 (Echter Ordner) built on the branch `schritt-13-ordner`, not yet pushed.
+**Plan, 30.10.:** steps 13 to 21 below. Step 13 (Echter Ordner) is live (#137), step 14 is next.
 **Maintenance:** every chat ends by updating this file and `_UEBERGABE.md`. Team status, gates and strategy: `../tieout-intern/_STATUS.md`.
 
 ## Where we stand
