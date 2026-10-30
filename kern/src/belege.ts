@@ -244,6 +244,13 @@ export function gelesen(d: Datensatz, belegId: string): GelesenerWert[] {
     .sort((a, b) => a.seite - b.seite);
 }
 
+/** The last page each Beleg has a field on, in one pass over the twin. */
+export function letzteSeiten(d: Datensatz): Map<string, number> {
+  const seiten = new Map<string, number>();
+  for (const { f } of felder(d)) seiten.set(f.quelle.belegId, Math.max(seiten.get(f.quelle.belegId) ?? 0, f.quelle.seite));
+  return seiten;
+}
+
 /**
  * The date of each Beleg as written on it, where the twin read one, else the date of its file: the one date every list,
  * the Zeitstrahl and the Belegabdeckung show (Aufmaßblatt 13 is dated 24.09.2026, though its file is from 20.10.2026).
