@@ -6,6 +6,7 @@
 // Ported from the v1 core (firma.ts).
 
 import type { AusserhalbErp } from "./belegquelle";
+import type { Eingang } from "./luecken";
 import { abrechnung, auftraggeberHistorie, gleicherGrund, tageZwischen, type Abrechnung, type AuftraggeberHistorie } from "./historie";
 import type { Auftraggeber, Cent, Datensatz, Datum, Entscheidung, Firmendaten, Projektstufe } from "./modell";
 import { LEERE_ENTSCHEIDUNGSSUMME, pruefeProjekt, ZAEHLENDE_ENTSCHEIDUNGEN, type Entscheidungssumme, type ProjektErgebnis, type ZaehlendeEntscheidung } from "./projekt";
@@ -95,13 +96,17 @@ const plusSumme = (a: Entscheidungssumme, b: Entscheidungssumme): Entscheidungss
   davonMitKuerzungsrisiko: a.davonMitKuerzungsrisiko + b.davonMitKuerzungsrisiko,
 });
 
-export function pruefeFirma(f: Firmendaten, entscheidungen: readonly Entscheidung[] = []): FirmenErgebnis {
+export function pruefeFirma(f: Firmendaten, entscheidungen: readonly Entscheidung[] = [], eingaenge: readonly Eingang[] = []): FirmenErgebnis {
   const ergebnisse: Record<string, ProjektErgebnis> = {};
   const abrechnungen: Record<string, Abrechnung> = {};
   const projekte: ProjektZeile[] = f.projekte.map((d) => {
     const ag = f.auftraggeber.find((a) => a.id === d.projekt.auftraggeberId);
     if (!ag) throw new Error(`Auftraggeber ${d.projekt.auftraggeberId} fehlt (${d.projekt.kurz})`);
-    const e = pruefeProjekt(d, { auftraggeber: ag.kurzname, entscheidungen: entscheidungen.filter((x) => x.fundSchluessel.startsWith(`${d.projekt.id}/`)).map((x) => ({ ...x, fundSchluessel: x.fundSchluessel.slice(d.projekt.id.length + 1) })) });
+    const e = pruefeProjekt(d, {
+      auftraggeber: ag.kurzname,
+      entscheidungen: entscheidungen.filter((x) => x.fundSchluessel.startsWith(`${d.projekt.id}/`)).map((x) => ({ ...x, fundSchluessel: x.fundSchluessel.slice(d.projekt.id.length + 1) })),
+      eingaenge: eingaenge.filter((x) => x.lueckeSchluessel.startsWith(`${d.projekt.id}/`)).map((x) => ({ ...x, lueckeSchluessel: x.lueckeSchluessel.slice(d.projekt.id.length + 1) })),
+    });
     ergebnisse[d.projekt.id] = e;
     const ab = abrechnung(d);
     if (ab) abrechnungen[d.projekt.id] = ab;

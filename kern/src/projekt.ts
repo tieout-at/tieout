@@ -3,6 +3,7 @@
 
 import { ausserhalbErp, belegquellen, type AusserhalbErp, type Belegquelle } from "./belegquelle";
 import type { Cent, Datensatz, Entscheidung, Entscheidungsstand } from "./modell";
+import { aktiveEingaenge, luecken, mitEingaengen, type Eingang, type Luecke } from "./luecken";
 import { ordnerLesen, type OrdnerStand } from "./ordner";
 import { positionstabelle, type Positionstabelle } from "./positionen";
 import { rechnungsabschluss, type Rechnungsabschluss } from "./rechnungsabschluss";
@@ -41,6 +42,8 @@ export interface ProjektErgebnis {
   ausserhalbErp: { zusaetzlichVerrechenbar: AusserhalbErp; inKlaerung: AusserhalbErp };
   /** The money words split by the decision on each find; per money word the parts add up to its total. */
   jeEntscheidung: Record<ZaehlendeEntscheidung, Entscheidungssumme>;
+  /** What can still be closed, as the twin was read; the closed ones carry their Eingang. */
+  luecken: Luecke[];
 }
 
 function jeEntscheidung(a: Abgleich, vp: Vorpruefung | null): Record<ZaehlendeEntscheidung, Entscheidungssumme> {
@@ -65,8 +68,11 @@ function jeEntscheidung(a: Abgleich, vp: Vorpruefung | null): Record<ZaehlendeEn
   ) as Record<ZaehlendeEntscheidung, Entscheidungssumme>;
 }
 
-export function pruefeProjekt(d: Datensatz, optionen: { auftraggeber?: string; entscheidungen?: readonly Entscheidung[] } = {}): ProjektErgebnis {
-  const a = abgleich(d, optionen);
+export function pruefeProjekt(gelesen: Datensatz, optionen: { auftraggeber?: string; entscheidungen?: readonly Entscheidung[]; eingaenge?: readonly Eingang[] } = {}): ProjektErgebnis {
+  const eingaenge = aktiveEingaenge(optionen.eingaenge ?? []);
+  const wieGelesen = abgleich(gelesen, optionen);
+  const d = mitEingaengen(gelesen, eingaenge);
+  const a = d === gelesen ? wieGelesen : abgleich(d, { ...optionen, nummern: new Map(wieGelesen.funde.map((f) => [f.schluessel, f.nr])) });
   const zaehlt = a.funde.filter((f) => f.entscheidung !== "nicht_verrechnen");
   const vp = vorpruefung(d, a);
   return {
@@ -83,5 +89,6 @@ export function pruefeProjekt(d: Datensatz, optionen: { auftraggeber?: string; e
       inKlaerung: ausserhalbErp(zaehlt.filter((f) => f.belegstand === "beleg_fehlt" || f.belegstand === "nachtrag_nicht_gelegt")),
     },
     jeEntscheidung: jeEntscheidung(a, vp),
+    luecken: luecken(gelesen, wieGelesen, d === gelesen ? vp : vorpruefung(gelesen, wieGelesen), eingaenge),
   };
 }

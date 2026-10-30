@@ -50,6 +50,10 @@ function aufmassNichtGegengezeichnet(k: Kontext, a: Abgleich): Roh[] {
     const plaene = k.d.plaene.filter((pl) => pl.vermerke.some((v) => v.typ === "aenderung" && nrs.has(v.positionNr.wert)));
     const mails = k.d.emails.filter((m) => m.kategorie.wert === "anweisung" && m.bezugPositionen.wert.some((x) => nrs.has(x)));
     const beilegen = [...plaene.map((pl) => `Plan ${pl.planNr.wert} Index ${pl.index.wert}`), ...mails.map((m) => `die E-Mail vom ${tagMonat(m.datum.wert)}`)];
+    const beilagen = [
+      ...plaene.map((pl) => ({ belegId: pl.belegId, seite: pl.planNr.quelle.seite, stelle: pl.vermerke.find((v) => v.typ === "aenderung" && nrs.has(v.positionNr.wert))?.text.quelle.stelle ?? "Plankopf", titel: `Plan ${pl.planNr.wert} Index ${pl.index.wert}` })),
+      ...mails.map((m) => ({ belegId: m.belegId, seite: m.datum.quelle.seite, stelle: m.zitat?.quelle.stelle ?? "Absatz 1", titel: `E-Mail vom ${datumText(m.datum.wert)}` })),
+    ];
     const blaetter = k.d.aufmass.filter((b) => g.blaetter.has(b.nr));
     return {
       schluessel: `vp:aufmass_nicht_gegengezeichnet:${key}`,
@@ -59,6 +63,7 @@ function aufmassNichtGegengezeichnet(k: Kontext, a: Abgleich): Roh[] {
       was: fund?.art === "mehrmenge_plan" ? `Mehrmenge, ${fund.titel.split(": ").slice(1).join(": ")}` : `${g.text.join(", ")} ohne Gegenzeichnung`,
       detail: `${blaetter.map((b) => `Aufmaßblatt ${b.nr}`).join(", ")} vom Auftraggeber nicht gegengezeichnet`,
       abhilfe: `${beilegen.length ? `${beilegen.join(" und ")} beilegen, ` : ""}gemeinsames Aufmaß vereinbaren`,
+      beilagen,
       betrag: g.betrag,
       zustand: g.nrs.some((nr) => k.kuerzungen.has(nr)) ? ("schon_gekuerzt" as const) : ("droht" as const),
       nachweise: blaetter.map((b): Nachweis => ({ titel: `Aufmaßblatt ${b.nr}`, text: "Unterschrift Auftraggeber fehlt", datum: b.datum.wert, quelle: b.gegengezeichnet.quelle, art: "aufmassblatt", rolle: "leistung", imErp: b.erfasstAm !== null })),

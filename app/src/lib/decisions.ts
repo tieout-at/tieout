@@ -5,6 +5,8 @@
  * ever edited or removed; a later entry counts.
  */
 
+import type { Eingang } from "@tieout/kern";
+
 import { currentState, DECISION_TEXT, refusal, type DecisionState } from "./decision-rules";
 import { CHANGED, refuse, serverAppend, serverRead, serverWaiting, WAITING, type ListKey } from "./server-store";
 
@@ -61,7 +63,7 @@ export type TaskCheck = {
   erledigt: boolean;
 };
 
-const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1", settings: "tieout.ablauf-einstellungen.v1" } as const;
+const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1", settings: "tieout.ablauf-einstellungen.v1", eingaenge: "tieout.eingaenge.v1" } as const;
 
 export function localTime(date = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -77,6 +79,7 @@ const SERVER_LIST: Record<string, ListKey> = {
   [KEYS.tasks]: "aufgaben",
   [KEYS.checks]: "erledigt",
   [KEYS.settings]: "einstellungen",
+  [KEYS.eingaenge]: "eingaenge",
 };
 
 function read<T>(key: string): T[] {
@@ -165,4 +168,9 @@ export const readSettings = () =>
     (x): x is Setting => !!x && typeof x === "object" && typeof (x as Setting).block === "string" && typeof (x as Setting).wert === "string" && typeof (x as Setting).zeit === "string" && FELDER.includes((x as Setting).feld),
   );
 export const appendSetting = (x: Setting) => append(KEYS.settings, x);
+/** Only well-formed entries, as for the settings: what lies in the browser's storage feeds the core. */
+export const readEingaenge = () =>
+  read<unknown>(KEYS.eingaenge).filter((x): x is Eingang => !!x && typeof x === "object" && typeof (x as Eingang).lueckeSchluessel === "string" && typeof (x as Eingang).zeit === "string" && typeof (x as Eingang).wer === "string" && typeof (x as Eingang).gueltig === "boolean");
+/** A signature came back (step 14), or takes an earlier entry back: appended, the latest entry of a gap counts. */
+export const appendEingang = (e: Eingang) => append(KEYS.eingaenge, e);
 export const appendTaskCheck = (c: TaskCheck) => append(KEYS.checks, c);

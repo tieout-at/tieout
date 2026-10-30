@@ -32,21 +32,30 @@ it("applies after the v1 SQL of the WhatsApp agent, and that SQL still applies a
 }, 30_000);
 
 it("fund_alias holds exactly the earlier keys of kern/'s sample data", async () => {
-  const b = pruefeFirma(beispielFirma());
+  // the work of a WhatsApp-Meldung keeps its decisions once its signed Regiebericht is entered (005_eingang.sql)
+  const offen = Object.entries(pruefeFirma(beispielFirma()).ergebnisse).flatMap(([projekt, e]) => e.luecken.filter((l) => l.art === "regiebericht").map((l) => `${projekt}/${l.schluessel}`));
+  const b = pruefeFirma(beispielFirma(), [], offen.map((lueckeSchluessel) => ({ lueckeSchluessel, zeit: "2026-10-23T09:00", wer: "Abrechnung", gueltig: true })));
   const erwartet = Object.entries(b.ergebnisse)
     .flatMap(([projekt, e]) => e.abgleich.funde.flatMap((f) => f.fruehereSchluessel.map((k) => `${projekt}/${f.schluessel} <- ${projekt}/${k}`)))
     .sort();
   const pg = await frisch();
   await pg.exec(sql("../migrations/001_basis.sql"));
+  await pg.exec(sql("../migrations/002_live.sql"));
+  await pg.exec(sql("../migrations/003_datei_beleg.sql"));
+  await pg.exec(sql("../migrations/004_eingaben.sql"));
+  await pg.exec(sql("../migrations/005_eingang.sql"));
   const rows = (await pg.query<{ s: string }>("select schluessel || ' <- ' || frueher as s from public.fund_alias order by 1")).rows.map((r) => r.s);
   expect(rows).toEqual(erwartet);
   expect(rows.length).toBeGreaterThan(0);
 }, 30_000);
 
-it("002_live.sql puts exactly the four lists of the company into Realtime, and nothing else", async () => {
+it("002_live.sql and 005_eingang.sql put exactly the five lists of the company into Realtime, and nothing else", async () => {
   const pg = await frisch();
   await pg.exec(sql("../migrations/001_basis.sql"));
   await pg.exec(sql("../migrations/002_live.sql"));
+  await pg.exec(sql("../migrations/003_datei_beleg.sql"));
+  await pg.exec(sql("../migrations/004_eingaben.sql"));
+  await pg.exec(sql("../migrations/005_eingang.sql"));
   const rows = (await pg.query<{ tablename: string }>("select tablename from pg_publication_tables where pubname = 'supabase_realtime' order by 1")).rows.map((r) => r.tablename);
-  expect(rows).toEqual(["ablauf_einstellung", "aufgabe", "aufgabe_erledigt", "entscheidung"]);
+  expect(rows).toEqual(["ablauf_einstellung", "aufgabe", "aufgabe_erledigt", "eingang", "entscheidung"]);
 }, 30_000);

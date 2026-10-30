@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, FileCheck2, FileSpreadsheet, Printer } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ChevronRight, CircleCheck, FileCheck2, FileSpreadsheet, FolderCheck, Printer } from "lucide-react";
+import { useRef, useState } from "react";
 
 import { KpiRow } from "@/components/charts/kpi";
 import { keep } from "@/components/charts/tones";
@@ -10,33 +10,46 @@ import { Tag, type TagColour } from "@/components/table/tag";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { InfoTip } from "@/components/ui/info-tip";
-import { useReducedMotion } from "@/components/ui/use-media";
 import { useActor } from "@/lib/account";
 import { notYours } from "@/lib/decision-rules";
-import { DECISION_TEXT, localTime, readDecisions, takeIntoInvoice, type DecisionState } from "@/lib/decisions";
-import type { ChangeEntry, InvoiceFind, InvoiceView as View, SettlementLine } from "@/lib/invoice";
+import { DECISION_TEXT, localTime, readDecisions, readEingaenge, takeIntoInvoice, type DecisionState } from "@/lib/decisions";
+import type { ChangeEntry, Gap, InvoiceFind, InvoiceView as View } from "@/lib/invoice";
 import { useLive } from "@/lib/live";
+import type { Mode } from "@/lib/stairs";
 import { cn } from "@/lib/utils";
 import { SavedWhere } from "@/components/shell/saved-where";
+import { FindWindow } from "./find-window";
+import { GapWindow } from "./gap-window";
+import { Treppe } from "./treppe";
 
 const quiet = "link-quiet";
 const DECISION_COLOUR: Partial<Record<DecisionState, TagColour>> = { freigegeben: "green", in_schlussrechnung: "green", nicht_verrechnen: "grey" };
 const decided = (d: DecisionState) => d === "freigegeben" || d === "in_schlussrechnung" || d === "nicht_verrechnen";
 const card = "flex min-w-0 flex-col rounded-xl bg-surface shadow-ring";
 
-type Mode = "announced" | "contract";
-
 /**
  * The tab "Schlussrechnung" of a project, rebuilt in step 8d from the council's mix of the two drafts: the decisions as
- * the answer to "Kann die Rechnung raus?", three figures with "zusätzlich verrechenbar" as the money tieout found (never
- * the Restforderung), then two equal columns: what comes into the invoice and the Restforderung step by step with the
- * switch "Laut Vertrag"; below, what can be cut and the sheet for the final meeting. Every figure is the core's; after a
- * decision in this browser the core's figures over it (live.ts). Printing shows every part, marked internal.
+ * the answer to "Kann die Rechnung raus?", two figures with "zusätzlich verrechenbar" as the money tieout found (never
+ * the Restforderung), the Rechnungsabschluss as a staircase (step 14), then what comes into the invoice, what can be cut
+ * with "Lücke schließen" at each line, and the sheet for the final meeting. Every figure is the core's; after a decision
+ * or a signature that came back the core's figures over it (live.ts). Printing shows every part, marked internal.
  */
 export function InvoiceView({ built }: { built: View }) {
   const v = useLive()?.invoiceView(built.project.id) ?? built;
   const [mode, setMode] = useState<Mode>("announced");
-  const rest = mode === "announced" ? v.settlement.restforderung : v.settlement.contract.restforderung;
+  const [findKey, setFindKey] = useState<string | null>(null);
+  const [gapKey, setGapKey] = useState<string | null>(null);
+  const all = [...v.status.all];
+  const find = all.find((f) => f.key === findKey || f.earlierKeys.includes(findKey ?? "")) ?? null;
+  const gap = v.gaps.find((g) => g.key === gapKey) ?? null;
+  const openGap = (g: Gap) => {
+    setFindKey(null);
+    setGapKey(g.key);
+  };
+  const openFind = (f: InvoiceFind) => {
+    setGapKey(null);
+    setFindKey(f.key);
+  };
   return (
     <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-5 px-6 py-5 max-md:px-4 print:max-w-none print:px-0">
       <p className="hidden text-xs font-medium print:block">Intern, nicht für {v.project.client.name}: mit Vorprüfung, Kalkulation und Untergrenzen. Für den Auftraggeber sind die Beweispakete.</p>
@@ -58,27 +71,22 @@ export function InvoiceView({ built }: { built: View }) {
             info: "Funde, denen ein Beleg oder ein Nachtrag fehlt. Sie werden nie zu zusätzlich verrechenbar addiert und kommen erst mit Beleg oder Nachtrag in die Änderungsliste.",
             lines: [{ text: "wartet auf Beleg oder Nachtrag" }],
           },
-          {
-            id: "rest",
-            label: mode === "announced" ? "Restforderung" : "Restforderung laut Vertrag",
-            value: rest.text,
-            info: `So rechnet ${v.project.client.name} voraussichtlich ab: Ihr Entwurf mit den Funden, abzüglich Nachlass, angekündigter Abzüge, Haftrücklass und der schon bezahlten Abschlagsrechnungen. Alle Beträge netto. Schritt für Schritt unten.`,
-            lines: [{ text: mode === "announced" ? `laut Vertrag ${v.settlement.contract.restforderung.text}` : `wie angekündigt ${v.settlement.restforderung.text}` }],
-          },
         ]}
       />
+      <Treppe v={v} mode={mode} setMode={setMode} onFind={openFind} />
       {/* two columns that stack on their own, so neither card is stretched to the height of its neighbour */}
       <div className="grid items-start gap-5 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-5">
-          <ChangeCard v={v} />
-          <CheckCard v={v} />
+          <ChangeCard v={v} onGap={openGap} />
+          <MeetingCard v={v} />
         </div>
         <div className="flex min-w-0 flex-col gap-5">
-          <SettlementCard v={v} mode={mode} setMode={setMode} />
-          <MeetingCard v={v} />
+          <CheckCard v={v} onGap={openGap} />
         </div>
       </div>
       <p className="text-xs text-fg-muted">tieout sendet nichts an den Auftraggeber. Alle Beträge netto.</p>
+      <FindWindow find={find} v={v} onClose={() => setFindKey(null)} onGap={openGap} />
+      <GapWindow gap={gap} onClose={() => setGapKey(null)} />
     </div>
   );
 }
@@ -123,6 +131,7 @@ function StatusHead({ v }: { v: View }) {
   const [exporting, setExporting] = useState(false);
   const busy = useRef(false);
   const done = v.status.all.filter((f) => decided(f.decision)).length;
+  const signatures = v.gaps.filter((g) => g.folder && !g.closed).length;
   const released = v.status.all.filter((f) => f.decision === "freigegeben");
   // the Abrechnung writes the invoice and notes the take-over (the database refuses it to anyone else)
   const notMine = notYours({ stand: "in_schlussrechnung", label: "Übernehmen", wer: "Abrechnung" }, useActor(), null);
@@ -149,7 +158,8 @@ function StatusHead({ v }: { v: View }) {
     setNote(null);
     try {
       const decisions = readDecisions();
-      const view = decisions.length ? ((await import("@/lib/kern-live")).live(decisions).invoiceView(v.project.id) ?? v) : v;
+      const eingaenge = readEingaenge();
+      const view = decisions.length || eingaenge.length ? ((await import("@/lib/kern-live")).live(decisions, eingaenge).invoiceView(v.project.id) ?? v) : v;
       (await import("@/lib/invoice-export")).downloadInvoice(view);
     } catch {
       setNote("Die Excel-Datei ließ sich nicht erstellen. Bitte versuchen Sie es noch einmal.");
@@ -205,6 +215,13 @@ function StatusHead({ v }: { v: View }) {
             <FileCheck2 className="size-4 text-fg-secondary" aria-hidden />
             Beweispakete
           </Link>
+          {signatures > 0 && (
+            <Link href={v.project.folderHref} className="inline-flex h-7 items-center gap-1.5 rounded-md bg-surface py-1 pr-2 pl-1.5 font-medium shadow-button outline-none hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-accent max-md:h-8">
+              <FolderCheck className="size-4 text-fg-secondary" aria-hidden />
+              Mappe
+              <span className="font-mono text-xs text-fg-secondary">{signatures}</span>
+            </Link>
+          )}
           <Button variant={can ? "primary" : "secondary"} disabled={!can} title={can ? undefined : takeOverNote} onClick={() => setAsking(true)} aria-describedby={can ? undefined : "uebernehmen-hinweis"}>
             In die Schlussrechnung übernehmen
           </Button>
@@ -312,7 +329,7 @@ function ChangeRow({ c }: { c: ChangeEntry }) {
 }
 
 /** "Was kommt dazu?": the Änderungsliste, one row per find (positions open on click), and apart what is still in Klärung. */
-function ChangeCard({ v }: { v: View }) {
+function ChangeCard({ v, onGap }: { v: View; onGap: (g: Gap) => void }) {
   return (
     <section id="aenderungsliste" aria-label="Was kommt dazu?" className={card}>
       <CardHead title="Was kommt dazu?" info="Neue Positionen für Ihr Rechnungsprogramm, je mit Beweispaket. tieout schreibt keine zweite Rechnung: Sie tragen diese Positionen selbst ein." right={<span className="pt-0.5 text-xs text-fg-muted">Änderungsliste, {v.changes.entries.length === 1 ? "1 Fund" : `${v.changes.entries.length} Funde`}</span>} />
@@ -345,6 +362,7 @@ function ChangeCard({ v }: { v: View }) {
                       {x.remedy ? `: ${x.remedy}` : ""}
                     </span>
                   </span>
+                  <GapLink gap={v.gaps.find((g) => g.find?.key === x.find.key && !g.closed)} onGap={onGap} />
                 </span>
                 <span className="shrink-0 text-fg-secondary tabular-nums">{keep(x.amount.text)}</span>
               </li>
@@ -356,164 +374,17 @@ function ChangeCard({ v }: { v: View }) {
   );
 }
 
-/** Counts an amount from its old to its new value (the Restforderung when the switch moves); none with reduced motion. */
-function useCounting(cent: number): number {
-  const still = useReducedMotion();
-  const [shown, setShown] = useState(cent);
-  const from = useRef(cent);
-  useEffect(() => {
-    if (still || from.current === cent) {
-      from.current = cent;
-      setShown(cent);
-      return;
-    }
-    const start = performance.now();
-    const a = from.current;
-    let frame = 0;
-    const step = (t: number) => {
-      const k = Math.min(1, (t - start) / 450);
-      const e = 1 - (1 - k) ** 3;
-      setShown(Math.round(a + (cent - a) * e));
-      if (k < 1) frame = requestAnimationFrame(step);
-      else from.current = cent;
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [cent, still]);
-  return shown;
-}
-
-const euroText = (cent: number) => {
-  const abs = Math.abs(cent);
-  const whole = Math.floor(abs / 100)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return `${cent < 0 ? "−" : ""}${whole},${String(abs % 100).padStart(2, "0")} €`;
-};
-
-/**
- * "Restforderung Schritt für Schritt": the Rechnungsabschluss as a short list, the finds folded into one line, a switch
- * between what the Auftraggeber announced and what the Vertrag allows. A deduction without contract item is marked and,
- * "laut Vertrag", struck through; the Restforderung counts to its new value.
- */
-function SettlementCard({ v, mode, setMode }: { v: View; mode: Mode; setMode: (m: Mode) => void }) {
-  const s = v.settlement;
-  const [paidOpen, setPaidOpen] = useState(false);
-  const lines = mode === "announced" ? s.lines : s.contract.lines;
-  const finds = lines.filter((l) => l.kind === "fund");
-  const restCent = mode === "announced" ? s.restforderung.cent : s.contract.restforderung.cent;
-  const counting = useCounting(restCent);
-  const ok = s.payments.every((p) => p.ok);
-  // the deductions the announced cascade has and "laut Vertrag" leaves out stay in place, struck through
-  const shown: (SettlementLine & { gone?: boolean })[] = [];
-  s.lines.forEach((l, i) => {
-    if (l.kind === "fund") return;
-    if (l.kind === "abzug" && l.check?.state === "abzug_ohne_vertragspunkt" && mode === "contract") return void shown.push({ ...l, gone: true });
-    const same = lines.filter((x) => x.kind === l.kind && x.label.replace(" laut Vertrag", "") === l.label.replace(" laut Vertrag", ""));
-    shown.push(same[0] ? { ...same[0], label: l.label } : l);
-    if (l.kind === "summe" && i === s.lines.findIndex((x) => x.kind === "summe")) shown.push({ label: `Änderungsliste, ${finds.length === 1 ? "1 Fund" : `${finds.length} Funde`}`, kind: "fund", amount: v.changes.total, rate: null, share: null, check: null, find: null });
-  });
-  return (
-    <section id="rechnungsabschluss" aria-label="Restforderung Schritt für Schritt" className={card}>
-      <CardHead
-        title="Restforderung Schritt für Schritt"
-        info={`So rechnet ${v.project.client.name} voraussichtlich ab. Nachlass und Abzüge werden auf die Gesamtleistung gerechnet. Laut Vertrag nimmt die Abzüge heraus, für die der Vertrag keinen Punkt nennt; ob Sie widersprechen, entscheiden Sie.`}
-        right={
-          <div role="radiogroup" aria-label="Rechnung" className="inline-flex h-8 shrink-0 items-center rounded-lg bg-fill-hover p-0.5 print:hidden max-md:h-11">
-            {(
-              [
-                ["announced", "Wie angekündigt"],
-                ["contract", "Laut Vertrag"],
-              ] as const
-            ).map(([id, text]) => (
-              <button
-                key={id}
-                type="button"
-                role="radio"
-                aria-checked={mode === id}
-                onClick={() => setMode(id)}
-                className={cn("h-7 rounded-md px-2.5 text-sm whitespace-nowrap outline-none transition-colors focus-visible:outline-2 focus-visible:outline-accent max-md:h-10", mode === id ? "bg-surface text-fg shadow-button" : "text-fg-secondary hover:text-fg")}
-              >
-                {text}
-              </button>
-            ))}
-          </div>
-        }
-      />
-      <ol className="flex flex-1 flex-col shadow-[inset_0_1px_0_0_var(--color-line)]">
-        {shown.map((l, i) => {
-          const sum = l.kind === "summe";
-          const result = l.kind === "ergebnis";
-          const minus = l.kind === "abzug" || l.kind === "zahlung";
-          if (result)
-            return (
-              <li key="ergebnis" className="mt-auto flex min-h-14 items-center justify-between gap-3 bg-fill-subtle px-4 py-2 shadow-[inset_0_1px_0_0_var(--color-line)]">
-                <span className="font-semibold">{mode === "announced" ? "Restforderung" : "Restforderung laut Vertrag"}</span>
-                <span className="text-xl font-semibold tracking-tight tabular-nums" aria-live="polite">
-                  {keep(euroText(counting))}
-                </span>
-              </li>
-            );
-          return (
-            <li key={`${l.label}-${i}`} className={cn("grid min-h-10 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-4 py-1.5 transition-opacity duration-300", sum && "font-medium", l.gone && "opacity-55")}>
-              <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
-              <span className={cn("flex min-w-0 items-center gap-1.5", minus && "pl-3")}>
-                {l.check?.state === "abzug_ohne_vertragspunkt" && <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-state-red" />}
-                <span className={cn(l.gone && "line-through")} title={l.label.includes(" (") ? l.label : undefined}>
-                  {l.kind === "zahlung" ? "Schon bezahlt" : l.label.split(" (")[0]}
-                </span>
-                {l.rate && <span className="text-fg-muted">{l.rate}</span>}
-              </span>
-              {l.check && (
-                <span className={cn("text-xs", l.check.state === "abzug_ohne_vertragspunkt" ? "text-state-red-edge" : l.check.state === "abweichung" ? "text-state-orange-edge" : "text-fg-muted max-md:hidden")}>
-                  {l.gone ? "entfällt laut Vertrag" : l.check.text}
-                </span>
-              )}
-              {l.kind === "zahlung" && (
-                <button type="button" aria-expanded={paidOpen} onClick={() => setPaidOpen(!paidOpen)} className="relative flex items-center gap-0.5 text-xs text-fg-muted outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent max-md:before:absolute max-md:before:-inset-y-3 max-md:before:inset-x-0 print:hidden">
-                  <ChevronRight className={cn("size-3.5 transition-transform", paidOpen && "rotate-90")} aria-hidden />
-                  {ok ? `${s.payments.length} Zahlungen, nachgerechnet` : "weicht vom Zahlungsavis ab"}
-                </button>
-              )}
-              </span>
-              <span className={cn("shrink-0 self-start pt-px text-right tabular-nums", l.gone && "line-through")}>{keep(minus ? `−${l.amount.text.replace("−", "")}` : l.amount.text)}</span>
-              {l.kind === "zahlung" && (
-                <ul className={cn("col-span-2 flex-col pt-1 pl-3", paidOpen ? "flex" : "hidden print:flex")}>
-                  {s.payments.map((p) => (
-                    <li key={p.invoice} className="flex min-h-7 items-center gap-2 text-xs text-fg-secondary">
-                      <span className="min-w-0 flex-1">
-                        {p.invoice} <span className="text-fg-muted">bezahlt am {p.paidOn}</span>
-                      </span>
-                      <span className="tabular-nums">{keep(p.paid.text)}</span>
-                    </li>
-                  ))}
-                  {s.withheld.map((w) => (
-                    <li key={w.kind} className="flex items-start gap-1.5 pt-1 text-xs text-fg-secondary">
-                      <span aria-hidden className="mt-1 size-1.5 shrink-0 rounded-full bg-state-red" />
-                      Davon schon einbehalten: {w.kind} {keep(w.amount.text)}, ohne Vertragspunkt.
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </section>
-  );
-}
-
 /** "Was kann gekürzt werden?": the Vorprüfung, what threatens first with its Abhilfe, what was already cut apart below. */
-function CheckCard({ v }: { v: View }) {
+function CheckCard({ v, onGap }: { v: View; onGap: (g: Gap) => void }) {
   const c = v.check;
+  const row = (r: View["check"]["risks"][number]) => <CheckRow key={r.number} r={r} gap={v.gaps.find((g) => g.riskKey === r.key && !g.closed)} onGap={onGap} />;
+  const closed = v.gaps.filter((g) => g.closed);
   const threat = c.risks.filter((r) => !r.alreadyCut);
   const cut = c.risks.filter((r) => r.alreadyCut);
   return (
     <Foldable id="vorpruefung" title="Was kann gekürzt werden?" info="Die Vorprüfung prüft Ihren Entwurf so, wie es die Software eines Generalunternehmers tun wird. Sie überschneidet sich mit zusätzlich verrechenbar und wird nie dazugezählt." figure={c.threatened.text} right={<span className="pt-0.5 text-xs text-fg-muted">Vorprüfung</span>}>
       <ul className="shadow-[inset_0_1px_0_0_var(--color-line)]">
-        {threat.map((r) => (
-          <CheckRow key={r.number} r={r} />
-        ))}
+        {threat.map(row)}
       </ul>
       {cut.length > 0 && (
         <div className="bg-fill-subtle shadow-[inset_0_1px_0_0_var(--color-line)]">
@@ -521,11 +392,24 @@ function CheckCard({ v }: { v: View }) {
             Schon gekürzt, nicht in {keep(c.threatened.text)}: steht noch im Entwurf
           </p>
           <ul className="pb-1">
-            {cut.map((r) => (
-              <CheckRow key={r.number} r={r} />
-            ))}
+            {cut.map(row)}
           </ul>
         </div>
+      )}
+      {closed.length > 0 && (
+        <ul className="shadow-[inset_0_1px_0_0_var(--color-line)]">
+          {closed.map((g) => (
+            <li key={g.key} className="flex min-h-11 items-center gap-2 px-4 py-1.5 text-xs">
+              <CircleCheck className="size-4 shrink-0 text-state-green-edge" aria-hidden />
+              <span className="min-w-0 flex-1 text-fg-secondary">
+                <span className="text-fg">{g.sheet?.title ?? g.title}</span>: Unterschrift liegt vor
+              </span>
+              <button type="button" onClick={() => onGap(g)} className="link-quiet shrink-0">
+                Ansehen
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
       <p className="mt-auto px-4 py-2.5 text-xs text-fg-secondary shadow-[inset_0_1px_0_0_var(--color-line)]">
         Vorprüfung, {c.risks.length === 1 ? "1 Position" : `${c.risks.length} Positionen`}: <span className="text-fg tabular-nums">{keep(c.total.text)}</span>, davon Kürzung droht {keep(c.threatened.text)}, schon gekürzt {keep(c.alreadyCut.text)}
@@ -534,7 +418,17 @@ function CheckCard({ v }: { v: View }) {
   );
 }
 
-function CheckRow({ r }: { r: View["check"]["risks"][number] }) {
+/** Opens the window of a gap; nothing where the line has no gap left. */
+function GapLink({ gap, onGap }: { gap: Gap | undefined; onGap: (g: Gap) => void }) {
+  if (!gap) return null;
+  return (
+    <button type="button" onClick={() => onGap(gap)} className="relative mt-0.5 w-fit text-xs font-medium text-accent underline-offset-2 outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent max-md:before:absolute max-md:before:-inset-y-3 max-md:before:inset-x-0 print:hidden">
+      Lücke schließen
+    </button>
+  );
+}
+
+function CheckRow({ r, gap, onGap }: { r: View["check"]["risks"][number]; gap: Gap | undefined; onGap: (g: Gap) => void }) {
   return (
     <li className="flex items-start gap-2.5 px-4 py-2.5 [&:not(:last-child)]:shadow-line-bottom">
       <span aria-hidden className={cn("mt-1.5 size-2 shrink-0 rounded-full", r.alreadyCut ? "bg-state-grey" : "bg-state-red")} />
@@ -550,6 +444,7 @@ function CheckRow({ r }: { r: View["check"]["risks"][number] }) {
           )}
         </span>
         <span className="text-xs text-fg-secondary">Abhilfe: {r.remedy}</span>
+        <GapLink gap={gap} onGap={onGap} />
       </span>
       <span className={cn("shrink-0 tabular-nums", r.alreadyCut && "text-fg-secondary")}>{keep(r.amount.text)}</span>
     </li>

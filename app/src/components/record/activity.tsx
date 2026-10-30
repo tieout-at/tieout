@@ -10,16 +10,16 @@ const ICON = { korrektur: PencilLine, meldung: MessageCircle, entscheidung: Gave
 
 /** A run of entries of one kind in one line ("korrigierte 5 Felder"). */
 const SUMMARY = {
-  korrektur: (n: number) => `korrigierte ${n} Felder`,
+  korrektur: (n: number) => `änderte ${n} Felder`,
   meldung: (n: number) => `bestätigte ${n} WhatsApp-Meldungen`,
   entscheidung: (n: number) => `traf ${n} Entscheidungen`,
   aufgabe: (n: number) => `legte ${n} Aufgaben an oder öffnete sie wieder`,
   erledigt: (n: number) => `hakte ${n} Aufgaben ab`,
 } as const;
 
-/** Inside a group the verb is said once, in the summary: "korrigierte Foto: …" shows as "Foto: …". */
+/** Inside a group the verb is said once, in the summary: "änderte Datum in Foto …" shows as "Datum in Foto …". */
 const without = (text: string) => {
-  const rest = text.replace(/^(korrigierte|bestätigte) /, "");
+  const rest = text.replace(/^(änderte|bestätigte) /, "");
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 };
 

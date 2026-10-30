@@ -119,6 +119,13 @@ export function notYours(move: Move, actor: Actor, checker: string | null): stri
   return null;
 }
 
+/** Why this person may not enter a signature that came back; null when they may (as `eingang_pruefen` in the database). */
+export function entryRefused(actor: Actor): string | null {
+  if (actor.kind === "beispiel") return null;
+  if (actor.kind === "none") return actor.why;
+  return actor.rollen.includes("abrechnung") || actor.rollen.includes("bauleitung") ? null : "Eintragen macht die Abrechnung oder die Bauleitung.";
+}
+
 /**
  * The moves this person may take, and one sentence for the others ("Prüfen und Nicht verrechnen sind Schritte der
  * Abrechnung."), so a page offers only their steps and says why the rest is not theirs.

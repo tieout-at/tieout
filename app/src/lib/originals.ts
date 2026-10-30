@@ -47,10 +47,14 @@ export type OriginalPage = {
  */
 export const placeText = (stelle: string) =>
   stelle
+    .replace(/^Zeile (?=Regiebericht)/, "")
     .replace(/^Zeile /, "Position ")
     .replace(/^Kopf, /, "")
     .replace(/^Kopf$/, "Briefkopf")
     .replace(/^EXIF$/, "Aufnahmedaten");
+
+/** A correction in the Verlauf: what changed where, so the verb cannot be read as a word about the Beleg ("korrigierte E-Mail"). */
+export const correctionText = (beleg: string, place: string, before: string, value: string, reason: string | null) => `änderte ${place} in ${beleg} von ${before} auf ${value}${reason ? `, ${reason}` : ""}`;
 
 /**
  * The place on the page to mark for a source: the part with exactly that place, else the part the place lies in
@@ -86,10 +90,17 @@ const zeit = (z: string) => `${datumText(z.slice(0, 10))}, ${z.slice(11, 16)}`;
 
 function readOn(werte: GelesenerWert[], page: number): OriginalPage["read"] {
   const seen = new Set<string>();
-  return werte
-    .filter((w) => w.seite === page)
+  const onPage = werte.filter((w) => w.seite === page);
+  // a period read as two values at one place ("Kopf, Woche") is one line
+  const until = (w: GelesenerWert) => (w.schluessel === "von" ? onPage.find((x) => x.schluessel === "bis" && x.stelle === w.stelle) : undefined);
+  return onPage
+    .filter((w) => !(w.schluessel === "bis" && onPage.some((x) => x.schluessel === "von" && x.stelle === w.stelle)))
     .filter((w) => !seen.has(`${w.stelle}|${w.text}`) && !!seen.add(`${w.stelle}|${w.text}`))
-    .map((w) => ({ place: w.stelle, label: LABEL[w.schluessel] ?? null, text: w.text, review: PRUEFSTAND_TEXT[w.pruefstand], before: w.vorher, reason: w.grund }));
+    .map((w) => {
+      const bis = until(w);
+      const text = bis ? `${w.text} bis ${bis.text}` : w.schluessel === "regieberichtNr" ? `Nr. ${w.text}` : w.text;
+      return { place: w.stelle, label: LABEL[w.schluessel] ?? null, text, review: PRUEFSTAND_TEXT[w.pruefstand], before: w.vorher, reason: w.grund };
+    });
 }
 
 /**

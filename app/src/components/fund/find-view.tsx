@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Kpi, type KpiItem } from "@/components/charts/kpi";
 import { Activity } from "@/components/record/activity";
+import { GapWindow } from "@/components/schlussrechnung/gap-window";
 import { RecordHead } from "@/components/shell/record-head";
 import { SideWindow, toggleOpen, useSheetWidth } from "@/components/ui/side-window";
 import { checkedBy } from "@/lib/decision-rules";
@@ -46,6 +47,7 @@ const STEPS: { id: DecisionState; title: string }[] = [
  */
 export function FindView({ record }: { record: FindRecord }) {
   const [source, setSource] = useState<SourceRef | null>(null);
+  const [gapKey, setGapKey] = useState<string | null>(null);
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const tasks = useTasks() ?? [];
   // with a decision in this browser the core runs here too (live.ts): the money word and the Kürzungsrisiko follow it
@@ -66,8 +68,15 @@ export function FindView({ record }: { record: FindRecord }) {
   const state = currentState(decisions, keys, record.decision);
   const last = mine.toSorted((a, b) => a.zeit.localeCompare(b.zeit)).at(-1);
   const excluded = state === "nicht_verrechnen";
+  // by the number: a WhatsApp-Meldung that became a Regiebericht keeps its number, not its key
+  const gaps = live && record.gaps[0] ? live.gapsView(record.gaps[0].project.id).filter((g) => g.find?.number === record.number) : record.gaps;
 
   const activity: ActivityEntry[] = [
+    ...gaps.flatMap((g) =>
+      g.closed
+        ? [{ id: `eingang-${g.key}`, time: g.closed.at, timeText: g.closed.when, who: g.closed.who, text: `trug ein: ${g.sheet?.title ?? "Regiebericht"}, Unterschrift liegt vor`, kind: "entscheidung" as const }]
+        : [],
+    ),
     ...mine.map((d, i) => ({
       id: `entscheidung-${i}`,
       time: d.zeit,
@@ -187,15 +196,16 @@ export function FindView({ record }: { record: FindRecord }) {
             </li>
           </ul>
         </section>
-        <WeakSpot record={record} excluded={excluded} active={source} onOpen={open} />
+        <WeakSpot record={record} excluded={excluded} active={source} onOpen={open} gaps={gaps} onGap={(g) => setGapKey(g.key)} />
         <CalcPath calc={record.calc} active={source} onOpen={open} />
         <EvidenceTiles evidence={record.evidence} active={source} onOpen={open} />
         <Link href={`/funde/${record.slug}/beweispaket/`} className="link-quiet w-fit text-fg-secondary">
-          Beweispaket ansehen und drucken
+          Beweispaket als PDF
         </Link>
         <Activity entries={activity} />
       </div>
 
+      <GapWindow gap={gaps.find((g) => g.key === gapKey) ?? null} onClose={() => setGapKey(null)} />
       <SideWindow open={source !== null} onClose={close} title="Original" width={sheetWidth}>
         {source && <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} onClose={close} />}
       </SideWindow>

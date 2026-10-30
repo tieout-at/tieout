@@ -23,7 +23,7 @@ import {
 } from "@tieout/kern";
 
 import { projectSlug } from "./example";
-import { placeText as stelleText } from "./originals";
+import { correctionText, placeText as stelleText } from "./originals";
 import { business, clientSlug, firm, projectRows, type ProjectRow, type StatusColour } from "./kern-data";
 
 /** One row of "Angaben": the value with the place in the original it was read from. */
@@ -214,7 +214,7 @@ function projectActivity(d: Datensatz): ActivityEntry[] {
       time: k.zeit,
       timeText: zeitText(k.zeit),
       who: k.wer,
-      text: `korrigierte ${k.beleg}, ${stelleText(k.stelle)}: ${k.vorher} auf ${k.wert}${k.grund ? `, ${k.grund}` : ""}`,
+      text: correctionText(k.beleg, stelleText(k.stelle), k.vorher, k.wert, k.grund),
       kind: "korrektur" as const,
     })),
     ...d.meldungen.map((m) => ({

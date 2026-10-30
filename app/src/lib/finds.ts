@@ -28,8 +28,9 @@ import {
 } from "@tieout/kern";
 
 import { findSlug, projectSlug } from "./example";
+import { gapsView, type Gap } from "./invoice";
 import { business, clientSlug, firm, nameAndFacts } from "./kern-data";
-import { originalPage, placeText, type OriginalPage } from "./originals";
+import { correctionText, originalPage, placeText, type OriginalPage } from "./originals";
 import type { ActivityEntry, Highlight } from "./records";
 
 /** A place in a Beleg a number or a fact comes from; opens the original on the right. */
@@ -89,6 +90,8 @@ export type FindRecord = {
   calc: { steps: CalcStep[]; total: { label: string; amount: string }; check: string | null };
   evidence: EvidenceGroups;
   risk: { number: string; reason: string; detail: string; remedy: string; amount: string; alreadyCut: boolean; sameReason: string | null; sources: SourceRef[] } | null;
+  /** The gaps of this find ("Lücke schließen"), closed ones included. */
+  gaps: Gap[];
   /** What closes the gap of a find that is not "belegt". */
   remedy: string | null;
   notes: { id: string; title: string; text: string }[];
@@ -240,13 +243,15 @@ export function findRecord(slug: string): FindRecord {
     ...korrekturen(d)
       // a correction to a line of a list counts only when the find points to that line
       .filter((k) => ids.has(k.belegId) && (!/^Zeile /.test(k.stelle) || places.has(`${k.belegId}|${k.stelle}`)))
-      .map((k, i) => ({ id: `korrektur-${i}`, time: k.zeit, timeText: zeitText(k.zeit), who: k.wer, text: `korrigierte ${k.beleg}, ${placeText(k.stelle)}: ${k.vorher} auf ${k.wert}${k.grund ? `, ${k.grund}` : ""}`, kind: "korrektur" as const })),
+      .map((k, i) => ({ id: `korrektur-${i}`, time: k.zeit, timeText: zeitText(k.zeit), who: k.wer, text: correctionText(k.beleg, placeText(k.stelle), k.vorher, k.wert, k.grund), kind: "korrektur" as const })),
     ...d.meldungen
       .filter((m) => ids.has(m.id))
       .map((m) => ({ id: `meldung-${m.id}`, time: m.bestaetigt.zeitpunkt, timeText: zeitText(m.bestaetigt.zeitpunkt), who: m.bestaetigt.rolle, text: `bestätigte WhatsApp-Meldung ${m.nr}: ${m.taetigkeit.wert}`, kind: "meldung" as const })),
   ].sort((x, y) => y.time.localeCompare(x.time));
 
-  const refs = [...calcSteps.flatMap((s) => s.sources), ...evidence.map((x) => x.source), ...(risk?.nachweise ?? []).map((n) => sourceRef(d, n.quelle))];
+  // the Abhilfe names the sheets to enclose: they open from it (customer test of step 10: it led nowhere)
+  const riskSources = risk ? [...risk.nachweise.map((n) => sourceRef(d, n.quelle)), ...(risk.beilagen ?? []).map((x) => sourceRef(d, { belegId: x.belegId, seite: x.seite, stelle: x.stelle }))] : [];
+  const refs = [...calcSteps.flatMap((s) => s.sources), ...evidence.map((x) => x.source), ...riskSources];
   // the places sources point to, so that a page lists a value its layout does not show only when it is marked
   const pointed = new Set(refs.map((r) => `${r.page}|${r.place ?? ""}`));
   const originals: Record<string, OriginalPage> = {};
@@ -288,9 +293,10 @@ export function findRecord(slug: string): FindRecord {
           amount: euro(risk.betrag),
           alreadyCut: risk.zustand === "schon_gekuerzt",
           sameReason,
-          sources: risk.nachweise.map((n) => sourceRef(d, n.quelle)),
+          sources: riskSources,
         }
       : null,
+    gaps: gapsView(p.projektId, b).filter((g) => g.find?.key === `${p.projektId}/${f.schluessel}`),
     remedy: f.abhilfe,
     notes: e.abgleich.hinweise.filter((h) => h.fundSchluessel === f.schluessel).map((h) => ({ id: h.schluessel, title: h.titel, text: h.text })),
     activity,

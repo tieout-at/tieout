@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, CircleCheck } from "lucide-react";
 import { createElement } from "react";
 
 import { InfoTip } from "@/components/ui/info-tip";
 import { useMediaQuery } from "@/components/ui/use-media";
 import type { EvidenceGroups, FindRecord, SourceRef, StepQuantities } from "@/lib/finds";
+import type { Gap } from "@/lib/invoice";
 import { cn } from "@/lib/utils";
 import { belegIcon } from "./icons";
 
@@ -168,8 +169,25 @@ export function EvidenceTiles({ evidence, active, onOpen }: { evidence: Evidence
  * Grund" and the sources under it. No box, no edge. A find set to "Nicht verrechnen" is in no Entwurf, so its
  * Kürzungsrisiko no longer applies.
  */
-export function WeakSpot({ record, excluded, active, onOpen }: { record: FindRecord; excluded: boolean; active: SourceRef | null; onOpen: OpenSource }) {
+export function WeakSpot({ record, excluded, active, onOpen, gaps, onGap }: { record: FindRecord; excluded: boolean; active: SourceRef | null; onOpen: OpenSource; gaps: Gap[]; onGap: (g: Gap) => void }) {
   const r = excluded ? null : record.risk;
+  const closed = excluded ? undefined : gaps.find((g) => g.closed);
+  const gap = excluded ? undefined : gaps.find((g) => !g.closed);
+  if (closed)
+    return (
+      <p id="kuerzungsrisiko" className="flex flex-wrap items-center gap-x-2 text-fg-secondary">
+        <CircleCheck className="size-4 text-state-green-edge" aria-hidden />
+        <span>{closed.sheet?.title ?? "Regiebericht"}: Unterschrift liegt vor, eingetragen von {closed.closed!.who}.</span>
+        <button type="button" onClick={() => onGap(closed)} className="link-quiet">
+          Ansehen
+        </button>
+      </p>
+    );
+  const closeIt = gap && (
+    <button type="button" onClick={() => onGap(gap)} className="w-fit text-xs font-medium text-accent underline-offset-2 outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent max-md:min-h-9">
+      Lücke schließen
+    </button>
+  );
   if (excluded && record.risk)
     return (
       <p id="kuerzungsrisiko" className="flex items-center gap-2 text-fg-secondary">
@@ -225,10 +243,12 @@ export function WeakSpot({ record, excluded, active, onOpen }: { record: FindRec
             </span>
           </p>
         )}
+        {closeIt && <span className="pl-[18px]">{closeIt}</span>}
         {record.notes.length > 0 && body}
       </section>
     );
   return (
+    <div className="flex flex-col gap-0.5">
     <details id="kuerzungsrisiko" className="group scroll-mt-4">
       <summary className="flex min-h-9 w-fit max-w-full cursor-pointer list-none flex-wrap items-center gap-x-2 rounded-md pr-2 outline-none hover:text-fg focus-visible:outline-2 focus-visible:outline-accent max-md:min-h-11">
         <span aria-hidden className={cn("size-2 shrink-0 rounded-full", dot)} />
@@ -241,5 +261,7 @@ export function WeakSpot({ record, excluded, active, onOpen }: { record: FindRec
       </summary>
       {body}
     </details>
+    {closeIt && <span className="pl-[18px]">{closeIt}</span>}
+    </div>
   );
 }
