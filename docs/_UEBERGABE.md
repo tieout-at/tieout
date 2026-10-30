@@ -10,6 +10,8 @@
 - **Supabase** project `tieout-app` (Frankfurt, Free plan), migrations 001 to 004 applied. "Testfirma A" with two accounts of Maxi S. (Abrechnung; Geschäftsführung), "Testfirma B" with a third (both roles). Their e-mail addresses are not written in this public repository. Maxi S. invites every account himself; Claude adds the row in `mitglied` in the SQL editor and never creates accounts or types a password or key.
 - **Checked:** two companies see only their own rows, in the database and on the live channel (with a counter check); four eyes; one synthetic PDF stored and opened as "unverändert"; amounts unchanged.
 
+- **Launch film done (30.10.):** in `website/public/film/` (#134), Maxi D. builds it into the website; nothing to do in `app/`.
+
 ## What comes next
 
 Step 11 ("Frag tieout") starts only after a team go (`_STATUS.md`). Until then, or before it, these are the candidates; Maxi S. picks one per chat:
