@@ -1,8 +1,8 @@
-# Handover: after step 10, before step 11
+# Handover: after step 10, on to step 13
 
-**As of:** Wednesday, 28 October 2026, after parts D to F of step 10. Written by Claude for Maxi S.
+**As of:** Friday, 30 October 2026. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
-**Precondition:** step 10 is merged into `main` and live (check row 10 of `docs/_STATUS.md`; if the pull request of `backend-10` is still open, finish it first: Cloudflare preview, merge, live check, each with the go of Maxi S.).
+**Precondition:** the plan from step 13 is in `docs/_STATUS.md` (section "Plan from step 13", steps 13 to 21). Read its four rules before building: they keep the product transferable to a stranger's setup.
 
 ## Where things stand
 
@@ -14,11 +14,12 @@
 
 ## What comes next
 
-Step 11 ("Frag tieout") starts only after a team go (`_STATUS.md`). Until then, or before it, these are the candidates; Maxi S. picks one per chat:
+Step 13 (Echter Ordner) is next, then the steps in the order of `_STATUS.md`. Step 11 ("Frag tieout") stays behind a team go. The first draft board of step 13 is local: `app/qa-shots/entwurf/ordner/board.html` (Aufmaßblatt 12 as a scan, plan comparison index C to D, the scan moving with the calculation path of F1). It uses the handwriting font from Google Fonts as a draft; the product serves its fonts itself.
 
-1. **Before the first real customer** (each a proposal with a go, some cost money or add a service): Supabase plan, AVV with Supabase, own SMTP and maybe a code instead of a link, a check of stored files on the server, short-lived signed addresses. Real data only after the legal clearance and the works council (CLAUDE.md rule 4).
-2. **Small fixes from the customer test of step 10** (open point "Step 10" in `_STATUS.md`): Stundenzettel head and unit, wording "korrigierte E-Mail", clickable Verlauf, the Abhilfe link of F1, a notice for the Geschäftsführung, the scan next to a correction.
-3. **Decisions waiting for Maxi S.** (below).
+- **Moved into the plan:** the small fixes from the customer test of step 10 go into step 14; the points before the first real customer (Supabase plan, AVV, own e-mail sending, a check of stored files on the server, short-lived signed addresses) go into steps 16 and 19. Real data only after the legal clearance and the works council (CLAUDE.md rule 4).
+- **Before the first meeting with a real construction professional:** rehearse the click path of `SPEZIFIKATION.md` 7.3 against the app as it is, and cut the open questions (section 9 there and `Demo_Faelle.md`) to at most ten. No date or name is written down yet.
+- **The agent, measured on 30.10.:** understands a typed message (one real run, every field right, 10 s, tests and scenarios green). It has no WhatsApp, no voice, no photo, no link to the v2 app, and knows only the old sample company; `agent/UEBERGABE.md` is out of date. Step 21. It belongs to Santino, so he hears before anything changes there.
+- **Decisions waiting for Maxi S.** (below).
 
 ## Good to know
 
@@ -38,4 +39,4 @@ Step 11 ("Frag tieout") starts only after a team go (`_STATUS.md`). Until then, 
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Lies `CLAUDE.md`, `docs/_UEBERGABE.md` und `docs/_STATUS.md`. Schritt 10 ist fertig. Sag mir in zwei Sätzen, was als Nächstes am meisten bringt, und hol dir mein Go vor allem, was nach außen geht. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Lies `CLAUDE.md`, `docs/_UEBERGABE.md` und `docs/_STATUS.md`, dort den Abschnitt „Plan from step 13“. Mach mit Schritt 13 weiter und hol dir mein Go vor allem, was nach außen geht. Deutsch, einfach, Ergebnis zuerst.
