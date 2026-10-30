@@ -14,7 +14,7 @@
 
 ## What comes next
 
-Step 13 (Echter Ordner) is next, then the steps in the order of `_STATUS.md`. Step 11 ("Frag tieout") stays behind a team go.
+Step 13 (Echter Ordner) is next, then the steps in the order of `_STATUS.md`. Step 11 ("Frag tieout") stays behind a team go. The first draft board of step 13 is local: `app/qa-shots/entwurf/ordner/board.html` (Aufmaßblatt 12 as a scan, plan comparison index C to D, the scan moving with the calculation path of F1). It uses the handwriting font from Google Fonts as a draft; the product serves its fonts itself.
 
 - **Moved into the plan:** the small fixes from the customer test of step 10 go into step 14; the points before the first real customer (Supabase plan, AVV, own e-mail sending, a check of stored files on the server, short-lived signed addresses) go into steps 16 and 19. Real data only after the legal clearance and the works council (CLAUDE.md rule 4).
 - **Before the first meeting with a real construction professional:** rehearse the click path of `SPEZIFIKATION.md` 7.3 against the app as it is, and cut the open questions (section 9 there and `Demo_Faelle.md`) to at most ten. No date or name is written down yet.
