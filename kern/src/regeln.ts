@@ -7,7 +7,7 @@
 import { betragAusMenge, euro, menge, prozent, prozentText, rundeHalbAuf, stunden, stundenBetrag } from "./geld";
 import { arbeitsdatum, aufmassFunde, aufmassMenge, baueKontext, verrechneteZeilen, verrechnetMenge, vorGrenze, type AufmassFund, type Kontext } from "./kontext";
 import type { Cent, Datensatz, Datum, Email, Entscheidung, Plan, Quelle, Regiebericht, WhatsAppMeldung } from "./modell";
-import { entscheidungsstand } from "./modell";
+import { entscheidungsstand, regieSchluessel } from "./modell";
 import type { Belegstand, Fund, FundArt, FundPosition, Hinweis, Nachweis, RechenSchritt } from "./typen";
 
 export const datumText = (iso: Datum) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
@@ -244,8 +244,8 @@ function regieFunde(k: Kontext): RohFund[] {
       const teile = [...s.teile, ...(material > 0 ? [`Material ${euro(material)} + ${prozentText(zuschlag, 0)} (${euro(aufschlag)})`] : [])];
       const gh = k.d.grosshaendlerrechnungen.filter((g) => g.regieberichtNr.wert === rb.nr);
       return {
-        schluessel: `regie:${rb.nr}`,
-        fruehereSchluessel: rb.ausMeldung ? [`meldung:${rb.ausMeldung.wert}`] : [],
+        schluessel: regieSchluessel(rb),
+        fruehereSchluessel: rb.ausMeldung && !rb.ausEingang ? [`meldung:${rb.ausMeldung.wert}`] : [],
         art: "regie" as const,
         belegstand: (unterschrieben ? "belegt" : "beleg_fehlt") as Belegstand,
         titel: `Regiebericht ${rb.nr}, ${rb.taetigkeit.wert}`,
@@ -469,6 +469,8 @@ export interface AbgleichOptionen {
   auftraggeber?: string;
   /** Decisions on the finds (append only); without any, every find is "Gefunden". */
   entscheidungen?: readonly Entscheidung[];
+  /** Numbers of the finds as first read: a find keeps its number when a signature changes its Belegstand (step 14). */
+  nummern?: ReadonlyMap<string, string>;
 }
 
 /** Only projects "in Ausführung" and "Schlussrechnung vorbereiten" are compared. */
@@ -478,14 +480,18 @@ export function abgleich(d: Datensatz, optionen: AbgleichOptionen = {}): Abgleic
   const k = baueKontext(d, optionen.auftraggeber);
   const laeuft = wirdAbgeglichen(d);
   const roh = laeuft ? [...mengenFunde(k), ...regieFunde(k), ...meldungsFunde(k), ...preisumrechnung(k), ...anmeldungen(k)] : [];
+  const bekannt = optionen.nummern;
+  let neu = bekannt?.size ?? 0;
   const funde: Fund[] = roh
     .sort((a, b) => STAND_REIHE.indexOf(a.belegstand) - STAND_REIHE.indexOf(b.belegstand) || ART_REIHE.indexOf(a.art) - ART_REIHE.indexOf(b.art) || b.betrag - a.betrag || a.schluessel.localeCompare(b.schluessel))
     .map((f, i) => {
       const frueher = f.fruehereSchluessel ?? [];
       // a decision on an earlier key of the same work counts for the find as it is now
       const eigene = (optionen.entscheidungen ?? []).filter((e) => e.fundSchluessel === f.schluessel || frueher.includes(e.fundSchluessel)).map((e) => ({ ...e, fundSchluessel: f.schluessel }));
-      return { ...f, fruehereSchluessel: frueher, nr: `F${i + 1}`, entscheidung: entscheidungsstand(eigene, f.schluessel) };
-    });
+      const nr = bekannt ? ([f.schluessel, ...frueher].map((s) => bekannt.get(s)).find(Boolean) ?? `F${++neu}`) : `F${i + 1}`;
+      return { ...f, fruehereSchluessel: frueher, nr, entscheidung: entscheidungsstand(eigene, f.schluessel) };
+    })
+    .sort((x, y) => (bekannt ? Number(x.nr.slice(1)) - Number(y.nr.slice(1)) : 0));
   const zaehlt = (f: Fund, ...staende: Belegstand[]) => f.belegstand !== null && staende.includes(f.belegstand) && f.entscheidung !== "nicht_verrechnen";
   const summe = (...staende: Belegstand[]) => funde.filter((f) => zaehlt(f, ...staende)).reduce((s, f) => s + f.betrag, 0);
   const offeneRegie = d.regie.filter((r) => !k.regieVerrechnet.has(r.nr));

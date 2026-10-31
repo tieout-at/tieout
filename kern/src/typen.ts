@@ -122,6 +122,14 @@ export interface Hinweis {
   nachweise: Nachweis[];
 }
 
+/** A sheet a gap points to or that goes along with it. */
+export interface Beilage {
+  belegId: string;
+  seite: number;
+  stelle: string;
+  titel: string;
+}
+
 /** One possible cut by the Auftraggeber, found by the Vorprüfung. Overlaps the finds; never added to them. */
 export interface Kuerzungsrisiko {
   schluessel: string;
@@ -138,4 +146,6 @@ export interface Kuerzungsrisiko {
   /** "schon gekürzt": the Auftraggeber already struck it on a Korrekturblatt; otherwise "droht". */
   zustand: "droht" | "schon_gekuerzt";
   nachweise: Nachweis[];
+  /** Sheets the Abhilfe says to enclose (the changed plan, the instruction). */
+  beilagen?: Beilage[];
 }

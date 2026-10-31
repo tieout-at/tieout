@@ -5,6 +5,8 @@
  * ever edited or removed; a later entry counts.
  */
 
+import type { Eingang } from "@tieout/kern";
+
 import { currentState, DECISION_TEXT, refusal, type DecisionState } from "./decision-rules";
 import { CHANGED, refuse, serverAppend, serverRead, serverWaiting, WAITING, type ListKey } from "./server-store";
 
@@ -61,7 +63,7 @@ export type TaskCheck = {
   erledigt: boolean;
 };
 
-const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1", settings: "tieout.ablauf-einstellungen.v1" } as const;
+const KEYS = { decisions: "tieout.entscheidungen.v1", tasks: "tieout.aufgaben.v1", checks: "tieout.aufgaben-erledigt.v1", settings: "tieout.ablauf-einstellungen.v1", eingaenge: "tieout.eingaenge.v1" } as const;
 
 export function localTime(date = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -77,6 +79,7 @@ const SERVER_LIST: Record<string, ListKey> = {
   [KEYS.tasks]: "aufgaben",
   [KEYS.checks]: "erledigt",
   [KEYS.settings]: "einstellungen",
+  [KEYS.eingaenge]: "eingaenge",
 };
 
 function read<T>(key: string): T[] {
@@ -92,8 +95,13 @@ function read<T>(key: string): T[] {
   }
 }
 
+let ownEntry = 0;
+/** When this page last made an entry: a figure that moves right after it moved because of it, not because a list arrived. */
+export const ownEntryAt = () => ownEntry;
+
 /** Appends one entry; returns the whole list. If the browser keeps nothing (private window), the entry lives for this visit. */
 function append<T>(key: string, entry: T): T[] {
+  ownEntry = Date.now();
   if (typeof window !== "undefined" && serverWaiting()) {
     refuse(WAITING);
     return read<T>(key);
@@ -165,4 +173,12 @@ export const readSettings = () =>
     (x): x is Setting => !!x && typeof x === "object" && typeof (x as Setting).block === "string" && typeof (x as Setting).wert === "string" && typeof (x as Setting).zeit === "string" && FELDER.includes((x as Setting).feld),
   );
 export const appendSetting = (x: Setting) => append(KEYS.settings, x);
+/** Only well-formed entries, as for the settings: what lies in the browser's storage feeds the core. */
+export const readEingaenge = () =>
+  read<unknown>(KEYS.eingaenge).filter((x): x is Eingang => {
+    const e = x as Eingang;
+    return !!e && typeof e === "object" && typeof e.lueckeSchluessel === "string" && /^[^/]+\/(unterschrift|gegenzeichnung|regiebericht):/.test(e.lueckeSchluessel) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(e.zeit) && typeof e.wer === "string" && typeof e.gueltig === "boolean" && (e.am === undefined || /^\d{4}-\d{2}-\d{2}$/.test(e.am));
+  });
+/** A signature came back (step 14), or takes an earlier entry back: appended, the latest entry of a gap counts. */
+export const appendEingang = (e: Eingang) => append(KEYS.eingaenge, e);
 export const appendTaskCheck = (c: TaskCheck) => append(KEYS.checks, c);

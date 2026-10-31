@@ -22,7 +22,7 @@ export type ShownFile = { file: StoredFile; url: string; intact: boolean };
  * account: the demo has no files and loads nothing for them. "Datei hinterlegen" takes one PDF, JPEG or PNG up to
  * 20 MB; "Ansehen" fetches it by a signed address, checks its checksum again and shows it in the viewer.
  */
-export function StoredFiles({ project, belegId, shown, onShow }: { project: string; belegId: string; shown: StoredFile | null; onShow: (f: ShownFile | null) => void }) {
+export function StoredFiles({ project, belegId, shown, onShow, onFiles }: { project: string; belegId: string; shown: StoredFile | null; onShow: (f: ShownFile | null) => void; onFiles?: (files: StoredFile[]) => void }) {
   const account = useAccount();
   const signedIn = account.stand === "konto";
   const [files, setFiles] = useState<StoredFile[] | null>(null);
@@ -40,6 +40,10 @@ export function StoredFiles({ project, belegId, shown, onShow }: { project: stri
       live = false;
     };
   }, [signedIn, project, belegId]);
+
+  useEffect(() => {
+    if (files) onFiles?.(files);
+  }, [files, onFiles]);
 
   if (!signedIn) return null;
 

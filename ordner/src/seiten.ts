@@ -186,6 +186,30 @@ function regiebericht(c: Kontext): string {
   </div>`;
 }
 
+/** A Stundenzettel: the week once, one row per Regiebericht with the hours of Monteur and Helfer (customer test of step 10). */
+function stundenzettel(c: Kontext): string {
+  const von = c.werte.find((w) => w.schluessel === "von");
+  const bis = c.werte.find((w) => w.schluessel === "bis");
+  if (von) c.gezeigt.add(von.stelle);
+  const trupp = wert(c, "Kopf, Trupp");
+  const stellen = [...new Set(c.werte.filter((w) => /^Zeile Regiebericht \S+$/.test(w.stelle)).map((w) => w.stelle))];
+  const zeilen = stellen.map((s) => {
+    const nr = wert(c, s) ?? "";
+    const stunden = (spalte: string) => ort(`${s}, ${spalte}`, hand(wert(c, `${s}, ${spalte}`) ?? "", c), "td", "zahl");
+    return ort(s, `<td>Regiebericht ${hand(nr, c)}</td>${stunden("Monteur")}${stunden("Helfer")}`, "tr");
+  });
+  return `${KOPF_BETRIEB(c, "Stundenzettel")}
+  <div class="felder">
+    <span>Bauvorhaben:</span><span>${e(c.d.projekt.langname)}</span>
+    <span>Auftraggeber:</span><span>${e(c.auftraggeber)}</span>
+    ${von && bis ? `<span>Woche:</span>${ort(von.stelle, hand(`${von.text} bis ${bis.text}`, c))}` : ""}
+    ${trupp ? `<span>Trupp:</span>${ort("Kopf, Trupp", hand(trupp, c))}` : ""}
+  </div>
+  ${zeilen.length ? `<table><thead><tr><th>Regiebericht</th><th class="zahl" style="width:22%">Monteur</th><th class="zahl" style="width:22%">Helfer</th></tr></thead><tbody>${zeilen.join("")}</tbody></table>` : ""}
+  ${vermerke(c)}
+  <div class="unten">${fuss(c)}</div>`;
+}
+
 function email(c: Kontext): string {
   const m = c.d.emails.find((x) => x.belegId === c.b.id)!;
   const absaetze = c.werte.filter((w) => w.stelle.startsWith("Absatz") && !/Aufwand|Material/.test(w.stelle));
@@ -291,6 +315,8 @@ export function blatt(firma: Firmendaten, d: Datensatz, b: Beleg, seite: number,
         return aufmassblatt(c);
       case "regiebericht":
         return regiebericht(c);
+      case "stundenzettel":
+        return stundenzettel(c);
       case "email":
         return email(c);
       case "leistungsverzeichnis":

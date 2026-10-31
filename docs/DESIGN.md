@@ -20,6 +20,10 @@ Maxi S.'s bar, confirmed on the 8d board and by three council rounds. Check each
 9. **Speed, security and bugs are part of done.** Charts are own SVG (no chart library); the core loads as its own chunk only where it computes; a new dependency needs a reason. Each step ends with a bug review of its diff and a security review (no secrets, no `dangerouslySetInnerHTML` with data, no user data in URLs; with the backend of step 10 also access per company and input validation). Measure before calling something slow.
 10. **Show, then build.** Big changes start as real pages with the core's figures next to references (Linear, Attio, Mercury, Ramp, Pigment), judged by independent reviewers who get pictures and rules, not the author's opinion; Maxi S. chooses per page; every finding is re-measured before it is fixed.
 
+## Treppe (step 14)
+
+The Rechnungsabschluss as stairs (`components/schlussrechnung/treppe.tsx`): a find is a step with its decision as fill (empty gefunden, light geprüft, full freigegeben, dark in der Schlussrechnung), in Klärung dashed in its own band, added to nothing; deductions neutral. Red only as the dot of a Kürzungsrisiko or a deduction without contract item. The axis starts where the data start and the page says where. A change walks down the steps one after the other (reduced motion: at once), the Restforderung counts, a chip shows what this page just changed. More than ten finds fold the smallest into "weitere"; below 620 px of chart the steps are the same list as on phones.
+
 ## Typeface
 
 Inter (variable, self-hosted from `@fontsource-variable/inter`, no request to Google). Attio sets every piece of UI text in weight 500 and tightens the larger sizes. Numbers of positions, Belege and dates in the readouts of "Übersicht" use `font-mono`, the brand's IBM Plex Mono 400 and 500 (self-hosted from `@fontsource/ibm-plex-mono`), never a system mono.

@@ -18,6 +18,8 @@ import {
   type Entscheidungsstand,
   type FirmenErgebnis,
   type Fund,
+  type LueckenArt,
+  type LueckenWirkung,
   type Satzpruefung,
 } from "@tieout/kern";
 
@@ -34,6 +36,40 @@ export type InvoiceFind = {
   key: string;
   earlierKeys: string[];
   decision: Entscheidungsstand;
+  amount: Amount;
+};
+
+/** A sheet of a Beleg: the place of a signature, or what goes along with it. */
+export type GapSheet = { belegId: string; page: number; place: string; title: string };
+
+/**
+ * A gap as the window "Lücke schließen" and the Mappe show it: what is missing, what closing it does, who signs, and the
+ * entry that closed it. From `luecken` of the core; no amount of the app.
+ */
+export type Gap = {
+  key: string;
+  kind: LueckenArt;
+  title: string;
+  about: string;
+  amount: Amount;
+  effect: LueckenWirkung;
+  remedy: string;
+  inCharge: "Abrechnung" | "Bauleitung";
+  sheet: GapSheet | null;
+  signer: string | null;
+  enclosures: GapSheet[];
+  folder: boolean;
+  closable: boolean;
+  template: { message: string; day: string; place: string; work: string; orderedBy: string | null; fitter: string; helper: string } | null;
+  /** Part of a sum that lies on more sheets. */
+  partial: boolean;
+  closed: { who: string; at: string; when: string; day: string; file: string | null } | null;
+  /** Business key of the risk in the Vorprüfung, and of the find with the earlier keys of its work. */
+  riskKey: string | null;
+  find: { number: string; name: string; href: string; key: string; earlierKeys: string[] } | null;
+  /** Page the task opens: the find, or the Vorprüfung of the project. */
+  href: string;
+  project: { id: string; name: string; slug: string; client: string; folderHref: string; deadline: string | null };
 };
 
 export type ChangeEntry = {
@@ -58,7 +94,7 @@ export type SettlementLine = {
 };
 
 export type InvoiceView = {
-  project: { id: string; name: string; href: string; packagesHref: string; client: { name: string; href: string }; deadline: string | null; asOf: Dated };
+  project: { id: string; slug: string; name: string; href: string; packagesHref: string; folderHref: string; client: { name: string; href: string }; deadline: string | null; asOf: Dated };
   /** "Entwurf, nicht freigegeben" until every find is decided (SPEZIFIKATION.md 5.1). */
   status: { finds: number; open: number; released: number; inInvoice: number; final: boolean; all: InvoiceFind[] };
   changes: { entries: ChangeEntry[]; total: Amount; risk: Amount };
@@ -77,8 +113,10 @@ export type InvoiceView = {
     total: Amount;
     threatened: Amount;
     alreadyCut: Amount;
-    risks: { number: string; reason: string; about: string; what: string; detail: string; remedy: string; amount: Amount; alreadyCut: boolean; find: InvoiceFind | null }[];
+    risks: { key: string; number: string; reason: string; about: string; what: string; detail: string; remedy: string; amount: Amount; alreadyCut: boolean; find: InvoiceFind | null }[];
   };
+  /** What can be closed, closed ones included. */
+  gaps: Gap[];
   meeting: {
     groups: { stand: Belegstand; label: string; items: { find: InvoiceFind; claim: Amount; floor: Amount; how: string }[]; claim: Amount; floor: Amount; room: Amount }[];
     claim: Amount;
@@ -119,6 +157,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
     key: `${projektId}/${f.schluessel}`,
     earlierKeys: f.fruehereSchluessel.map((k) => `${projektId}/${k}`),
     decision: f.entscheidung,
+    amount: amount(f.betrag),
   });
   const linkOf = (schluessel: string | null | undefined) => {
     const f = schluessel ? bySchluessel.get(schluessel) : undefined;
@@ -165,9 +204,11 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
   return {
     project: {
       id: projektId,
+      slug: projectSlug(p.name),
       name: p.name,
       href: `/projekte/${projectSlug(p.name)}/`,
       packagesHref: `/schlussrechnungen/${projectSlug(p.name)}/beweispakete/`,
+      folderHref: `/schlussrechnungen/${projectSlug(p.name)}/mappe/`,
       client: { name: p.auftraggeber.name, href: `/auftraggeber/${clientSlug(p.auftraggeber.kurzname)}/` },
       deadline: p.datum?.art === "legen_bis" ? `Schlussrechnung legen bis ${datumText(p.datum.wert)}` : null,
       asOf: { iso: b.stichtag, text: datumText(b.stichtag) },
@@ -210,6 +251,7 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
       threatened: amount(vp.droht),
       alreadyCut: amount(vp.schonGekuerzt),
       risks: vp.risiken.map((r) => ({
+        key: r.schluessel,
         number: r.nr,
         reason: KUERZUNGSGRUND_TEXT[r.grund],
         about: r.bezug,
@@ -237,8 +279,51 @@ export function invoiceView(projektId: string, b: FirmenErgebnis = business()): 
       floor: amount(sb.untergrenze),
       room: amount(sb.spielraum),
     },
+    gaps: gapsView(projektId, b),
     notes: e.abgleich.hinweise.filter((h) => h.art === "rechtsfrage").map((h) => ({ title: h.titel, text: h.text })),
   };
+}
+
+/** The gaps of one project, as the core lists them; an empty list for a project without any or an unknown id. */
+export function gapsView(projektId: string, b: FirmenErgebnis = business()): Gap[] {
+  const p = b.projekte.find((x) => x.projektId === projektId);
+  if (!p) return [];
+  const e = b.ergebnisse[projektId];
+  const slug = projectSlug(p.name);
+  // a Regiebericht made from a WhatsApp-Meldung has a new key: the find is still the same work
+  const findOf = (schluessel: string | null) => (schluessel ? e.abgleich.funde.find((f) => f.schluessel === schluessel || f.fruehereSchluessel.includes(schluessel)) : undefined);
+  return e.luecken.map((l): Gap => {
+    const f = findOf(l.fundSchluessel);
+    const href = f ? `/funde/${findSlug(p.name, f.nr)}/` : `/projekte/${slug}/schlussrechnung/#vorpruefung`;
+    const sheet = (s: (typeof l.beilagen)[number]): GapSheet => ({ belegId: s.belegId, page: s.seite, place: s.stelle, title: s.titel });
+    return {
+      key: `${projektId}/${l.schluessel}`,
+      kind: l.art,
+      title: l.titel,
+      about: l.bezug,
+      amount: amount(l.betrag),
+      effect: l.wirkung,
+      remedy: l.abhilfe,
+      inCharge: l.zustaendig,
+      sheet: l.blatt ? sheet(l.blatt) : null,
+      signer: l.unterschreibt,
+      enclosures: l.beilagen.map(sheet),
+      folder: l.mappe,
+      closable: l.schliessbar,
+      template: l.vorlage && { message: l.vorlage.meldung, day: datumText(l.vorlage.arbeitstag), place: l.vorlage.ort, work: l.vorlage.taetigkeit, orderedBy: l.vorlage.angeordnet, fitter: menge(l.vorlage.monteur), helper: menge(l.vorlage.helfer) },
+      partial: l.teil,
+      closed: l.eingang && { who: l.eingang.wer, at: l.eingang.zeit, day: datumText(l.eingang.am ?? l.eingang.zeit.slice(0, 10)), when: `${datumText(l.eingang.zeit.slice(0, 10))}, ${l.eingang.zeit.slice(11, 16)}`, file: l.eingang.dateiId ?? null },
+      riskKey: l.risikoSchluessel,
+      find: f ? { number: f.nr, name: nameAndFacts(f).name, href, key: `${projektId}/${f.schluessel}`, earlierKeys: f.fruehereSchluessel.map((k) => `${projektId}/${k}`) } : null,
+      href,
+      project: { id: projektId, name: p.name, slug, client: p.auftraggeber.name, folderHref: `/schlussrechnungen/${slug}/mappe/`, deadline: p.datum?.art === "legen_bis" ? `Schlussrechnung legen bis ${datumText(p.datum.wert)}` : null },
+    };
+  });
+}
+
+/** The open projects, each with a page "Mappe", the ones without an open signature too (they say so). */
+export function folderProjects(b: FirmenErgebnis = business()): string[] {
+  return b.projekte.filter((p) => b.ergebnisse[p.projektId].abgleich.laeuft).map((p) => p.projektId);
 }
 
 

@@ -5,15 +5,15 @@
  * never adds an amount of its own.
  */
 
-import { pruefeFirma } from "@tieout/kern";
+import { pruefeFirma, type Eingang } from "@tieout/kern";
 
 import type { Decision } from "./decisions";
-import { findHighlights } from "./finds";
+import { findHighlights, findRecord } from "./finds";
 import { findCalculations, findRows, firm, projectCalculations, projectRows, startView } from "./kern-data";
 import { projectHighlights } from "./records";
 import { positionsView } from "./positions";
 import { reportsView } from "./reports";
-import { invoiceList, invoiceView } from "./invoice";
+import { gapsView, invoiceList, invoiceView } from "./invoice";
 import { twinProjects, twinView } from "./twin";
 import { flowView } from "./flows";
 
@@ -32,8 +32,8 @@ const perKey = <T,>(make: (key: string) => T): ((key: string) => T) => {
   };
 };
 
-export function live(decisions: readonly Decision[]) {
-  const b = pruefeFirma(firm(), decisions);
+export function live(decisions: readonly Decision[], eingaenge: readonly Eingang[] = []) {
+  const b = pruefeFirma(firm(), decisions, eingaenge);
   return {
     findRows: once(() => findRows(b)),
     findCalculations: once(() => findCalculations(b)),
@@ -47,12 +47,16 @@ export function live(decisions: readonly Decision[]) {
     /** The list "Schlussrechnungen". */
     invoiceList: once(() => invoiceList(b)),
     invoiceView: perKey((projektId) => invoiceView(projektId, b)),
+    /** The gaps of a project, closed ones included, by the core's project id. */
+    gapsView: perKey((projektId) => gapsView(projektId, b)),
     /** The highlights of a project's "Überblick", by the core's project id. */
     projectHighlights: perKey((projektId) => projectHighlights(projektId, b)),
     /** The tab "Positionen" of an open project, by the core's project id. */
     positionsView: perKey((projektId) => positionsView(projektId, b)),
     /** "Auf einen Blick" of a find page, by its slug. */
     findHighlights: perKey((slug) => findHighlights(slug, b)),
+    /** A find as its page and its Beweispaket show it, with the decisions and the signatures that came back. */
+    findRecord: perKey((slug) => findRecord(slug, b)),
     /** An Ablauf with its runs, by its slug. */
     flowView: perKey((slug) => flowView(slug, b)),
     /** The "Übersicht" of an open project, by its slug. */

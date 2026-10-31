@@ -70,6 +70,9 @@ export function marksOf(page: ScanPage, source: string | null): Box[] {
   return part ? page.marken[part] : NONE;
 }
 
+/** The field to sign: the form's own, else the place the twin names. */
+export const signMarks = (page: ScanPage, place: string): Box[] => page.marken["Unterschrift Auftraggeber"] ?? marksOf(page, place);
+
 /** The whole line a value lies in ("Pos. 22.04.12B" for its Einheitspreis), so that a close view keeps the line's name. */
 export function lineOf(page: ScanPage, source: string | null): Box[] {
   const line = source?.split(",")[0] ?? null;

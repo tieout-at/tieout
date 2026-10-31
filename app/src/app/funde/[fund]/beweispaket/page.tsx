@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { EvidencePackage } from "@/components/fund/evidence-package";
-import { PrintBar } from "@/components/fund/print-bar";
+import { OnePackage } from "@/components/fund/evidence-actions";
 import { Page } from "@/components/shell/page";
 import { findRecord, findSlugs } from "@/lib/finds";
+import { firm } from "@/lib/kern-data";
 import { reportsView } from "@/lib/reports";
 
 type Props = { params: Promise<{ fund: string }> };
@@ -31,8 +31,7 @@ export default async function BeweispaketPage({ params }: Props) {
         { label: "Beweispaket" },
       ]}
     >
-      <PrintBar back={{ href: `/funde/${record.slug}/`, label: `Zurück zu ${record.number}` }} />
-      <EvidencePackage record={record} asOf={reportsView().asOf} />
+      <OnePackage record={record} asOf={reportsView().asOf} sample={firm().beispieldaten} />
     </Page>
   );
 }
