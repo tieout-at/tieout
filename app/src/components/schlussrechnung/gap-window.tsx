@@ -68,7 +68,7 @@ function Body({ gap, onClose }: { gap: Gap; onClose: () => void }) {
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-y-auto">
-      <PeekHeader chip={gap.find?.number} title={gap.title} sub={gap.project.name} onClose={onClose} />
+      <PeekHeader chip={gap.find?.number} title={gap.closed ? `${gap.sheet?.title ?? "Regiebericht"}: Unterschrift liegt vor` : gap.title} sub={gap.project.name} onClose={onClose} />
       <div className="flex flex-col gap-3 px-4 py-3">
         {gap.sheet && <SheetCrop project={gap.project.slug} sheet={gap.sheet} />}
         {gap.template && (

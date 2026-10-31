@@ -7,14 +7,14 @@
 ## Where things stand
 
 - The app at https://app.tieout.workers.dev has sign-in for companies (`/anmelden/`), and without sign-in the demo with the sample data as before. With an account, decisions, tasks, ticks, settings of the Abläufe and files live in the company's database at Supabase (`backend/README.md`), live for every member, and the interface offers each person only the steps of their roles.
-- **Supabase** project `tieout-app` (Frankfurt, Free plan), migrations 001 to 004 applied. "Testfirma A" with two accounts of Maxi S. (Abrechnung; Geschäftsführung), "Testfirma B" with a third (both roles). Their e-mail addresses are not written in this public repository. Maxi S. invites every account himself; Claude adds the row in `mitglied` in the SQL editor and never creates accounts or types a password or key.
+- **Supabase** project `tieout-app` (Frankfurt, Free plan), migrations 001 to 005 applied. "Testfirma A" with two accounts of Maxi S. (Abrechnung; Geschäftsführung), "Testfirma B" with a third (both roles). Their e-mail addresses are not written in this public repository. Maxi S. invites every account himself; Claude adds the row in `mitglied` in the SQL editor and never creates accounts or types a password or key.
 - **Checked:** two companies see only their own rows, in the database and on the live channel (with a counter check); four eyes; one synthetic PDF stored and opened as "unverändert"; amounts unchanged.
 
 - **Launch film done (30.10.):** in `website/public/film/` (#134), Maxi D. builds it into the website; nothing to do in `app/`.
 
 ## What comes next
 
-Step 14 (Rechnung zum Anfassen) is built on the branch `schritt-14-rechnung`, row 14 of `_STATUS.md`. **Order after the go of Maxi S.:** first apply `backend/migrations/005_eingang.sql` in the Supabase SQL editor (with an account the app reads the table `eingang`; without it the PDFs refuse, because the lists stay incomplete), check it with one signed sheet in Testfirma A (never tested with a real account yet), then push, pull request, wait for the checks by hand, merge, amount audit against live. Then step 15 (Zeitreise). Step 11 ("Frag tieout") stays behind a team go. Draft boards are local: `app/qa-shots/entwurf/ordner/board.html`, `app/qa-shots/entwurf/rechnung/board.html`; the scripts next to the second one play the step through (`fahrt.mjs`, `fahrt2.mjs`), compare amounts with live (`betraege.mjs`) and measure scripts (`tempo.mjs`).
+Step 14 (Rechnung zum Anfassen) is built, row 14 of `_STATUS.md`; migration 005 is applied and checked with a real account. **Left:** wait for the checks of the pull request by hand, merge with the go of Maxi S., amount audit against live, a short status note. Then step 15 (Zeitreise). Step 11 ("Frag tieout") stays behind a team go. Draft boards are local: `app/qa-shots/entwurf/ordner/board.html`, `app/qa-shots/entwurf/rechnung/board.html`; the scripts next to the second one play the step through (`fahrt.mjs`, `fahrt2.mjs`), compare amounts with live (`betraege.mjs`) and measure scripts (`tempo.mjs`).
 
 - **The folder:** `ordner/README.md`. After a change in `kern/` that touches a Beleg, run `npm run erzeugen` in `ordner/` (needs the local Edge, about 3 minutes) and commit `app/public/belege/`; `app/src/lib/scans.test.ts` fails when a value has no place.
 - **Left of step 13:** the 10 photos need real synthetic pictures; `.msg` and `.xlsx` files for step 18; Z-01 and 26.02.03A have no unit in the core, a correction of the sample data needs the go of Maxi S.
@@ -31,7 +31,7 @@ Step 14 (Rechnung zum Anfassen) is built on the branch `schritt-14-rechnung`, ro
 - **E-mail limit:** a few links an hour, and an invitation link lives one hour. Plan a test with at most two links an hour.
 - **Two persons at once:** one browser keeps one session per address. The second person acts in the SQL editor with its own rights (pattern in `backend/test/livetest.sql`), or in a second browser.
 - **Supabase SQL editor:** text goes in with `monaco.editor.getModels()[0].setValue(...)`, "Run" runs it. A "Leave site?" dialog blocks navigation when a query is unsaved; open a new tab. Unicode escapes in SQL: build the backslash in a script (`String.fromCharCode(92)`) and compare the SHA-256 before running.
-- **Test data in Supabase stay** (append only): decisions on F1 and F2 of A, one file of A, F1 checked in B.
+- **Test data in Supabase stay** (append only): decisions on F1 and F2 of A, one file of A, F1 checked in B, and from step 14 in B a file at Regiebericht 12 with an entry and its taking back.
 - A server job or the WhatsApp agent needs a deliberate way to write (today only members write).
 
 ## Decisions waiting for Maxi S.
