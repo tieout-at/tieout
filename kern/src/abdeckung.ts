@@ -9,6 +9,7 @@ import type { Datensatz, Datum } from "./modell";
 import type { ProjektErgebnis } from "./projekt";
 import { datumText } from "./regeln";
 import type { Belegstand, Fund, Nachweis } from "./typen";
+import { regieSchluessel } from "./modell";
 
 /** Kinds of evidence, in the order of the website table: beauftragt, erbracht, verrechnet. */
 export type Nachweisart = "leistungsverzeichnis" | "plan" | "email" | "whatsapp" | "foto" | "aufmass" | "regie" | "rechnung";
@@ -104,8 +105,8 @@ export function belegabdeckung(d: Datensatz, e: ProjektErgebnis): Belegabdeckung
   for (const b of d.aufmass) for (const z of b.zeilen) dazu(z.positionNr.wert, "aufmass", b.belegId, b.gegengezeichnet.wert ? null : "nicht gegengezeichnet");
   for (const f of d.fotodokumentationen) dazu(f.positionNr.wert, "aufmass", f.belegId);
   for (const rb of d.regie) {
-    dazu(`regie:${rb.nr}`, "regie", rb.belegId, rb.unterschrieben.wert ? null : "nicht unterschrieben");
-    if (rb.ausMeldung) dazu(`regie:${rb.nr}`, "whatsapp", rb.ausMeldung.wert);
+    dazu(regieSchluessel(rb), "regie", rb.belegId, rb.unterschrieben.wert ? null : "nicht unterschrieben");
+    if (rb.ausMeldung) dazu(regieSchluessel(rb), "whatsapp", rb.ausMeldung.wert);
   }
   for (const s of d.stundenzettel) for (const x of s.eintraege) dazu(`regie:${x.regieberichtNr.wert}`, "regie", s.belegId);
   for (const g of d.grosshaendlerrechnungen) dazu(`regie:${g.regieberichtNr.wert}`, "regie", g.belegId);

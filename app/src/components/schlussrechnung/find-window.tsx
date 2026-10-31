@@ -35,7 +35,7 @@ function Body({ find, v, onClose, onGap }: { find: InvoiceFind; v: InvoiceView; 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-y-auto">
       <PeekHeader chip={find.number} title={find.name} sub={v.project.name} onClose={onClose} />
-      <PeekFigure label={waiting ? "in Klärung, nicht addiert" : "zusätzlich verrechenbar"} value={find.amount.text} line="netto, vor Nachlass" />
+      <PeekFigure label={state === "nicht_verrechnen" ? "zählt in keiner Summe" : waiting ? "in Klärung, nicht addiert" : "zusätzlich verrechenbar"} value={find.amount.text} line="netto, vor Nachlass" />
       <PeekFacts
         rows={[
           { label: "Entscheidung", value: DECISION_TEXT[state] },

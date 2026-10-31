@@ -9,6 +9,7 @@ import { arbeitsdatum, aufmassMenge, baueKontext, verrechnetMenge, type Kontext 
 import type { AbzugArt, Bp, Cent, Datensatz } from "./modell";
 import { datumText, type Abgleich } from "./regeln";
 import type { Kuerzungsrisiko, Nachweis } from "./typen";
+import { regieSchluessel } from "./modell";
 
 const tagMonat = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.`;
 
@@ -73,7 +74,7 @@ function aufmassNichtGegengezeichnet(k: Kontext, a: Abgleich): Roh[] {
 
 function stundenWeichenAb(k: Kontext, a: Abgleich): Roh[] {
   const v = k.d.vertrag;
-  const abzurechnen = k.d.regie.filter((rb) => k.regieVerrechnet.has(rb.nr) || a.funde.some((f) => f.schluessel === `regie:${rb.nr}` && f.belegstand === "belegt"));
+  const abzurechnen = k.d.regie.filter((rb) => k.regieVerrechnet.has(rb.nr) || a.funde.some((f) => f.schluessel === regieSchluessel(rb) && f.belegstand === "belegt"));
   return abzurechnen.flatMap((rb): Roh[] => {
     // Every Stundenzettel of a week with a work day of the report and an entry for it; the hours are added up.
     const tage = rb.arbeitstage.wert.length ? rb.arbeitstage.wert : [arbeitsdatum(rb)];
@@ -89,7 +90,7 @@ function stundenWeichenAb(k: Kontext, a: Abgleich): Roh[] {
     const trupp = [...new Set(zettel.map((s) => s.trupp.wert))].join(", ");
     const bis = zettel.map((s) => s.bis.wert).sort().at(-1)!;
     const h = (m: number, hh: number) => `${menge(m)} h Monteur und ${menge(hh)} h Helfer`;
-    const fund = a.funde.find((f) => f.schluessel === `regie:${rb.nr}`);
+    const fund = a.funde.find((f) => f.schluessel === regieSchluessel(rb));
     return [
       {
         schluessel: `vp:stunden_weichen_ab:${rb.nr}`,
@@ -122,7 +123,7 @@ function entwurfsZeilen(k: Kontext): Roh[] {
           schluessel: `vp:regie_nicht_unterschrieben:${rb.nr}`,
           grund: "regie_nicht_unterschrieben",
           bezug: `Regiebericht ${rb.nr}`,
-          fundSchluessel: `regie:${rb.nr}`,
+          fundSchluessel: regieSchluessel(rb),
           was: "ganzer Regiebericht",
           detail: `Regiebericht ${rb.nr} vom ${datumText(rb.datum.wert)} ist im Entwurf, aber nicht unterschrieben`,
           abhilfe: "Regiebericht unterschreiben lassen oder aus dem Entwurf nehmen",

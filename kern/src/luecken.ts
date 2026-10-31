@@ -8,7 +8,7 @@ import { datumText, type Abgleich } from "./regeln";
 import type { Datensatz, Feld, Regiebericht, Zeitpunkt } from "./modell";
 import { feld, korrigiere, KUERZUNGSGRUND_TEXT } from "./modell";
 import type { Beilage, Fund } from "./typen";
-import type { Cent } from "./grundtypen";
+import type { Cent, Datum } from "./grundtypen";
 import type { Vorpruefung } from "./vorpruefung";
 
 /** One fact that came back from the site. `gueltig: false` takes an earlier entry back; nothing is ever removed. */
@@ -19,6 +19,8 @@ export interface Eingang {
   /** Role or person, as a decision notes it. */
   wer: string;
   gueltig: boolean;
+  /** The day the sheet was signed, as the person entered it; without it the day of the entry. */
+  am?: Datum;
   /** With an account: the stored file of the signed sheet. */
   dateiId?: string;
 }
@@ -37,6 +39,8 @@ export interface Luecke {
   fundSchluessel: string | null;
   risikoSchluessel: string | null;
   betrag: Cent;
+  /** The amount lies on more than this one sheet: closing it takes only a part of it away. */
+  teil: boolean;
   wirkung: LueckenWirkung;
   abhilfe: string;
   /** Who gets the task. */
@@ -57,13 +61,9 @@ export interface Luecke {
   eingang: Eingang | null;
 }
 
-/** The entries that count: per gap the latest, if it was not taken back. */
+/** The entries that count: per gap the latest in the order they were appended, if it was not taken back. */
 export function aktiveEingaenge(eingaenge: readonly Eingang[]): Eingang[] {
-  const letzte = new Map<string, Eingang>();
-  for (const e of eingaenge) {
-    const bisher = letzte.get(e.lueckeSchluessel);
-    if (!bisher || e.zeit >= bisher.zeit) letzte.set(e.lueckeSchluessel, e);
-  }
+  const letzte = new Map(eingaenge.map((e) => [e.lueckeSchluessel, e]));
   return [...letzte.values()].filter((e) => e.gueltig);
 }
 
@@ -75,26 +75,27 @@ export function mitEingaengen(d: Datensatz, eingaenge: readonly Eingang[]): Date
   let aufmass = d.aufmass;
   for (const e of eingaenge) {
     const [art, id] = [e.lueckeSchluessel.split(":")[0], e.lueckeSchluessel.split(":").slice(1).join(":")];
-    const tag = e.zeit.slice(0, 10);
+    const tag = e.am ?? e.zeit.slice(0, 10);
     if (art === "unterschrift")
       regie = regie.map((r) => (r.belegId === id && !r.unterschrieben.wert ? { ...r, unterschrieben: zuWahr(r.unterschrieben, e), unterschriebenAm: feld(tag, r.unterschrieben.quelle) } : r));
     if (art === "gegenzeichnung")
       aufmass = aufmass.map((a) => (a.belegId === id && !a.gegengezeichnet.wert ? { ...a, gegengezeichnet: zuWahr(a.gegengezeichnet, e), gegengezeichnetAm: feld(tag, a.gegengezeichnet.quelle) } : a));
     if (art === "regiebericht") {
       const m = d.meldungen.find((x) => x.nr === id);
-      if (m && !regie.some((r) => r.ausMeldung?.wert === m.nr)) regie = [...regie, ausMeldung(m, regie, e)];
+      if (m && !regie.some((r) => r.ausMeldung?.wert === m.nr)) regie = [...regie, ausMeldung(m, e)];
     }
   }
   return regie === d.regie && aufmass === d.aufmass ? d : { ...d, regie, aufmass };
 }
 
 /** The Regiebericht prepared from a WhatsApp-Meldung and signed: its hours are the Meldung's, no material. */
-function ausMeldung(m: Datensatz["meldungen"][number], regie: readonly Regiebericht[], e: Eingang): Regiebericht {
+function ausMeldung(m: Datensatz["meldungen"][number], e: Eingang): Regiebericht {
   const quelle = m.stundenMonteur.quelle;
-  const tag = e.zeit.slice(0, 10);
-  const nr = String(Math.max(0, ...regie.map((r) => Number(r.nr) || 0)) + 1);
+  const tag = e.am ?? e.zeit.slice(0, 10);
   return {
-    nr,
+    // the sheet comes without a number of its own, and the work stays the find of the Meldung
+    nr: m.nr,
+    ausEingang: true,
     belegId: m.id,
     datum: feld(tag, quelle),
     arbeitstage: feld([m.zeitpunkt.slice(0, 10)], quelle),
@@ -117,7 +118,7 @@ export function luecken(d: Datensatz, a: Abgleich, vp: Vorpruefung | null, einga
   const add = (l: Omit<Luecke, "eingang">) => {
     if (!liste.has(l.schluessel)) liste.set(l.schluessel, { ...l, eingang: aktiv.get(l.schluessel) ?? null });
   };
-  const leer = { fundSchluessel: null, risikoSchluessel: null, blatt: null, unterschreibt: null, beilagen: [], mappe: false, schliessbar: false, vorlage: null };
+  const leer = { teil: false, fundSchluessel: null, risikoSchluessel: null, blatt: null, unterschreibt: null, beilagen: [], mappe: false, schliessbar: false, vorlage: null };
   const unterschrift = (r: Regiebericht, f: Fund | null, betrag: Cent, wirkung: LueckenWirkung, abhilfe: string, risiko: string | null) =>
     add({
       ...leer,
@@ -137,13 +138,14 @@ export function luecken(d: Datensatz, a: Abgleich, vp: Vorpruefung | null, einga
       schliessbar: true,
     });
 
-  const zaehlt = (f: Fund) => f.entscheidung !== "nicht_verrechnen";
-  for (const f of a.funde.filter(zaehlt)) {
+  // a find on "Nicht verrechnen" has no gap, unless it was closed: an entry can always be taken back
+  const zaehlt = (f: Fund, schluessel = "") => f.entscheidung !== "nicht_verrechnen" || aktiv.has(schluessel);
+  for (const f of a.funde) {
     const rb = d.regie.find((r) => f.schluessel === `regie:${r.nr}`);
-    if (rb && f.belegstand === "beleg_fehlt") unterschrift(rb, f, f.betrag, "in_rechnung", f.abhilfe ?? "", null);
+    if (rb && f.belegstand === "beleg_fehlt" && zaehlt(f, `unterschrift:${rb.belegId}`)) unterschrift(rb, f, f.betrag, "in_rechnung", f.abhilfe ?? "", null);
     if (f.art === "stunden_ohne_regiebericht") {
       const m = d.meldungen.find((x) => f.schluessel === `meldung:${x.nr}`);
-      if (m)
+      if (m && zaehlt(f, `regiebericht:${m.nr}`))
         add({
           ...leer,
           schluessel: `regiebericht:${m.nr}`,
@@ -161,16 +163,15 @@ export function luecken(d: Datensatz, a: Abgleich, vp: Vorpruefung | null, einga
           vorlage: { meldung: m.id, arbeitstag: m.zeitpunkt.slice(0, 10), ort: m.ort.wert, taetigkeit: m.taetigkeit.wert, angeordnet: m.angewiesenVon?.wert ?? null, monteur: m.stundenMonteur.wert, helfer: m.stundenHelfer.wert },
         });
     }
-    if (f.belegstand === "nachtrag_nicht_gelegt") add({ ...leer, schluessel: `nachtrag:${f.schluessel}`, art: "nachtrag", titel: f.abhilfe ?? "Nachtrag legen", bezug: f.nr, fundSchluessel: f.schluessel, betrag: f.betrag, wirkung: "keine", abhilfe: f.abhilfe ?? "", zustaendig: "Abrechnung" });
+    if (f.belegstand === "nachtrag_nicht_gelegt" && zaehlt(f)) add({ ...leer, schluessel: `nachtrag:${f.schluessel}`, art: "nachtrag", titel: f.abhilfe ?? "Nachtrag legen", bezug: f.nr, fundSchluessel: f.schluessel, betrag: f.betrag, wirkung: "keine", abhilfe: f.abhilfe ?? "", zustaendig: "Abrechnung" });
   }
 
   for (const r of vp?.risiken ?? []) {
     const f = a.funde.find((x) => x.schluessel === r.fundSchluessel) ?? null;
-    if (f && !zaehlt(f)) continue;
     if (r.grund === "aufmass_nicht_gegengezeichnet") {
       for (const n of r.nachweise) {
         const b = d.aufmass.find((x) => x.belegId === n.quelle.belegId);
-        if (!b) continue;
+        if (!b || (f && !zaehlt(f, `gegenzeichnung:${b.belegId}`))) continue;
         add({
           ...leer,
           schluessel: `gegenzeichnung:${b.belegId}`,
@@ -180,6 +181,7 @@ export function luecken(d: Datensatz, a: Abgleich, vp: Vorpruefung | null, einga
           fundSchluessel: f?.schluessel ?? null,
           risikoSchluessel: r.schluessel,
           betrag: r.betrag,
+          teil: r.nachweise.length > 1,
           wirkung: "kuerzungsrisiko",
           abhilfe: r.abhilfe,
           zustaendig: "Bauleitung",
@@ -192,6 +194,7 @@ export function luecken(d: Datensatz, a: Abgleich, vp: Vorpruefung | null, einga
       }
       continue;
     }
+    if (f && !zaehlt(f)) continue;
     const rb = r.grund === "regie_nicht_unterschrieben" ? d.regie.find((x) => r.schluessel.endsWith(`:${x.nr}`)) : undefined;
     if (rb) unterschrift(rb, f, r.betrag, "kuerzungsrisiko", r.abhilfe, r.schluessel);
     else add({ ...leer, schluessel: `klaerung:${r.schluessel}`, art: "klaerung", titel: KUERZUNGSGRUND_TEXT[r.grund], bezug: r.bezug, fundSchluessel: f?.schluessel ?? null, risikoSchluessel: r.schluessel, betrag: r.betrag, wirkung: "keine", abhilfe: r.abhilfe, zustaendig: r.grund === "stunden_weichen_ab" ? "Bauleitung" : "Abrechnung" });

@@ -29,6 +29,10 @@ export type Step = {
 
 export type Stairs = {
   steps: Step[];
+  /** The sums of the core between the steps, each after the step it closes; the list of every line shows them. */
+  sums: { after: string; label: string; text: string }[];
+  /** The other Restforderung, named under the one shown. */
+  other: { label: string; text: string };
   /** Finds in Klärung, drawn beside the steps and added to nothing. */
   pending: Step[];
   end: { cent: number; text: string };
@@ -85,6 +89,15 @@ export function stairs(v: InvoiceView, mode: Mode): Stairs {
     return step;
   });
 
+  // a sum closes the step before it in the core's order
+  const sums: Stairs["sums"] = [];
+  let before = "";
+  for (const l of lines) {
+    if (l.kind === "fund") before = l.find?.number ?? before;
+    if (l.kind === "abzug") before = l.label.replace(" laut Vertrag", "");
+    if (l.kind === "summe" && l !== entwurf && l !== of("summe").at(-1)) sums.push({ after: steps.some((x) => x.id === before) ? before : steps.at(rest.length ? steps.findIndex((x) => x.kind === "more") : 0)!.id, label: l.label, text: l.amount.text });
+  }
+
   const end = of("summe").at(-1)!.amount;
   const paid = of("zahlung")[0]?.amount ?? { cent: 0, text: "" };
   const result = of("ergebnis")[0].amount;
@@ -98,6 +111,8 @@ export function stairs(v: InvoiceView, mode: Mode): Stairs {
 
   return {
     steps,
+    sums,
+    other: mode === "announced" ? { label: "laut Vertrag", text: s.contract.restforderung.text } : { label: "wie angekündigt", text: s.restforderung.text },
     pending,
     end: { cent: end.cent, text: end.text },
     paid: { cent: Math.abs(paid.cent), text: paid.text.replace("−", "") },

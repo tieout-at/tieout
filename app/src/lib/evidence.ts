@@ -13,16 +13,26 @@ const INTERNAL = new Set<string>(["entwurf", "preisbasis", "stundenzettel"]);
 /** Whether an Aufmaßblatt was entered into the own invoicing program is a note for the business, not for the Auftraggeber. */
 export const outward = (text: string) => text.replace(/, (?:nicht im Rechnungsprogramm erfasst|erfasst am \d{2}\.\d{2}\.\d{4})/, "");
 
-/** The Rechenweg as it goes out: every step without its internal sources. */
+/** A find whose Nachtrag is not laid stands on the own calculation only: it has no Beweispaket until the Nachtrag is laid. */
+export const packageOpen = (r: FindRecord) => r.belegstand?.state !== "nachtrag_nicht_gelegt";
+
+/** The Rechenweg as it goes out: every step without its internal sources, the quantity invoiced so far in plain words. */
 export function outwardSteps(r: FindRecord) {
-  return r.calc.steps.map((s) => ({ ...s, sources: s.sources.filter((x) => !isInternal(r, x)) }));
+  return r.calc.steps.map((s) => ({ ...s, title: s.title.replace("Verrechnet im Entwurf", "Bisher verrechnet"), sources: s.sources.filter((x) => !isInternal(r, x)) }));
 }
+
+/** The finds of a PDF, each with whether it is still a draft: none on "Nicht verrechnen", none without a Beweispaket. */
+export const outwardFinds = (records: readonly FindRecord[]) =>
+  records.filter((r) => r.decision !== "nicht_verrechnen" && packageOpen(r)).map((record) => ({ record, draft: record.decision !== "freigegeben" && record.decision !== "in_schlussrechnung" }));
 
 const isInternal = (r: FindRecord, s: SourceRef) => INTERNAL.has(r.originals[s.page]?.art ?? "");
 
 export function outwardEvidence(r: FindRecord): { work: EvidenceItem[]; price: EvidenceItem[] } {
   return { work: r.evidence.work.filter((e) => !isInternal(r, e.source)), price: r.evidence.price.filter((e) => !isInternal(r, e.source)) };
 }
+
+/** A photo and a WhatsApp-Meldung have no sheet yet (ordner/README.md), so nobody asks for one. */
+export const hasSheet = (o: OriginalPage) => o.art !== "foto" && o.art !== "whatsapp";
 
 /** A page of a Beleg in the package, with every place on it the Rechenweg or the Belege point to. */
 export type PackagePage = { page: OriginalPage; places: string[]; first: SourceRef };

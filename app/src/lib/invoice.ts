@@ -61,7 +61,9 @@ export type Gap = {
   folder: boolean;
   closable: boolean;
   template: { message: string; day: string; place: string; work: string; orderedBy: string | null; fitter: string; helper: string } | null;
-  closed: { who: string; at: string; when: string; file: string | null } | null;
+  /** Part of a sum that lies on more sheets. */
+  partial: boolean;
+  closed: { who: string; at: string; when: string; day: string; file: string | null } | null;
   /** Business key of the risk in the Vorprüfung, and of the find with the earlier keys of its work. */
   riskKey: string | null;
   find: { number: string; name: string; href: string; key: string; earlierKeys: string[] } | null;
@@ -309,7 +311,8 @@ export function gapsView(projektId: string, b: FirmenErgebnis = business()): Gap
       folder: l.mappe,
       closable: l.schliessbar,
       template: l.vorlage && { message: l.vorlage.meldung, day: datumText(l.vorlage.arbeitstag), place: l.vorlage.ort, work: l.vorlage.taetigkeit, orderedBy: l.vorlage.angeordnet, fitter: menge(l.vorlage.monteur), helper: menge(l.vorlage.helfer) },
-      closed: l.eingang && { who: l.eingang.wer, at: l.eingang.zeit, when: `${datumText(l.eingang.zeit.slice(0, 10))}, ${l.eingang.zeit.slice(11, 16)}`, file: l.eingang.dateiId ?? null },
+      partial: l.teil,
+      closed: l.eingang && { who: l.eingang.wer, at: l.eingang.zeit, day: datumText(l.eingang.am ?? l.eingang.zeit.slice(0, 10)), when: `${datumText(l.eingang.zeit.slice(0, 10))}, ${l.eingang.zeit.slice(11, 16)}`, file: l.eingang.dateiId ?? null },
       riskKey: l.risikoSchluessel,
       find: f ? { number: f.nr, name: nameAndFacts(f).name, href, key: `${projektId}/${f.schluessel}`, earlierKeys: f.fruehereSchluessel.map((k) => `${projektId}/${k}`) } : null,
       href,

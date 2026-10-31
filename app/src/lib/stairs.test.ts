@@ -17,6 +17,17 @@ describe("Treppe", () => {
     for (let i = 2; i < s.steps.length; i++) expect(s.steps[i].from).toBe(s.steps[i - 1].to);
   });
 
+  it("names the sums of the core after the step they close, and the other Restforderung", () => {
+    const s = stairs(v, "announced");
+    expect(s.sums).toEqual([
+      { after: "F5", label: "Gesamtleistung", text: "766.934,95 €" },
+      { after: "Nachlass", label: "Nach Nachlass", text: "743.926,90 €" },
+      { after: "Bauschadensumlage", label: "Vor Haftrücklass", text: "735.743,71 €" },
+    ]);
+    expect(s.other).toEqual({ label: "laut Vertrag", text: "92.882,45 €" });
+    expect(stairs(v, "contract").other).toEqual({ label: "wie angekündigt", text: "89.274,41 €" });
+  });
+
   it("keeps what is in Klärung beside the steps and out of every level", () => {
     const s = stairs(v, "announced");
     expect(s.pending.map((x) => [x.label, x.text])).toEqual([

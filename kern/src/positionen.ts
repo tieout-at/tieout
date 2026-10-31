@@ -8,6 +8,7 @@ import { arbeitsdatum, aufmassMenge, baueKontext, verrechnetMenge, vorGrenze } f
 import type { Cent, Datensatz, Einheit, Hundertstel } from "./modell";
 import { datumText, type Abgleich } from "./regeln";
 import type { Belegstand, Fund } from "./typen";
+import { regieSchluessel } from "./modell";
 
 export interface Positionszeile {
   art: "position" | "regie" | "meldung" | "aenderung" | "preisumrechnung" | "pauschale";
@@ -76,12 +77,12 @@ export function positionstabelle(d: Datensatz, a: Abgleich): Positionstabelle {
   const regie: Positionszeile[] = d.regie
     .filter((rb) => k.regieVerrechnet.has(rb.nr) || vorGrenze(k, arbeitsdatum(rb)))
     .map((rb) => {
-      const f = regieFund.get(`regie:${rb.nr}`);
+      const f = regieFund.get(regieSchluessel(rb));
       const stunden = rb.stundenMonteur.wert + rb.stundenHelfer.wert;
       const verrechnet = k.regieVerrechnet.has(rb.nr);
       return {
         art: "regie",
-        schluessel: `regie:${rb.nr}`,
+        schluessel: regieSchluessel(rb),
         positionNr: null,
         text: `Regiebericht ${rb.nr}, ${rb.taetigkeit.wert}`,
         einheit: "h",

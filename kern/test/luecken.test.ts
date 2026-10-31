@@ -59,9 +59,24 @@ describe("Eingänge", () => {
     expect(euro(e.vorpruefung!.davonMitKuerzungsrisiko)).toBe("194,40 €");
   });
 
-  it("macht aus der WhatsApp-Meldung Regiebericht 16 mit denselben 476,00 €", () => {
+  it("macht aus der WhatsApp-Meldung einen unterschriebenen Regiebericht mit denselben 476,00 €, der Fund bleibt derselbe", () => {
     const f = p1([ein("p1/regiebericht:W4")]).abgleich.funde.find((x) => x.nr === "F7")!;
-    expect(f).toMatchObject({ schluessel: "regie:16", belegstand: "belegt", betrag: 47600, fruehereSchluessel: ["meldung:W4"] });
+    expect(f).toMatchObject({ schluessel: "meldung:W4", belegstand: "belegt", betrag: 47600, fruehereSchluessel: [] });
+    expect(f.titel).toBe("Regiebericht W4, Heizkörper Top 9 versetzt");
+  });
+
+  it("verliert beim Zurücknehmen keine Entscheidung, und eine geschlossene Lücke auf Nicht verrechnen bleibt sichtbar", () => {
+    const nv = { fundSchluessel: "p1/meldung:W4", zeit: "2026-10-23T09:30", wer: "Abrechnung", stand: "nicht_verrechnen" as const, grund: "x" };
+    const zu = pruefeFirma(daten, [nv], [ein("p1/regiebericht:W4")]).ergebnisse.p1;
+    expect(zu.abgleich.funde.find((x) => x.nr === "F7")!.entscheidung).toBe("nicht_verrechnen");
+    expect(zu.luecken.find((x) => x.art === "regiebericht")!.eingang).not.toBeNull();
+    const auf = pruefeFirma(daten, [nv], [ein("p1/regiebericht:W4"), ein("p1/regiebericht:W4", false)]).ergebnisse.p1;
+    expect(auf.abgleich.funde.find((x) => x.nr === "F7")!.entscheidung).toBe("nicht_verrechnen");
+  });
+
+  it("nimmt das Datum der Unterschrift, wie es eingetragen wurde", () => {
+    const e = p1([{ ...ein("p1/unterschrift:rb-12"), am: "2026-10-20" }]);
+    expect(e.abgleich.funde.find((x) => x.nr === "F6")!.nachweise.find((n) => n.titel === "Regiebericht 12")!.text).toContain("20.10.2026");
   });
 
   it("lässt jede Fundnummer stehen", () => {

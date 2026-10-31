@@ -9,6 +9,7 @@ import { readEingaenge, readDecisions } from "@/lib/decisions";
 import type { Gap } from "@/lib/invoice";
 import { useLive } from "@/lib/live";
 import { loadScan } from "@/lib/scans";
+import { serverComplete } from "@/lib/server-store";
 import { SheetCrop } from "./sheet-crop";
 
 /**
@@ -19,6 +20,7 @@ export function FolderView({ built, projektId, project, client, back, asOf, samp
   const gaps = (useLive()?.gapsView(projektId) ?? built).filter((g) => g.folder && !g.closed);
   const make = async () => {
     const [{ folderPdf }, { browserSheets }, { savePdf }] = await Promise.all([import("@/lib/folder-pdf"), import("@/lib/sheet-pdf"), import("@/lib/pdf")]);
+    if (!serverComplete()) throw new Error("Die Einträge der Firma laden noch");
     const fresh = (await import("@/lib/kern-live")).live(readDecisions(), readEingaenge()).gapsView(projektId);
     const bytes = await folderPdf({ business: BUSINESS.name, project, client, asOf, gaps: fresh, sample }, browserSheets(loadScan));
     savePdf(bytes, `Mappe_${project.replace(/[^\p{L}\p{N}]+/gu, "_")}.pdf`);
@@ -60,7 +62,7 @@ export function FolderView({ built, projektId, project, client, back, asOf, samp
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-fg-muted">Der Betrieb druckt die Mappe, die Bauleitung nimmt sie mit. tieout kontaktiert niemanden. Die Mappe zeigt keine Beträge.</p>
+            <p className="text-xs text-fg-muted">Der Betrieb druckt die Mappe, die Bauleitung nimmt sie mit. tieout kontaktiert niemanden. Die Mappe nennt keine Beträge von tieout; ein Blatt bleibt, wie es ist, denn das wird unterschrieben.</p>
           </>
         )}
       </div>

@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 
 import { BUSINESS } from "@/lib/example";
 import { currentState, onStorageChange, readDecisions, type Decision } from "@/lib/decisions";
-import { outward, outwardEvidence, outwardSteps, packagePages, type PackagePage } from "@/lib/evidence";
+import { hasSheet, outward, outwardEvidence, outwardSteps, packageOpen, packagePages, type PackagePage } from "@/lib/evidence";
 import type { FindRecord } from "@/lib/finds";
+import { useLive } from "@/lib/live";
 import { markOf } from "@/lib/originals";
 import { marksOf, scanUrl, useScan } from "@/lib/scans";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,7 @@ import { OriginalPaper } from "./original-paper";
 
 /** A real sheet with every place the package points to; the drawn page where a Beleg has none. */
 function PackageSheet({ p }: { p: PackagePage }) {
-  const scan = useScan(p.page.project, p.page.belegId)?.seiten[String(p.page.page)];
+  const scan = useScan(hasSheet(p.page) ? p.page.project : null, p.page.belegId)?.seiten[String(p.page.page)];
   if (!scan) return <OriginalPaper page={p.page} mark={markOf(p.page, p.places[0] ?? null)} />;
   return (
     <div className="relative mx-auto w-full" style={{ aspectRatio: `${scan.b} / ${scan.h}`, maxWidth: scan.b > scan.h ? undefined : 620 }}>
@@ -34,7 +35,8 @@ function PackageSheet({ p }: { p: PackagePage }) {
  * Rechenweg with the source of every number, the Belege, and every sheet they point to with the place marked. What
  * stays inside is in `evidence.ts`. Until the find is released it carries "Entwurf, nicht freigegeben" (SPEZIFIKATION.md 5.1).
  */
-export function EvidencePackage({ record, asOf, first = true }: { record: FindRecord; asOf: string; first?: boolean }) {
+export function EvidencePackage({ record: built, asOf, first = true }: { record: FindRecord; asOf: string; first?: boolean }) {
+  const record = useLive()?.findRecord(built.slug) ?? built;
   const [decisions, setDecisions] = useState<Decision[]>([]);
   useEffect(() => {
     const load = () => setDecisions(readDecisions());
@@ -46,6 +48,9 @@ export function EvidencePackage({ record, asOf, first = true }: { record: FindRe
 
   const evidence = outwardEvidence(record);
   const pages = packagePages(record);
+
+  if (!packageOpen(record))
+    return <p className="mx-auto max-w-[820px] px-6 py-10 text-fg-secondary max-md:px-4">Für {record.number} gibt es noch kein Beweispaket: Der Nachtrag ist nicht gelegt, der Betrag ist Ihre eigene Schätzung. Mit dem gelegten Nachtrag entsteht es hier.</p>;
 
   return (
     <article aria-label={`Beweispaket ${record.number}`} className={cn("mx-auto flex w-full max-w-[820px] flex-col gap-6 px-6 py-6 max-md:px-4 print:max-w-none print:px-0 print:py-0", !first && "print:break-before-page")}>

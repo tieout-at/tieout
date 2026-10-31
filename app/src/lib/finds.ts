@@ -217,12 +217,11 @@ export function findHighlights(slug: string, b: FirmenErgebnis): Highlight[] | n
 }
 
 /** The find page of one find; throws for an unknown slug (the pages are generated from `findSlugs()`). */
-export function findRecord(slug: string): FindRecord {
-  const list = allFinds();
+export function findRecord(slug: string, b: FirmenErgebnis = business()): FindRecord {
+  const list = allFinds(b);
   const at = list.findIndex((x) => x.slug === slug);
   if (at < 0) throw new Error(`Unknown find ${slug}`);
   const { f, d, p, e } = list[at];
-  const b = business();
   const inProject = list.filter((x) => x.p.projektId === p.projektId);
   const index = inProject.findIndex((x) => x.slug === slug);
 

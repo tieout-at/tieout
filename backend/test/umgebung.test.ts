@@ -32,9 +32,7 @@ it("applies after the v1 SQL of the WhatsApp agent, and that SQL still applies a
 }, 30_000);
 
 it("fund_alias holds exactly the earlier keys of kern/'s sample data", async () => {
-  // the work of a WhatsApp-Meldung keeps its decisions once its signed Regiebericht is entered (005_eingang.sql)
-  const offen = Object.entries(pruefeFirma(beispielFirma()).ergebnisse).flatMap(([projekt, e]) => e.luecken.filter((l) => l.art === "regiebericht").map((l) => `${projekt}/${l.schluessel}`));
-  const b = pruefeFirma(beispielFirma(), [], offen.map((lueckeSchluessel) => ({ lueckeSchluessel, zeit: "2026-10-23T09:00", wer: "Abrechnung", gueltig: true })));
+  const b = pruefeFirma(beispielFirma());
   const erwartet = Object.entries(b.ergebnisse)
     .flatMap(([projekt, e]) => e.abgleich.funde.flatMap((f) => f.fruehereSchluessel.map((k) => `${projekt}/${f.schluessel} <- ${projekt}/${k}`)))
     .sort();

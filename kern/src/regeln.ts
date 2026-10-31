@@ -7,7 +7,7 @@
 import { betragAusMenge, euro, menge, prozent, prozentText, rundeHalbAuf, stunden, stundenBetrag } from "./geld";
 import { arbeitsdatum, aufmassFunde, aufmassMenge, baueKontext, verrechneteZeilen, verrechnetMenge, vorGrenze, type AufmassFund, type Kontext } from "./kontext";
 import type { Cent, Datensatz, Datum, Email, Entscheidung, Plan, Quelle, Regiebericht, WhatsAppMeldung } from "./modell";
-import { entscheidungsstand } from "./modell";
+import { entscheidungsstand, regieSchluessel } from "./modell";
 import type { Belegstand, Fund, FundArt, FundPosition, Hinweis, Nachweis, RechenSchritt } from "./typen";
 
 export const datumText = (iso: Datum) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
@@ -244,8 +244,8 @@ function regieFunde(k: Kontext): RohFund[] {
       const teile = [...s.teile, ...(material > 0 ? [`Material ${euro(material)} + ${prozentText(zuschlag, 0)} (${euro(aufschlag)})`] : [])];
       const gh = k.d.grosshaendlerrechnungen.filter((g) => g.regieberichtNr.wert === rb.nr);
       return {
-        schluessel: `regie:${rb.nr}`,
-        fruehereSchluessel: rb.ausMeldung ? [`meldung:${rb.ausMeldung.wert}`] : [],
+        schluessel: regieSchluessel(rb),
+        fruehereSchluessel: rb.ausMeldung && !rb.ausEingang ? [`meldung:${rb.ausMeldung.wert}`] : [],
         art: "regie" as const,
         belegstand: (unterschrieben ? "belegt" : "beleg_fehlt") as Belegstand,
         titel: `Regiebericht ${rb.nr}, ${rb.taetigkeit.wert}`,

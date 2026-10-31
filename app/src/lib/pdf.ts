@@ -14,7 +14,7 @@ const BOLD = [278, 333, 474, 556, 556, 889, 722, 238, 333, 333, 389, 584, 278, 3
 const WIN: Record<string, number> = { "€": 0x80, "‚": 0x82, "„": 0x84, "…": 0x85, "‘": 0x91, "’": 0x92, "“": 0x93, "”": 0x94, "•": 0x95, "\u2013": 0x96, "\u2014": 0x97 };
 
 /** What Helvetica has no glyph for, in words or the nearest sign ("Index C → D" reads "Index C auf D"). */
-const plain = (text: string) => text.replace(/ → /g, " auf ").replace(/→/g, "-").replace(/−/g, "\u2013").replace(/[  ]/g, " ");
+const plain = (text: string) => text.replace(/ → /g, " auf ").replace(/→/g, "-").replace(/−/g, "\u2013").replace(/[  ]/g, " ").replace(/₂/g, "2").replace(/₃/g, "3");
 
 export function winAnsi(text: string): number[] {
   return [...plain(text)].map((c) => {
@@ -68,7 +68,7 @@ export const WHITE: Colour = [1, 1, 1];
 
 const n = (x: number) => (Math.round(x * 100) / 100).toString();
 const hex = (bytes: number[]) => bytes.map((b) => b.toString(16).padStart(2, "0")).join("");
-const utf16 = (text: string) => `FEFF${[...text].map((c) => c.charCodeAt(0).toString(16).padStart(4, "0")).join("")}`;
+const utf16 = (text: string) => `FEFF${Array.from({ length: text.length }, (_, i) => text.charCodeAt(i).toString(16).padStart(4, "0")).join("")}`;
 const rgb = (c: Colour, op: string) => `${c.map(n).join(" ")} ${op}`;
 
 type Picture = { bytes: Uint8Array; w: number; h: number };
@@ -174,7 +174,7 @@ export class Pdf {
     object(3, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
     object(4, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
     object(5, "<< /Type /ExtGState /ca 0.14 >>");
-    object(6, `<< /Title <${utf16(this.title)}> /Author <${utf16(this.author)}> /Producer (tieout) >>`);
+    object(6, `<< /Title <${utf16(this.title)}> /Author <${utf16(this.author)}> >>`);
     object(7, `<< /Type /Outlines /Count ${this.marks.length}${this.marks.length ? ` /First ${firstMark} 0 R /Last ${firstMark + this.marks.length - 1} 0 R` : ""} >>`);
     this.marks.forEach((m, i) => {
       const id = firstMark + i;

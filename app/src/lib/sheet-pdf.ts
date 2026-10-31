@@ -81,9 +81,9 @@ export function feet(pdf: Pdf, left: string | null) {
 }
 
 /** Loads a sheet in the browser and turns it into a JPEG: the PDF format has no WebP. */
-export const browserSheets = (load: SheetSource["scan"]): SheetSource => ({
-  scan: load,
-  picture: async (project, file) => {
+export function browserSheets(load: SheetSource["scan"]): SheetSource {
+  const made = new Map<string, Promise<Picture>>();
+  const picture = async (project: string, file: string): Promise<Picture> => {
     const res = await fetch(`/belege/${project}/${file}`);
     if (!res.ok) throw new Error(`Blatt ${file} fehlt`);
     const bitmap = await createImageBitmap(await res.blob());
@@ -95,5 +95,14 @@ export const browserSheets = (load: SheetSource["scan"]): SheetSource => ({
     const blob = await new Promise<Blob | null>((done) => canvas.toBlob(done, "image/jpeg", 0.8));
     if (!blob) throw new Error("Blatt ließ sich nicht umwandeln");
     return { bytes: new Uint8Array(await blob.arrayBuffer()), w: canvas.width, h: canvas.height };
-  },
-});
+  };
+  // a sheet that recurs in a package is decoded once
+  return {
+    scan: load,
+    picture: (project, file) => {
+      const key = `${project}/${file}`;
+      if (!made.has(key)) made.set(key, picture(project, file));
+      return made.get(key)!;
+    },
+  };
+}

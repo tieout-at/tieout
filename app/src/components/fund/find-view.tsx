@@ -1,16 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, SearchCheck } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Kpi, type KpiItem } from "@/components/charts/kpi";
 import { Activity } from "@/components/record/activity";
-import { GapWindow } from "@/components/schlussrechnung/gap-window";
 import { RecordHead } from "@/components/shell/record-head";
 import { SideWindow, toggleOpen, useSheetWidth } from "@/components/ui/side-window";
 import { checkedBy } from "@/lib/decision-rules";
 import { currentState, decide, gapBeforeRelease, localTime, onStorageChange, readDecisions, type Decision, type DecisionState } from "@/lib/decisions";
+import { packageOpen } from "@/lib/evidence";
 import type { FindRecord, SourceRef } from "@/lib/finds";
 import { useLive } from "@/lib/live";
 import type { ActivityEntry } from "@/lib/records";
@@ -45,14 +46,18 @@ const STEPS: { id: DecisionState; title: string }[] = [
  * is no longer built into the page: a source opens it in a window at the right, a second click on the same source, its X or Escape
  * closes it.
  */
-export function FindView({ record }: { record: FindRecord }) {
+/** The window of a gap loads on its click: most visits to a find never open it. */
+const GapWindow = dynamic(() => import("@/components/schlussrechnung/gap-window").then((m) => m.GapWindow), { ssr: false });
+
+export function FindView({ record: built }: { record: FindRecord }) {
   const [source, setSource] = useState<SourceRef | null>(null);
   const [gapKey, setGapKey] = useState<string | null>(null);
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const tasks = useTasks() ?? [];
   // with a decision in this browser the core runs here too (live.ts): the money word and the Kürzungsrisiko follow it
   const live = useLive();
-  const highlights = live?.findHighlights(record.slug) ?? record.highlights;
+  const record = live?.findRecord(built.slug) ?? built;
+  const highlights = record.highlights;
 
   // the static page shows the core's state; what this browser recorded replaces it after the first paint
   useEffect(() => {
@@ -68,8 +73,7 @@ export function FindView({ record }: { record: FindRecord }) {
   const state = currentState(decisions, keys, record.decision);
   const last = mine.toSorted((a, b) => a.zeit.localeCompare(b.zeit)).at(-1);
   const excluded = state === "nicht_verrechnen";
-  // by the number: a WhatsApp-Meldung that became a Regiebericht keeps its number, not its key
-  const gaps = live && record.gaps[0] ? live.gapsView(record.gaps[0].project.id).filter((g) => g.find?.number === record.number) : record.gaps;
+  const gaps = record.gaps;
 
   const activity: ActivityEntry[] = [
     ...gaps.flatMap((g) =>
@@ -199,13 +203,15 @@ export function FindView({ record }: { record: FindRecord }) {
         <WeakSpot record={record} excluded={excluded} active={source} onOpen={open} gaps={gaps} onGap={(g) => setGapKey(g.key)} />
         <CalcPath calc={record.calc} active={source} onOpen={open} />
         <EvidenceTiles evidence={record.evidence} active={source} onOpen={open} />
-        <Link href={`/funde/${record.slug}/beweispaket/`} className="link-quiet w-fit text-fg-secondary">
-          Beweispaket als PDF
-        </Link>
+        {packageOpen(record) && (
+          <Link href={`/funde/${record.slug}/beweispaket/`} className="link-quiet w-fit text-fg-secondary">
+            Beweispaket als PDF
+          </Link>
+        )}
         <Activity entries={activity} />
       </div>
 
-      <GapWindow gap={gaps.find((g) => g.key === gapKey) ?? null} onClose={() => setGapKey(null)} />
+      {gapKey && <GapWindow gap={gaps.find((g) => g.key === gapKey) ?? null} onClose={() => setGapKey(null)} />}
       <SideWindow open={source !== null} onClose={close} title="Original" width={sheetWidth}>
         {source && <OriginalViewer key={`${source.page}|${source.place}`} source={source} originals={record.originals} onClose={close} />}
       </SideWindow>

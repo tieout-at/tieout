@@ -7,8 +7,9 @@ import { findRecord, findSlugs } from "./finds";
 import { folderPdf } from "./folder-pdf";
 import { gapsView, invoiceView } from "./invoice";
 import { live } from "./kern-live";
+import { outwardFinds, packageOpen } from "./evidence";
 import { Pdf, textWidth, winAnsi, wrap } from "./pdf";
-import type { ScanBeleg } from "./scans";
+import { signMarks, type ScanBeleg } from "./scans";
 import type { SheetSource } from "./sheet-pdf";
 
 const sheets: SheetSource = {
@@ -115,6 +116,41 @@ describe("Beweispaket", () => {
     expect(t).toContain("14.620,15 €");
   });
 
+  it("holds nothing internal for any find of any project that has a Beweispaket", async () => {
+    const open = findSlugs().map((s) => record(s)).filter(packageOpen);
+    for (const r of open) {
+      const t = texts(await evidencePdf({ ...input([]), finds: [{ record: r, draft: true }], total: null }, sheets));
+      for (const word of ["Kürzungsrisiko", "Abhilfe", "Preisbasis", "Stundenzettel", "Mittellohn", "Untergrenze", "tieout", "im Entwurf"]) expect(t, `${r.slug}: ${word}`).not.toContain(word);
+    }
+  });
+
+  it("a find whose Nachtrag is not laid has no Beweispaket", () => {
+    const f8 = record(slugOf(v.pending.find((x) => x.stand === "Nachtrag nicht gelegt")!.find.href));
+    expect(packageOpen(f8)).toBe(false);
+    expect(outwardFinds([f8])).toEqual([]);
+  });
+
+  it("after a signature the finds, their words and the sum belong together", async () => {
+    const l = live([], [{ lueckeSchluessel: "p1/unterschrift:rb-12", zeit: "2026-10-23T10:00", wer: "Abrechnung", gueltig: true, am: "2026-10-22" }]);
+    const view = l.invoiceView("p1")!;
+    const finds = outwardFinds(view.changes.entries.map((c) => l.findRecord(slugOf(c.find.href))));
+    expect(finds.map((f) => f.record.number)).toEqual(["F1", "F2", "F3", "F4", "F5", "F6"]);
+    const t = texts(await evidencePdf({ ...input([]), finds, total: view.changes.total.text }, sheets));
+    expect(t).toContain("15.264,14 €");
+    expect(t).toContain("643,99 €");
+    expect(t).toContain("unterschrieben am 22.10.2026");
+    expect(t).toContain("Unterschrieben am 22.10.2026, unterschriebenes Blatt beim Betrieb");
+    expect(t).not.toContain("nicht unterschrieben");
+  });
+
+  it("leaves out a find on Nicht verrechnen and marks a released one as final", () => {
+    const f1 = v.status.all[0];
+    const no = live([{ fundSchluessel: f1.key, zeit: "2026-10-23T10:00", wer: "Abrechnung", stand: "nicht_verrechnen", grund: "x" }]);
+    expect(outwardFinds([no.findRecord(slugOf(f1.href))])).toEqual([]);
+    const yes = live([{ fundSchluessel: f1.key, zeit: "2026-10-23T10:00", wer: "Abrechnung", stand: "geprueft" }, { fundSchluessel: f1.key, zeit: "2026-10-23T10:01", wer: "Geschäftsführung", stand: "freigegeben" }]);
+    expect(outwardFinds([yes.findRecord(slugOf(f1.href))])[0].draft).toBe(false);
+  });
+
   it("says nothing of a draft once a find is released", async () => {
     const b = await evidencePdf(input([slugOf(v.status.all[0].href)], false), sheets);
     expect(texts(b)).not.toContain("Entwurf, nicht freigegeben");
@@ -137,7 +173,13 @@ describe("Mappe", () => {
     for (const word of ["Mappe für die Baustelle", "Regiebericht 12", "Aufmaßblatt 12", "Regiebericht, neu", "Hier unterschreiben", "Hier gegenzeichnen", "Beilage zu Aufmaßblatt 12: Plan H-201 Index D", "Beilage zu Aufmaßblatt 12: E-Mail vom 07.04.2026", "Heizkörper Top 9 versetzt", "Polier"]) expect(t).toContain(word);
   });
 
-  it("shows no amount and not the word Fund", async () => {
+  it("marks the field to sign on the sheet of every open project", () => {
+    const rb5 = JSON.parse(readFileSync(new URL("../../public/belege/volksschule-ahornbrunn/rb-5.json", import.meta.url), "utf8")) as ScanBeleg;
+    const g = gapsView("p3")[0];
+    expect(signMarks(rb5.seiten["1"], g.sheet!.place)).toEqual(rb5.seiten["1"].marken["Unterschrift Auftraggeber"]);
+  });
+
+  it("adds no amount and not the word Fund", async () => {
     const t = texts(await folder());
     expect(t).not.toMatch(/\d,\d\d €/);
     expect(t).not.toContain("€");

@@ -1,14 +1,15 @@
 /**
  * The Mappe for the site (step 14): what the business prints and the Bauleitung takes along. A sheet to tick off, then
  * per gap the real sheet with the field to sign marked, what the Abhilfe says to enclose, and a Regiebericht prepared from
- * a WhatsApp-Meldung. It goes through the hands of the Polier, so it holds no amount and not the word "Fund"; a mark must
- * read in black and white. tieout sends it to nobody.
+ * a WhatsApp-Meldung. It goes through the hands of the Polier, so it adds no amount and not the word "Fund"; a sheet stays
+ * as it is, also what is written on it, because that is what gets signed. A mark must read in black and white. tieout
+ * sends it to nobody.
  */
 
 import type { Gap, GapSheet } from "./invoice";
 import { LINE, MUTED, Pdf, textWidth, WHITE, INK, wrap } from "./pdf";
 import { feet, markPlaces, MARGIN, sheetPage, type SheetSource } from "./sheet-pdf";
-import { marksOf } from "./scans";
+import { signMarks } from "./scans";
 
 export type FolderInput = { business: string; project: string; client: string; asOf: string; gaps: Gap[]; sample: boolean };
 
@@ -27,7 +28,7 @@ async function signSheet(pdf: Pdf, src: SheetSource, g: Gap, sheet: GapSheet, pr
     const { page: at, at: place } = sheetPage(pdf, picture, `${project}/${page.bild}`, page, `${sheet.title}, Seite ${number}`, null);
     if (number !== sheet.page) continue;
     pdf.bookmark(sheet.title, at);
-    for (const b of marksOf(page, sheet.place)) {
+    for (const b of signMarks(page, sheet.place)) {
       // the signature goes on the line above the label, so the frame reaches over it
       const r = place(b);
       const top = r.y - ABOVE;
@@ -90,7 +91,7 @@ function prepared(pdf: Pdf, g: Gap, input: FolderInput) {
 export async function folderPdf(input: FolderInput, src: SheetSource): Promise<Uint8Array> {
   const gaps = input.gaps.filter((g) => g.folder && !g.closed);
   const pdf = new Pdf(`Mappe für die Baustelle, ${input.project}`, input.business);
-  const p = pdf.page();
+  let p = pdf.page();
   let y = 72;
   p.text(MARGIN, y, "Mappe für die Baustelle", { size: 20, bold: true });
   y += 20;
@@ -102,6 +103,10 @@ export async function folderPdf(input: FolderInput, src: SheetSource): Promise<U
   p.line(MARGIN, y, p.w - MARGIN, { colour: INK });
   y += 16;
   for (const g of gaps) {
+    if (y > p.h - 90) {
+      p = pdf.page();
+      y = 60;
+    }
     const title = g.sheet?.title ?? "Regiebericht, neu";
     const small = g.template ? `aus der WhatsApp-Meldung, Arbeitstag ${g.template.day}` : g.enclosures.length ? `Beilagen: ${g.enclosures.map((e) => e.title).join(", ")}` : null;
     p.rect(col[0], y - 9, 11, 11, { stroke: INK, width: 0.8 });

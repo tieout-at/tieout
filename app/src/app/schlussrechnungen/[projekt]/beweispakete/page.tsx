@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
-import { EvidencePdfButton } from "@/components/fund/evidence-actions";
-import { EvidencePackage } from "@/components/fund/evidence-package";
-import { PrintBar } from "@/components/fund/print-bar";
+import { AllPackages } from "@/components/fund/evidence-actions";
 import { Page } from "@/components/shell/page";
 import { PROJECTS, projectHref } from "@/lib/example";
 import { findRecord } from "@/lib/finds";
@@ -25,8 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * Every Beweispaket of the Änderungsliste as one PDF: what goes with the Schlussrechnung. The page lists the finds of the
- * built page; the PDF takes the decisions of the moment and leaves out a find set to "Nicht verrechnen".
+ * Every Beweispaket of the Änderungsliste as one PDF: what goes with the Schlussrechnung. Page and PDF follow the
+ * decisions and signatures of the moment; a find set to "Nicht verrechnen" leaves both.
  */
 export default async function BeweispaketePage({ params }: Props) {
   const p = project((await params).projekt);
@@ -35,12 +33,7 @@ export default async function BeweispaketePage({ params }: Props) {
   const records = view.changes.entries.map((c) => findRecord(c.find.href.split("/")[2]));
   return (
     <Page destination="schlussrechnungen" trail={[{ label: p.name, href: projectHref(p, "schlussrechnung") }, { label: "Beweispakete" }]}>
-      <PrintBar back={{ href: projectHref(p, "schlussrechnung"), label: "Zurück zur Schlussrechnung" }} count={records.length}>
-        <EvidencePdfButton records={records} asOf={asOf} projektId={p.id} sample={firm().beispieldaten} />
-      </PrintBar>
-      {records.map((r, i) => (
-        <EvidencePackage key={r.key} record={r} asOf={asOf} first={i === 0} />
-      ))}
+      <AllPackages records={records} projektId={p.id} back={projectHref(p, "schlussrechnung")} asOf={asOf} sample={firm().beispieldaten} />
     </Page>
   );
 }

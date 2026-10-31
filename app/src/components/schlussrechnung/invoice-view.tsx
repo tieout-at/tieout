@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ChevronRight, CircleCheck, FileCheck2, FileSpreadsheet, FolderCheck, Printer } from "lucide-react";
 import { useRef, useState } from "react";
@@ -18,9 +19,11 @@ import { useLive } from "@/lib/live";
 import type { Mode } from "@/lib/stairs";
 import { cn } from "@/lib/utils";
 import { SavedWhere } from "@/components/shell/saved-where";
-import { FindWindow } from "./find-window";
-import { GapWindow } from "./gap-window";
 import { Treppe } from "./treppe";
+
+// the windows load on their first click
+const FindWindow = dynamic(() => import("./find-window").then((m) => m.FindWindow), { ssr: false });
+const GapWindow = dynamic(() => import("./gap-window").then((m) => m.GapWindow), { ssr: false });
 
 const quiet = "link-quiet";
 const DECISION_COLOUR: Partial<Record<DecisionState, TagColour>> = { freigegeben: "green", in_schlussrechnung: "green", nicht_verrechnen: "grey" };
@@ -85,8 +88,8 @@ export function InvoiceView({ built }: { built: View }) {
         </div>
       </div>
       <p className="text-xs text-fg-muted">tieout sendet nichts an den Auftraggeber. Alle Beträge netto.</p>
-      <FindWindow find={find} v={v} onClose={() => setFindKey(null)} onGap={openGap} />
-      <GapWindow gap={gap} onClose={() => setGapKey(null)} />
+      {find && <FindWindow find={find} v={v} onClose={() => setFindKey(null)} onGap={openGap} />}
+      {gap && <GapWindow gap={gap} onClose={() => setGapKey(null)} />}
     </div>
   );
 }

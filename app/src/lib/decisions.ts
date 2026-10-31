@@ -95,8 +95,13 @@ function read<T>(key: string): T[] {
   }
 }
 
+let ownEntry = 0;
+/** When this page last made an entry: a figure that moves right after it moved because of it, not because a list arrived. */
+export const ownEntryAt = () => ownEntry;
+
 /** Appends one entry; returns the whole list. If the browser keeps nothing (private window), the entry lives for this visit. */
 function append<T>(key: string, entry: T): T[] {
+  ownEntry = Date.now();
   if (typeof window !== "undefined" && serverWaiting()) {
     refuse(WAITING);
     return read<T>(key);
@@ -170,7 +175,10 @@ export const readSettings = () =>
 export const appendSetting = (x: Setting) => append(KEYS.settings, x);
 /** Only well-formed entries, as for the settings: what lies in the browser's storage feeds the core. */
 export const readEingaenge = () =>
-  read<unknown>(KEYS.eingaenge).filter((x): x is Eingang => !!x && typeof x === "object" && typeof (x as Eingang).lueckeSchluessel === "string" && typeof (x as Eingang).zeit === "string" && typeof (x as Eingang).wer === "string" && typeof (x as Eingang).gueltig === "boolean");
+  read<unknown>(KEYS.eingaenge).filter((x): x is Eingang => {
+    const e = x as Eingang;
+    return !!e && typeof e === "object" && typeof e.lueckeSchluessel === "string" && /^[^/]+\/(unterschrift|gegenzeichnung|regiebericht):/.test(e.lueckeSchluessel) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(e.zeit) && typeof e.wer === "string" && typeof e.gueltig === "boolean" && (e.am === undefined || /^\d{4}-\d{2}-\d{2}$/.test(e.am));
+  });
 /** A signature came back (step 14), or takes an earlier entry back: appended, the latest entry of a gap counts. */
 export const appendEingang = (e: Eingang) => append(KEYS.eingaenge, e);
 export const appendTaskCheck = (c: TaskCheck) => append(KEYS.checks, c);

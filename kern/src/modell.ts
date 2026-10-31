@@ -330,7 +330,12 @@ export interface Regiebericht {
   unterschriebenAm: Feld<Datum> | null;
   /** WhatsApp-Meldung the report was written from, or null. */
   ausMeldung: Feld<string> | null;
+  /** Prepared from that Meldung and signed (step 14): the work keeps the key of the Meldung. */
+  ausEingang?: boolean;
 }
+
+/** The key of the work of a Regiebericht. One prepared from a WhatsApp-Meldung stays the find it was. */
+export const regieSchluessel = (r: Regiebericht) => (r.ausEingang && r.ausMeldung ? `meldung:${r.ausMeldung.wert}` : `regie:${r.nr}`);
 
 /** Internal hours per crew and week, booked to Regieberichte. Read only as a sum per crew and week. */
 export interface Stundenzettel {

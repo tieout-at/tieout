@@ -1,12 +1,12 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
 import { keep } from "@/components/charts/tones";
 import { InfoTip } from "@/components/ui/info-tip";
 import { useReducedMotion } from "@/components/ui/use-media";
-import type { DecisionState } from "@/lib/decisions";
+import { ownEntryAt, type DecisionState } from "@/lib/decisions";
 import type { InvoiceFind, InvoiceView } from "@/lib/invoice";
 import { stairs, type Mode, type Stairs } from "@/lib/stairs";
 import { cn } from "@/lib/utils";
@@ -85,9 +85,10 @@ function useCounting(cent: number): number {
     let frame = 0;
     const step = (t: number) => {
       const k = Math.min(1, (t - start) / 520);
-      setShown(Math.round(a + (cent - a) * (1 - (1 - k) ** 3)));
+      const now = Math.round(a + (cent - a) * (1 - (1 - k) ** 3));
+      setShown(now);
+      from.current = now;
       if (k < 1) frame = requestAnimationFrame(step);
-      else from.current = cent;
     };
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
@@ -141,7 +142,7 @@ function Chart({ s, width, onFind }: { s: Stairs; width: number; onFind: (f: Inv
   const x = (col: number) => left + col * cw + (cw - bw) / 2;
   const small = cw < 74;
   const amount = (text: string, cx: number, top: number, muted = false) => (
-    <text x={cx} y={top - 6} textAnchor="middle" className={cn("font-mono tabular-nums", muted ? "fill-fg-secondary" : "fill-fg")} fontSize={small ? 9 : 10.5}>
+    <text x={cx} y={top - 6} textAnchor="middle" className={cn("font-mono tabular-nums", muted ? "fill-fg-secondary" : "fill-fg")} fontSize={cw < 52 ? 8.5 : small ? 9 : 10.5}>
       {short(text)}
     </text>
   );
@@ -151,9 +152,10 @@ function Chart({ s, width, onFind }: { s: Stairs; width: number; onFind: (f: Inv
         {l}
       </text>
     ));
-  const lines = (t: string) => (t === "Baustrom und Bauwasser" ? ["Baustrom,", "Bauwasser"] : t === "Bauschadensumlage" ? ["Bauschaden-", "umlage"] : t === "Haftrücklass" ? ["Haft-", "rücklass"] : t === "Deckungsrücklass" ? ["Deckungs-", "rücklass"] : [t]);
+  const lines = (t: string) => (t === "Baustrom und Bauwasser" ? (cw < 52 ? ["Bau-", "strom"] : ["Baustrom,", "Bauwasser"]) : t === "Bauschadensumlage" ? (cw < 52 ? ["Bau-", "schaden"] : ["Bauschaden-", "umlage"]) : t === "Haftrücklass" ? ["Haft-", "rücklass"] : t === "Deckungsrücklass" ? ["Deckungs-", "rücklass"] : [t]);
 
-  const band = s.pending.length ? { x: left + p[s.pending[0].id]?.col * cw, w: s.pending.length * cw } : null;
+  const firstWaiting = s.pending[0] ? p[s.pending[0].id] : undefined;
+  const band = firstWaiting ? { x: left + firstWaiting.col * cw, w: s.pending.length * cw } : null;
   const clickable = (f: InvoiceFind, text: string, body: React.ReactNode) => (
     <g
       key={f.key}
@@ -173,7 +175,7 @@ function Chart({ s, width, onFind }: { s: Stairs; width: number; onFind: (f: Inv
   );
 
   return (
-    <svg width={width} height={HEIGHT} viewBox={`0 0 ${width} ${HEIGHT}`} role="img" aria-label={`Treppe vom Entwurf zum Betrag der Schlussrechnung ${s.end.text}`} className="block">
+    <svg width={width} height={HEIGHT} viewBox={`0 0 ${width} ${HEIGHT}`} role="group" aria-label={`Treppe vom Entwurf zum Betrag der Schlussrechnung ${s.end.text}`} className="block">
       {band && <rect x={band.x} y={8} width={band.w} height={floor - 8} rx={6} fill="var(--color-fill-subtle)" />}
       <line x1={left} x2={width - left} y1={floor} y2={floor} stroke="var(--color-line)" />
       {s.steps.map((st, i) => {
@@ -285,15 +287,25 @@ function Rows({ s, v, onFind }: { s: Stairs; v: InvoiceView; onFind: (f: Invoice
           </>
         );
         return (
-          <li key={st.id} className="[&:not(:last-child)]:shadow-line-bottom">
-            {st.find ? (
-              <button type="button" onClick={() => onFind(st.find!)} className={cn(row, "outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent")}>
-                {text}
-              </button>
-            ) : (
-              <span className={row}>{text}</span>
-            )}
-          </li>
+          <Fragment key={st.id}>
+            <li className="shadow-line-bottom">
+              {st.find ? (
+                <button type="button" onClick={() => onFind(st.find!)} className={cn(row, "outline-none hover:bg-fill-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent")}>
+                  {text}
+                </button>
+              ) : (
+                <span className={row}>{text}</span>
+              )}
+            </li>
+            {s.sums
+              .filter((x) => x.after === st.id)
+              .map((x) => (
+                <li key={x.label} className="flex min-h-9 items-center justify-between gap-2 px-4 py-1 font-medium shadow-line-bottom">
+                  <span>{x.label}</span>
+                  <span className="shrink-0 tabular-nums">{keep(x.text)}</span>
+                </li>
+              ))}
+          </Fragment>
         );
       })}
       <li className="flex min-h-11 items-center justify-between gap-2 px-4 py-1.5 font-medium shadow-line-bottom">
@@ -386,13 +398,16 @@ export function Treppe({ v, mode, setMode, onFind }: { v: InvoiceView; mode: Mod
   const width = (beside ? card - 216 : card) - 16;
   const counting = useCounting(s.rest.cent);
   // what the last change did to the Restforderung: new minus old, both figures of the core
-  const seen = useRef({ mode, cent: s.rest.cent });
+  const marks = v.status.all.map((f) => f.decision).join();
+  const seen = useRef({ mode, cent: s.rest.cent, marks });
   const [change, setChange] = useState(0);
   useEffect(() => {
-    if (seen.current.mode === mode && seen.current.cent !== s.rest.cent) setChange(s.rest.cent - seen.current.cent);
-    if (seen.current.mode !== mode) setChange(0);
-    seen.current = { mode, cent: s.rest.cent };
-  }, [mode, s.rest.cent]);
+    const was = seen.current;
+    seen.current = { mode, cent: s.rest.cent, marks };
+    // only what this page did right now: a list that arrives after loading is no change
+    if (was.mode === mode && was.cent !== s.rest.cent && Date.now() - ownEntryAt() < 5000) setChange(s.rest.cent - was.cent);
+    else if (was.mode !== mode || was.cent !== s.rest.cent || was.marks !== marks) setChange(0);
+  }, [mode, s.rest.cent, marks]);
   const axis = euroText(s.base).replace(",00", "");
   const [lines, setLines] = useState(false);
   const tight = width < NARROW;
@@ -444,8 +459,14 @@ export function Treppe({ v, mode, setMode, onFind }: { v: InvoiceView; mode: Mod
         </div>
         <div className={cn("flex flex-col gap-1.5 px-4 pt-3 pb-3.5 max-md:sticky max-md:top-0 max-md:z-10 max-md:bg-surface max-md:shadow-line-bottom", beside ? "md:shadow-[inset_1px_0_0_0_var(--color-line)]" : "order-1 md:flex-row md:flex-wrap md:items-baseline md:gap-x-3 md:pt-1")}>
           <span className="font-medium">{s.rest.label}</span>
-          <span className="text-2xl font-semibold tracking-tight tabular-nums" aria-live="polite">
+          <span className="sr-only" aria-live="polite">
+            {s.rest.label} {s.rest.text}
+          </span>
+          <span aria-hidden className="text-2xl font-semibold tracking-tight tabular-nums">
             {keep(euroText(counting))}
+          </span>
+          <span className="text-xs text-fg-secondary tabular-nums">
+            {s.other.label} {keep(s.other.text)}
           </span>
           <span className={cn("w-fit rounded-sm px-1.5 text-xs font-medium tabular-nums transition-opacity duration-300", change ? "opacity-100" : "opacity-0", change > 0 ? "bg-money-soft text-state-green-edge" : "bg-fill-hover text-fg-secondary")}>{change ? keep(`${change > 0 ? "+" : ""}${euroText(change)}`) : " "}</span>
           <p className={cn("flex justify-between gap-2 text-xs text-fg-secondary max-md:hidden", beside ? "mt-2" : "md:ml-auto")}>

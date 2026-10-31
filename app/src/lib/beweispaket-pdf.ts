@@ -5,7 +5,7 @@
  * a find until it is released. Nothing is computed here: amounts are the texts of the core.
  */
 
-import { outward, outwardEvidence, outwardSteps, packagePages, type PackagePage } from "./evidence";
+import { hasSheet, outward, outwardEvidence, outwardSteps, packagePages, type PackagePage } from "./evidence";
 import type { FindRecord, SourceRef } from "./finds";
 import { INK, LINE, MUTED, ACCENT, Pdf, textWidth, wrap, type Page } from "./pdf";
 import { feet, markPlaces, MARGIN, readPage, sheetPage, type SheetSource } from "./sheet-pdf";
@@ -141,7 +141,7 @@ function findPages(pdf: Pdf, { record: r, draft }: EvidenceInput["finds"][number
 
 async function sheetOf(pdf: Pdf, src: SheetSource, r: FindRecord, draft: boolean, p: PackagePage) {
   const o = p.page;
-  const scan = await src.scan(o.project, o.belegId);
+  const scan = hasSheet(o) ? await src.scan(o.project, o.belegId) : null;
   const page = scan?.seiten[String(o.page)];
   const where = p.places[0] ? `, ${p.first.detail.replace(/^Seite \d+, /, "")}` : "";
   const head = `${r.number} · ${o.title}, Seite ${o.page} von ${o.pages}${where}`;
@@ -150,6 +150,9 @@ async function sheetOf(pdf: Pdf, src: SheetSource, r: FindRecord, draft: boolean
   const picture = await src.picture(o.project, page.bild);
   const { page: at, at: place } = sheetPage(pdf, picture, `${o.project}/${page.bild}`, page, head, stamp);
   markPlaces(at, page, p.places, place);
+  // the sheet here is the one read from the folder; the signed one lies with the business
+  const signed = r.gaps.find((g) => g.closed && g.sheet?.belegId === o.belegId);
+  if (signed) at.text(at.w / 2, at.h - 12, `Unterschrieben am ${signed.closed!.day}, unterschriebenes Blatt beim Betrieb`, { size: 8, bold: true, right: false });
   pdf.anchor(keyOf(r.number, o.key), at);
 }
 
@@ -158,7 +161,7 @@ export async function evidencePdf(input: EvidenceInput, src: SheetSource): Promi
   const one = finds.length === 1;
   const pdf = new Pdf(one ? `Beweispaket ${finds[0].record.number}, ${input.project}` : `Beweispakete, ${input.project}`, input.business);
 
-  const cover = pdf.page();
+  let cover = pdf.page();
   const draftAny = finds.some((f) => f.draft);
   if (draftAny) cover.text(cover.w - 20, 20, DRAFT, { size: 8, bold: true, right: true });
   let y = 96;
@@ -181,13 +184,16 @@ export async function evidencePdf(input: EvidenceInput, src: SheetSource): Promi
   y += 6;
   cover.line(MARGIN, y, cover.w - MARGIN, { colour: INK });
   y += 14;
-  const links: { y: number; to: string }[] = [];
   for (const { record: r } of finds) {
+    if (y > cover.h - 90) {
+      cover = pdf.page();
+      y = 60;
+    }
     const lines = wrap(r.name, 10, cover.w - MARGIN * 2 - 36 - 80);
     cover.text(MARGIN, y, r.number, { size: 10 });
     lines.forEach((l, i) => cover.text(MARGIN + 36, y + i * 13, l, { size: 10 }));
     cover.text(cover.w - MARGIN, y, r.amount, { size: 10, right: true });
-    links.push({ y, to: `fund|${r.number}` });
+    cover.link(MARGIN, y - 9, cover.w - MARGIN * 2, 12, `fund|${r.number}`);
     y += lines.length * 13 + 5;
     cover.line(MARGIN, y - 9, cover.w - MARGIN, { colour: LINE });
     y += 6;
@@ -196,7 +202,6 @@ export async function evidencePdf(input: EvidenceInput, src: SheetSource): Promi
     cover.text(MARGIN + 36, y + 2, "Zusammen", { size: 10, bold: true });
     cover.text(cover.w - MARGIN, y + 2, input.total, { size: 10, bold: true, right: true });
   }
-  for (const l of links) cover.link(MARGIN, l.y - 9, cover.w - MARGIN * 2, 12, l.to);
 
   for (const f of finds) {
     const at = pdf.pages.length;

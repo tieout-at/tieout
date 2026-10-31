@@ -8,7 +8,7 @@
 import { pruefeFirma, type Eingang } from "@tieout/kern";
 
 import type { Decision } from "./decisions";
-import { findHighlights } from "./finds";
+import { findHighlights, findRecord } from "./finds";
 import { findCalculations, findRows, firm, projectCalculations, projectRows, startView } from "./kern-data";
 import { projectHighlights } from "./records";
 import { positionsView } from "./positions";
@@ -55,6 +55,8 @@ export function live(decisions: readonly Decision[], eingaenge: readonly Eingang
     positionsView: perKey((projektId) => positionsView(projektId, b)),
     /** "Auf einen Blick" of a find page, by its slug. */
     findHighlights: perKey((slug) => findHighlights(slug, b)),
+    /** A find as its page and its Beweispaket show it, with the decisions and the signatures that came back. */
+    findRecord: perKey((slug) => findRecord(slug, b)),
     /** An Ablauf with its runs, by its slug. */
     flowView: perKey((slug) => flowView(slug, b)),
     /** The "Übersicht" of an open project, by its slug. */

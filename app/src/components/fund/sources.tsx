@@ -169,20 +169,29 @@ export function EvidenceTiles({ evidence, active, onOpen }: { evidence: Evidence
  * Grund" and the sources under it. No box, no edge. A find set to "Nicht verrechnen" is in no Entwurf, so its
  * Kürzungsrisiko no longer applies.
  */
-export function WeakSpot({ record, excluded, active, onOpen, gaps, onGap }: { record: FindRecord; excluded: boolean; active: SourceRef | null; onOpen: OpenSource; gaps: Gap[]; onGap: (g: Gap) => void }) {
+export function WeakSpot(props: { record: FindRecord; excluded: boolean; active: SourceRef | null; onOpen: OpenSource; gaps: Gap[]; onGap: (g: Gap) => void }) {
+  const closed = props.excluded ? [] : props.gaps.filter((g) => g.closed);
+  return (
+    <>
+      {closed.map((g) => (
+        <p key={g.key} className="flex flex-wrap items-center gap-x-2 text-fg-secondary">
+          <CircleCheck className="size-4 text-state-green-edge" aria-hidden />
+          <span>
+            {g.sheet?.title ?? "Regiebericht"}: Unterschrift liegt vor, eingetragen von {g.closed!.who}.
+          </span>
+          <button type="button" onClick={() => props.onGap(g)} className="link-quiet">
+            Ansehen
+          </button>
+        </p>
+      ))}
+      <OpenSpot {...props} />
+    </>
+  );
+}
+
+function OpenSpot({ record, excluded, active, onOpen, gaps, onGap }: { record: FindRecord; excluded: boolean; active: SourceRef | null; onOpen: OpenSource; gaps: Gap[]; onGap: (g: Gap) => void }) {
   const r = excluded ? null : record.risk;
-  const closed = excluded ? undefined : gaps.find((g) => g.closed);
   const gap = excluded ? undefined : gaps.find((g) => !g.closed);
-  if (closed)
-    return (
-      <p id="kuerzungsrisiko" className="flex flex-wrap items-center gap-x-2 text-fg-secondary">
-        <CircleCheck className="size-4 text-state-green-edge" aria-hidden />
-        <span>{closed.sheet?.title ?? "Regiebericht"}: Unterschrift liegt vor, eingetragen von {closed.closed!.who}.</span>
-        <button type="button" onClick={() => onGap(closed)} className="link-quiet">
-          Ansehen
-        </button>
-      </p>
-    );
   const closeIt = gap && (
     <button type="button" onClick={() => onGap(gap)} className="w-fit text-xs font-medium text-accent underline-offset-2 outline-none hover:underline focus-visible:outline-2 focus-visible:outline-accent max-md:min-h-9">
       Lücke schließen

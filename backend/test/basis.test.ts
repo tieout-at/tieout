@@ -317,12 +317,21 @@ describe("Dateien", () => {
 describe("Unterschrift liegt vor (005)", () => {
   const SHA = "b".repeat(64);
   const datei = async (user: string, beleg: string) =>
-    (await als<{ id: string }>(user, "insert into public.datei (projekt_id, beleg_id, name, typ, groesse, sha256) values ('wohnpark-mooshaim', $1, 'blatt.pdf', 'application/pdf', 10, $2) returning id", [beleg, SHA]))[0].id;
+    (await zeile(user, beleg)).id;
+  const zeile = async (user: string, beleg: string) => {
+    const [d] = await als<{ id: string; pfad: string }>(user, "insert into public.datei (projekt_id, beleg_id, name, typ, groesse, sha256) values ('wohnpark-mooshaim', $1, 'blatt.pdf', 'application/pdf', 10, $2) returning id, pfad", [beleg, SHA]);
+    return d;
+  };
+  const gespeichert = async (user: string, beleg: string) => {
+    const d = await zeile(user, beleg);
+    await als(user, "insert into storage.objects (bucket_id, name) values ('dateien', $1)", [d.pfad]);
+    return d.id;
+  };
   const eintragen = (user: string, luecke: string, gueltig: boolean, dateiId: string | null) =>
     als<{ firma_id: string; person: string }>(user, "insert into public.eingang (luecke_schluessel, gueltig, datei_id) values ($1, $2, $3) returning *", [luecke, gueltig, dateiId]);
 
   it("the Abrechnung and the Bauleitung enter it, the server stamps who, and it stays in the company", async () => {
-    const id = await datei(U.anna, "rb-12");
+    const id = await gespeichert(U.anna, "rb-12");
     const [e] = await eintragen(U.bernd, "p1/unterschrift:rb-12", true, id);
     expect(e).toMatchObject({ firma_id: FIRMA_A, person: "Bernd Bauleitung" });
     expect(await als(U.georg, "select luecke_schluessel from public.eingang")).toEqual([{ luecke_schluessel: "p1/unterschrift:rb-12" }]);
@@ -330,7 +339,7 @@ describe("Unterschrift liegt vor (005)", () => {
   });
 
   it("the Geschäftsführung alone does not", async () => {
-    const id = await datei(U.anna, "rb-12");
+    const id = await gespeichert(U.anna, "rb-12");
     await expect(eintragen(U.georg, "p1/unterschrift:rb-12", true, id)).rejects.toThrow(/Abrechnung oder die Bauleitung/);
     await expect(als(null, "insert into public.eingang (luecke_schluessel, gueltig) values ('p1/unterschrift:rb-12', false)")).rejects.toThrow(/permission denied/);
     await expect(eintragen(U.fremd, "p1/unterschrift:rb-12", false, null)).rejects.toThrow(/Nur Mitglieder/);
@@ -338,14 +347,19 @@ describe("Unterschrift liegt vor (005)", () => {
 
   it("needs the signed sheet of this very Beleg, in the own company", async () => {
     await expect(eintragen(U.anna, "p1/unterschrift:rb-12", true, null)).rejects.toThrow(/Ohne das unterschriebene Blatt/);
-    const anderes = await datei(U.anna, "rb-9");
+    const anderes = await gespeichert(U.anna, "rb-9");
     await expect(eintragen(U.anna, "p1/unterschrift:rb-12", true, anderes)).rejects.toThrow(/Ohne das unterschriebene Blatt/);
-    const fremd = await datei(U.berta, "rb-12");
+    const fremd = await gespeichert(U.berta, "rb-12");
     await expect(eintragen(U.anna, "p1/unterschrift:rb-12", true, fremd)).rejects.toThrow(/Ohne das unterschriebene Blatt/);
   });
 
+  it("a row whose upload broke off is no sheet", async () => {
+    const ohneDatei = await datei(U.anna, "rb-12");
+    await expect(eintragen(U.anna, "p1/unterschrift:rb-12", true, ohneDatei)).rejects.toThrow(/Ohne das unterschriebene Blatt/);
+  });
+
   it("a WhatsApp-Meldung has its sheet under the lower-case Beleg", async () => {
-    const id = await datei(U.anna, "w4");
+    const id = await gespeichert(U.anna, "w4");
     await expect(eintragen(U.anna, "p1/regiebericht:W4", true, id)).resolves.toHaveLength(1);
   });
 
@@ -359,6 +373,8 @@ describe("Unterschrift liegt vor (005)", () => {
     await expect(eintragen(U.anna, "p1/nachtrag:mail-0316", false, null)).rejects.toThrow(/check/);
     await expect(eintragen(U.anna, "unterschrift:rb-12", false, null)).rejects.toThrow(/check/);
     await expect(eintragen(U.anna, "p1/unterschrift:../x", false, null)).rejects.toThrow(/check/);
+    await expect(eintragen(U.anna, "p1/unterschrift:RB-12", false, null)).rejects.toThrow(/check/);
+    await expect(eintragen(U.anna, "p1/unterschrift:rb-12", false, await datei(U.anna, "rb-12"))).rejects.toThrow(/check/);
     await expect(als(U.anna, `insert into public.eingang (luecke_schluessel, gueltig, firma_id) values ('p1/unterschrift:rb-12', false, '${FIRMA_B}')`)).rejects.toThrow(/permission denied/);
   });
 });

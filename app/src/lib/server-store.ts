@@ -70,7 +70,7 @@ export const FROM_ROW: Record<ListKey, (r: Row) => unknown> = {
   }),
   erledigt: (r): TaskCheck => ({ aufgabeId: String(r.aufgabe_id), zeit: localMinute(String(r.zeit)), wer: String(r.person), erledigt: r.erledigt === true }),
   einstellungen: (r): Setting => ({ block: String(r.block), feld: r.feld as Setting["feld"], wert: String(r.wert), zeit: localMinute(String(r.zeit)) }),
-  eingaenge: (r): Eingang => ({ lueckeSchluessel: String(r.luecke_schluessel), zeit: localMinute(String(r.zeit)), wer: String(r.person), gueltig: r.gueltig === true, ...(r.datei_id ? { dateiId: String(r.datei_id) } : {}) }),
+  eingaenge: (r): Eingang => ({ lueckeSchluessel: String(r.luecke_schluessel), zeit: localMinute(String(r.zeit)), wer: String(r.person), gueltig: r.gueltig === true, ...(r.unterschrieben_am ? { am: String(r.unterschrieben_am) } : {}), ...(r.datei_id ? { dateiId: String(r.datei_id) } : {}) }),
 };
 
 /** Only the columns the browser may fill (the grants of the migration); the database adds the rest. */
@@ -79,7 +79,7 @@ export const TO_ROW: Record<ListKey, (e: never) => Row> = {
   aufgaben: (t: Task) => ({ id: t.id, fund_schluessel: t.fundSchluessel, fund: t.fund, href: t.href, text: t.text, zustaendig: t.zustaendig, bis: t.bis }),
   erledigt: (c: TaskCheck) => ({ aufgabe_id: c.aufgabeId, erledigt: c.erledigt }),
   einstellungen: (s: Setting) => ({ block: s.block, feld: s.feld, wert: s.wert }),
-  eingaenge: (e: Eingang) => ({ luecke_schluessel: e.lueckeSchluessel, gueltig: e.gueltig, datei_id: e.dateiId ?? null }),
+  eingaenge: (e: Eingang) => ({ luecke_schluessel: e.lueckeSchluessel, gueltig: e.gueltig, datei_id: e.dateiId ?? null, unterschrieben_am: e.am ?? null }),
 };
 
 /** In order of their entry, so that "the latest entry counts" holds within one minute too. */
@@ -105,6 +105,8 @@ export function refusalReason(message: string): string {
 let lists: Record<ListKey, unknown[]> | null = null;
 const pending: Record<ListKey, unknown[]> = { entscheidungen: [], aufgaben: [], erledigt: [], einstellungen: [], eingaenge: [] };
 let firma: string | null = null;
+/** Every list of the company came from the database; before that a page must not hand out a document. */
+let complete = false;
 let channel: RealtimeChannel | null = null;
 let started = false;
 /** The state of the account this file last followed. */
@@ -114,14 +116,16 @@ function changed() {
   window.dispatchEvent(new Event(CHANGED));
 }
 
-async function fetchList(sb: SupabaseClient, key: ListKey) {
+async function fetchList(sb: SupabaseClient, key: ListKey): Promise<boolean> {
   const { data, error } = await sb.from(TABLE[key]).select("*").order(ORDER[key], { ascending: true });
-  if (error || !lists) return;
+  if (error || !lists) return false;
   lists[key] = (data ?? []).map((r) => FROM_ROW[key](r as Row));
+  return true;
 }
 
 async function fetchAll(sb: SupabaseClient) {
-  await Promise.all((Object.keys(TABLE) as ListKey[]).map((k) => fetchList(sb, k)));
+  const done = await Promise.all((Object.keys(TABLE) as ListKey[]).map((k) => fetchList(sb, k)));
+  complete = done.every(Boolean);
   changed();
 }
 
@@ -148,6 +152,7 @@ function onVisible() {
 
 function deactivate() {
   firma = null;
+  complete = false;
   lists = null;
   for (const k of Object.keys(pending) as ListKey[]) pending[k] = [];
   document.removeEventListener("visibilitychange", onVisible);
@@ -191,6 +196,12 @@ export function serverWaiting(): boolean {
 /** Tells the page that an entry was not kept, and why (the notice "Nicht gespeichert."). */
 export function refuse(why: string) {
   window.dispatchEvent(new CustomEvent(REFUSED, { detail: why }));
+}
+
+/** Whether what this browser knows is whole: no company, or all of its lists arrived. */
+export function serverComplete(): boolean {
+  start();
+  return currentAccount().stand !== "laden" && (!firma || complete);
 }
 
 /** Whether entries of this browser go to the database: signed in with a company. */

@@ -61,7 +61,7 @@ describe("every page's data with a closed gap", () => {
     const closed = l.gapsView("p1").filter((g) => g.closed);
     expect(closed.map((g) => g.about)).toEqual(["F6", "F7", "F1 (4 Positionen)"]);
     expect(closed[0].closed).toMatchObject({ who: "Abrechnung", when: "23.10.2026, 10:00" });
-    expect(closed[1].find).toMatchObject({ number: "F7", key: "p1/regie:16", earlierKeys: ["p1/meldung:W4"] });
+    expect(closed[1].find).toMatchObject({ number: "F7", key: "p1/meldung:W4", earlierKeys: [] });
   });
 
   it("taking an entry back opens the gap again", () => {

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { BookOpenCheck, CircleCheck, FolderCheck, ListTodo } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { TaskDialog } from "@/components/aufgaben/task-dialog";
+import { field } from "@/components/fund/decision-confirm";
 import { FileView, StoredFiles, type ShownFile } from "@/components/fund/stored-files";
 import { PeekHeader } from "@/components/table/peek";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ export const targetOfGap = (g: Gap): TaskTarget => ({
 function gain(g: Gap): string | null {
   if (g.closed) return null;
   if (g.effect === "in_rechnung") return `Bringt ${g.amount.text} aus „in Klärung“ in die Rechnung`;
-  if (g.effect === "kuerzungsrisiko") return `Nimmt ${g.amount.text} aus dem Kürzungsrisiko`;
+  if (g.effect === "kuerzungsrisiko") return g.partial ? `Nimmt einen Teil von ${g.amount.text} aus dem Kürzungsrisiko` : `Nimmt ${g.amount.text} aus dem Kürzungsrisiko`;
   return null;
 }
 
@@ -46,13 +47,23 @@ function Body({ gap, onClose }: { gap: Gap; onClose: () => void }) {
   const [task, setTask] = useState(false);
   const [made, setMade] = useState<string | null>(null);
   const [files, setFiles] = useState<StoredFile[]>([]);
+  // no file counts by itself: the person says which one is the signed sheet; one uploaded here is it
+  const [file, setFile] = useState("");
   const [shown, setShown] = useState<ShownFile | null>(null);
+  const today = localTime().slice(0, 10);
+  const [day, setDay] = useState(today);
   const signedIn = account.stand === "konto";
   const belegId = gap.sheet?.belegId ?? gap.template?.message ?? null;
-  const file = files[0]?.id;
   const line = gain(gap);
+  const known = useRef<number | null>(null);
+  const takeFiles = useCallback((list: StoredFile[]) => {
+    setFiles(list);
+    if (known.current !== null && list.length > known.current) setFile(list[0].id);
+    known.current = list.length;
+  }, []);
+  const dayOk = /^\d{4}-\d{2}-\d{2}$/.test(day) && day <= today;
 
-  const enter = () => appendEingang({ lueckeSchluessel: gap.key, zeit: localTime(), wer: "Abrechnung", gueltig: true, ...(file ? { dateiId: file } : {}) });
+  const enter = () => appendEingang({ lueckeSchluessel: gap.key, zeit: localTime(), wer: "Abrechnung", gueltig: true, am: day, ...(file ? { dateiId: file } : {}) });
   const takeBack = () => appendEingang({ lueckeSchluessel: gap.key, zeit: localTime(), wer: "Abrechnung", gueltig: false });
 
   return (
@@ -79,12 +90,13 @@ function Body({ gap, onClose }: { gap: Gap; onClose: () => void }) {
         {gap.enclosures.length > 0 && <p className="text-xs text-fg-secondary">Kommt mit: {gap.enclosures.map((e) => e.title).join(", ")}.</p>}
 
         {gap.closed ? (
-          <div className={WAY}>
+          <div className="flex flex-col gap-2">
+            <div className={WAY}>
             <CircleCheck className="mt-0.5 size-4 shrink-0 text-state-green-edge" aria-hidden />
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span className="font-medium">Unterschrift liegt vor</span>
               <span className="text-xs text-fg-secondary">
-                Eingetragen von {gap.closed.who}, {gap.closed.when}. {gap.find ? `${gap.find.number} geht seinen Weg weiter: prüfen, freigeben.` : ""}
+                Unterschrieben am {gap.closed.day}, eingetragen von {gap.closed.who}, {gap.closed.when}. {gap.find ? `${gap.find.number} geht seinen Weg weiter: prüfen, freigeben.` : ""}
               </span>
             </span>
             {!refused && (
@@ -92,6 +104,13 @@ function Body({ gap, onClose }: { gap: Gap; onClose: () => void }) {
                 Zurücknehmen
               </Button>
             )}
+            </div>
+            {belegId && (
+              <div className="overflow-hidden rounded-lg empty:hidden">
+                <StoredFiles project={gap.project.slug} belegId={belegId} shown={shown?.file ?? null} onShow={setShown} />
+              </div>
+            )}
+            {shown && <FileView shown={shown} />}
           </div>
         ) : (
           <>
@@ -130,13 +149,34 @@ function Body({ gap, onClose }: { gap: Gap; onClose: () => void }) {
                       {refused ?? (signedIn && !file ? "Erst das unterschriebene Blatt hinterlegen, dann eintragen." : "tieout rechnet neu. Zurücknehmen geht jederzeit.")} <SavedWhere variant="satz" />
                     </span>
                   </span>
-                  <Button variant="primary" onClick={enter} disabled={!!refused || (signedIn && !file)} className="shrink-0">
+                  <Button variant="primary" onClick={enter} disabled={!!refused || !dayOk || (signedIn && !file)} className="shrink-0">
                     Eintragen
                   </Button>
                 </div>
+                {!refused && (
+                  <div className="grid gap-2 text-xs text-fg-secondary sm:grid-cols-2">
+                    <label className="flex flex-col gap-1">
+                      Unterschrieben am
+                      <input type="date" value={day} max={today} onChange={(e) => setDay(e.target.value)} className={field} />
+                    </label>
+                    {signedIn && files.length > 0 && (
+                      <label className="flex flex-col gap-1">
+                        Das unterschriebene Blatt
+                        <select value={file} onChange={(e) => setFile(e.target.value)} className={field}>
+                          <option value="">Bitte wählen</option>
+                          {files.map((f) => (
+                            <option key={f.id} value={f.id}>
+                              {f.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    )}
+                  </div>
+                )}
                 {belegId && !refused && (
                   <div className="overflow-hidden rounded-lg empty:hidden">
-                    <StoredFiles project={gap.project.slug} belegId={belegId} shown={shown?.file ?? null} onShow={setShown} onFiles={setFiles} />
+                    <StoredFiles project={gap.project.slug} belegId={belegId} shown={shown?.file ?? null} onShow={setShown} onFiles={takeFiles} />
                   </div>
                 )}
                 {shown && <FileView shown={shown} />}

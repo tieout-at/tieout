@@ -1,6 +1,6 @@
-# Handover: after step 10, on to step 13
+# Handover: step 14 built, waiting for the go
 
-**As of:** Friday, 30 October 2026. Written by Claude for Maxi S.
+**As of:** Saturday, 31 October 2026. Written by Claude for Maxi S.
 **Folder:** open `C:\Users\maxis\dev\tieout` as the project in Claude Code. Strategy next to it in `../tieout-intern` (read only).
 **Precondition:** the plan from step 13 is in `docs/_STATUS.md` (section "Plan from step 13", steps 13 to 21). Read its four rules before building: they keep the product transferable to a stranger's setup.
 
@@ -14,10 +14,10 @@
 
 ## What comes next
 
-Step 13 (Echter Ordner) is merged and live (#137, row 13 of `_STATUS.md`). Step 14 (Rechnung zum Anfassen) is next, then the steps in the order of `_STATUS.md`. Step 11 ("Frag tieout") stays behind a team go. The draft board of step 13 is local: `app/qa-shots/entwurf/ordner/board.html`.
+Step 14 (Rechnung zum Anfassen) is built on the branch `schritt-14-rechnung`, row 14 of `_STATUS.md`. **Order after the go of Maxi S.:** first apply `backend/migrations/005_eingang.sql` in the Supabase SQL editor (with an account the app reads the table `eingang`; without it the PDFs refuse, because the lists stay incomplete), check it with one signed sheet in Testfirma A (never tested with a real account yet), then push, pull request, wait for the checks by hand, merge, amount audit against live. Then step 15 (Zeitreise). Step 11 ("Frag tieout") stays behind a team go. Draft boards are local: `app/qa-shots/entwurf/ordner/board.html`, `app/qa-shots/entwurf/rechnung/board.html`; the scripts next to the second one play the step through (`fahrt.mjs`, `fahrt2.mjs`), compare amounts with live (`betraege.mjs`) and measure scripts (`tempo.mjs`).
 
 - **The folder:** `ordner/README.md`. After a change in `kern/` that touches a Beleg, run `npm run erzeugen` in `ordner/` (needs the local Edge, about 3 minutes) and commit `app/public/belege/`; `app/src/lib/scans.test.ts` fails when a value has no place.
-- **Left of step 13:** the 10 photos need real synthetic pictures; `.msg` and `.xlsx` files for step 18; the Beweispaket prints the real sheets in step 14; Z-01 and 26.02.03A have no unit in the core, a correction of the sample data needs the go of Maxi S.
+- **Left of step 13:** the 10 photos need real synthetic pictures; `.msg` and `.xlsx` files for step 18; Z-01 and 26.02.03A have no unit in the core, a correction of the sample data needs the go of Maxi S.
 - **Merging:** `main` has no required checks and the repository no auto-merge, so a merge waits for the checks by hand.
 
 - **Moved into the plan:** the small fixes from the customer test of step 10 go into step 14; the points before the first real customer (Supabase plan, AVV, own e-mail sending, a check of stored files on the server, short-lived signed addresses) go into steps 16 and 19. Real data only after the legal clearance and the works council (CLAUDE.md rule 4).
@@ -36,6 +36,7 @@ Step 13 (Echter Ordner) is merged and live (#137, row 13 of `_STATUS.md`). Step 
 
 ## Decisions waiting for Maxi S.
 
+- Step 14: Regiebericht 12 carries "Material 42,60 €" in handwriting, so the Mappe shows that one amount of the sheet itself; masking it would change what gets signed. Kept as it is unless Maxi S. decides otherwise.
 - Supabase plan before the first real customer (price in `../tieout-intern`, not here).
 - From 8e: a figure "sicher verrechenbar" and a hint "davon noch nicht freigegeben" at the Restforderung.
 - From 8d: project status colours, the red mark at the Bauschadensumlage, the thin bars on the Übersicht, the dates of the Nachträge N1 to N3.
@@ -43,4 +44,4 @@ Step 13 (Echter Ordner) is merged and live (#137, row 13 of `_STATUS.md`). Step 
 
 ## Start prompt for the next chat (copy into a new chat in `C:\Users\maxis\dev\tieout`)
 
-> Ich bin Maxi S. Lies `CLAUDE.md`, `docs/_UEBERGABE.md` und `docs/_STATUS.md`, dort den Abschnitt „Plan from step 13“. Mach mit Schritt 14 weiter und hol dir mein Go vor allem, was nach außen geht. Deutsch, einfach, Ergebnis zuerst.
+> Ich bin Maxi S. Lies `CLAUDE.md`, `docs/_UEBERGABE.md` und `docs/_STATUS.md`, dort den Abschnitt „Plan from step 13“. Mach mit dem nächsten offenen Schritt weiter und hol dir mein Go vor allem, was nach außen geht. Deutsch, einfach, Ergebnis zuerst.

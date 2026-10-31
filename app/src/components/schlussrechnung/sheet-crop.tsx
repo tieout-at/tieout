@@ -1,6 +1,6 @@
 "use client";
 
-import { marksOf, scanUrl, useScan, type Box } from "@/lib/scans";
+import { scanUrl, signMarks, useScan, type Box } from "@/lib/scans";
 import type { GapSheet } from "@/lib/invoice";
 
 /** The part of the page to show around a box, as fractions of its height. */
@@ -19,7 +19,7 @@ export function SheetCrop({ project, sheet }: { project: string; sheet: GapSheet
   const scan = useScan(project, sheet.belegId);
   const page = scan?.seiten[String(sheet.page)];
   if (!page) return <p className="rounded-md bg-fill-subtle px-2 py-3 text-xs text-fg-secondary shadow-ring">{scan === undefined ? "Blatt wird geladen." : `${sheet.title}, ohne Bild in den Beispieldaten`}</p>;
-  const box = marksOf(page, sheet.place)[0] as Box | undefined;
+  const box = signMarks(page, sheet.place)[0] as Box | undefined;
   const { start, size } = range(box);
   return (
     <a href={scanUrl(project, page.bild)} target="_blank" rel="noreferrer" aria-label={`${sheet.title}, ganzes Blatt in neuem Tab`} className="relative block overflow-hidden rounded-md shadow-ring outline-none focus-visible:outline-2 focus-visible:outline-accent" style={{ aspectRatio: `${page.b} / ${page.h * size}` }}>

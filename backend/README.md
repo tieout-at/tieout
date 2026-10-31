@@ -18,6 +18,8 @@ Supabase project `tieout-app` (Frankfurt). Signed-in companies keep their decisi
 - **Earlier keys** of the same work (a WhatsApp-Meldung that later got its Regiebericht) live in `fund_alias`, written by us only; the browser cannot pass another find off as an earlier key.
 - **Files** in the private bucket `dateien`, at `<firma_id>/<id>` only, after their row with name, type, size and SHA-256, the project and (since `003_datei_beleg.sql`) the Beleg they belong to; PDF, JPEG, PNG up to 20 MB; never overwritten.
 
+`005_eingang.sql` (step 14): a signature that came back, appended; Abrechnung or Bauleitung enter it, a new entry needs a stored file at this Beleg of the own company.
+
 Known limits, decided on purpose:
 
 - Name, type, size and SHA-256 of a file are what the browser computed before the upload; the app says so. A check on the server (an Edge Function reading the stored file) comes before real data.
