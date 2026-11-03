@@ -47,8 +47,8 @@ flowchart LR
 
     subgraph IN [1 · Your data]
         direction TB
-        F["Project folder<br/>contract, bill of quantities, measurements,<br/>daywork reports, plans, e-mails, photos<br/><i>today: synthetic, from ordner/</i>"]:::input
-        W["WhatsApp agent (agent/)<br/>fitters report work by message<br/><i>built on its own, connected in step 21</i>"]:::planned
+        F["Project folder<br/>contract, LV, Aufmaß,<br/>Regieberichte, plans,<br/>e-mails, photos<br/><i>today synthetic (ordner/)</i>"]:::input
+        W["WhatsApp agent<br/>(agent/)<br/><i>joins in step 21</i>"]:::planned
     end
 
     subgraph TW [2 · Digital twin: kern/]
@@ -67,7 +67,7 @@ flowchart LR
         P --> H --> O
     end
 
-    DB[("Supabase, Frankfurt (backend/)<br/>decisions, tasks, files, append only,<br/>one data silo per company")]
+    DB[("Supabase<br/>(backend/)<br/>decisions, tasks,<br/>files per company")]
 
     F --> D
     W -.-> D
