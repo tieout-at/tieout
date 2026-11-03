@@ -61,12 +61,12 @@ flowchart LR
 
     subgraph OUT [3 · Result: app/]
         direction TB
+        DB[("Supabase (backend/)<br/>decisions, tasks, files<br/>per company")]
         P["Finds with amount, calculation<br/>and original, one click each"]
         H["A person checks and releases<br/>(four eyes, roles)"]
         O["Schlussrechnung, Beweispaket (PDF),<br/>export for the invoicing program (Excel)"]:::out
-        DB[("Supabase (backend/)<br/>decisions, tasks, files<br/>per company")]
         P --> H --> O
-        H <--> DB
+        DB <--> H
     end
 
 
