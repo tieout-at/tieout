@@ -453,10 +453,11 @@
   },
   "video": {
     "eyebrow": "04 · Product video",
-    "title": "tieout in three minutes",
-    "placeholder": "[[PLACEHOLDER: product video]]",
-    "soon": "Video coming soon.",
-    "play": "Play video"
+    "title": "tieout in 47 seconds",
+    "label": "tieout launch film",
+    "play": "Play video",
+    "sample": "Sample data",
+    "meta": "0:47 · in German"
   },
   "team": {
     "eyebrow": "05 · About us",
