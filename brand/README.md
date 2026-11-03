@@ -32,4 +32,4 @@ python brand/linkedin/firmenseite.py
 python brand/linkedin/export.py
 ```
 
-Drafts and intermediate files land in `linkedin/entwuerfe/`, which is not tracked (`brand/.gitignore`).
+Drafts and intermediate files land in `linkedin/entwuerfe/`, which is not tracked (`brand/.gitignore`). The logo drafts of October 2026 are in the history of git.
