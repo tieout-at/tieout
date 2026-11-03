@@ -1,12 +1,12 @@
-# Einheitliche Zeilenenden (LF) für Windows und Mac
+# Same line endings (LF) on Windows and Mac
 * text=auto eol=lf
 
-# Windows-Skripte brauchen CRLF
+# Windows scripts need CRLF
 *.ps1 text eol=crlf
 *.bat text eol=crlf
 *.cmd text eol=crlf
 
-# Binärdateien
+# Binary files
 *.png binary
 *.jpg binary
 *.jpeg binary

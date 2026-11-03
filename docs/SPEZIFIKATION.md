@@ -407,29 +407,7 @@ The demo data of solution list v2 are rebuilt before the core is ported (step 0c
 
 ## 8. v1 calculation core: port, rewrite or drop
 
-Measured in tag `v1-archiv`: 15 files in `product/app/src/engine` (1.945 lines without tests, of which 93 lines test data), 7 test files with 114 test blocks, 4 of them parametrised (the plan speaks of 135 tests against the solution list; the tests were not run in this step), data model `product/app/src/domain/typen.ts` (469 lines), demo generator `product/app/src/demo` (2.169 lines).
-
-**Decision: port the calculation, rewrite the cut.** The rules are the only part checked to the cent against the solution list; the object names and entry points follow the objects of this specification.
-
-| Module | What it does | Decision | Reason |
-|---|---|---|---|
-| `geld.ts` | cents, basis points, commercial rounding per line, formatting | port unchanged | uses only type aliases from the data model (`Cent`, `Bp`, `Einheit`), tested |
-| `domain/typen.ts` | data model with field, source and review state | rewrite | new objects (Beleg, Position, Fund, WhatsApp-Meldung, Verlauf); keep the field with source; a correction must keep the old value |
-| `kontext.ts` | lookup tables (Aufmaß, invoiced per position, boundary of the last Abschlagsrechnung) | port, adapt | pure helpers |
-| `befunde.ts` | rules: Mehrmengen and "erbracht, nicht verrechnet", Regie, hours from messages, Preisumrechnung, notified changes, notes for a lawyer | port, rename Befund → find | produces lists 1 and 2 of solution list v2, tested; a find may now cover several positions (F1), and Regie material carries the surcharge of the Vertrag |
-| `ledger.ts` | one row per position (`baueLedger`) and the import state: duplicates, plan indices, corrected fields (`importStand`) | rewrite `baueLedger` as the position table; port `importStand` to "Ordner lesen" | the table needs rows without a position, "offen" in € and the Belegstand; the import state feeds section 1.5 |
-| `vorpruefung.ts` | pre-check and 20 % notes | port, add "invoiced above the Aufmaß" | tested against solution list v2 |
-| `kaskade.ts` | cascade down to the Restforderung | port, change the input to the finds that are not set to "Nicht verrechnen", add "Restforderung laut Vertrag" | section 5; tested against solution list v2 |
-| `schlussbesprechung.ts` | Forderung and Untergrenze per find | port | tested |
-| `belegquelle.ts` | source of the evidence, "nur außerhalb ERP" | port, report per money word | tested directly against the solution list |
-| `firma.ts` | status colour, money split, company totals | port, rename the money words (E1), add "davon mit Kürzungsrisiko" (E13) | tested against solution list v2 |
-| `historie.ts` | Auftraggeber history, "same reason already in" a closed project | port | tested; in v3 the bridge is "schon im Wohnhof Erlenhain" |
-| `abrechnung.ts` | settlement of paid final invoices (v2: two closed projects) | port | feeds the settlement view of Wohnhof Erlenhain and Pflegeheim Eibenau |
-| `pruefe.ts`, `index.ts`, engine `typen.ts` | entry points and result types | rewrite | one function per object of this specification |
-| `testdaten.ts` and the 7 test files | small fixtures and the tests against the solution list | port with their modules | the solution list stays the yardstick |
-| demo generator | synthetic company and Wien 21 with target sums | port the mechanics, rewrite the data for solution list v3 | the tests depend on it; the v1 data review found filler and inconsistencies (lump-sum items, Abschlagsrechnung 1 before the first Aufmaß), which v3 avoids |
-
-All tests are rewritten against solution list v3; the amounts in `_STATUS.md` stay unless Maxi S. gives a go. Build step 2 ports in this order: money, data model, rules, position table, pre-check, cascade, business level; each with its tests before the next.
+Done in step 2: the calculation of v1 was ported, the data model and the entry points were rewritten, and every test was written again against solution list v3. Which file came from where is in the table of [`kern/README.md`](../kern/README.md); the full decision table is in the history of git (before 3.11.2026).
 
 ## 9. Open questions for the construction insider
 

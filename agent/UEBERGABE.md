@@ -10,7 +10,7 @@ This file is the memory between sessions. Overwrite it at the end of every sessi
 - The agent understands a typed message (real run on 30.10.2026: every field right, about 10 s per reply). Tests and scenario checks are green and run in CI (`.github/workflows/agent.yml`).
 - It has no WhatsApp number, no voice, no photo yet, and knows only its own small sample company (`src/firma.ts`, Haustechnik Beispiel GmbH with Wien 21 and four more projects).
 - The v2 app does not use it yet. `worker/route.ts` is the route the v1 app used (archived under the tag `v1-archiv`); it is the starting point for step 21 (`PLAN.md`, section Integration).
-- `npm run app-server` (`worker/lokal.ts`) still reads the company file of the v1 app and only runs on the branch `v1`.
+- `npm run app-server` (`worker/lokal.ts`) still reads the company file of the v1 app and only runs with the code of the tag `v1-archiv`.
 
 ## What is in the folder (Inhalt)
 

@@ -5,7 +5,7 @@ Public website of **tieout** (lowercase, no trailing dot): Next.js 16 with stati
 ## Run
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
