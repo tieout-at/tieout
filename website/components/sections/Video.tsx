@@ -61,10 +61,6 @@ export function Video({ t }: { t: Messages["video"] }) {
             </>
           )}
         </div>
-        <div className="video__caption">
-          <span>{t.sample}</span>
-          <span>{t.meta}</span>
-        </div>
       </div>
     </section>
   );

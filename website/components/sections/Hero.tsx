@@ -27,8 +27,6 @@ export function Hero({ t }: { t: Messages["hero"] }) {
         </div>
 
         <div className="photos">
-          <span className="photos__tag">{c.sample}</span>
-
           <figure className="photo photo--tall">
             <img src="/hero/steckdose.jpg" alt="" />
             <div className="vcard vcard--big" style={{ animationDelay: ".5s" }}>

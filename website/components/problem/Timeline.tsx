@@ -110,7 +110,6 @@ export function Timeline({ t, locale }: { t: T; locale: Locale }) {
         <p className="tl__summary" aria-live="polite">{summary}</p>
         <p className={`tl__total ${withEp ? "is-with" : ""}`}>{withEp ? `+ ${fmt(missingSum)}` : `− ${fmt(missingSum)}`}</p>
       </div>
-      <span className="tl__sample">{t.sample}</span>
     </div>
   );
 }

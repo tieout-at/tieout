@@ -444,7 +444,6 @@ export function Flow({ t, locale }: { t: T; locale: "de" | "en" }) {
         </div>
       </div>
       <p className="twin__caption">{t.caption}</p>
-      <span className="flow__sample">{t.sample}</span>
     </div>
   );
 }

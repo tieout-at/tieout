@@ -27,7 +27,6 @@
     "cta": "Demo buchen",
     "secondary": "So funktioniert es",
     "cards": {
-      "sample": "Beispieldaten",
       "c1Tag": "Vergessene Leistung gefunden",
       "c1Title": "Steckdose in Raum 5 versetzt",
       "c1Text": "Per Zuruf vom Bauherrn beauftragt, nie verrechnet.",
@@ -164,7 +163,6 @@
         "Zu jeder Position ein Beleg"
       ],
       "openLabel": "zusätzlich verrechenbar",
-      "sample": "Beispieldaten",
       "level1": "Ebene 1 · Ihr Betrieb",
       "projectWord": "Projekt",
       "level2Caption": "Leistungen: beauftragt, gebaut, verrechnet",
@@ -392,7 +390,7 @@
       "outputProjectPrefix": "Projekt"
     },
     "timeline": {
-      "timelineTitle": "Projekt Wien 21 · Beispiel",
+      "timelineTitle": "Projekt Wien 21",
       "trackSite": "Baustelle",
       "trackInvoice": "Schlussrechnung",
       "without": "Heute",
@@ -403,7 +401,6 @@
       "summaryWithout": "{n} von {total} Änderungen nicht verrechnet",
       "summaryWith": "Alle {total} Änderungen belegt und verrechnet",
       "hint": "Umschalten und vergleichen",
-      "sample": "Synthetische Beispieldaten",
       "events": [
         {
           "week": "KW 12",
@@ -453,11 +450,9 @@
   },
   "video": {
     "eyebrow": "04 · Produktvideo",
-    "title": "tieout in 47 Sekunden",
+    "title": "tieout in unter einer Minute",
     "label": "Launchfilm von tieout",
-    "play": "Video abspielen",
-    "sample": "Beispieldaten",
-    "meta": "0:47"
+    "play": "Video abspielen"
   },
   "team": {
     "eyebrow": "05 · Über uns",
