@@ -27,7 +27,6 @@
     "cta": "Book a demo",
     "secondary": "How it works",
     "cards": {
-      "sample": "Sample data",
       "c1Tag": "Forgotten work found",
       "c1Title": "Socket in room 5 moved",
       "c1Text": "Requested on site by the client, never invoiced.",
@@ -164,7 +163,6 @@
         "Evidence for every line"
       ],
       "openLabel": "additionally billable",
-      "sample": "Sample data",
       "level1": "Level 1 · Your business",
       "projectWord": "Project",
       "level2Caption": "Work: ordered, built, invoiced",
@@ -392,7 +390,7 @@
       "outputProjectPrefix": "Project"
     },
     "timeline": {
-      "timelineTitle": "Project Vienna 21 · Example",
+      "timelineTitle": "Project Vienna 21",
       "trackSite": "On site",
       "trackInvoice": "Final invoice",
       "without": "Today",
@@ -403,7 +401,6 @@
       "summaryWithout": "{n} of {total} changes not invoiced",
       "summaryWith": "All {total} changes backed by evidence and invoiced",
       "hint": "Switch and compare",
-      "sample": "Synthetic sample data",
       "events": [
         {
           "week": "Wk 12",
@@ -453,11 +450,9 @@
   },
   "video": {
     "eyebrow": "04 · Product video",
-    "title": "tieout in 47 seconds",
+    "title": "tieout in under a minute",
     "label": "tieout launch film",
-    "play": "Play video",
-    "sample": "Sample data",
-    "meta": "0:47 · in German"
+    "play": "Play video"
   },
   "team": {
     "eyebrow": "05 · About us",
