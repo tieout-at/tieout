@@ -1,6 +1,6 @@
 # Zuruf agent: plan
 
-Status: 22.10.2026, draft. Basis: Dossier v3, sections 3.4, 4, 11, 15.
+Status: written 22.10.2026 for v1, paths and the integration section updated for v2 on 3.11.2026. Phases 0 and 1 are done; the current state is in `UEBERGABE.md`.
 
 ## Goal (Ziel)
 
@@ -10,9 +10,9 @@ A WhatsApp agent to which a fitter can call out in seconds what he has done, and
 
 ## Relation to the team's plan (Verhältnis zum Plan des Teams)
 
-- Dossier v3 15.2: Stage 2 (Zuruf) is planned as a prototype from January, after R3. The MVP (`../docs/Umfang_v1.md`) only has a staged WhatsApp scene, the real agent is listed there as "not included" („nicht drin“).
-- This folder brings the prototype forward, separate from the MVP. Who works on it and for how long belongs in the Sunday meeting on 25.10. (build split, open question 14). The MVP v0.9 on 31.10. must not suffer from it.
-- Synthetic data only. Real employees and real sites only after R4 and clarification with the works council.
+- The agent is one of the inputs of the digital twin: what a fitter reports flows into the project as a work event with its source. In the v2 plan it is step 21 "Live vom Handy" (`../docs/_STATUS.md`).
+- This folder builds the agent on its own; the v2 app does not use it yet.
+- Synthetic data only. Real employees and real sites only after the legal clearance and the works council.
 
 ## Decisions (Entscheidungen)
 
@@ -21,7 +21,7 @@ A WhatsApp agent to which a fitter can call out in seconds what he has done, and
 | 22.10.2026 | Order: first simulator with learning loop, then real number |
 | 22.10.2026 | Channel: WhatsApp Cloud API directly with Meta, no intermediary provider |
 | 22.10.2026 | Testers: nobody from construction yet. First synthetic personas and the team |
-| 22.10.2026 | Own folder `product/zuruf/`, TypeScript like `../app/`, own `package.json` |
+| 22.10.2026 | Own folder (then `product/zuruf/`, since 23.10.2026 `agent/`), TypeScript like the app, own `package.json` |
 | 22.10.2026 (proposal) | The AI reads and phrases, the code decides. Which fields are missing, whether to ask a follow-up and when to save is deterministic code. This makes the behaviour testable |
 | 22.10.2026 | The agent's replies are fixed sentences in code, not phrased by the AI. Predictable, short, no slips on money and law. The AI only reads |
 | 22.10.2026 | Model Claude Opus 5.5 for agent, persona and rater (default according to the Claude API reference). A cheaper model only with a go from the team |
@@ -41,7 +41,7 @@ Channel: simulator (browser, local) | WhatsApp Cloud API (webhook)
   → Storage: Zuruf and work event (Leistungsereignis) with source, append only, never overwrite
 ```
 
-The agent knows the active projects, building sections or units (Tops) and the short texts of the bill of quantities (LV) from a small synthetic company twin (Haustechnik Beispiel GmbH, project Wien 21 from `../app/src/demo/w21/` plus further invented ones). In phase 1 storage is a file (one line per event), a database only at integration.
+The agent knows the active projects, building sections or units (Tops) and the short texts of the bill of quantities (LV) from a small synthetic company twin (Haustechnik Beispiel GmbH in `src/firma.ts`, project Wien 21 of the v1 demo plus further invented ones; step 21 switches it to the company of the v2 core in `../kern/`). In phase 1 storage is a file (one line per event), a database only at integration.
 
 ## Phases (Phasen)
 
@@ -51,7 +51,7 @@ The agent knows the active projects, building sections or units (Tops) and the s
 | **1 Core and simulator** | Zuruf data model, small company twin, extraction with quote, conversation control, simulator in the browser (text only), 30 scenarios plus 10 held back, learning loop | Metrics from `GESTALTUNG.md` reached on all scenarios |
 | **2 Voice and photo** | Speech to text: compare two to three providers with our own test recordings (EU providers preferred). The team records the test recordings with invented content, including dialect and construction noise underneath. Have photos described | With a poor recording the agent asks instead of guessing. Provider chosen with justification |
 | **3 Real number** | Meta test number, webhook, reply buttons, downloading media, the team's test phones | 20 Zurufe from a real phone, same metrics as in the simulator |
-| **4 Integration** | Proposal to Maxi S.: types Zuruf and Leistungsereignis in `../app/src/domain/typen.ts`, Zurufe in timeline and "open" („offen“) list, replace the mock scene with a recorded real run | Pull request with a go from Maxi S. |
+| **4 Integration** | Work events of the agent as Belege of the v2 twin (`../kern/`, Belegquelle "WhatsApp"), shown on the app page "WhatsApp-Meldungen", stored in Supabase (`../backend/`) | Pull request with a go from the team (step 21) |
 
 The team sets the dates. Phase 1 only needs the Anthropic key, phase 3 additionally the Meta account.
 
@@ -74,7 +74,7 @@ Limit: synthetic fitters are not real fitters. The loop finds logic errors and s
 **Phase 1: Anthropic API key**
 1. Create an account on console.anthropic.com (this is not the same as the Claude subscription).
 2. Under Billing, set a small credit balance and a monthly spending limit.
-3. Under API Keys, create a key and enter it in `product/zuruf/.env` as `ANTHROPIC_API_KEY=`. Never into the chat, never into Git.
+3. Under API Keys, create a key and enter it in `agent/.env` as `ANTHROPIC_API_KEY=`. Never into the chat, never into Git.
 
 **Phase 3: WhatsApp Cloud API**
 1. On developers.facebook.com, create a developer account with a Facebook account, create an app of type Business, add the WhatsApp product. Meta then creates a test business account and a test number.
@@ -100,18 +100,14 @@ Research as of 22.10.2026. Check again with Meta before phase 3.
 
 | Risk | Countermeasure |
 |---|---|
-| Not enough time for the MVP v0.9 (31.10.) | Sunday meeting decides; Zuruf work pauses if the MVP needs it |
-| Synthetic tests fake quality | held-back scenarios; as early as possible a real fitter with invented content (via R1 or co-founder B) |
+| Synthetic tests fake quality | held-back scenarios; as early as possible a real fitter with invented content |
 | Dialect and noise make transcripts poor | Phase 2 compares providers with our own recordings; agent asks instead of guessing |
 | Model costs in the learning loop | spending limit in the account; small runs, full runs only at acceptance |
 | Meta changes rules or prices | the channel is replaceable, the core does not depend on WhatsApp |
-| Data protection and works council (Dossier v3 risk 12) | synthetic only; R4 question list; no evaluation per person in the data model |
+| Data protection and works council | synthetic only until the legal clearance; no evaluation per person in the data model |
 
-## Integration (go from Maxi S. 22.10.2026, implemented) (Integration)
+## Integration (Integration)
 
-- Data model: no second type. `product/app/src/zuruf/abbildung.ts` maps a work event (Leistungsereignis) onto the app type `Zuruf`; every item keeps its quote as its source (`Quelle.stelle`).
-- Amounts: new Zurufe without an amount. Hours stay 0 (the agent does not distinguish between fitter and helper), on the "open" („offen“) list as „Neu per Zuruf, ohne Betrag“ (new via Zuruf, without amount), status „Regiebericht fehlt“ (time-and-materials report missing). The calculation core never sees them, the demo totals stay unchanged.
-- Server: route `POST /api/zuruf/nachricht` (`worker/route.ts`), without server state (the browser sends the conversation state along). Runs in the app's worker behind the login (Supabase session, main chat) and locally in `worker/lokal.ts`. AI only via `apiFrage` (ki.ts) with the key as a Cloudflare secret; `llm.ts` and `speicher-datei.ts` are Node only.
-- Protection: switch `ZURUF_ECHT` in the worker, read at runtime (default off), at most 40 AI calls per day and 20 US dollars per month based on the actual cost of each reply, for everyone together (never per person); the hard limit is the monthly limit in the Anthropic console just under 25 € (requirement from Maxi S.). Limit reached or agent unreachable: the app plays the staged scene, without an error message.
-- Storage: interface `ZurufAblage` (`product/app/src/zustand/zurufe.ts`), currently in the browser; later Supabase (table per company, append only, Row Level Security).
-- Company: from the app's company twin (`product/app/src/zuruf/firma.ts`, written by the generator as `data/generated/zuruf-firma.json`). `src/firma.ts` remains for tests and the learning loop.
+**v1 (22.10.2026, archived):** the agent ran behind a switch in the worker of the v1 app (route `POST /api/zuruf/nachricht` in `worker/route.ts`, off by default, at most 40 AI calls a day and 20 US dollars a month for everyone together, counter in Supabase via `worker/supabase.sql`). That app is frozen under the tag `v1-archiv`; `worker/route.ts` and its tests stay here as the starting point.
+
+**v2 (step 21, open):** the same route in the v2 app, the company from the v2 core instead of `src/firma.ts`, work events stored append only per company in Supabase (`../backend/`, the counter tables of `worker/supabase.sql` move there and use `mitglied` instead of `app_metadata.firma`). Amounts stay out of the agent: a new Meldung has no amount until a human assigns it to a position.

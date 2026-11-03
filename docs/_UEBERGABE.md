@@ -22,7 +22,7 @@ Step 14 (Rechnung zum Anfassen) is merged and live (#139, row 14 of `_STATUS.md`
 
 - **Moved into the plan:** the small fixes from the customer test of step 10 go into step 14; the points before the first real customer (Supabase plan, AVV, own e-mail sending, a check of stored files on the server, short-lived signed addresses) go into steps 16 and 19. Real data only after the legal clearance and the works council (CLAUDE.md rule 4).
 - **Before the first meeting with a real construction professional:** rehearse the click path of `SPEZIFIKATION.md` 7.3 against the app as it is, and cut the open questions (section 9 there and `Demo_Faelle.md`) to at most ten. No date or name is written down yet.
-- **The agent, measured on 30.10.:** understands a typed message (one real run, every field right, 10 s, tests and scenarios green). It has no WhatsApp, no voice, no photo, no link to the v2 app, and knows only the old sample company; `agent/UEBERGABE.md` is out of date. Step 21. It belongs to Santino, so he hears before anything changes there.
+- **The agent, measured on 30.10.:** understands a typed message (one real run, every field right, 10 s, tests and scenarios green). It has no WhatsApp, no voice, no photo, no link to the v2 app, and knows only the old sample company; `agent/UEBERGABE.md` and `agent/PLAN.md` describe this state since 3.11.2026 (code unchanged). Step 21. It belongs to Santino, so he hears before anything changes there.
 - **Decisions waiting for Maxi S.** (below).
 
 ## Good to know

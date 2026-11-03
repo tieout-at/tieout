@@ -20,8 +20,9 @@ coverage/
 **/real_data/
 **/kundendaten/
 
-# Large media files (keep videos outside the repository)
+# Large media files stay outside the repository; only the two published films of the website are tracked
 *.mp4
+!website/public/film/*.mp4
 *.mov
 *.mkv
 *.wav

@@ -158,7 +158,7 @@ A find with the Art "Pauschale laut Vertrag" (none in solution list v3) shows th
 
 F1 is both "zusätzlich verrechenbar" and the largest Vorprüfung line (G1, Aufmaßblatt 12 not countersigned). The find page shows this on the find itself, with the remedy, and the headline shows it too: under "zusätzlich verrechenbar" the line "davon mit Kürzungsrisiko" (E13) sums the Vorprüfung amounts in state "droht" that lie inside "zusätzlich verrechenbar", not the full flagged finds: G1 6.648,60 € + G2 194,40 € = 6.843,00 €.
 
-### 3.3 Outputs (dossier section 3.6 after the challenge)
+### 3.3 Outputs
 
 | Output | Verdict | Content |
 |---|---|---|
@@ -517,7 +517,7 @@ Taken on 23.10.2026: Maxi S. delegated the decisions to Claude with the guidelin
 | Output should be a change list, not a second invoice | AR, GF | yes, matches "tieout never replaces the ERP" | "Änderungsliste" as main output (3.3) |
 | Who builds the folder, effort, data location, who sees the K7 | all three | yes, not in the first version | 1.1, 1.4; effort measured with the first real projects |
 | Fitters' side missing; hours per person; Stundenzettel as control | BL | yes | 1.3 |
-| WhatsApp-Meldung lacks who instructed it and why | BL | yes; the agent already asks "Who instructed this?" (dossier) | fields in 1.2, 2.3 |
+| WhatsApp-Meldung lacks who instructed it and why | BL | yes; the agent already asks "Who instructed this?" | fields in 1.2, 2.3 |
 | V1 "Nicht verrechnen" is a contract reading against the business | AR, fact check | yes | 3.2: fact only, no proposal |
 | Money lost during construction, not at the end | all three | yes; the ongoing-project rule already exists | 5 and E16 |
 | "Posten" and "Position" confused; "Digitaler Zwilling" and "gebaut" not understood | all three | yes | E10, E12, question 11 |
