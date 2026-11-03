@@ -1,5 +1,5 @@
 -- Supabase (Projekt tieout-app, Frankfurt) für den Zuruf-Agenten. Einspielen im SQL-Editor, einmal, in dieser Reihenfolge.
--- Nur synthetische Daten bis Gate R4. Nichts wird überschrieben: kein UPDATE, kein DELETE für angemeldete Nutzer.
+-- Nur synthetische Daten bis zur rechtlichen Freigabe. Nichts wird überschrieben: kein UPDATE, kein DELETE für angemeldete Nutzer.
 
 -- 1. Zähler der KI-Aufrufe und Kosten je Tag (Grenzen 40 Aufrufe pro Tag und 20 US-Dollar pro Monat, für alle
 --    zusammen, nie pro Person). Nur der Worker mit dem geheimen Schlüssel zählt; Nutzer sehen und ändern ihn nicht.

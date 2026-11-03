@@ -1,8 +1,8 @@
 # Zuruf agent: rules for Claude Code
 
-The Zuruf agent is the third way into the twin (Dossier v3, section 3.4): a fitter or site foreman sends a photo or voice note via WhatsApp, the agent assigns it, summarises it, the sender confirms with one tap, and a work event with a source is created in the project twin.
+The Zuruf agent is one of the ways into the digital twin: a fitter or site foreman sends a photo or voice note via WhatsApp, the agent assigns it, summarises it, the sender confirms with one tap, and a work event with a source is created in the project twin.
 
-The rules in `../../CLAUDE.md` (repo root) and `../app/CLAUDE.md` apply in addition.
+The rules in `../CLAUDE.md` (repo root) apply in addition.
 
 ## Reading order at every start (Lesereihenfolge)
 
@@ -13,16 +13,16 @@ The rules in `../../CLAUDE.md` (repo root) and `../app/CLAUDE.md` apply in addit
 
 ## Boundary with the MVP (Abgrenzung zum MVP)
 
-- In the MVP (`../app/`, `../docs/Umfang_v1.md`) the WhatsApp scene is a mock. The real agent is listed there as "not included" („nicht drin“). This folder builds it in parallel without disturbing the MVP.
-- Do not change anything in `../app/` or `../docs/` without a go from Maxi S. Integration happens through a proposal in `PLAN.md` (section Integration) and a separate pull request.
+- The v2 app (`../app/`) does not use the agent yet; its page "WhatsApp-Meldungen" shows the synthetic Meldungen of the core. This folder builds the agent on its own without disturbing the app.
+- Do not change anything in `../app/`, `../kern/` or `../docs/` from here without a go from the team. Integration is step 21 (`PLAN.md`, section Integration) and comes as a separate pull request.
 - Never amounts in the agent. The agent records facts (project, location, work performed, quantity, effort, person who gave the instruction). Pricing is done by the calculation core, decisions are made by a human.
 
 ## Hard rules (Harte Regeln)
 
-- **Synthetic data only.** Fictitious company (Haustechnik Beispiel GmbH), fictitious construction sites, fictitious people. Real phone numbers only for the team's own test phones, no real construction site content. Real customer data only after R4 and the works council.
+- **Synthetic data only.** Fictitious company (Haustechnik Beispiel GmbH), fictitious construction sites, fictitious people. Real phone numbers only for the team's own test phones, no real construction site content. Real customer data only after the legal clearance and the works council.
 - The agent only talks to employees of the customer company, never to the general contractor (GU). It never decides whether something is billable, never makes legal assessments, says nothing about deadlines or preclusion.
 - No evaluation per employee (§ 96a ArbVG): no counts, rankings, reminders to individuals. The sender is only the origin of the entry.
-- The agent never writes first. It only replies in a conversation the employee has started (§ 174 TKG unresolved, Dossier v3 section 4).
+- The agent never writes first. It only replies in a conversation the employee has started (§ 174 TKG unresolved).
 - Nothing is overwritten. Corrections are new versions with a reference to the old one.
 - No unofficial WhatsApp libraries (Baileys, whatsapp-web.js). Only Meta's official Cloud API.
 - Secrets only in `.env` (it is ignored). `.env.example` shows the names without values.

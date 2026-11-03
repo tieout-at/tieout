@@ -69,5 +69,5 @@ These figures apply to the system as a whole, never per employee.
 - Should the agent say that a signed time-and-materials report (Regiebericht) is still missing for billing? Helps the money, but can come across as pressure.
 - Does the agent also reply by voice note if the fitter only sends voice?
 - Groups: many sites write in WhatsApp groups. Can and may the agent read along there? (unbelegt, technically and legally)
-- How does someone without WhatsApp, or without any desire to use it, get the same route (upload link, Dossier v3 3.4)?
+- How does someone without WhatsApp, or without any desire to use it, get the same route (for example an upload link)?
 - Which languages besides German? Many people on Austrian construction sites have another first language (Annahme, share unverified).
