@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-label="tieout architecture: your data flows into a digital twin of the business and its projects, which produces a final invoice with evidence for every line">
+<defs>
+<pattern id="fine" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="#E8ECF2" stroke-width="1"/></pattern>
+<pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><rect width="48" height="48" fill="url(#fine)"/><path d="M48 0H0V48" fill="none" stroke="#D5DCE6" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="620" fill="#F4F6F9"/><rect width="1200" height="620" fill="url(#grid)"/>
+<rect x="20" y="20" width="1160" height="580" fill="#FBFCFE" stroke="#D5DCE6"/>
+<text x="48" y="62" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#1D3BFF" text-anchor="start" letter-spacing="1.5" >01 · YOUR DATA</text>
+<text x="470" y="62" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#1D3BFF" text-anchor="start" letter-spacing="1.5" >02 · DIGITAL TWIN</text>
+<text x="890" y="62" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#1D3BFF" text-anchor="start" letter-spacing="1.5" >03 · RESULT</text>
+<rect x="70" y="86" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<ellipse cx="90" cy="99.0" rx="6" ry="2.5" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M84 99.0V109.0c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5V99.0M84 104.0c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="109" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >ERP</text>
+<text x="308" y="109" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >invoices</text>
+<rect x="70" y="129" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<rect x="85" y="140.0" width="10" height="14" rx="1" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M87 143.0h6M87.5 147.0h1M91.5 147.0h1M87.5 150.0h1M91.5 150.0h1" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="152" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Estimating</text>
+<text x="308" y="152" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >prices</text>
+<path d="M58 86V165" stroke="#D5DCE6" stroke-width="1"/>
+<text transform="rotate(-90 46 125.5)" x="46" y="125.5" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9" font-weight="400" fill="#8A94A6" text-anchor="middle" letter-spacing="1.6" >SYSTEMS</text>
+<rect x="70" y="186" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<rect x="83" y="197.0" width="14" height="14" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M83 203.0h6V211.0M89 200.0V197.0M92 203.0h5" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="209" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Plans</text>
+<text x="308" y="209" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >with revision</text>
+<rect x="70" y="229" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<path d="M85 240.0h7l3 3v11H85z" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M87.5 246.0h5M87.5 249.0h5M87.5 252.0h3" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="252" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Bill of quantities</text>
+<text x="308" y="252" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >PDF</text>
+<rect x="70" y="272" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<rect x="83" y="284.0" width="14" height="12" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M83 288.0h14M83 292.0h14M88 284.0v12" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="295" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Measurements</text>
+<text x="308" y="295" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >Excel</text>
+<rect x="70" y="315" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<path d="M85 326.0h7l3 3v11H85z" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M87.5 332.0h5M87.5 335.0h5M87.5 338.0h3" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="338" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Timesheets</text>
+<text x="308" y="338" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >scan</text>
+<path d="M58 186V351" stroke="#D5DCE6" stroke-width="1"/>
+<text transform="rotate(-90 46 268.5)" x="46" y="268.5" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9" font-weight="400" fill="#8A94A6" text-anchor="middle" letter-spacing="1.6" >DOCUMENTS</text>
+<rect x="70" y="372" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<rect x="83" y="385.0" width="14" height="10" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M83 385.0l7 5 7-5" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="395" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Email</text>
+<text x="308" y="395" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >instructions</text>
+<rect x="70" y="415" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<path d="M90 426.5a6.5 6.5 0 1 1-3.2 12.2L83.5 439.5l.9-3.2A6.5 6.5 0 0 1 90 426.5z" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="438" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >WhatsApp</text>
+<text x="308" y="438" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >messages</text>
+<rect x="70" y="458" width="250" height="36" fill="#FFFFFF" stroke="#C9D2DF"/>
+<rect x="83" y="472.0" width="14" height="10" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M87 472.0l1.5-2h3L93 472.0" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="90" cy="477.0" r="2.6" fill="none" stroke="#0A1020" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="110" y="481" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Photos</text>
+<text x="308" y="481" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#8A94A6" text-anchor="end" letter-spacing="0.3" >voice notes</text>
+<path d="M58 372V494" stroke="#D5DCE6" stroke-width="1"/>
+<text transform="rotate(-90 46 433.0)" x="46" y="433.0" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9" font-weight="400" fill="#8A94A6" text-anchor="middle" letter-spacing="1.6" >COMMUNICATION</text>
+<path d="M320 104.0C360 104.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 147.0C360 147.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 204.0C360 204.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 247.0C360 247.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 290.0C360 290.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 333.0C360 333.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 390.0C360 390.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 433.0C360 433.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M320 476.0C360 476.0 338 312 378 312" fill="none" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1.2"/>
+<path d="M378 312C418 312 421 180 461 180" fill="none" stroke="#1D3BFF" stroke-width="1.3"/>
+<circle cx="461" cy="180" r="3.5" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M378 312C418 312 421 423 461 423" fill="none" stroke="#1D3BFF" stroke-width="1.3"/>
+<circle cx="461" cy="423" r="3.5" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<circle cx="378" cy="312" r="3.5" fill="#1D3BFF"/>
+<polygon points="484,98 848,98 814,274 450,274" fill="#E3E8F0" stroke="none" stroke-width="1.3" />
+<polygon points="478,92 842,92 808,268 444,268" fill="#FFFFFF" stroke="#0A1020" stroke-width="1.3" />
+<text x="500" y="118" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#1D3BFF" text-anchor="start" letter-spacing="1.5" >LEVEL 1 · YOUR BUSINESS</text>
+<text x="500" y="136" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1.2" >COMPANY KNOWLEDGE</text>
+<rect x="500" y="146" width="96" height="22" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="548" y="161" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#0A1020" text-anchor="middle" letter-spacing="0.3" >Clients</text>
+<rect x="606" y="146" width="96" height="22" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="654" y="161" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#0A1020" text-anchor="middle" letter-spacing="0.3" >Contracts</text>
+<rect x="712" y="146" width="96" height="22" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="760" y="161" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#0A1020" text-anchor="middle" letter-spacing="0.3" >Price base</text>
+<rect x="492" y="180" width="96" height="32" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="499" y="192" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="7.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="0.8" >PROJECT</text>
+<text x="499" y="206" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0A1020" text-anchor="start" letter-spacing="0" >Vienna 21</text>
+<rect x="598" y="180" width="96" height="32" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="605" y="192" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="7.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="0.8" >PROJECT</text>
+<text x="605" y="206" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0A1020" text-anchor="start" letter-spacing="0" >Linz South</text>
+<rect x="704" y="180" width="96" height="32" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="711" y="192" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="7.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="0.8" >PROJECT</text>
+<text x="711" y="206" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0A1020" text-anchor="start" letter-spacing="0" >Graz East</text>
+<rect x="482" y="220" width="96" height="32" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="489" y="232" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="7.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="0.8" >PROJECT</text>
+<text x="489" y="246" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0A1020" text-anchor="start" letter-spacing="0" >Mödling</text>
+<rect x="588" y="220" width="96" height="32" fill="#FFFFFF" stroke="#C9D2DF"/>
+<text x="595" y="232" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="7.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="0.8" >PROJECT</text>
+<text x="595" y="246" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0A1020" text-anchor="start" letter-spacing="0" >Baden</text>
+<rect x="694" y="220" width="96" height="32" fill="#1D3BFF" stroke="#1D3BFF"/>
+<text x="701" y="232" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="7.5" font-weight="400" fill="#C9D3FF" text-anchor="start" letter-spacing="0.8" >PROJECT</text>
+<text x="701" y="246" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#FFFFFF" text-anchor="start" letter-spacing="0" >St. Pölten</text>
+<polygon points="694,252 790,252 842,330 478,330" fill="#1D3BFF" fill-opacity="0.07"/>
+<path d="M694 252L478 330M790 252L842 330" stroke="#1D3BFF" stroke-opacity="0.35" stroke-width="1"/>
+<polygon points="484,336 848,336 814,522 450,522" fill="#E3E8F0" stroke="none" stroke-width="1.3" />
+<polygon points="478,330 842,330 808,516 444,516" fill="#F1F3FF" stroke="#1D3BFF" stroke-width="1.3" />
+<text x="500" y="356" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="400" fill="#1D3BFF" text-anchor="start" letter-spacing="1.5" >LEVEL 2 · PROJECT ST. PÖLTEN</text>
+<text x="500" y="374" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1.2" >WORK: ORDERED, BUILT, INVOICED</text>
+<text x="492" y="398" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="8.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1" >ITEM</text>
+<text x="612" y="398" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="8.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1" >ORDERED</text>
+<text x="672" y="398" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="8.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1" >BUILT</text>
+<text x="726" y="398" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="8.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1" >INVOICED</text>
+<text x="790" y="398" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="8.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1" >OPEN</text>
+<path d="M486 405H810" stroke="#C9D2DF"/>
+<text x="492" y="424" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Ventilation duct</text>
+<rect x="612" y="417" width="28" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="672" y="417" width="44" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="726" y="417" width="28" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="786" y="413" width="34" height="15" fill="#1D3BFF"/>
+<text x="803" y="424" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.3" >+ €</text>
+<text x="488" y="446" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Roof unit</text>
+<text x="608" y="446" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="0" >–</text>
+<rect x="668" y="439" width="23" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<text x="722" y="446" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="0" >–</text>
+<rect x="782" y="435" width="34" height="15" fill="#1D3BFF"/>
+<text x="799" y="446" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.3" >+ €</text>
+<text x="484" y="468" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Fire sealing</text>
+<rect x="604" y="461" width="39" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="664" y="461" width="39" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="718" y="461" width="25" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="778" y="457" width="34" height="15" fill="#1D3BFF"/>
+<text x="795" y="468" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.3" >+ €</text>
+<text x="480" y="490" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >WC units</text>
+<rect x="600" y="483" width="30" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="660" y="483" width="30" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<rect x="714" y="483" width="30" height="6" fill="#0A1020" fill-opacity="0.22"/>
+<path d="M785 486l3 3 6-6" fill="none" stroke="#8A94A6" stroke-width="1.4"/>
+<text x="640" y="568" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9.5" font-weight="400" fill="#8A94A6" text-anchor="middle" letter-spacing="1.4" >ONE TWIN FOR THE WHOLE BUSINESS, WITH INSIGHT INTO EVERY PROJECT</text>
+<path d="M826 180C851 180 841 300 866 300" fill="none" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M826 423C851 423 841 300 866 300" fill="none" stroke="#1D3BFF" stroke-width="1.3"/>
+<circle cx="866" cy="300" r="3.5" fill="#1D3BFF"/>
+<path d="M866 300H890" stroke="#1D3BFF" stroke-width="1.3"/>
+<rect x="898" y="94" width="272" height="436" fill="#D9DFFF"/>
+<rect x="890" y="86" width="272" height="436" fill="#FFFFFF" stroke="#0A1020" stroke-width="1.3"/>
+<text x="908" y="116" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1.4" >FINAL INVOICE</text>
+<text x="908" y="141" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#0A1020" text-anchor="start" letter-spacing="0" >Project St. Pölten</text>
+<path d="M890 158H1162" stroke="#C9D2DF"/>
+<rect x="908" y="178" width="15" height="15" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M911.5 185.5l3 3 5.5-6.5" fill="none" stroke="#1D3BFF" stroke-width="1.6"/>
+<text x="934" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Forgotten hours found</text>
+<path d="M908 205H1144" stroke="#E8ECF2" stroke-dasharray="2 3"/>
+<rect x="908" y="214" width="15" height="15" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M911.5 221.5l3 3 5.5-6.5" fill="none" stroke="#1D3BFF" stroke-width="1.6"/>
+<text x="934" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Extra quantities detected</text>
+<path d="M908 241H1144" stroke="#E8ECF2" stroke-dasharray="2 3"/>
+<rect x="908" y="250" width="15" height="15" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M911.5 257.5l3 3 5.5-6.5" fill="none" stroke="#1D3BFF" stroke-width="1.6"/>
+<text x="934" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Plan changes included</text>
+<path d="M908 277H1144" stroke="#E8ECF2" stroke-dasharray="2 3"/>
+<rect x="908" y="286" width="15" height="15" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M911.5 293.5l3 3 5.5-6.5" fill="none" stroke="#1D3BFF" stroke-width="1.6"/>
+<text x="934" y="298" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Checked like the client would</text>
+<path d="M908 313H1144" stroke="#E8ECF2" stroke-dasharray="2 3"/>
+<rect x="908" y="322" width="15" height="15" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M911.5 329.5l3 3 5.5-6.5" fill="none" stroke="#1D3BFF" stroke-width="1.6"/>
+<text x="934" y="334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Evidence for every line</text>
+<path d="M908 349H1144" stroke="#E8ECF2" stroke-dasharray="2 3"/>
+<rect x="908" y="358" width="15" height="15" fill="#FFFFFF" stroke="#1D3BFF" stroke-width="1.3"/>
+<path d="M911.5 365.5l3 3 5.5-6.5" fill="none" stroke="#1D3BFF" stroke-width="1.6"/>
+<text x="934" y="370" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#0A1020" text-anchor="start" letter-spacing="0" >Released by a person</text>
+<path d="M890 416H1162" stroke="#C9D2DF"/>
+<text x="908" y="442" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1.4" >ADDITIONALLY</text>
+<text x="908" y="456" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="9.5" font-weight="400" fill="#8A94A6" text-anchor="start" letter-spacing="1.4" >BILLABLE</text>
+<rect x="908" y="488" width="28" height="16" fill="#D9DFFF"/>
+<rect x="942" y="495" width="28" height="9" fill="#D9DFFF"/>
+<rect x="976" y="493" width="28" height="11" fill="#D9DFFF"/>
+<rect x="1010" y="486" width="28" height="18" fill="#D9DFFF"/>
+<rect x="1044" y="496" width="28" height="8" fill="#1D3BFF"/>
+<rect x="1078" y="482" width="28" height="22" fill="#D9DFFF"/>
+<rect x="1112" y="478" width="28" height="26" fill="#D9DFFF"/>
+</svg>

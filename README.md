@@ -32,37 +32,9 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 
 ### Architecture
 
-```mermaid
-flowchart LR
-    classDef input fill:#ffffff,stroke:#0a1020,stroke-width:1px,color:#0a1020;
-    classDef twin fill:#e8ecff,stroke:#1d3bff,stroke-width:1px,color:#0a1020;
-    classDef out fill:#1d3bff,stroke:#1d3bff,stroke-width:2px,color:#ffffff;
-
-    subgraph IN [Input: your data]
-        direction TB
-        S["Systems<br/>accounting, estimating"]:::input
-        D["Documents<br/>contracts, plans,<br/>measurements, timesheets"]:::input
-        C["Communication<br/>e-mail, WhatsApp,<br/>photos, voice notes"]:::input
-    end
-
-    subgraph TW [Digital twin]
-        direction TB
-        B["Business<br/>clients, contracts, prices"]:::twin
-        P["Projects<br/>every line item:<br/>ordered, built, invoiced"]:::twin
-        E["Evidence<br/>every value linked<br/>to its source"]:::twin
-        B --> P --> E
-    end
-
-    subgraph OUT [Output: final invoice]
-        direction TB
-        F["Findings<br/>work done but not invoiced"]
-        H["A person checks<br/>and decides"]
-        R["Final invoice<br/>with evidence for every line"]:::out
-        F --> H --> R
-    end
-
-    IN --> TW --> OUT
-```
+<p align="center">
+  <img src="docs/images/architecture.svg" width="100%" alt="Your data (systems, documents, communication) flows into the digital twin: level 1 is the business with clients, contracts, prices and all projects, level 2 is one project with every line item as ordered, built and invoiced. The result is a final invoice with evidence for every line, released by a person." />
+</p>
 
 1. **Input.** Everything a contractor already has, in whatever form it comes: figures from accounting and estimating, documents such as contracts, plans, measurements and timesheets, and what happens on site, from e-mails to WhatsApp messages, photos and voice notes.
 2. **Digital twin.** tieout reads these sources and builds one picture of the business: the business on top, every project below it, down to each line item as ordered, built and invoiced. Every value keeps a link to where it came from, and nothing is overwritten.
