@@ -174,7 +174,7 @@ export interface ZurufUmgebung {
 }
 
 /**
- * Einstieg für den Worker der App (product/app/worker/index.ts): beantwortet /api/zuruf/…, sonst null.
+ * Einstieg für den Worker einer App (in v1: product/app/worker/index.ts, Tag v1-archiv): beantwortet /api/zuruf/…, sonst null.
  * Ohne Schlüssel oder Zähler gilt der Agent als aus (Status „nicht verfügbar“, keine KI).
  */
 export async function zurufAnfrage(anfrage: Request, env: ZurufUmgebung, firma: Firma, zaehler: Zaehler | null): Promise<Response | null> {

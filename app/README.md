@@ -27,7 +27,7 @@ v1 is archived at https://app-v1.tieout.workers.dev (worker `app-v1`, frozen); i
 | `src/lib/records.ts` | record pages (project, Auftraggeber): Angaben with the place in the original, highlights, Verlauf, history; drawn by `src/components/record/` |
 | `src/lib/finds.ts` | the find page `/funde/<projekt>-f1/`: Rechenweg with the source of every quantity and price, Belege split into work and price, Kürzungsrisiko with Abhilfe, Verlauf, and the original pages each source points to; drawn by `src/components/fund/` |
 | `src/lib/originals.ts` | the original viewer: a page of a Beleg drawn from the values the twin read from it (no scans in the sample data, and the page says so), and which part of it a source marks |
-| `src/lib/decisions.ts` | decisions and tasks on a find, append only, kept in the browser until the backend (step 10) |
+| `src/lib/decisions.ts` | decisions and tasks on a find, append only: in this browser for the demo, in the company's database with an account (`server-store.ts`, step 10) |
 | `src/lib/table.ts` | sort, filter and which fixed sum fits the visible rows (tested); `src/components/table/` draws the table |
 | `src/lib/twin.ts` | view model of the Übersicht (Belege, Ebene 1, the Abgleich per position, findings, money), computed from `kern/` while the pages are built |
 | `src/app/uebersicht/` | the Übersicht (Digitaler Zwilling): Wohnpark Mooshaim at `/uebersicht/`, every other open project at `/uebersicht/<slug>/`; closed projects have none |
