@@ -53,7 +53,9 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 | What | Commands |
 |---|---|
 | v2 app | `cd app && npm ci && npm run dev` (http://localhost:3100); all checks: `npm run check` |
-| Core | `cd kern && npm ci && npm test` |
+| Core | `cd kern && npm ci && npm run check` |
+| Backend rules (local Postgres) | `cd backend && npm ci && npm run check` |
+| Synthetic folder | `cd ordner && npm ci && npm run erzeugen` (needs a local Microsoft Edge) |
 | Website | `cd website && npm ci && npm run dev` (http://localhost:3210) |
 | WhatsApp agent simulator | `cd agent && npm ci && npm run sim` (http://localhost:4321; needs an API key or a Claude login in `agent/.env`, see [`agent/UEBERGABE.md`](agent/UEBERGABE.md)) |
 | v1 app | `git checkout v1-archiv && cd product/app && npm ci && npm run dev` |

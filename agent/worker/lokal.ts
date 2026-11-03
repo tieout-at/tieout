@@ -1,6 +1,6 @@
 // Nur zum lokalen Testen: dieselbe Route wie im Worker, als kleiner Node-Server auf Port 3103.
-// KI nach ZURUF_KI in product/zuruf/.env (abo = Claude-Abo, api = Schlüssel). Firma aus dem Generator der App
-// (product/app/data/generated/zuruf-firma.json, entsteht mit `npm run generate` in product/app).
+// KI nach ZURUF_KI in agent/.env (abo = Claude-Abo, api = Schlüssel). Firma aus dem Generator der v1-App
+// (Tag v1-archiv: product/app/data/generated/zuruf-firma.json, entsteht mit `npm run generate` in product/app).
 // Start: npm run app-server. Die App ruft ihn auf, wenn sie mit NEXT_PUBLIC_ZURUF_API=http://localhost:3103/api/zuruf läuft.
 
 import { createServer } from "node:http";
