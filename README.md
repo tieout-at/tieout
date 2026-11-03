@@ -64,15 +64,15 @@ flowchart LR
         P["Finds with amount, calculation<br/>and original, one click each"]
         H["A person checks and releases<br/>(four eyes, roles)"]
         O["Schlussrechnung, Beweispaket (PDF),<br/>export for the invoicing program (Excel)"]:::out
+        DB[("Supabase (backend/)<br/>decisions, tasks, files<br/>per company")]
         P --> H --> O
+        H <--> DB
     end
 
-    DB[("Supabase<br/>(backend/)<br/>decisions, tasks,<br/>files per company")]
 
     F --> D
     W -.-> D
     R --> P
-    H <--> DB
 ```
 
 **How it works**
