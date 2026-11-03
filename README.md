@@ -36,6 +36,69 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 
 **Principles:** AI delivers facts with a source, a human confirms. The invoice itself is deterministic code. Every number links to its original document. Every business has its own data silo. Synthetic data only until the legal review is complete.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    classDef input fill:#ffffff,stroke:#0a1020,stroke-width:1px,color:#0a1020;
+    classDef core fill:#e8ecff,stroke:#1d3bff,stroke-width:1px,color:#0a1020;
+    classDef out fill:#1d3bff,stroke:#1d3bff,stroke-width:2px,color:#ffffff;
+    classDef planned fill:#ffffff,stroke:#8a94a6,stroke-width:1px,stroke-dasharray:4 3,color:#5a6475;
+
+    subgraph IN [1 · Your data]
+        direction TB
+        F["Project folder<br/>contract, bill of quantities, measurements,<br/>daywork reports, plans, e-mails, photos<br/><i>today: synthetic, from ordner/</i>"]:::input
+        W["WhatsApp agent (agent/)<br/>fitters report work by message<br/><i>built on its own, connected in step 21</i>"]:::planned
+    end
+
+    subgraph TW [2 · Digital twin: kern/]
+        direction TB
+        D["Firmendaten<br/>business, Auftraggeber, contracts,<br/>projects, every Beleg"]:::core
+        V["Every value with its source<br/>Beleg, page, place, review state, Verlauf"]:::core
+        R["Final-invoice run<br/>Ordner lesen, Abgleich, Vorprüfung,<br/>Rechnungsabschluss, in whole cents"]:::core
+        D --> V --> R
+    end
+
+    subgraph OUT [3 · Result: app/]
+        direction TB
+        P["Finds with amount, calculation<br/>and original, one click each"]
+        H["A person checks and releases<br/>(four eyes, roles)"]
+        O["Schlussrechnung, Beweispaket (PDF),<br/>export for the invoicing program (Excel)"]:::out
+        P --> H --> O
+    end
+
+    DB[("Supabase, Frankfurt (backend/)<br/>decisions, tasks, files, append only,<br/>one data silo per company")]
+
+    F --> D
+    W -.-> D
+    R --> P
+    H <--> DB
+```
+
+**How it works**
+
+- **`kern/` is the single place where money is computed.** Plain TypeScript without runtime dependencies: it takes `Firmendaten` (whatever a company's setup is, every source ends there), finds what is missing from the final invoice and pre-checks it the way the Auftraggeber would. Amounts are integer cents; every figure is tested to the cent against the solution list [`docs/Demo_Faelle.md`](docs/Demo_Faelle.md).
+- **`app/` renders the result.** The pages are built with the figures of `kern/` ahead of time (static export). When someone decides on a find, the same core runs again in the browser over those decisions, so every sum follows at once. PDF and Excel files are written in the browser by small writers of our own.
+- **`backend/` keeps what people decide.** Without an account the demo keeps decisions in the browser. With an account (sign-in link by e-mail, invited members only) decisions, tasks and files go to Postgres at Supabase in Frankfurt. The database enforces the rules itself: nothing is changed or deleted, every row belongs to one company, and the person who checked a find cannot also release it. Amounts are never stored; they are always recomputed by `kern/`.
+- **`ordner/` builds the test material.** It turns the sample company of `kern/` into real-looking documents (scanned sheets, plans, e-mails) and records where each value sits on the page. The app shows these originals, and every number links to its marked place.
+- **`agent/` is the WhatsApp input.** A fitter reports work in a message; Claude reads it and quotes the words each field comes from, code decides whether to ask back or to file it, and the fitter confirms. It runs in a simulator with 60 test scenarios and joins the app in step 21.
+
+**Principles in the code:** AI delivers facts with a source, a person confirms, the invoice itself is deterministic code. History is append only. Each company sees only its own data. All data is synthetic until the legal review is complete.
+
+**Not built yet:** reading a real customer folder with AI (step 18; today the folder is generated, so every value is known in advance), the agent inside the app (step 21), connectors to ERP systems. The plan is in [`docs/_STATUS.md`](docs/_STATUS.md).
+
+### Tech stack
+
+| Part | Built with |
+|---|---|
+| `app/` | Next.js 16 (static export), React 19, TypeScript, Tailwind 4, shadcn components on Base UI, Lucide icons; Vitest |
+| `kern/` | TypeScript, no runtime dependencies; Vitest, about 180 tests against the solution list |
+| `backend/` | Supabase (Postgres, Auth, Storage, Realtime) in Frankfurt; SQL migrations with row level security, tested in a local Postgres (PGlite) |
+| `ordner/` | TypeScript, pages rendered and measured with the local Microsoft Edge |
+| `agent/` | TypeScript, Anthropic SDK (Claude), Zod; simulator and scenario runs with Vitest |
+| `website/` | Next.js 16 (static export), one CSS file, German and English |
+| Hosting | App on a Cloudflare Worker (Workers Builds: `main` goes live on every merge, every branch gets a preview); website on Cloudflare Pages; GitHub Actions checks every pull request per part (types, lint, tests, build, amount audit) |
+
 ## Repository layout
 
 ```
