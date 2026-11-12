@@ -203,13 +203,15 @@ img { display: block; max-width: 100%; }
 .video--tall { aspect-ratio: 4 / 5; width: min(100%, calc((100vh - 240px) * 4 / 5)); }
 
 /* Team */
-.team { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+.team { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+@media (max-width: 960px) { .team { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .team { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 32px; } .member__body { padding: 12px 12px 10px; } .member__name { font-size: 16px; } .member__role { font-size: 11px; } .member__logos { padding: 12px; gap: 8px; } .member__logos img { height: 22px; } .member__li { padding: 10px 12px; } }
 .member { background: var(--white); border: 1px solid var(--ink-15); display: flex; flex-direction: column; transition: border-color .25s, transform .25s; }
 .member:hover { border-color: var(--ultra); transform: translateY(-3px); }
 .member__img { aspect-ratio: 1; overflow: hidden; border-bottom: 1px solid var(--ink-15); background: var(--grid-minor); }
 .member__img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); transition: filter .4s, transform .6s; }
 .member:hover .member__img img { filter: grayscale(0); transform: scale(1.03); }
-.member__body { padding: 16px 16px 12px; display: grid; gap: 4px; }
+.member__body { padding: 16px 16px 12px; display: grid; gap: 4px; align-content: start; flex: 1; }
 .member__name { font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
 .member__role { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--ultra); }
 /* Drei Stationen pro Person, gleich breite Spalten */
@@ -432,7 +434,6 @@ img { display: block; max-width: 100%; }
 .fit--on .fit__frame { cursor: zoom-in; }
 .fit--open .fit__frame { overflow-x: auto; cursor: zoom-out; -webkit-overflow-scrolling: touch; }
 .fit__hint { margin: 10px 0 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ultra); text-align: center; }
-.fit .team { margin-top: 0; }
 .fit { margin-top: 48px; }
 #problem .fit, #loesung .fit { margin-top: 0; }
 
