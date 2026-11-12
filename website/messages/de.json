@@ -472,15 +472,15 @@
         "title": "CEO"
       },
       {
-        "name": "Maximilian Seipl",
-        "photo": "/team/seipl.jpg",
-        "linkedin": "https://www.linkedin.com/in/maximilian-seipl/",
+        "name": "Jack Northwood",
+        "photo": "/team/northwood.jpg",
+        "linkedin": "https://www.linkedin.com/in/jack-northwood/",
         "logos": [
           "wu",
-          "enpal",
-          "icons"
+          "start",
+          "miyon"
         ],
-        "title": "COO"
+        "title": "CRO"
       },
       {
         "name": "Santino Schrader",
@@ -494,15 +494,15 @@
         "title": "CTO"
       },
       {
-        "name": "Jack Northwood",
-        "photo": "/team/northwood.jpg",
-        "linkedin": "https://www.linkedin.com/in/jack-northwood/",
+        "name": "Maximilian Seipl",
+        "photo": "/team/seipl.jpg",
+        "linkedin": "https://www.linkedin.com/in/maximilian-seipl/",
         "logos": [
           "wu",
-          "start",
-          "miyon"
+          "enpal",
+          "icons"
         ],
-        "title": "CRO"
+        "title": "COO"
       },
       {
         "name": "Constantin Dieringer",
