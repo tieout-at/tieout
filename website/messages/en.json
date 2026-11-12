@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "tieout | Final invoices for electrical and MEP contractors",
-    "description": "tieout checks the final invoice of electrical and MEP contractors against everything that happened on the project. Every line backed by evidence, no earned euro forgotten."
+    "title": "tieout | Final invoices that leave nothing behind",
+    "description": "tieout checks your final invoice against everything that happened on the project. Every line backed by evidence, no earned euro forgotten."
   },
   "nav": {
     "cta": "Book a demo",
@@ -20,7 +20,6 @@
     ]
   },
   "hero": {
-    "eyebrow": "For electrical and MEP contractors",
     "title1": "Final invoices",
     "title2": "that leave nothing behind",
     "sub": "tieout checks your final invoice against everything that happened on the project. Every line backed by evidence, no earned euro forgotten.",
@@ -477,7 +476,7 @@
         "linkedin": "https://www.linkedin.com/in/jack-northwood/",
         "logos": [
           "wu",
-          "start",
+          "clickwise",
           "miyon"
         ],
         "title": "CRO"
@@ -513,7 +512,7 @@
           "tacto",
           "rewe"
         ],
-        "title": "Founding Forward Deployed Engineer"
+        "title": "FDE"
       }
     ]
   },
@@ -564,7 +563,7 @@
     ]
   },
   "footer": {
-    "claim": "Final invoices for electrical and MEP contractors.",
+    "claim": "Final invoices that leave nothing behind.",
     "legal": "[[PLACEHOLDER: legal form]] · [[PLACEHOLDER: address]]",
     "impressum": "Legal notice",
     "datenschutz": "Privacy",

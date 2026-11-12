@@ -4,7 +4,7 @@
 
 ## 1. Goal
 
-In a few seconds the page says what tieout does: **Schlussrechnungen für Elektro- und HKLS-Betriebe, die nichts liegen lassen**, built on the digital twin of the business. The call to action is **„Demo buchen“**. No prices, no packages, no offers.
+In a few seconds the page says what tieout does: **Schlussrechnungen, die nichts liegen lassen**, built on the digital twin of the business. The call to action is **„Demo buchen“**. No prices, no packages, no offers. The page names no target group (decided by Maxi D. on 13.11.2026, the target group is still open).
 
 ## 2. Page
 

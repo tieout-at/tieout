@@ -10,7 +10,6 @@ export function Hero({ t }: { t: Messages["hero"] }) {
     <section id="start" className="hero">
       <div className="wrap hero__grid">
         <div style={{ animation: "fadeUp .8s ease both" }}>
-          <p className="eyebrow">{t.eyebrow}</p>
           <h1 className="h-display hero__title">
             {t.title1}
             <span className="l2">{t.title2}</span>
