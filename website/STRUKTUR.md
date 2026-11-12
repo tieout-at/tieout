@@ -16,7 +16,7 @@ One page per language, sections in this order (labels of the side navigation in 
 | 02 | Problem | the project timeline of Wien 21 with the switch „Heute \| Mit tieout“ | `problem/Timeline.tsx` |
 | 03 | Lösung | the flow: Ihre Daten → Digitaler Zwilling → Ergebnis, sample projects rotate | `flow/Flow.tsx`, `sections/Solution.tsx` |
 | 04 | Produktvideo (Video) | the launch film, 16:9 on laptops, 4:5 on phones | `sections/Video.tsx` |
-| 05 | Über uns (Team) | four founders with role, stations and logos | `sections/Team.tsx` |
+| 05 | Über uns (Team) | five founders with role, one university and two stations as logos, LinkedIn; five columns, three below 960 px, two below 600 px | `sections/Team.tsx` |
 | 06 | Demo | month calendar with free slots and the contact form | `sections/Calendar.tsx`, `sections/Contact.tsx` |
 | | Footer | Impressum, Datenschutz, LinkedIn | `Footer.tsx` |
 
@@ -45,7 +45,7 @@ Logo and brand files: [`../brand/README.md`](../brand/README.md).
 - Form of address „Sie“. Never the word „Claim“. No invented figures; statements about the market only with a source.
 - The website tells its own example (project Wien 21, electrical, 5.546 € open), independent of the app's sample company; decided on 23.10.2026.
 - No sample-data labels on the website (decided by Maxi D. on 3.11.2026). All amounts are invented.
-- Team texts come from each founder; photos from LinkedIn with their consent.
+- Team texts come from each founder; photos from LinkedIn with their consent (Jack Northwood and Constantin Dieringer agreed on 12.11.2026).
 
 ## 5. Placeholders
 

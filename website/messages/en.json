@@ -494,15 +494,26 @@
         "title": "CTO"
       },
       {
-        "name": "Simon Fuhrbach",
-        "photo": "/team/fuhrbach.jpg",
-        "linkedin": "https://www.linkedin.com/in/simonfuhrbach/",
+        "name": "Jack Northwood",
+        "photo": "/team/northwood.jpg",
+        "linkedin": "https://www.linkedin.com/in/jack-northwood/",
+        "logos": [
+          "wu",
+          "start",
+          "miyon"
+        ],
+        "title": "CRO"
+      },
+      {
+        "name": "Constantin Dieringer",
+        "photo": "/team/c-dieringer.jpg",
+        "linkedin": "https://www.linkedin.com/in/constantin-dieringer/",
         "logos": [
           "wu",
           "tacto",
-          "feldwerke"
+          "rewe"
         ],
-        "title": "CFO"
+        "title": "Founding Forward Deployed Engineer"
       }
     ]
   },
