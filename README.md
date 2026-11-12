@@ -76,7 +76,7 @@ Built with TypeScript, Next.js and Supabase (Frankfurt), hosted on Cloudflare; t
 | Jack Northwood | Co-Founder, CRO | [LinkedIn](https://www.linkedin.com/in/jack-northwood/) |
 | Santino Schrader | Co-Founder, CTO | [LinkedIn](https://www.linkedin.com/in/santino-schrader/) |
 | Maximilian Seipl | Co-Founder, COO | [LinkedIn](https://www.linkedin.com/in/maximilian-seipl/) |
-| Constantin Dieringer | Co-Founder, Founding Forward Deployed Engineer | [LinkedIn](https://www.linkedin.com/in/constantin-dieringer/) |
+| Constantin Dieringer | Co-Founder, Forward Deployed Engineer (FDE) | [LinkedIn](https://www.linkedin.com/in/constantin-dieringer/) |
 
 ## Rights
 

@@ -11,6 +11,7 @@ const LOGO_ALT: Record<string, string> = {
   icons: "icons consulting by students",
   start: "START Vienna",
   miyon: "miyon.ai",
+  clickwise: "ClickWise",
   rewe: "REWE",
 };
 

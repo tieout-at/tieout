@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "tieout | Schlussrechnungen für Elektro- und HKLS-Betriebe",
-    "description": "tieout prüft die Schlussrechnung von Elektro- und HKLS-Betrieben gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
+    "title": "tieout | Schlussrechnungen, die nichts liegen lassen",
+    "description": "tieout prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein Euro vergessen."
   },
   "nav": {
     "cta": "Demo buchen",
@@ -20,7 +20,6 @@
     ]
   },
   "hero": {
-    "eyebrow": "Für Elektro- und HKLS-Betriebe",
     "title1": "Schlussrechnungen,",
     "title2": "die nichts liegen lassen",
     "sub": "tieout prüft Ihre Schlussrechnung gegen alles, was im Projekt passiert ist. Jede Position belegt, kein verdienter Euro vergessen.",
@@ -477,7 +476,7 @@
         "linkedin": "https://www.linkedin.com/in/jack-northwood/",
         "logos": [
           "wu",
-          "start",
+          "clickwise",
           "miyon"
         ],
         "title": "CRO"
@@ -513,7 +512,7 @@
           "tacto",
           "rewe"
         ],
-        "title": "Founding Forward Deployed Engineer"
+        "title": "FDE"
       }
     ]
   },
@@ -564,7 +563,7 @@
     ]
   },
   "footer": {
-    "claim": "Schlussrechnungen für Elektro- und HKLS-Betriebe.",
+    "claim": "Schlussrechnungen, die nichts liegen lassen.",
     "legal": "[[PLATZHALTER: Rechtsform]] · [[PLATZHALTER: Adresse]]",
     "impressum": "Impressum",
     "datenschutz": "Datenschutz",
