@@ -527,40 +527,61 @@
     ],
     "mailLabel": "Or by email",
     "mail": "kontakt@tieout.at",
-    "fields": {
-      "name": "Name",
-      "company": "Company",
-      "email": "Email",
-      "phone": "Phone",
-      "message": "Message"
+    "progress": "Step {n} of {total}",
+    "back": "Back",
+    "next": "Next",
+    "steps": {
+      "need": {
+        "label": "Goal",
+        "title": "What are you looking for?",
+        "options": [
+          "Complete final invoices",
+          "Fully documented daywork",
+          "Bring measurement and invoicing together",
+          "Just have a look first"
+        ]
+      },
+      "trade": {
+        "label": "Trade",
+        "title": "Which trade do you work in?",
+        "options": [
+          "Electrical",
+          "Heating, ventilation, plumbing",
+          "Construction",
+          "Another trade"
+        ]
+      },
+      "size": {
+        "label": "Business",
+        "title": "How large is your business?",
+        "options": [
+          "1 to 10 employees",
+          "11 to 50 employees",
+          "51 to 250 employees",
+          "More than 250 employees"
+        ]
+      },
+      "details": {
+        "label": "Contact",
+        "title": "Where may we write to you?"
+      }
     },
-    "optional": "optional",
-    "messagePlaceholder": "Trade, size, what matters to you …",
-    "consent": "I agree that tieout may contact me about this request by email or phone. I can withdraw my consent at any time. Details in the privacy policy.",
-    "submit": "Request demo",
-    "errorName": "Please enter your name.",
+    "calendlyUrl": "https://calendly.com/northwoodjack181/tieout-meeting",
+    "loading": "Loading calendar …",
+    "book": {
+      "title": "Book a time directly",
+      "sub": "Choose a day and time. The confirmation arrives by email."
+    },
+    "ask": {
+      "title": "Or we get in touch with you"
+    },
+    "email": "Email",
+    "submit": "Send",
+    "consent": "I agree that tieout may contact me about this request by email. I can withdraw my consent at any time. Details in the privacy policy.",
     "errorEmail": "Please enter a valid email address.",
     "errorConsent": "Without your consent we cannot reply.",
     "success": "Request received",
-    "successNote": "Preview: this form does not send anything yet. [[PLACEHOLDER: form backend]]",
-    "slotLabel": "Preferred time",
-    "slotTimezone": "Vienna time",
-    "slotPlaceholder": "[[PLACEHOLDER: calendar integration]]",
-    "errorSlot": "Please choose a time slot.",
-    "slotChooseDay": "Choose a day",
-    "slotTimesFor": "Available times on",
-    "slotNoDay": "Choose a day in the calendar first.",
-    "prevMonth": "Previous month",
-    "nextMonth": "Next month",
-    "weekdays": [
-      "Mo",
-      "Tu",
-      "We",
-      "Th",
-      "Fr",
-      "Sa",
-      "Su"
-    ]
+    "successNote": "Preview: this form does not send anything yet. [[PLACEHOLDER: form backend]]"
   },
   "footer": {
     "claim": "Final invoices that leave nothing behind.",

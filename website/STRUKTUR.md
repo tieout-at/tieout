@@ -17,7 +17,7 @@ One page per language, sections in this order (labels of the side navigation in 
 | 03 | Lösung | the flow: Ihre Daten → Digitaler Zwilling → Ergebnis, sample projects rotate | `flow/Flow.tsx`, `sections/Solution.tsx` |
 | 04 | Produktvideo (Video) | the launch film, 16:9 on laptops, 4:5 on phones | `sections/Video.tsx` |
 | 05 | Über uns (Team) | five founders with role, one university and two stations as logos, LinkedIn; five columns, three below 960 px, two below 600 px | `sections/Team.tsx` |
-| 06 | Demo | month calendar with free slots and the contact form | `sections/Calendar.tsx`, `sections/Contact.tsx` |
+| 06 | Demo | two ways side by side: the booking in Calendly (loaded when the visitor comes near the section) and a short request (three questions answered by click, then the email address) | `sections/Contact.tsx` |
 | | Footer | Impressum, Datenschutz, LinkedIn | `Footer.tsx` |
 
 Site map: `/`, `/en/`, `/impressum/`, `/datenschutz/` and their English pages under `/en/`.
@@ -51,7 +51,7 @@ Logo and brand files: [`../brand/README.md`](../brand/README.md).
 
 Anything unknown is written as `[[PLATZHALTER: …]]` (German) or `[[PLACEHOLDER: …]]` (English), never invented; `ui/Ph.tsx` marks them visibly. `npm run check:platzhalter` lists them.
 
-Open on purpose: the Impressum and Datenschutz details (no company is registered yet), the form backend and the calendar connection. The page is reachable by link and sets `noindex` while these are open.
+Open on purpose: the Impressum and Datenschutz details (no company is registered yet), the form backend of the request in section 06. The page is reachable by link and sets `noindex` while these are open.
 
 ## 6. Technology
 

@@ -527,40 +527,61 @@
     ],
     "mailLabel": "Oder per Mail",
     "mail": "kontakt@tieout.at",
-    "fields": {
-      "name": "Name",
-      "company": "Firma",
-      "email": "E-Mail",
-      "phone": "Telefon",
-      "message": "Nachricht"
+    "progress": "Schritt {n} von {total}",
+    "back": "Zurück",
+    "next": "Weiter",
+    "steps": {
+      "need": {
+        "label": "Anliegen",
+        "title": "Worum geht es Ihnen?",
+        "options": [
+          "Schlussrechnungen vollständig stellen",
+          "Regieleistungen lückenlos belegen",
+          "Aufmaß und Abrechnung zusammenführen",
+          "Erst einmal ansehen"
+        ]
+      },
+      "trade": {
+        "label": "Gewerk",
+        "title": "In welchem Gewerk arbeiten Sie?",
+        "options": [
+          "Elektro",
+          "Heizung, Lüftung, Sanitär",
+          "Bau",
+          "Anderes Gewerk"
+        ]
+      },
+      "size": {
+        "label": "Betrieb",
+        "title": "Wie groß ist Ihr Betrieb?",
+        "options": [
+          "1 bis 10 Mitarbeitende",
+          "11 bis 50 Mitarbeitende",
+          "51 bis 250 Mitarbeitende",
+          "Über 250 Mitarbeitende"
+        ]
+      },
+      "details": {
+        "label": "Kontakt",
+        "title": "Wohin dürfen wir Ihnen schreiben?"
+      }
     },
-    "optional": "optional",
-    "messagePlaceholder": "Gewerk, Größe, worum es Ihnen geht …",
-    "consent": "Ich bin einverstanden, dass tieout mich zu dieser Anfrage per Mail oder Telefon kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
-    "submit": "Demo anfragen",
-    "errorName": "Bitte Namen angeben.",
+    "calendlyUrl": "https://calendly.com/northwoodjack181/tieout-meeting",
+    "loading": "Kalender wird geladen …",
+    "book": {
+      "title": "Termin direkt buchen",
+      "sub": "Wählen Sie Tag und Uhrzeit. Die Bestätigung kommt per Mail."
+    },
+    "ask": {
+      "title": "Oder wir melden uns bei Ihnen"
+    },
+    "email": "E-Mail",
+    "submit": "Absenden",
+    "consent": "Ich bin einverstanden, dass tieout mich zu dieser Anfrage per Mail kontaktiert. Die Einwilligung kann ich jederzeit widerrufen. Details in der Datenschutzerklärung.",
     "errorEmail": "Bitte eine gültige Mailadresse angeben.",
     "errorConsent": "Ohne Einwilligung können wir nicht antworten.",
     "success": "Anfrage erhalten",
-    "successNote": "Vorschau: Das Formular versendet noch nichts. [[PLATZHALTER: Formular-Backend]]",
-    "slotLabel": "Wunschtermin",
-    "slotTimezone": "Wiener Zeit",
-    "slotPlaceholder": "[[PLATZHALTER: Kalender-Anbindung]]",
-    "errorSlot": "Bitte einen Termin wählen.",
-    "slotChooseDay": "Tag wählen",
-    "slotTimesFor": "Freie Zeiten am",
-    "slotNoDay": "Wählen Sie zuerst einen Tag im Kalender.",
-    "prevMonth": "Vorheriger Monat",
-    "nextMonth": "Nächster Monat",
-    "weekdays": [
-      "Mo",
-      "Di",
-      "Mi",
-      "Do",
-      "Fr",
-      "Sa",
-      "So"
-    ]
+    "successNote": "Vorschau: Das Formular versendet noch nichts. [[PLATZHALTER: Formular-Backend]]"
   },
   "footer": {
     "claim": "Schlussrechnungen, die nichts liegen lassen.",
