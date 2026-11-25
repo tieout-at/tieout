@@ -1,6 +1,6 @@
 # tieout: rules for Claude Code
 
-This folder is the public repository github.com/tieout-at/tieout (opened for the hackathon jury; the hackathon has ended, and the product is now developed without a deadline until it is ready for customers and investors). Strategy, prices, gates, the dossier and team status live in the private repository tieout-at/intern, cloned next to this folder as `../tieout-intern` (read it, never copy from it into this repository). Read this file, then `docs/_UEBERGABE.md` and `docs/_STATUS.md`.
+This folder is the public repository github.com/tieout-at/tieout (opened for the hackathon jury; the hackathon has ended, and the product is now developed without a deadline until it is ready for customers and investors). Strategy, prices, gates, the dossier and team status live in the private repository tieout-at/intern, cloned next to this folder as `../tieout-intern` (read it, never copy from it into this repository). Read this file, then `docs/_STATUS.md`.
 
 ## Where things stand
 
@@ -15,7 +15,7 @@ v2 is rebuilt from zero (decided 23.10.2026): UI modelled on Attio's layout, beh
 | `agent/` | WhatsApp agent (Santino), an input of the twin, integrated into v2 in step 21; its own `CLAUDE.md` applies there |
 | `website/` | public website; `website/STRUKTUR.md` is binding |
 | `brand/` | logo and graphics |
-| `docs/` | `_STATUS.md`, `_UEBERGABE.md`, `SPEZIFIKATION.md`, `Demo_Faelle.md` (solution list) with `demo_faelle_check.mjs` (recomputes every amount; run before every change to either file), `DESIGN.md` |
+| `docs/` | `_STATUS.md`, `SPEZIFIKATION.md`, `Demo_Faelle.md` (solution list) with `demo_faelle_check.mjs` (recomputes every amount; run before every change to either file), `DESIGN.md` |
 
 ## Rules
 
@@ -26,6 +26,6 @@ v2 is rebuilt from zero (decided 23.10.2026): UI modelled on Attio's layout, beh
 5. **Never:** the word "Claim" (we say Schlussrechnung, verrechenbar, Beweispaket), contact with the general contractor, legal assessments or statements on preclusion, evaluation of employees (§ 96a ArbVG), pooling prices between companies, debt collection, faking a feature.
 6. **Sales:** no cold emails, no cold calls (§ 174 TKG).
 7. **Decided and rejected:** strategy decisions and rejected options live in `../tieout-intern`; a rejected option is not proposed again without new evidence.
-8. **Working practice:** one chat per step, started from `docs/_UEBERGABE.md`, ended with updated `_STATUS.md` and `_UEBERGABE.md`. Before each part two sentences on what happens, a go from Maxi S. before pushing, deleting or anything outward facing. Every change through a branch and a pull request. Never code in OneDrive. No worktrees or parallel sessions unless Maxi S. asks.
+8. **Working practice:** one chat per step, started from `docs/_STATUS.md` and ended with it updated. Before each part two sentences on what happens, a go from Maxi S. before pushing, deleting or anything outward facing. Every change through a branch and a pull request. Never code in OneDrive. No worktrees or parallel sessions unless Maxi S. asks.
 9. **Done means:** typecheck, lint, tests, build green; amount audit green; browser light at 1440 px and 390 px; screenshot next to the reference shown to Maxi S.; a bug review and a security review of the step's diff, findings re-measured and fixed; no slower than before (bundle and page load checked when code changes); status updated.
 10. **Building a page:** follow "Principles for every new page" in `docs/DESIGN.md` (clear and not packed, picture first, the extra where it fits, interactive where clearer, scalable, fit for onboarding, colour and money rules, phones, speed and security).
