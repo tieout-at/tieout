@@ -17,6 +17,10 @@
 
 ---
 
+<p align="center">
+  <a href="https://app.tieout.workers.dev"><img src="docs/images/app-start.png" width="100%" alt="tieout demo app: start page of a synthetic building services contractor with the amount that can additionally be billed, the amount still in clarification and the money per project" /></a>
+</p>
+
 ## Status
 
 - **The demo app is live** at [app.tieout.workers.dev](https://app.tieout.workers.dev), no sign-in: a synthetic building services contractor (Kronfeld Haustechnik) with five projects. Each find (Fund) shows its amount, its calculation and its original documents; a person checks and releases it, and released finds go into the final invoice (Schlussrechnung) with an evidence package. Rebuilt from zero since 23 October 2026 (v2). Today the twin is filled with synthetic data; reading real folders, e-mails and WhatsApp messages with AI comes next. Plan and progress in [`docs/_STATUS.md`](docs/_STATUS.md).
