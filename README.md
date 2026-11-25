@@ -68,6 +68,16 @@ On a construction site, more gets built, changed and agreed verbally than ends u
 
 Built with TypeScript, Next.js and Supabase (Frankfurt), hosted on Cloudflare; the WhatsApp agent uses Claude. Node 22 or newer. Every change goes through a branch and a pull request to `main`; CI checks each part on its own. Working rules: [`CLAUDE.md`](CLAUDE.md).
 
+## Team
+
+Team tieout
+
+| | |
+|---|---|
+| Maximilian Dieringer | [LinkedIn](https://www.linkedin.com/in/maximilian-dieringer/) |
+| Santino Schrader | [LinkedIn](https://www.linkedin.com/in/santino-schrader/) |
+| Maximilian Seipl | [LinkedIn](https://www.linkedin.com/in/maximilian-seipl/) |
+
 ## Rights
 
 Copyright 2026 the tieout team. All rights reserved. The code is public so that it can be read; it is not licensed for use, copying or distribution. All data in this repository is synthetic.
