@@ -72,11 +72,11 @@ Built with TypeScript, Next.js and Supabase (Frankfurt), hosted on Cloudflare; t
 
 Team tieout
 
-| | |
-|---|---|
-| Maximilian Dieringer | [LinkedIn](https://www.linkedin.com/in/maximilian-dieringer/) |
-| Santino Schrader | [LinkedIn](https://www.linkedin.com/in/santino-schrader/) |
-| Maximilian Seipl | [LinkedIn](https://www.linkedin.com/in/maximilian-seipl/) |
+<table>
+  <tr><td>Maximilian Dieringer</td><td><a href="https://www.linkedin.com/in/maximilian-dieringer/">LinkedIn</a></td></tr>
+  <tr><td>Santino Schrader</td><td><a href="https://www.linkedin.com/in/santino-schrader/">LinkedIn</a></td></tr>
+  <tr><td>Maximilian Seipl</td><td><a href="https://www.linkedin.com/in/maximilian-seipl/">LinkedIn</a></td></tr>
+</table>
 
 ## Rights
 
